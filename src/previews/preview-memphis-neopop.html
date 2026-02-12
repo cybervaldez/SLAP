@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Memphis / Neo-Pop</title>
+<style>
+  /* ─── DESIGN TOKENS ─── */
+  :root {
+    --color-bg: #FFF8E7;
+    --color-bg-alt: #FFE4CC;
+    --color-text: #1A1A2E;
+    --color-text-secondary: #6B6B80;
+    --color-accent-pink: #FF6B9D;
+    --color-accent-blue: #4ECDC4;
+    --color-accent-yellow: #FFE66D;
+    --color-accent-coral: #FF6B6B;
+    --color-accent-purple: #A855F7;
+    --color-rule: #1A1A2E;
+    --color-card-bg: #FFFFFF;
+    --color-card-border: #1A1A2E;
+
+    --font-display: 'Impact', 'Arial Black', sans-serif;
+    --font-heading: 'Trebuchet MS', 'Lucida Grande', sans-serif;
+    --font-body: 'Trebuchet MS', 'Lucida Grande', sans-serif;
+    --font-mono: 'Courier New', monospace;
+
+    --radius-none: 0px;
+    --radius-squircle: 24px;
+    --radius-blob: 40% 60% 60% 40% / 60% 30% 70% 40%;
+
+    --ease-enter: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+    --duration-micro: 150ms;
+    --duration-small: 250ms;
+    --duration-bounce: 500ms;
+  }
+
+  [data-theme="dark"] {
+    --color-bg: #1A1A2E;
+    --color-bg-alt: #16213E;
+    --color-text: #FFF8E7;
+    --color-text-secondary: #A0A0B0;
+    --color-card-bg: #16213E;
+    --color-card-border: #FFF8E7;
+    --color-rule: #FFF8E7;
+  }
+
+  /* ─── RESET ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    transition: background var(--duration-small) var(--ease-exit);
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 100;
+    background: var(--color-accent-yellow);
+    color: var(--color-text);
+    border: 3px solid var(--color-rule);
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: transform var(--duration-micro) var(--ease-enter);
+  }
+  .theme-toggle:hover { transform: rotate(-3deg) scale(1.05); }
+  .variation-label {
+    position: fixed; top: 16px; left: 16px; z-index: 100;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ─── GEOMETRIC SHAPES (background decoration) ─── */
+  .geo {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .geo--circle {
+    border-radius: 50%;
+    border: 3px solid;
+  }
+  .geo--triangle {
+    width: 0; height: 0;
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+  }
+  .geo--squiggle {
+    font-size: 3rem;
+    font-weight: 900;
+    opacity: 0.15;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 120px 0 80px;
+    position: relative;
+  }
+  /* Decorative shapes */
+  .hero .geo-1 { top: 60px; right: 80px; width: 80px; height: 80px; border-color: var(--color-accent-pink); transform: rotate(15deg); }
+  .hero .geo-2 { top: 200px; right: 200px; border-bottom: 50px solid var(--color-accent-blue); }
+  .hero .geo-3 { bottom: 40px; left: 60px; width: 50px; height: 50px; background: var(--color-accent-yellow); border: none; }
+
+  .hero__content { position: relative; z-index: 1; }
+
+  .hero__overline {
+    display: inline-block;
+    background: var(--color-accent-pink);
+    color: #FFFFFF;
+    padding: 4px 14px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transform: rotate(-2deg);
+    margin-bottom: 24px;
+  }
+  .hero__headline {
+    font-family: var(--font-display);
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .hero__headline .line-1 {
+    display: block;
+    color: var(--color-text);
+  }
+  .hero__headline .line-2 {
+    display: block;
+    color: var(--color-accent-coral);
+    -webkit-text-stroke: 2px var(--color-accent-coral);
+    -webkit-text-fill-color: transparent;
+  }
+  .hero__headline .line-3 {
+    display: inline-block;
+    background: var(--color-accent-blue);
+    color: var(--color-bg);
+    -webkit-text-fill-color: var(--color-bg);
+    padding: 4px 16px;
+    transform: rotate(1deg);
+  }
+  .hero__sub {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    max-width: 480px;
+    margin: 28px 0 36px;
+    line-height: 1.7;
+  }
+  .hero__actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 3px solid var(--color-rule);
+    cursor: pointer;
+    transition: transform var(--duration-micro) var(--ease-enter),
+                box-shadow var(--duration-micro) var(--ease-enter);
+    text-decoration: none;
+    position: relative;
+  }
+  .btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--color-rule);
+  }
+  .btn:active {
+    transform: translate(0, 0);
+    box-shadow: none;
+  }
+  .btn--pink { background: var(--color-accent-pink); color: #FFFFFF; }
+  .btn--blue { background: var(--color-accent-blue); color: var(--color-text); }
+  .btn--yellow { background: var(--color-accent-yellow); color: var(--color-text); }
+  .btn--outline { background: var(--color-bg); color: var(--color-text); }
+  .btn--small { padding: 10px 18px; font-size: 0.8125rem; border-width: 2px; }
+  .btn--small:hover { box-shadow: 3px 3px 0 var(--color-rule); }
+
+  /* ─── FEATURES ─── */
+  .features { padding: 80px 0; position: relative; }
+  .features__header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .features__header h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+  .features__header .tag {
+    display: inline-block;
+    background: var(--color-accent-yellow);
+    border: 2px solid var(--color-rule);
+    padding: 2px 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transform: rotate(3deg);
+  }
+  .features__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .feature-card {
+    padding: 28px;
+    background: var(--color-card-bg);
+    border: 3px solid var(--color-card-border);
+    position: relative;
+    transition: transform var(--duration-micro) var(--ease-enter);
+  }
+  .feature-card:hover {
+    transform: rotate(-1deg) translateY(-4px);
+  }
+  .feature-card:nth-child(1) { box-shadow: 6px 6px 0 var(--color-accent-pink); }
+  .feature-card:nth-child(2) { box-shadow: 6px 6px 0 var(--color-accent-blue); }
+  .feature-card:nth-child(3) { box-shadow: 6px 6px 0 var(--color-accent-yellow); }
+
+  .feature-card__number {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .feature-card:nth-child(1) .feature-card__number { color: var(--color-accent-pink); }
+  .feature-card:nth-child(2) .feature-card__number { color: var(--color-accent-blue); }
+  .feature-card:nth-child(3) .feature-card__number { color: var(--color-accent-coral); }
+
+  .feature-card__title {
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+  .feature-card__desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ─── PRICING ─── */
+  .pricing {
+    padding: 80px 0;
+    background: var(--color-bg-alt);
+    position: relative;
+  }
+  .pricing__header { margin-bottom: 48px; }
+  .pricing__header h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .pricing__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .price-card {
+    background: var(--color-card-bg);
+    border: 3px solid var(--color-card-border);
+    padding: 28px;
+    text-align: center;
+    transition: transform var(--duration-micro) var(--ease-enter);
+  }
+  .price-card:hover { transform: translateY(-4px); }
+  .price-card--featured {
+    background: var(--color-text);
+    color: var(--color-bg);
+    transform: rotate(-1deg);
+    box-shadow: 8px 8px 0 var(--color-accent-pink);
+  }
+  .price-card--featured:hover {
+    transform: rotate(-1deg) translateY(-4px);
+  }
+  .price-card__name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+  }
+  .price-card--featured .price-card__name {
+    color: var(--color-accent-pink);
+  }
+  .price-card__amount {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .price-card__period {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+  }
+  .price-card--featured .price-card__period { color: #A0A0B0; }
+  .price-card__features {
+    list-style: none;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+  .price-card__features li {
+    padding: 8px 0;
+    border-bottom: 2px dashed var(--color-card-border);
+    font-size: 0.9375rem;
+  }
+  .price-card--featured .price-card__features li {
+    border-bottom-color: rgba(255,255,255,0.15);
+  }
+  .price-card__features li::before {
+    content: '\2605 ';
+    color: var(--color-accent-yellow);
+  }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials { padding: 80px 0; }
+  .testimonials__header {
+    margin-bottom: 48px;
+    text-align: center;
+  }
+  .testimonials__header h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    text-transform: uppercase;
+  }
+  .testimonials__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .testimonial-card {
+    background: var(--color-card-bg);
+    border: 3px solid var(--color-card-border);
+    padding: 24px;
+    position: relative;
+  }
+  .testimonial-card:nth-child(1) {
+    box-shadow: 5px 5px 0 var(--color-accent-blue);
+    transform: rotate(0.5deg);
+  }
+  .testimonial-card:nth-child(2) {
+    box-shadow: 5px 5px 0 var(--color-accent-pink);
+    transform: rotate(-0.5deg);
+  }
+  .testimonial-card__quote {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  .testimonial-card__author {
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .testimonial-card__role {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* ─── SIGNUP ─── */
+  .signup {
+    padding: 80px 0;
+    text-align: center;
+    position: relative;
+  }
+  .signup h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .signup__sub {
+    color: var(--color-text-secondary);
+    margin-bottom: 32px;
+  }
+  .signup__form {
+    display: flex;
+    gap: 0;
+    justify-content: center;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .signup__input {
+    flex: 1;
+    padding: 14px 16px;
+    border: 3px solid var(--color-card-border);
+    border-right: none;
+    background: var(--color-card-bg);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    outline: none;
+  }
+  .signup__input:focus {
+    border-color: var(--color-accent-pink);
+    box-shadow: inset 0 0 0 2px var(--color-accent-pink);
+  }
+
+  /* ─── PALETTE ─── */
+  .palette { padding: 40px 0; border-top: 3px solid var(--color-rule); }
+  .palette__label {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+  }
+  .palette__row { display: flex; gap: 3px; }
+  .palette__swatch {
+    flex: 1; height: 48px;
+    display: flex; align-items: flex-end;
+    padding: 4px 6px;
+    font-family: var(--font-mono); font-size: 9px;
+    color: #FFFFFF;
+    border: 2px solid var(--color-rule);
+  }
+
+  .footer {
+    padding: 32px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .features__grid, .pricing__grid { grid-template-columns: 1fr; }
+    .testimonials__grid { grid-template-columns: 1fr; }
+    .hero__headline { font-size: 3rem; }
+    .hero__actions { flex-direction: column; }
+    .geo { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<span class="variation-label">Memphis / Neo-Pop</span>
+<button class="theme-toggle" data-testid="theme-toggle" onclick="
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'light' ? 'dark' : 'light';
+  this.textContent = html.dataset.theme === 'light' ? 'Dark' : 'Light';
+">Dark</button>
+
+<!-- ─── HERO ─── -->
+<section class="hero" data-testid="hero">
+  <div class="geo geo--circle geo-1"></div>
+  <div class="geo geo--triangle geo-2"></div>
+  <div class="geo geo--circle geo-3"></div>
+  <div class="container hero__content">
+    <div class="hero__overline">Design Review Toolkit</div>
+    <h1 class="hero__headline">
+      <span class="line-1">Stop</span>
+      <span class="line-2">Shipping</span>
+      <span class="line-3">AI Slop</span>
+    </h1>
+    <p class="hero__sub">
+      Catch generic design patterns before they reach production.
+      SLAP reviews your UI against 17 personas, 5 expert roles,
+      and a library of known AI-default indicators.
+    </p>
+    <div class="hero__actions">
+      <a href="#" class="btn btn--pink">Start Free Review</a>
+      <a href="#" class="btn btn--outline">View Examples</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section class="features" data-testid="features">
+  <div class="container">
+    <div class="features__header">
+      <h2>Features</h2>
+      <span class="tag">03 Core</span>
+    </div>
+    <div class="features__grid">
+      <div class="feature-card">
+        <div class="feature-card__number">01</div>
+        <h3 class="feature-card__title">Expert Review Panel</h3>
+        <p class="feature-card__desc">Five specialist roles — marketing, UX, product, technical, design — each score and annotate every section of your page.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__number">02</div>
+        <h3 class="feature-card__title">Persona Stress Test</h3>
+        <p class="feature-card__desc">Seventeen fictional users evaluate your interface from perspectives you cannot simulate alone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__number">03</div>
+        <h3 class="feature-card__title">Slop Detection</h3>
+        <p class="feature-card__desc">Flags known AI defaults: purple accents, system fonts, uniform border-radius, 0.2s-ease transitions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ─── -->
+<section class="pricing" data-testid="pricing">
+  <div class="container">
+    <div class="pricing__header">
+      <h2>Pricing</h2>
+    </div>
+    <div class="pricing__grid">
+      <div class="price-card">
+        <div class="price-card__name">Starter</div>
+        <div class="price-card__amount">$0</div>
+        <div class="price-card__period">Free forever</div>
+        <ul class="price-card__features">
+          <li>3 reviews / month</li>
+          <li>Expert panel only</li>
+          <li>Basic slop detection</li>
+        </ul>
+        <a href="#" class="btn btn--outline btn--small" style="width:100%;justify-content:center;">Get Started</a>
+      </div>
+      <div class="price-card price-card--featured">
+        <div class="price-card__name">Professional</div>
+        <div class="price-card__amount" style="color: var(--color-accent-pink);">$29</div>
+        <div class="price-card__period">per month</div>
+        <ul class="price-card__features">
+          <li>Unlimited reviews</li>
+          <li>Expert + Persona panels</li>
+          <li>Full slop detection</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="btn btn--pink btn--small" style="width:100%;justify-content:center;">Start Free Trial</a>
+      </div>
+      <div class="price-card">
+        <div class="price-card__name">Enterprise</div>
+        <div class="price-card__amount">$99</div>
+        <div class="price-card__period">per month</div>
+        <ul class="price-card__features">
+          <li>Everything in Pro</li>
+          <li>Custom personas</li>
+          <li>CI/CD integration</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a href="#" class="btn btn--blue btn--small" style="width:100%;justify-content:center;">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─── -->
+<section class="testimonials" data-testid="testimonials">
+  <div class="container">
+    <div class="testimonials__header">
+      <h2>People Talk</h2>
+    </div>
+    <div class="testimonials__grid">
+      <div class="testimonial-card">
+        <p class="testimonial-card__quote">"We caught 14 AI-default patterns in our redesign before launch. The persona panel alone was worth it — our colorblind user persona found 3 issues we missed."</p>
+        <div class="testimonial-card__author">Sarah Chen</div>
+        <div class="testimonial-card__role">Design Lead, Vercel</div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-card__quote">"SLAP forced us to justify every design decision. If the system flagged it as generic, we had to defend it or change it. Conversion rate went up 23%."</p>
+        <div class="testimonial-card__author">Marcus Rivera</div>
+        <div class="testimonial-card__role">VP Product, Linear</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SIGNUP ─── -->
+<section class="signup" data-testid="signup">
+  <div class="container">
+    <h2>Join Up</h2>
+    <p class="signup__sub">No credit card required. Free tier includes 3 reviews per month.</p>
+    <div class="signup__form">
+      <input type="email" class="signup__input" placeholder="Email address" data-testid="email-input">
+      <button class="btn btn--pink" data-testid="signup-btn" style="border-left: 3px solid var(--color-rule);">Go!</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PALETTE ─── -->
+<section class="palette">
+  <div class="container">
+    <div class="palette__label">Color Palette</div>
+    <div class="palette__row">
+      <div class="palette__swatch" style="background: #1A1A2E;">#1A1A2E</div>
+      <div class="palette__swatch" style="background: #FF6B9D;">#FF6B9D</div>
+      <div class="palette__swatch" style="background: #4ECDC4;">#4ECDC4</div>
+      <div class="palette__swatch" style="background: #FFE66D; color: #1A1A2E;">#FFE66D</div>
+      <div class="palette__swatch" style="background: #FF6B6B;">#FF6B6B</div>
+    </div>
+  </div>
+</section>
+
+<footer class="container footer">
+  <span>SLAP! Design Review Toolkit</span>
+  <span>Memphis / Neo-Pop</span>
+</footer>
+
+</body>
+</html>

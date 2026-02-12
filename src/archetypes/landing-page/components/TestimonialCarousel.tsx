@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { testimonials } from '../data';
 
 const ACCENT = '#8B5CF6';
@@ -99,26 +99,22 @@ function getDotStyle(isActive: boolean): React.CSSProperties {
     border: 'none',
     background: isActive ? ACCENT : '#D1D5DB',
     cursor: 'pointer',
-    padding: 0,
+    padding: '12px',
     transition: 'background 0.2s',
+    backgroundClip: 'content-box',
   };
 }
 
 export default function TestimonialCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const next = useCallback(() => {
+  const next = () => {
     setActiveIndex((prev) => (prev + 1) % testimonials.length);
-  }, []);
+  };
 
-  const prev = useCallback(() => {
+  const prev = () => {
     setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(next, 5000);
-    return () => clearInterval(interval);
-  }, [next]);
+  };
 
   const current = testimonials[activeIndex];
 

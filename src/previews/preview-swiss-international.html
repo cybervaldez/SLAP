@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Swiss/International Typography</title>
+<style>
+  /* ─── DESIGN TOKENS ─── */
+  :root {
+    --color-bg: #FFFFFF;
+    --color-bg-alt: #F2F2F2;
+    --color-text: #1A1A1A;
+    --color-text-secondary: #6B6B6B;
+    --color-accent: #E63946;
+    --color-rule: #1A1A1A;
+    --color-rule-light: #D4D4D4;
+    --color-card-bg: #FFFFFF;
+
+    --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-mono: 'SF Mono', 'Consolas', monospace;
+
+    --grid-column: 60px;
+    --grid-gutter: 20px;
+    --grid-margin: 40px;
+
+    --ease-enter: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --duration-micro: 120ms;
+    --duration-small: 200ms;
+  }
+
+  [data-theme="dark"] {
+    --color-bg: #0D0D0D;
+    --color-bg-alt: #1A1A1A;
+    --color-text: #F2F2F2;
+    --color-text-secondary: #999999;
+    --color-accent: #E63946;
+    --color-rule: #F2F2F2;
+    --color-rule-light: #333333;
+    --color-card-bg: #1A1A1A;
+  }
+
+  /* ─── RESET ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.5;
+    transition: background var(--duration-small) var(--ease-enter),
+                color var(--duration-small) var(--ease-enter);
+  }
+
+  /* ─── THEME TOGGLE ─── */
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 100;
+    background: var(--color-text); color: var(--color-bg);
+    border: none; padding: 8px 16px; cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ─── LABEL ─── */
+  .variation-label {
+    position: fixed; top: 16px; left: 16px; z-index: 100;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  /* ─── GRID SYSTEM ─── */
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 var(--grid-margin);
+  }
+
+  .grid-12 {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--grid-gutter);
+  }
+
+  /* ─── TYPOGRAPHIC SCALE (based on √2 ratio) ─── */
+  .t-display {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+  .t-h1 { font-size: 2.83rem; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; }
+  .t-h2 { font-size: 2rem; font-weight: 700; line-height: 1.15; letter-spacing: -0.015em; }
+  .t-h3 { font-size: 1.414rem; font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; }
+  .t-body { font-size: 1rem; font-weight: 400; line-height: 1.6; letter-spacing: 0; }
+  .t-small { font-size: 0.707rem; font-weight: 400; line-height: 1.5; letter-spacing: 0.04em; text-transform: uppercase; }
+  .t-caption { font-size: 0.75rem; font-weight: 400; color: var(--color-text-secondary); }
+
+  /* ─── RULES (the Swiss signature) ─── */
+  .rule { border: none; border-top: 2px solid var(--color-rule); margin: 0; }
+  .rule--light { border-top: 1px solid var(--color-rule-light); }
+  .rule--accent { border-top: 3px solid var(--color-accent); }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 120px 0 80px;
+    border-bottom: 2px solid var(--color-rule);
+  }
+
+  .hero__overline {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 24px;
+  }
+
+  .hero__headline {
+    grid-column: 1 / 9;
+  }
+
+  .hero__sub {
+    grid-column: 1 / 7;
+    margin-top: 32px;
+    color: var(--color-text-secondary);
+  }
+
+  .hero__cta-area {
+    grid-column: 1 / 13;
+    margin-top: 48px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--duration-micro) var(--ease-enter);
+    text-decoration: none;
+  }
+  .btn--primary {
+    background: var(--color-text);
+    color: var(--color-bg);
+    border-color: var(--color-text);
+  }
+  .btn--primary:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #FFFFFF;
+  }
+  .btn--secondary {
+    background: transparent;
+    color: var(--color-text);
+    border-color: var(--color-rule-light);
+  }
+  .btn--secondary:hover {
+    border-color: var(--color-text);
+  }
+  .btn--small {
+    padding: 10px 20px;
+    font-size: 0.8125rem;
+  }
+
+  /* ─── FEATURES ─── */
+  .features {
+    padding: 80px 0;
+  }
+
+  .features__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 48px;
+  }
+
+  .feature-card {
+    grid-column: span 4;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-rule-light);
+  }
+  .feature-card__number {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+  }
+  .feature-card__title {
+    margin-bottom: 12px;
+  }
+  .feature-card__desc {
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  /* ─── PRICING ─── */
+  .pricing {
+    padding: 80px 0;
+    background: var(--color-bg-alt);
+    border-top: 2px solid var(--color-rule);
+    border-bottom: 2px solid var(--color-rule);
+  }
+
+  .pricing__header {
+    margin-bottom: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .price-col {
+    grid-column: span 4;
+    padding: 32px 0;
+    border-top: 3px solid var(--color-rule-light);
+  }
+  .price-col--featured {
+    border-top-color: var(--color-accent);
+  }
+  .price-col__label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+  }
+  .price-col__amount {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .price-col__period {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+  }
+  .price-col__features {
+    list-style: none;
+    margin-bottom: 32px;
+  }
+  .price-col__features li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-rule-light);
+    font-size: 0.9375rem;
+  }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials {
+    padding: 80px 0;
+  }
+
+  .testimonial {
+    grid-column: span 6;
+    padding: 32px 0;
+    border-top: 1px solid var(--color-rule-light);
+  }
+  .testimonial__quote {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+  .testimonial__author {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  .testimonial__role {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* ─── SIGNUP ─── */
+  .signup {
+    padding: 80px 0;
+    border-top: 2px solid var(--color-rule);
+  }
+  .signup__form {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .signup__input {
+    flex: 1;
+    max-width: 400px;
+    padding: 14px 16px;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    border: 2px solid var(--color-rule-light);
+    background: var(--color-bg);
+    color: var(--color-text);
+    outline: none;
+    transition: border-color var(--duration-micro) var(--ease-enter);
+  }
+  .signup__input:focus {
+    border-color: var(--color-text);
+  }
+
+  /* ─── PALETTE STRIP ─── */
+  .palette {
+    padding: 40px 0;
+    border-top: 1px solid var(--color-rule-light);
+  }
+  .palette__row {
+    display: flex;
+    gap: 2px;
+  }
+  .palette__swatch {
+    flex: 1;
+    height: 48px;
+    display: flex;
+    align-items: flex-end;
+    padding: 4px 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    color: #FFFFFF;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    padding: 40px 0;
+    border-top: 2px solid var(--color-rule);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .grid-12 { grid-template-columns: repeat(6, 1fr); }
+    .hero__headline { grid-column: 1 / 7; }
+    .hero__sub { grid-column: 1 / 7; }
+    .hero__cta-area { grid-column: 1 / 7; }
+    .feature-card { grid-column: span 6; }
+    .price-col { grid-column: span 6; }
+    .testimonial { grid-column: span 6; }
+    .t-display { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<span class="variation-label">Swiss / International</span>
+<button class="theme-toggle" data-testid="theme-toggle" onclick="
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'light' ? 'dark' : 'light';
+  this.textContent = html.dataset.theme === 'light' ? 'Dark' : 'Light';
+">Dark</button>
+
+<!-- ─── HERO ─── -->
+<section class="hero" data-testid="hero">
+  <div class="container">
+    <div class="hero__overline">Design Review Toolkit</div>
+    <div class="grid-12">
+      <div class="hero__headline">
+        <h1 class="t-display">Stop Shipping<br>AI Slop</h1>
+      </div>
+      <p class="hero__sub t-body">
+        Catch generic design patterns before they reach production.
+        SLAP reviews your UI against 17 personas, 5 expert roles,
+        and a library of known AI-default indicators.
+      </p>
+      <div class="hero__cta-area">
+        <a href="#" class="btn btn--primary">Start Free Review</a>
+        <a href="#" class="btn btn--secondary">View Examples</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section class="features" data-testid="features">
+  <div class="container">
+    <div class="features__header">
+      <h2 class="t-h2">Capabilities</h2>
+      <span class="t-small" style="color: var(--color-text-secondary)">03 Core Features</span>
+    </div>
+    <hr class="rule--light" style="margin-bottom: 0;">
+    <div class="grid-12" style="margin-top: 0;">
+      <div class="feature-card">
+        <div class="feature-card__number">01</div>
+        <h3 class="t-h3 feature-card__title">Expert Review Panel</h3>
+        <p class="feature-card__desc">Five specialist roles — marketing, UX, product, technical, design — each score and annotate every section of your page independently.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__number">02</div>
+        <h3 class="t-h3 feature-card__title">Persona Stress Test</h3>
+        <p class="feature-card__desc">Seventeen fictional users — from colorblind developers to first-time visitors — evaluate your interface from perspectives you cannot simulate alone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__number">03</div>
+        <h3 class="t-h3 feature-card__title">Slop Detection Engine</h3>
+        <p class="feature-card__desc">Flags known AI defaults: purple accents, system fonts, uniform border-radius, 0.2s-ease transitions, generic copy patterns.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ─── -->
+<section class="pricing" data-testid="pricing">
+  <div class="container">
+    <div class="pricing__header">
+      <h2 class="t-h2">Pricing</h2>
+      <span class="t-small" style="color: var(--color-text-secondary)">03 Plans</span>
+    </div>
+    <div class="grid-12">
+      <div class="price-col">
+        <div class="price-col__label">Starter</div>
+        <div class="price-col__amount">$0</div>
+        <div class="price-col__period">Free forever</div>
+        <ul class="price-col__features">
+          <li>3 reviews / month</li>
+          <li>Expert panel only</li>
+          <li>Basic slop detection</li>
+        </ul>
+        <a href="#" class="btn btn--secondary btn--small">Get Started</a>
+      </div>
+      <div class="price-col price-col--featured">
+        <div class="price-col__label" style="color: var(--color-accent)">Professional</div>
+        <div class="price-col__amount">$29</div>
+        <div class="price-col__period">per month</div>
+        <ul class="price-col__features">
+          <li>Unlimited reviews</li>
+          <li>Expert + Persona panels</li>
+          <li>Full slop detection</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="btn btn--primary btn--small">Start Free Trial</a>
+      </div>
+      <div class="price-col">
+        <div class="price-col__label">Enterprise</div>
+        <div class="price-col__amount">$99</div>
+        <div class="price-col__period">per month</div>
+        <ul class="price-col__features">
+          <li>Everything in Pro</li>
+          <li>Custom persona creation</li>
+          <li>CI/CD integration</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a href="#" class="btn btn--secondary btn--small">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─── -->
+<section class="testimonials" data-testid="testimonials">
+  <div class="container">
+    <h2 class="t-h2" style="margin-bottom: 48px;">What Teams Say</h2>
+    <div class="grid-12">
+      <div class="testimonial">
+        <p class="testimonial__quote">"We caught 14 AI-default patterns in our redesign before launch. The persona panel alone was worth it — our colorblind user persona found 3 issues we missed."</p>
+        <div class="testimonial__author">Sarah Chen</div>
+        <div class="testimonial__role">Design Lead, Vercel</div>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial__quote">"SLAP forced us to justify every design decision. If the system flagged it as generic, we had to defend it or change it. Our conversion rate went up 23%."</p>
+        <div class="testimonial__author">Marcus Rivera</div>
+        <div class="testimonial__role">VP Product, Linear</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SIGNUP ─── -->
+<section class="signup" data-testid="signup">
+  <div class="container">
+    <h2 class="t-h2">Start reviewing</h2>
+    <p class="t-body" style="color: var(--color-text-secondary); margin-top: 8px;">No credit card required. Free tier includes 3 reviews per month.</p>
+    <div class="signup__form">
+      <input type="email" class="signup__input" placeholder="Email address" data-testid="email-input">
+      <button class="btn btn--primary" data-testid="signup-btn">Get Started</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PALETTE ─── -->
+<section class="palette">
+  <div class="container">
+    <div class="t-small" style="margin-bottom: 16px; color: var(--color-text-secondary);">Color Palette</div>
+    <div class="palette__row">
+      <div class="palette__swatch" style="background: #1A1A1A;">#1A1A1A</div>
+      <div class="palette__swatch" style="background: #6B6B6B;">#6B6B6B</div>
+      <div class="palette__swatch" style="background: #D4D4D4; color: #1A1A1A;">#D4D4D4</div>
+      <div class="palette__swatch" style="background: #F2F2F2; color: #1A1A1A;">#F2F2F2</div>
+      <div class="palette__swatch" style="background: #E63946;">#E63946</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer class="container footer">
+  <span>SLAP! Design Review Toolkit</span>
+  <span>Swiss / International Typography</span>
+</footer>
+
+</body>
+</html>

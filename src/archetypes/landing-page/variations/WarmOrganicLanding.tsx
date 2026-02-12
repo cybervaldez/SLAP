@@ -475,7 +475,7 @@ export default function WarmOrganicLanding() {
       <div style={styles.section} data-section="signup">
         <h2 style={styles.signupHeading}>Join our garden</h2>
         {submitted ? (
-          <p style={styles.successMessage}>{emailSignup.successMessage}</p>
+          <p style={styles.successMessage} role="status" aria-live="polite">{emailSignup.successMessage}</p>
         ) : (
           <form style={styles.signupForm} onSubmit={handleEmailSubmit}>
             <input
@@ -484,6 +484,7 @@ export default function WarmOrganicLanding() {
               placeholder={emailSignup.placeholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              aria-label="Email address"
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = FOREST_GREEN;
                 e.currentTarget.style.boxShadow = `0 0 0 3px ${SAGE}66`;

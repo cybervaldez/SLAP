@@ -402,6 +402,7 @@ export default function BrutalistLanding() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder={emailSignup.placeholder}
               style={styles.signupInput}
+              aria-label="Email address"
             />
             <button
               type="submit"
@@ -419,7 +420,7 @@ export default function BrutalistLanding() {
             </button>
           </form>
         ) : (
-          <div style={styles.successMessage}>
+          <div style={styles.successMessage} role="status" aria-live="polite">
             {emailSignup.successMessage}
           </div>
         )}

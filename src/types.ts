@@ -7,6 +7,7 @@ export interface Route {
 export interface VariationDef {
   id: string;
   hook: string;
+  dark?: boolean;
 }
 
 export interface ArchetypeDemoProps {
@@ -59,7 +60,7 @@ export interface ConsensusItem { text: string; type: 'agree' | 'disagree'; }
 export interface ActionItem { priority: 'high' | 'med' | 'low'; text: string; }
 export interface ReviewBundle { consensus: ConsensusItem[]; actions: ActionItem[]; }
 
-export type SectionId = 'hero' | 'pricing' | 'testimonials' | 'faq' | 'signup';
+export type SectionId = 'hero' | 'pricing' | 'testimonials' | 'faq' | 'signup' | 'products' | 'cart' | 'checkout';
 
 export interface SectionFindingSummary {
   sectionId: SectionId;

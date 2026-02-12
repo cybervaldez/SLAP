@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import RetroNavBar from './RetroNavBar';
-import VariationPills from './VariationPills';
 import type { VariationDef } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {
@@ -34,17 +33,24 @@ export default function DemoShell({
   onVariationChange,
   accent,
 }: DemoShellProps) {
+  const isDark = variations?.find(v => v.id === activeVariation)?.dark ?? false;
+
+  useEffect(() => {
+    document.body.dataset.contentTheme = isDark ? 'dark' : 'light';
+    return () => {
+      delete document.body.dataset.contentTheme;
+    };
+  }, [isDark]);
+
   return (
     <div style={styles.shell} data-testid="demo-shell">
-      <RetroNavBar archetypeName={archetypeName} />
-      {variations && activeVariation && onVariationChange && accent && (
-        <VariationPills
-          variations={variations}
-          activeVariation={activeVariation}
-          onVariationChange={onVariationChange}
-          accent={accent}
-        />
-      )}
+      <RetroNavBar
+        archetypeName={archetypeName}
+        variations={variations}
+        activeVariation={activeVariation}
+        onVariationChange={onVariationChange}
+        accent={accent}
+      />
       <div style={styles.content}>
         {children}
       </div>

@@ -664,7 +664,7 @@ export default function MaximalistLanding() {
             Join thousands of teams already building better products.
           </p>
           {submitted ? (
-            <p style={styles.emailSuccess}>{emailSignup.successMessage}</p>
+            <p style={styles.emailSuccess} role="status" aria-live="polite">{emailSignup.successMessage}</p>
           ) : (
             <form style={styles.emailForm} onSubmit={handleSubmit}>
               <input
@@ -672,6 +672,7 @@ export default function MaximalistLanding() {
                 type="email"
                 placeholder={emailSignup.placeholder}
                 required
+                aria-label="Email address"
                 onFocus={(e) => {
                   e.currentTarget.style.boxShadow = `0 0 0 3px ${GOLD}88`;
                 }}

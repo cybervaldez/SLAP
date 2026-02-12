@@ -393,7 +393,7 @@ export default function NeoMinimalLanding() {
       <div style={styles.signupSection} data-section="signup">
         <h2 style={styles.sectionHeading}>Stay Updated</h2>
         {submitted ? (
-          <p style={styles.successMessage}>{emailSignup.successMessage}</p>
+          <p style={styles.successMessage} role="status" aria-live="polite">{emailSignup.successMessage}</p>
         ) : (
           <form style={styles.signupForm} onSubmit={handleEmailSubmit}>
             <input
@@ -402,6 +402,7 @@ export default function NeoMinimalLanding() {
               placeholder={emailSignup.placeholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              aria-label="Email address"
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = ACCENT;
               }}

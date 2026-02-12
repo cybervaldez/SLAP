@@ -126,6 +126,7 @@ export default function SlapLanding() {
               placeholder={emailSignup.placeholder}
               style={styles.input}
               data-testid="email-input"
+              aria-label="Email address"
               onFocus={(e) => {
                 (e.currentTarget as HTMLInputElement).style.borderColor = ACCENT;
               }}
@@ -148,7 +149,7 @@ export default function SlapLanding() {
             </button>
           </form>
         ) : (
-          <div style={styles.success} data-testid="email-success">
+          <div style={styles.success} data-testid="email-success" role="status" aria-live="polite">
             {emailSignup.successMessage}
           </div>
         )}

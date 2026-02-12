@@ -99,6 +99,9 @@ export default function HeroSection() {
         <button
           style={styles.secondaryBtn}
           data-testid="hero-cta-secondary"
+          onClick={() => {
+            document.querySelector('[data-section="pricing"]')?.scrollIntoView({ behavior: 'smooth' });
+          }}
           onMouseEnter={(e) => {
             const btn = e.currentTarget as HTMLButtonElement;
             btn.style.background = ACCENT;

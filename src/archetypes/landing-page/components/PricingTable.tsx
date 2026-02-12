@@ -123,7 +123,7 @@ function PricingCard({ plan, index }: { plan: PricingPlan; index: number }) {
       <ul style={styles.featureList}>
         {plan.features.map((feature, fi) => (
           <li key={fi} style={styles.featureItem}>
-            <span style={styles.checkmark}>&#10003;</span>
+            <span style={styles.checkmark} aria-hidden="true">&#10003;</span>
             <span>{feature}</span>
           </li>
         ))}

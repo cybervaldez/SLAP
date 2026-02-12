@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import type { PersonaEntry } from '../data/personaFindings';
+import type { BubbleData } from './DockBar';
 import type {
   LensDef,
   DockMode,
@@ -20,11 +21,16 @@ interface UIReviewOverlayProps {
   onSoloSelect: (id: string) => void;
   onSoloClose: () => void;
   variationHook: string;
+  variationId: string;
   expertFindings: { expert: ExpertDef; finding: ExpertFinding }[];
   reviewBundle: ReviewBundle | undefined;
   personaFindings: { lens: LensDef; entry: PersonaEntry }[];
   kaizenBundle: ReviewBundle | undefined;
   onFindingHover?: (sectionKey: string | null) => void;
+  expertBubbles: BubbleData[];
+  personaBubbles: BubbleData[];
+  activeBubbleId: string | null;
+  onBubbleClick: (id: string) => void;
 }
 
 // ─── Persona colors for bubbles and solo view ────────────────
@@ -67,6 +73,45 @@ const LIGHT_COLORS: Record<TrafficLight, string> = {
   red: '#FF6B6B',
 };
 
+const VARIATION_PALETTES: Record<string, string[]> = {
+  slap:              ['#8B5CF6'],
+  brutalist:         ['#FF0000', '#000000', '#FFFFFF'],
+  'neo-minimal':     ['#2563EB', '#18181B', '#E5E7EB'],
+  maximalist:        ['#1B1F3B', '#FF6B6B', '#D4A574', '#FFF8F0'],
+  'dark-industrial': ['#D4A574', '#0A0A0F', '#12121A', '#1E293B'],
+  'warm-organic':    ['#2D5016', '#8B6914', '#FDF6EE', '#A7C4A0'],
+  'retro-futurism':  ['#14B8A6', '#8B5CF6', '#EC4899', '#0F0B1A'],
+  memphis:           ['#FF6B9D', '#4ECDC4', '#FFE66D', '#FF6B6B', '#FFF8E7'],
+  'art-deco':        ['#B8860B', '#D4A017', '#1B2838', '#FAF7F0'],
+};
+
+function TrafficLightIcon({ light, size = 12 }: { light: TrafficLight; size?: number }) {
+  const color = LIGHT_COLORS[light];
+  const svgStyle: React.CSSProperties = { flexShrink: 0, verticalAlign: 'middle', marginRight: '0.25rem' };
+  if (light === 'green') {
+    // Outlined thumbs up (Lucide)
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={svgStyle}>
+        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+      </svg>
+    );
+  }
+  if (light === 'red') {
+    // Outlined thumbs down (Lucide)
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={svgStyle}>
+        <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" />
+      </svg>
+    );
+  }
+  // Yellow = neutral: tilde/wave ("so-so")
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" style={svgStyle}>
+      <path d="M3 12c2-2 5-2 7 0s5 2 7 0" />
+    </svg>
+  );
+}
+
 // ─── Styles ──────────────────────────────────────────────────
 
 const s: Record<string, React.CSSProperties> = {
@@ -81,9 +126,88 @@ const s: Record<string, React.CSSProperties> = {
     background: '#1A1A2E',
     fontFamily: "'Courier New', monospace",
     borderLeft: '3px solid #FFD000',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    transition: 'transform 0.3s ease',
+  },
+  panelScroll: {
+    flex: 1,
     overflowY: 'auto',
     padding: '1rem',
-    transition: 'transform 0.3s ease',
+  },
+  bubbleBar: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.4rem',
+    height: 64,
+    borderTop: '1px solid rgba(154, 138, 122, 0.3)',
+    flexShrink: 0,
+    flexWrap: 'wrap' as const,
+  },
+  bubbleExpertBtn: {
+    fontFamily: "'Courier New', monospace",
+    fontSize: '0.5rem',
+    fontWeight: 800,
+    letterSpacing: '0.06em',
+    padding: '0.35rem 0.6rem',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap' as const,
+    border: 'none',
+    background: '#2A2A4E',
+    color: '#C8C0B0',
+    borderRadius: 3,
+    transform: 'skewX(-6deg)',
+    boxShadow: '3px 3px 6px rgba(0,0,0,0.5), -2px -2px 5px rgba(80,80,120,0.25)',
+    transition: 'background 0.15s, color 0.15s, box-shadow 0.15s',
+    minHeight: 30,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bubbleExpertBtnActive: {
+    background: '#222240',
+    color: '#FFD000',
+    boxShadow: 'inset 2px 2px 4px rgba(0,0,0,0.5), inset -1px -1px 3px rgba(80,80,120,0.15)',
+  },
+  bubbleExpertBtnText: {
+    transform: 'skewX(6deg)',
+    display: 'inline-block',
+  },
+  bubblePersona: {
+    position: 'relative' as const,
+    width: 30,
+    height: 30,
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    fontSize: '0.6rem',
+    fontWeight: 800,
+    transition: 'transform 0.15s, border-color 0.15s',
+    flexShrink: 0,
+    border: '2px solid transparent',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
+  },
+  bubblePersonaActive: {
+    borderColor: '#FFD000',
+    boxShadow: '0 2px 10px rgba(255, 208, 0, 0.3)',
+  },
+  bubblePersonaBadge: {
+    position: 'absolute' as const,
+    top: -3,
+    right: -3,
+    fontSize: '0.4rem',
+    background: '#1A1A2E',
+    borderRadius: '50%',
+    width: 13,
+    height: 13,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 800,
   },
   header: {
     display: 'flex',
@@ -99,7 +223,7 @@ const s: Record<string, React.CSSProperties> = {
   },
   closeBtn: {
     background: 'none',
-    border: '2px solid #FFD000',
+    border: 'none',
     color: '#FFD000',
     fontFamily: "'Courier New', monospace",
     fontSize: '0.85rem',
@@ -258,7 +382,7 @@ const s: Record<string, React.CSSProperties> = {
     fontSize: '0.66rem',
     lineHeight: 1.4,
     marginTop: '0.25rem',
-    paddingLeft: '2.6rem',
+    paddingLeft: '0',
   },
   detail: {
     padding: '0.35rem 0 0.35rem 2.6rem',
@@ -431,6 +555,19 @@ const s: Record<string, React.CSSProperties> = {
     lineHeight: 1.5,
     marginTop: '1rem',
   },
+  paletteRow: {
+    display: 'flex',
+    gap: '0.35rem',
+    marginBottom: '0.5rem',
+    flexWrap: 'wrap' as const,
+  },
+  paletteSwatch: {
+    width: 18,
+    height: 18,
+    borderRadius: 3,
+    border: '1px solid rgba(255,255,255,0.15)',
+    flexShrink: 0,
+  },
 };
 
 const PRIORITY_STYLES: Record<string, React.CSSProperties> = {
@@ -523,11 +660,16 @@ export default function UIReviewOverlay({
   onSoloSelect,
   onSoloClose,
   variationHook,
+  variationId,
   expertFindings,
   reviewBundle,
   personaFindings,
   kaizenBundle,
   onFindingHover,
+  expertBubbles,
+  personaBubbles,
+  activeBubbleId,
+  onBubbleClick,
 }: UIReviewOverlayProps) {
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
 
@@ -573,88 +715,152 @@ export default function UIReviewOverlay({
 
   const hasContent = expertFindings.length > 0 || personaFindings.length > 0;
 
+  const isReview = dockMode === 'review';
+  const activeBubbles = dockMode === null ? [] : isReview ? expertBubbles : personaBubbles;
+
   return (
     <div style={panelStyle} data-testid="anti-slop-overlay">
-      {/* Header */}
-      <div style={s.header}>
-        <span style={s.title}>{overlayTitle}</span>
-        <button
-          style={s.closeBtn}
-          onClick={overlayView === 'solo' ? onSoloClose : onClose}
-          data-testid="anti-slop-close"
-        >
-          &times;
-        </button>
-      </div>
-      <div style={s.hook}>{variationHook}</div>
-      <hr style={s.divider} />
-
-      {/* Tab switcher — hidden in solo view */}
-      {overlayView !== 'solo' && (
-        <div style={s.tabs}>
+      {/* Scrollable content */}
+      <div style={s.panelScroll}>
+        {/* Header */}
+        <div style={s.header}>
+          <span style={s.title}>{overlayTitle}</span>
           <button
-            data-testid="overlay-tab-review"
-            style={{
-              ...s.tab,
-              ...s.tabBorder,
-              ...(overlayView === 'team' ? s.tabActive : {}),
-            }}
-            onClick={() => onTabSwitch('team')}
+            style={s.closeBtn}
+            onClick={overlayView === 'solo' ? onSoloClose : onClose}
+            data-testid="anti-slop-close"
           >
-            UI REVIEW
-          </button>
-          <button
-            data-testid="overlay-tab-kaizen"
-            style={{
-              ...s.tab,
-              ...(overlayView === 'kaizen' ? s.tabActive : {}),
-            }}
-            onClick={() => onTabSwitch('kaizen')}
-          >
-            KAIZEN
+            &times;
           </button>
         </div>
-      )}
+        <div style={s.hook}>{variationHook}</div>
+        {VARIATION_PALETTES[variationId] && (
+          <div style={s.paletteRow}>
+            {VARIATION_PALETTES[variationId].map((color) => (
+              <span
+                key={color}
+                style={{
+                  ...s.paletteSwatch,
+                  backgroundColor: color,
+                }}
+                title={color}
+              />
+            ))}
+          </div>
+        )}
+        <hr style={s.divider} />
 
-      {/* No data placeholder */}
-      {!hasContent && overlayView !== 'solo' && (
-        <p style={s.placeholder}>
-          Select a themed variation to see the review.
-        </p>
-      )}
+        {/* Tab switcher — hidden in solo view */}
+        {overlayView !== 'solo' && (
+          <div style={s.tabs}>
+            <button
+              data-testid="overlay-tab-review"
+              style={{
+                ...s.tab,
+                ...s.tabBorder,
+                ...(overlayView === 'team' ? s.tabActive : {}),
+              }}
+              onClick={() => onTabSwitch('team')}
+            >
+              UI REVIEW
+            </button>
+            <button
+              data-testid="overlay-tab-kaizen"
+              style={{
+                ...s.tab,
+                ...(overlayView === 'kaizen' ? s.tabActive : {}),
+              }}
+              onClick={() => onTabSwitch('kaizen')}
+            >
+              KAIZEN
+            </button>
+          </div>
+        )}
 
-      {/* ═══ VIEW 1: Team Summary ═══ */}
-      {overlayView === 'team' && hasContent && (
-        <TeamSummaryView
-          expertFindings={expertFindings}
-          reviewBundle={reviewBundle}
-          expandedCards={expandedCards}
-          onToggle={toggleCard}
-          onSoloSelect={onSoloSelect}
-          onFindingHover={onFindingHover}
-        />
-      )}
+        {/* No data placeholder */}
+        {!hasContent && overlayView !== 'solo' && (
+          <p style={s.placeholder}>
+            Select a themed variation to see the review.
+          </p>
+        )}
 
-      {/* ═══ VIEW 2: Kaizen Dashboard ═══ */}
-      {overlayView === 'kaizen' && hasContent && (
-        <KaizenDashboardView
-          personaFindings={personaFindings}
-          kaizenBundle={kaizenBundle}
-          expandedCards={expandedCards}
-          onToggle={toggleCard}
-          onSoloSelect={onSoloSelect}
-        />
-      )}
+        {/* ═══ VIEW 1: Team Summary ═══ */}
+        {overlayView === 'team' && hasContent && (
+          <TeamSummaryView
+            expertFindings={expertFindings}
+            reviewBundle={reviewBundle}
+            expandedCards={expandedCards}
+            onToggle={toggleCard}
+            onSoloSelect={onSoloSelect}
+            onFindingHover={onFindingHover}
+          />
+        )}
 
-      {/* ═══ VIEW 3: Solo View ═══ */}
-      {overlayView === 'solo' && soloId && (
-        <SoloView
-          soloId={soloId}
-          dockMode={dockMode}
-          expertFindings={expertFindings}
-          personaFindings={personaFindings}
-          onFindingHover={onFindingHover}
-        />
+        {/* ═══ VIEW 2: Kaizen Dashboard ═══ */}
+        {overlayView === 'kaizen' && hasContent && (
+          <KaizenDashboardView
+            personaFindings={personaFindings}
+            kaizenBundle={kaizenBundle}
+            expandedCards={expandedCards}
+            onToggle={toggleCard}
+            onSoloSelect={onSoloSelect}
+          />
+        )}
+
+        {/* ═══ VIEW 3: Solo View ═══ */}
+        {overlayView === 'solo' && soloId && (
+          <SoloView
+            soloId={soloId}
+            dockMode={dockMode}
+            expertFindings={expertFindings}
+            personaFindings={personaFindings}
+            onFindingHover={onFindingHover}
+          />
+        )}
+      </div>
+
+      {/* Fixed bottom bubble bar */}
+      {activeBubbles.length > 0 && (
+        <div style={s.bubbleBar} data-testid="overlay-bubble-bar">
+          {isReview
+            ? expertBubbles.map((b) => {
+                const active = b.id === activeBubbleId;
+                return (
+                  <button
+                    key={b.id}
+                    data-testid={`dock-bubble-${b.id}`}
+                    style={{
+                      ...s.bubbleExpertBtn,
+                      ...(active ? s.bubbleExpertBtnActive : {}),
+                    }}
+                    onClick={() => onBubbleClick(b.id)}
+                  >
+                    <span style={s.bubbleExpertBtnText}>
+                      {b.label || b.id.toUpperCase()}
+                    </span>
+                  </button>
+                );
+              })
+            : personaBubbles.map((b) => {
+                const active = b.id === activeBubbleId;
+                return (
+                  <div
+                    key={b.id}
+                    data-testid={`dock-bubble-${b.id}`}
+                    style={{
+                      ...s.bubblePersona,
+                      ...(b.bg ? { background: b.bg } : { background: '#2A2A4E' }),
+                      ...(b.color ? { color: b.color } : {}),
+                      ...(active ? s.bubblePersonaActive : {}),
+                    }}
+                    onClick={() => onBubbleClick(b.id)}
+                  >
+                    {b.icon}
+                  </div>
+                );
+              })
+          }
+        </div>
       )}
     </div>
   );
@@ -699,7 +905,6 @@ function TeamSummaryView({
               onClick={() => onToggle(expert.id)}
             >
               <div style={s.cardTop}>
-                <div style={{ ...s.cardIcon, background: expert.bg }}>{expert.icon}</div>
                 <div style={s.cardInfo}>
                   <div style={s.cardName}>{expert.name}</div>
                   <div style={s.cardRole}>{expert.role}</div>
@@ -728,7 +933,7 @@ function TeamSummaryView({
                     >
                       <div style={s.findingSection}>{section}</div>
                       <div style={s.findingText}>
-                        <span style={{ ...s.findingLight, background: LIGHT_COLORS[item.light] }} />
+                        <TrafficLightIcon light={item.light} size={10} />
                         {item.text}
                       </div>
                     </div>
@@ -834,7 +1039,7 @@ function KaizenDashboardView({
                     >
                       <div style={s.findingSection}>{obs.category}</div>
                       <div style={s.findingText}>
-                        <span style={{ ...s.findingLight, background: LIGHT_COLORS[light] }} />
+                        <TrafficLightIcon light={light} size={10} />
                         {obs.observation}
                       </div>
                     </div>
@@ -891,7 +1096,6 @@ function SoloView({
     return (
       <>
         <div style={s.soloHeader}>
-          <div style={{ ...s.soloIcon, background: expert.bg }}>{expert.icon}</div>
           <div>
             <div style={s.soloName}>{expert.name}</div>
             <div style={s.soloRole}>{expert.role}</div>
@@ -927,7 +1131,7 @@ function SoloView({
                   onMouseEnter={() => onFindingHover?.(section === 'features' ? 'hero' : section)}
                   onMouseLeave={() => onFindingHover?.(null)}
                 >
-                  <div style={{ ...s.soloFindingLight, background: LIGHT_COLORS[item.light] }} />
+                  <TrafficLightIcon light={item.light} size={14} />
                   <div>
                     <div style={s.soloFindingText}>{item.text}</div>
                     {item.comment && (
@@ -995,7 +1199,7 @@ function SoloView({
                 ...s.soloFinding,
                 ...(fi > 0 ? s.soloFindingBorder : {}),
               }}>
-                <div style={{ ...s.soloFindingLight, background: LIGHT_COLORS[item.light] }} />
+                <TrafficLightIcon light={item.light} size={14} />
                 <div>
                   <div style={s.soloFindingText}>{item.text}</div>
                   {item.comment && (

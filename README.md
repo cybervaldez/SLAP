@@ -2,15 +2,29 @@
 
 > Anti-slop design study & toolkit — because AI-generated UIs shouldn't all look the same.
 
+**8 archetypes. 7 landing page variations. Zero purple gradients.**
+
+<!-- TODO: Add screenshot of the gallery hub here -->
+
 ## What Is This
 
-An interactive gallery of 8 UI archetypes — each one built, reviewed, and stress-tested using the [Cybervaldez Playbook](https://github.com/cybervaldez/cybervaldez-playbook)'s AI-assisted design pipeline. The study: documenting what makes AI output look generic. The toolkit: catching it automatically.
+Every AI tool generates the same landing page. Same purple gradient, same Inter font, same `rounded-full` buttons with `transition: all 0.3s ease`. You know it when you see it. We call it slop.
+
+SLAP! is an interactive gallery of 8 UI archetypes — each one built, reviewed, and stress-tested using the [Cybervaldez Playbook](https://github.com/cybervaldez/cybervaldez-playbook)'s AI-assisted design pipeline. The study documents what makes AI output look generic. The toolkit catches it before you ship.
+
+## Quick Start
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:5173` and browse the archetype gallery.
 
 ## The Problem
 
-- **AI generates UIs that converge on the same patterns.** Purple gradients, Inter font, `rounded-full`, `transition: all 0.3s ease` — you've seen it a thousand times.
-- **Developers can't always articulate _why_ something looks AI-made.** They know it when they see it, but there's no shared vocabulary for the problem.
-- **No structured process to catch "slop" before shipping.** Code linters exist. Design linters don't.
+- **AI generates UIs that converge on the same patterns.** You've seen the same hero section a thousand times. So has everyone else.
+- **Developers can't articulate _why_ something looks AI-made.** They know it when they see it, but there's no shared vocabulary for the problem.
+- **No structured process to catch slop before shipping.** Code linters exist. Design linters don't.
 
 ## The Pipeline
 
@@ -26,22 +40,18 @@ Three tools from the Cybervaldez Playbook, used in sequence:
 
 ## Archetypes
 
-| Archetype | Description |
-|-----------|-------------|
-| `text-heavy` | Blog, docs, knowledge base |
-| `data-dashboard` | Analytics, admin panel |
-| `form-heavy` | SaaS settings, onboarding |
-| `media-gallery` | Portfolio, e-commerce catalog |
-| `task-management` | Project mgmt, todo, CRM |
-| `real-time` | Chat, feeds, collaboration |
-| `e-commerce` | Online stores, marketplaces |
-| `landing-page` | Marketing, waitlists |
+| Archetype | What it covers |
+|-----------|---------------|
+| **Landing Page** | Hero sections, pricing, testimonials & CTAs — **7 style variations:** SLAP!, Raw & Honest (Brutalist), Less is More (Neo-Minimal), More is More (Maximalist), Built to Spec (Dark Industrial), Grown Not Made (Warm Organic), Tomorrow Today (Retro Futurism) |
+| **Text Heavy** | Long-form content with TOC, search & collapsible sections |
+| **E-Commerce** | Product grid, cart drawer & checkout flow |
+| **Data Dashboard** | Metrics, charts, filters & sortable data tables |
+| **Form Heavy** | Multi-step forms with validation & conditional fields |
+| **Task Management** | Kanban board with drag-and-drop & task modals |
+| **Media Gallery** | Grid/list views, lightbox, filters & lazy loading |
+| **Real-Time** | Chat interface with simulated messages & channels |
 
-## Quick Start
-
-```bash
-npm run dev
-```
+The landing page archetype is the most developed — 7 variations that prove the same content can look radically different when you make deliberate aesthetic choices instead of accepting defaults.
 
 ## Part of the Cybervaldez Playbook
 

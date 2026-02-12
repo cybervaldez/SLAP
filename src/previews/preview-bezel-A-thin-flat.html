@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bezel A — Thin + Flat Chin</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Courier New', monospace;
+    background: #1A1A2E;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── BEZEL: thin white border, no depth ─── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    border: 6px solid #FFFFFF;
+    border-bottom: none; /* chin takes over */
+    pointer-events: none;
+    z-index: 99999;
+    border-radius: 2px 2px 0 0;
+  }
+
+  /* ─── HEADER ─── */
+  .nav {
+    background: #1A1A2E;
+    color: #FFFEF5;
+    padding: 0.6rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 10;
+  }
+  .nav-back {
+    background: none;
+    border: 2px solid #FFD000;
+    color: #FFD000;
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+  }
+  .nav-pills {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+  }
+  .nav-pill {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid rgba(245, 240, 225, 0.4);
+    background: transparent;
+    color: #F5F0E1;
+    cursor: pointer;
+  }
+  .nav-pill.active {
+    border-color: #E040FB;
+    background: #E040FB;
+    color: #fff;
+  }
+  .nav-title {
+    font-size: 0.75rem;
+    color: #FF1493;
+    letter-spacing: 0.1em;
+    font-weight: bold;
+  }
+
+  /* ─── DEMO CONTENT (simulated page) ─── */
+  .content {
+    background: #FAFAFA;
+    min-height: calc(100vh - 42px - 48px);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .content h2 {
+    font-family: Georgia, serif;
+    font-size: 1.5rem;
+    color: #1A1A2E;
+  }
+  .content p {
+    font-family: -apple-system, sans-serif;
+    color: #444;
+    max-width: 60ch;
+    line-height: 1.6;
+  }
+  .card-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 200px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .card h3 { font-size: 0.9rem; margin-bottom: 0.5rem; color: #1A1A2E; }
+  .card p { font-size: 0.8rem; color: #666; font-family: -apple-system, sans-serif; }
+
+  /* ─── CHIN: flat white bar ─── */
+  .chin {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 99999;
+    height: 48px;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Simple flat — no shadow, no depth */
+    border-top: 1px solid #e0e0e0;
+  }
+
+  /* ─── DOCK PILL (inside chin) ─── */
+  .dock-pill {
+    display: inline-flex;
+    align-items: center;
+    background: #F5F5F5;
+    border-radius: 9999px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+  }
+  .dock-btn {
+    border: none;
+    padding: 0.4rem 1rem;
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    font-size: 0.65rem;
+    cursor: pointer;
+    background: transparent;
+    color: #666;
+    transition: background 0.15s;
+  }
+  .dock-btn.active {
+    background: #FFD000;
+    color: #1A1A2E;
+  }
+  .dock-divider {
+    width: 1px;
+    height: 18px;
+    background: #ccc;
+  }
+
+  /* ─── FLOATING BUBBLES (above chin) ─── */
+  .bubble-row {
+    position: fixed;
+    bottom: 54px;
+    left: 0;
+    right: 0;
+    z-index: 99998;
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+  .expert-chip {
+    font-family: 'Courier New', monospace;
+    font-size: 0.5rem;
+    font-weight: 800;
+    padding: 0.4rem 0.7rem;
+    background: #2A2A4E;
+    color: #C8C0B0;
+    border: none;
+    border-radius: 3px;
+    transform: skewX(-6deg);
+    box-shadow: 3px 3px 6px rgba(0,0,0,0.5), -2px -2px 5px rgba(80,80,120,0.25);
+    cursor: pointer;
+  }
+  .expert-chip span { display: inline-block; transform: skewX(6deg); }
+  .expert-chip.active { background: #222240; color: #FFD000; box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5); }
+
+  /* ─── LABEL ─── */
+  .variant-label {
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    background: #FFD000;
+    color: #1A1A2E;
+    padding: 0.3rem 0.8rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    z-index: 100000;
+  }
+</style>
+</head>
+<body>
+
+<div class="variant-label">A: THIN BEZEL + FLAT CHIN</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <button class="nav-back">&laquo; Gallery</button>
+  <div class="nav-pills">
+    <button class="nav-pill active">SLAPified</button>
+    <button class="nav-pill">Brutalist</button>
+    <button class="nav-pill">Neo-Minimal</button>
+    <button class="nav-pill">Warm Organic</button>
+  </div>
+  <span class="nav-title">&#9733; LANDING PAGE</span>
+</nav>
+
+<!-- Content -->
+<div class="content">
+  <h2>Welcome to SLAP!</h2>
+  <p>This preview shows the thin (6px) white bezel around the viewport with a flat white chin at the bottom. The dock pill tabs live inside the chin. Simple, clean, no depth illusion.</p>
+  <div class="card-row">
+    <div class="card"><h3>Card One</h3><p>Sample content to show the page layout behind the frame.</p></div>
+    <div class="card"><h3>Card Two</h3><p>Another card demonstrating content density.</p></div>
+    <div class="card"><h3>Card Three</h3><p>Third card for visual balance.</p></div>
+  </div>
+</div>
+
+<!-- Floating expert bubbles -->
+<div class="bubble-row">
+  <button class="expert-chip active"><span>HIERARCHY</span></button>
+  <button class="expert-chip"><span>TYPOGRAPHY</span></button>
+  <button class="expert-chip"><span>COLOR</span></button>
+  <button class="expert-chip"><span>SPACING</span></button>
+</div>
+
+<!-- White chin -->
+<div class="chin">
+  <div class="dock-pill">
+    <button class="dock-btn active">/ui-review</button>
+    <div class="dock-divider"></div>
+    <button class="dock-btn">/kaizen</button>
+  </div>
+</div>
+
+</body>
+</html>

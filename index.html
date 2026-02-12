@@ -4,6 +4,55 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SLAP!</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      /* CRT bezel — top + sides only; chin (DockBar) takes over at bottom */
+      body::after {
+        content: '';
+        position: fixed;
+        inset: 0;
+        border: 8px solid #FFFFFF;
+        border-bottom: none;
+        pointer-events: none;
+        z-index: 99999;
+        border-radius: 10px 10px 0 0;
+        box-shadow:
+          inset 0 0 30px rgba(0, 0, 0, 0.12),
+          inset 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+      /* Light content → dark bezel for contrast */
+      body[data-content-theme="light"]::after {
+        border-color: #1A1A2E;
+        box-shadow:
+          inset 0 0 30px rgba(0, 0, 0, 0.25),
+          inset 0 2px 8px rgba(0, 0, 0, 0.12);
+      }
+      /* Custom scrollbar for UI review panel — yellow on white */
+      [data-testid="anti-slop-overlay"] > div:first-child::-webkit-scrollbar {
+        width: 6px;
+      }
+      [data-testid="anti-slop-overlay"] > div:first-child::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 3px;
+      }
+      [data-testid="anti-slop-overlay"] > div:first-child::-webkit-scrollbar-thumb {
+        background: #FFD000;
+        border-radius: 3px;
+      }
+      [data-testid="anti-slop-overlay"] > div:first-child::-webkit-scrollbar-thumb:hover {
+        background: #FFE44D;
+      }
+      [data-testid="anti-slop-overlay"] > div:first-child {
+        scrollbar-width: thin;
+        scrollbar-color: #FFD000 rgba(255, 255, 255, 0.08);
+      }
+      *:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

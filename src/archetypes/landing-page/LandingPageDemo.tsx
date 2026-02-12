@@ -6,6 +6,8 @@ import MaximalistLanding from './variations/MaximalistLanding';
 import DarkIndustrialLanding from './variations/DarkIndustrialLanding';
 import WarmOrganicLanding from './variations/WarmOrganicLanding';
 import RetroFuturismLanding from './variations/RetroFuturismLanding';
+import MemphisLanding from './variations/MemphisLanding';
+import ArtDecoLanding from './variations/ArtDecoLanding';
 
 export default function LandingPageDemo({ variation }: ArchetypeDemoProps) {
   switch (variation) {
@@ -21,6 +23,10 @@ export default function LandingPageDemo({ variation }: ArchetypeDemoProps) {
       return <WarmOrganicLanding />;
     case 'retro-futurism':
       return <RetroFuturismLanding />;
+    case 'memphis':
+      return <MemphisLanding />;
+    case 'art-deco':
+      return <ArtDecoLanding />;
     default:
       return <SlapLanding />;
   }

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Glassmorphism</title>
+<style>
+  /* ─── DESIGN TOKENS ─── */
+  :root {
+    --color-bg: #E8ECF4;
+    --color-bg-gradient-start: #C9D6FF;
+    --color-bg-gradient-end: #E2E2E2;
+    --color-text: #1E293B;
+    --color-text-secondary: #64748B;
+    --color-accent: #6366F1;
+    --color-accent-glow: rgba(99, 102, 241, 0.4);
+    --color-glass: rgba(255, 255, 255, 0.55);
+    --color-glass-border: rgba(255, 255, 255, 0.35);
+    --color-glass-shadow: rgba(0, 0, 0, 0.08);
+
+    --font-heading: 'SF Pro Display', -apple-system, 'Segoe UI', sans-serif;
+    --font-body: 'SF Pro Text', -apple-system, 'Segoe UI', sans-serif;
+    --font-mono: 'SF Mono', 'Consolas', monospace;
+
+    --blur-glass: 16px;
+    --blur-heavy: 24px;
+    --radius-card: 20px;
+    --radius-btn: 14px;
+    --radius-input: 12px;
+
+    --ease-enter: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --duration-micro: 150ms;
+    --duration-small: 250ms;
+    --duration-medium: 400ms;
+  }
+
+  [data-theme="dark"] {
+    --color-bg: #0F172A;
+    --color-bg-gradient-start: #1E1B4B;
+    --color-bg-gradient-end: #0F172A;
+    --color-text: #F1F5F9;
+    --color-text-secondary: #94A3B8;
+    --color-accent: #818CF8;
+    --color-accent-glow: rgba(129, 140, 248, 0.3);
+    --color-glass: rgba(30, 41, 59, 0.6);
+    --color-glass-border: rgba(148, 163, 184, 0.15);
+    --color-glass-shadow: rgba(0, 0, 0, 0.3);
+  }
+
+  /* ─── RESET ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: var(--font-body);
+    background: linear-gradient(135deg, var(--color-bg-gradient-start), var(--color-bg-gradient-end));
+    min-height: 100vh;
+    color: var(--color-text);
+    line-height: 1.6;
+    position: relative;
+    transition: background var(--duration-medium) var(--ease-enter);
+  }
+
+  /* ─── AMBIENT SHAPES ─── */
+  body::before, body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before {
+    width: 600px; height: 600px;
+    background: var(--color-accent);
+    top: -200px; right: -100px;
+    opacity: 0.15;
+  }
+  body::after {
+    width: 500px; height: 500px;
+    background: #EC4899;
+    bottom: -150px; left: -100px;
+    opacity: 0.12;
+  }
+
+  /* ─── THEME TOGGLE ─── */
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 100;
+    background: var(--color-glass);
+    backdrop-filter: blur(var(--blur-glass));
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+    border: 1px solid var(--color-glass-border);
+    color: var(--color-text);
+    padding: 8px 16px;
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  .variation-label {
+    position: fixed; top: 16px; left: 16px; z-index: 100;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  /* ─── GLASS PANEL ─── */
+  .glass {
+    background: var(--color-glass);
+    backdrop-filter: blur(var(--blur-glass));
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+    border: 1px solid var(--color-glass-border);
+    border-radius: var(--radius-card);
+    box-shadow: 0 8px 32px var(--color-glass-shadow);
+  }
+
+  .glass--heavy {
+    backdrop-filter: blur(var(--blur-heavy));
+    -webkit-backdrop-filter: blur(var(--blur-heavy));
+  }
+
+  /* ─── CONTAINER ─── */
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 140px 0 100px;
+    text-align: center;
+  }
+  .hero__badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    margin-bottom: 24px;
+  }
+  .hero__headline {
+    font-family: var(--font-heading);
+    font-size: 3.75rem;
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+  .hero__headline em {
+    font-style: normal;
+    background: linear-gradient(135deg, var(--color-accent), #EC4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero__sub {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    max-width: 560px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+  .hero__actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    transition: all var(--duration-micro) var(--ease-enter);
+    text-decoration: none;
+  }
+  .btn--primary {
+    background: var(--color-accent);
+    color: #FFFFFF;
+    box-shadow: 0 4px 20px var(--color-accent-glow);
+  }
+  .btn--primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 30px var(--color-accent-glow);
+  }
+  .btn--glass {
+    background: var(--color-glass);
+    backdrop-filter: blur(var(--blur-glass));
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+    border: 1px solid var(--color-glass-border);
+    color: var(--color-text);
+  }
+  .btn--glass:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
+  [data-theme="dark"] .btn--glass:hover {
+    background: rgba(30, 41, 59, 0.8);
+  }
+  .btn--small { padding: 10px 20px; font-size: 0.875rem; }
+
+  /* ─── FEATURES ─── */
+  .features {
+    padding: 80px 0;
+  }
+  .features__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .features__header h2 {
+    font-family: var(--font-heading);
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .features__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .feature-card {
+    padding: 32px;
+    transition: transform var(--duration-small) var(--ease-enter),
+                box-shadow var(--duration-small) var(--ease-enter);
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px var(--color-glass-shadow);
+  }
+  .feature-card__icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--color-accent), #EC4899);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    color: #FFFFFF;
+  }
+  .feature-card__title {
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .feature-card__desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  /* ─── PRICING ─── */
+  .pricing {
+    padding: 80px 0;
+  }
+  .pricing__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .pricing__header h2 {
+    font-family: var(--font-heading);
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .pricing__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  .price-card {
+    padding: 32px;
+    text-align: center;
+  }
+  .price-card--featured {
+    border: 1px solid var(--color-accent);
+    box-shadow: 0 8px 40px var(--color-accent-glow);
+  }
+  .price-card__name {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-secondary);
+    margin-bottom: 16px;
+  }
+  .price-card--featured .price-card__name {
+    color: var(--color-accent);
+  }
+  .price-card__amount {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 4px;
+  }
+  .price-card__period {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+  }
+  .price-card__features {
+    list-style: none;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+  .price-card__features li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-glass-border);
+    font-size: 0.9375rem;
+  }
+  .price-card__features li::before {
+    content: '\2713';
+    color: var(--color-accent);
+    margin-right: 8px;
+    font-weight: 700;
+  }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials {
+    padding: 80px 0;
+  }
+  .testimonials__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .testimonials__header h2 {
+    font-family: var(--font-heading);
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .testimonials__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .testimonial-card {
+    padding: 28px;
+  }
+  .testimonial-card__quote {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .testimonial-card__author {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  .testimonial-card__role {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* ─── SIGNUP ─── */
+  .signup {
+    padding: 80px 0;
+    text-align: center;
+  }
+  .signup h2 {
+    font-family: var(--font-heading);
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .signup__sub {
+    color: var(--color-text-secondary);
+    margin-bottom: 32px;
+  }
+  .signup__form {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .signup__input {
+    flex: 1;
+    padding: 14px 16px;
+    border-radius: var(--radius-input);
+    border: 1px solid var(--color-glass-border);
+    background: var(--color-glass);
+    backdrop-filter: blur(var(--blur-glass));
+    -webkit-backdrop-filter: blur(var(--blur-glass));
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    outline: none;
+    transition: border-color var(--duration-micro) var(--ease-enter);
+  }
+  .signup__input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-glow);
+  }
+
+  /* ─── PALETTE ─── */
+  .palette {
+    padding: 40px 0;
+  }
+  .palette__label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+  }
+  .palette__row {
+    display: flex;
+    gap: 4px;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .palette__swatch {
+    flex: 1;
+    height: 48px;
+    display: flex;
+    align-items: flex-end;
+    padding: 6px 8px;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: #FFFFFF;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    padding: 32px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .features__grid, .pricing__grid { grid-template-columns: 1fr; }
+    .testimonials__grid { grid-template-columns: 1fr; }
+    .hero__headline { font-size: 2.5rem; }
+    .hero__actions { flex-direction: column; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<span class="variation-label">Glassmorphism</span>
+<button class="theme-toggle" data-testid="theme-toggle" onclick="
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'light' ? 'dark' : 'light';
+  this.textContent = html.dataset.theme === 'light' ? 'Dark' : 'Light';
+">Dark</button>
+
+<!-- ─── HERO ─── -->
+<section class="hero" data-testid="hero">
+  <div class="container">
+    <span class="glass hero__badge">Design Review Toolkit</span>
+    <h1 class="hero__headline">Stop Shipping<br><em>AI Slop</em></h1>
+    <p class="hero__sub">
+      Catch generic design patterns before they reach production.
+      SLAP reviews your UI against 17 personas, 5 expert roles,
+      and a library of known AI-default indicators.
+    </p>
+    <div class="hero__actions">
+      <a href="#" class="btn btn--primary">Start Free Review</a>
+      <a href="#" class="btn btn--glass">View Examples</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section class="features" data-testid="features">
+  <div class="container">
+    <div class="features__header">
+      <h2>Capabilities</h2>
+      <p style="color: var(--color-text-secondary)">Everything you need to catch slop before it ships</p>
+    </div>
+    <div class="features__grid">
+      <div class="glass feature-card">
+        <div class="feature-card__icon">&#9733;</div>
+        <h3 class="feature-card__title">Expert Review Panel</h3>
+        <p class="feature-card__desc">Five specialist roles — marketing, UX, product, technical, design — each score and annotate every section of your page.</p>
+      </div>
+      <div class="glass feature-card">
+        <div class="feature-card__icon">&#9786;</div>
+        <h3 class="feature-card__title">Persona Stress Test</h3>
+        <p class="feature-card__desc">Seventeen fictional users evaluate your interface from perspectives you cannot simulate alone.</p>
+      </div>
+      <div class="glass feature-card">
+        <div class="feature-card__icon">&#9888;</div>
+        <h3 class="feature-card__title">Slop Detection Engine</h3>
+        <p class="feature-card__desc">Flags known AI defaults: purple accents, system fonts, uniform border-radius, 0.2s-ease transitions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ─── -->
+<section class="pricing" data-testid="pricing">
+  <div class="container">
+    <div class="pricing__header">
+      <h2>Pricing</h2>
+      <p style="color: var(--color-text-secondary)">Start free, scale when you are ready</p>
+    </div>
+    <div class="pricing__grid">
+      <div class="glass price-card">
+        <div class="price-card__name">Starter</div>
+        <div class="price-card__amount">$0</div>
+        <div class="price-card__period">Free forever</div>
+        <ul class="price-card__features">
+          <li>3 reviews / month</li>
+          <li>Expert panel only</li>
+          <li>Basic slop detection</li>
+        </ul>
+        <a href="#" class="btn btn--glass btn--small" style="width:100%;justify-content:center;">Get Started</a>
+      </div>
+      <div class="glass price-card price-card--featured">
+        <div class="price-card__name">Professional</div>
+        <div class="price-card__amount">$29</div>
+        <div class="price-card__period">per month</div>
+        <ul class="price-card__features">
+          <li>Unlimited reviews</li>
+          <li>Expert + Persona panels</li>
+          <li>Full slop detection</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="btn btn--primary btn--small" style="width:100%;justify-content:center;">Start Free Trial</a>
+      </div>
+      <div class="glass price-card">
+        <div class="price-card__name">Enterprise</div>
+        <div class="price-card__amount">$99</div>
+        <div class="price-card__period">per month</div>
+        <ul class="price-card__features">
+          <li>Everything in Pro</li>
+          <li>Custom persona creation</li>
+          <li>CI/CD integration</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a href="#" class="btn btn--glass btn--small" style="width:100%;justify-content:center;">Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─── -->
+<section class="testimonials" data-testid="testimonials">
+  <div class="container">
+    <div class="testimonials__header">
+      <h2>What Teams Say</h2>
+    </div>
+    <div class="testimonials__grid">
+      <div class="glass testimonial-card">
+        <p class="testimonial-card__quote">"We caught 14 AI-default patterns in our redesign before launch. The persona panel alone was worth it — our colorblind user persona found 3 issues we missed."</p>
+        <div class="testimonial-card__author">Sarah Chen</div>
+        <div class="testimonial-card__role">Design Lead, Vercel</div>
+      </div>
+      <div class="glass testimonial-card">
+        <p class="testimonial-card__quote">"SLAP forced us to justify every design decision. If the system flagged it as generic, we had to defend it or change it. Our conversion rate went up 23%."</p>
+        <div class="testimonial-card__author">Marcus Rivera</div>
+        <div class="testimonial-card__role">VP Product, Linear</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SIGNUP ─── -->
+<section class="signup" data-testid="signup">
+  <div class="container">
+    <h2>Start reviewing</h2>
+    <p class="signup__sub">No credit card required. Free tier includes 3 reviews per month.</p>
+    <div class="signup__form">
+      <input type="email" class="signup__input" placeholder="Email address" data-testid="email-input">
+      <button class="btn btn--primary" data-testid="signup-btn">Get Started</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PALETTE ─── -->
+<section class="palette">
+  <div class="container">
+    <div class="palette__label">Color Palette</div>
+    <div class="palette__row">
+      <div class="palette__swatch" style="background: #1E293B;">#1E293B</div>
+      <div class="palette__swatch" style="background: #64748B;">#64748B</div>
+      <div class="palette__swatch" style="background: #6366F1;">#6366F1</div>
+      <div class="palette__swatch" style="background: #EC4899;">#EC4899</div>
+      <div class="palette__swatch" style="background: #C9D6FF; color: #1E293B;">#C9D6FF</div>
+    </div>
+  </div>
+</section>
+
+<footer class="container footer">
+  <span>SLAP! Design Review Toolkit</span>
+  <span>Glassmorphism</span>
+</footer>
+
+</body>
+</html>

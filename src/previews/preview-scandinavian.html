@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Scandinavian / Hygge</title>
+<style>
+  /* ─── DESIGN TOKENS ─── */
+  :root {
+    --color-bg: #FAFAF8;
+    --color-bg-alt: #F0EFEB;
+    --color-bg-warm: #F5F0E8;
+    --color-text: #2D2D2D;
+    --color-text-secondary: #8A8A80;
+    --color-accent: #5B7E6A;
+    --color-accent-light: #7FA98E;
+    --color-accent-bg: rgba(91, 126, 106, 0.08);
+    --color-blush: #D4A59A;
+    --color-clay: #C4A882;
+    --color-rule: #E0DED8;
+    --color-card-bg: #FFFFFF;
+    --color-card-border: #E8E6E0;
+
+    --font-heading: 'Georgia', 'Palatino', serif;
+    --font-body: -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif;
+    --font-mono: 'SF Mono', 'Consolas', monospace;
+
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-full: 100px;
+
+    --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-exit: cubic-bezier(0.4, 0, 0.2, 1);
+    --duration-micro: 180ms;
+    --duration-small: 300ms;
+    --duration-medium: 450ms;
+  }
+
+  [data-theme="dark"] {
+    --color-bg: #1E1E1C;
+    --color-bg-alt: #2A2A27;
+    --color-bg-warm: #2D2A24;
+    --color-text: #E8E6E0;
+    --color-text-secondary: #9A9A90;
+    --color-accent: #7FA98E;
+    --color-accent-light: #A3C5B0;
+    --color-accent-bg: rgba(127, 169, 142, 0.1);
+    --color-rule: #3A3A36;
+    --color-card-bg: #2A2A27;
+    --color-card-border: #3A3A36;
+  }
+
+  /* ─── RESET ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.65;
+    transition: background var(--duration-small) var(--ease-enter),
+                color var(--duration-small) var(--ease-enter);
+  }
+
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 100;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    color: var(--color-text);
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-family: var(--font-mono); font-size: 11px;
+    transition: box-shadow var(--duration-micro) var(--ease-enter);
+  }
+  .theme-toggle:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .variation-label {
+    position: fixed; top: 16px; left: 16px; z-index: 100;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--color-text-secondary);
+  }
+
+  .container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    padding: 120px 0 80px;
+    text-align: center;
+  }
+  .hero__badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent-bg);
+    color: var(--color-accent);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    margin-bottom: 28px;
+  }
+  .hero__headline {
+    font-family: var(--font-heading);
+    font-size: 3.25rem;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+  }
+  .hero__headline strong {
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+  .hero__sub {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    max-width: 520px;
+    margin: 0 auto 40px;
+    line-height: 1.75;
+  }
+  .hero__actions { display: flex; gap: 12px; justify-content: center; }
+
+  /* ─── BUTTONS ─── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 28px;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--duration-micro) var(--ease-enter);
+    text-decoration: none;
+  }
+  .btn--primary {
+    background: var(--color-accent);
+    color: #FFFFFF;
+  }
+  .btn--primary:hover {
+    background: var(--color-accent-light);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(91, 126, 106, 0.2);
+  }
+  .btn--soft {
+    background: var(--color-accent-bg);
+    color: var(--color-accent);
+  }
+  .btn--soft:hover {
+    background: rgba(91, 126, 106, 0.15);
+  }
+  .btn--outline {
+    background: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-card-border);
+  }
+  .btn--outline:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+  .btn--small { padding: 10px 20px; font-size: 0.875rem; }
+
+  /* ─── FEATURES ─── */
+  .features {
+    padding: 80px 0;
+  }
+  .features__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .features__header h2 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  .features__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .feature-card {
+    padding: 28px;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+    transition: transform var(--duration-small) var(--ease-enter),
+                box-shadow var(--duration-small) var(--ease-enter);
+  }
+  .feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+  }
+  .feature-card__icon {
+    width: 44px; height: 44px;
+    border-radius: var(--radius-sm);
+    background: var(--color-accent-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    color: var(--color-accent);
+  }
+  .feature-card__title {
+    font-family: var(--font-heading);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .feature-card__desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+
+  /* ─── PRICING ─── */
+  .pricing {
+    padding: 80px 0;
+    background: var(--color-bg-warm);
+    border-radius: var(--radius-lg);
+    margin: 0 16px;
+  }
+  .pricing__header { text-align: center; margin-bottom: 48px; }
+  .pricing__header h2 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 400;
+  }
+  .pricing__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .price-card {
+    padding: 28px;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+    text-align: center;
+  }
+  .price-card--featured {
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 20px rgba(91, 126, 106, 0.12);
+    position: relative;
+  }
+  .price-card--featured::before {
+    content: 'Recommended';
+    position: absolute;
+    top: -10px; left: 50%; transform: translateX(-50%);
+    background: var(--color-accent);
+    color: #FFFFFF;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 3px 14px;
+    border-radius: var(--radius-full);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .price-card__name {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .price-card__amount {
+    font-family: var(--font-heading);
+    font-size: 2.75rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .price-card__period {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 24px;
+  }
+  .price-card__features {
+    list-style: none;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+  .price-card__features li {
+    padding: 8px 0;
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .price-card__features li::before {
+    content: '\2713';
+    color: var(--color-accent);
+    font-weight: 700;
+    font-size: 0.8125rem;
+  }
+
+  /* ─── TESTIMONIALS ─── */
+  .testimonials { padding: 80px 0; }
+  .testimonials__header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .testimonials__header h2 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 400;
+  }
+  .testimonials__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .testimonial-card {
+    padding: 28px;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-card-border);
+    border-radius: var(--radius-md);
+  }
+  .testimonial-card__quote {
+    font-family: var(--font-heading);
+    font-size: 1.0625rem;
+    font-style: italic;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    color: var(--color-text);
+  }
+  .testimonial-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .testimonial-card__avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--color-accent-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+  .testimonial-card__author {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  .testimonial-card__role {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* ─── SIGNUP ─── */
+  .signup {
+    padding: 80px 0;
+    text-align: center;
+  }
+  .signup h2 {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  .signup__sub {
+    color: var(--color-text-secondary);
+    margin-bottom: 32px;
+  }
+  .signup__form {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    max-width: 440px;
+    margin: 0 auto;
+  }
+  .signup__input {
+    flex: 1;
+    padding: 13px 18px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-card-border);
+    background: var(--color-card-bg);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    outline: none;
+    transition: border-color var(--duration-micro) var(--ease-enter),
+                box-shadow var(--duration-micro) var(--ease-enter);
+  }
+  .signup__input:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--color-accent-bg);
+  }
+
+  /* ─── PALETTE ─── */
+  .palette { padding: 40px 0; border-top: 1px solid var(--color-rule); }
+  .palette__label {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+  }
+  .palette__row {
+    display: flex; gap: 6px; border-radius: var(--radius-sm); overflow: hidden;
+  }
+  .palette__swatch {
+    flex: 1; height: 48px;
+    display: flex; align-items: flex-end;
+    padding: 6px 8px;
+    font-family: var(--font-mono); font-size: 9px;
+    color: #FFFFFF;
+    border-radius: var(--radius-sm);
+  }
+
+  .footer {
+    padding: 32px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .features__grid, .pricing__grid { grid-template-columns: 1fr; }
+    .testimonials__grid { grid-template-columns: 1fr; }
+    .hero__headline { font-size: 2.25rem; }
+    .hero__actions { flex-direction: column; align-items: center; }
+    .pricing { margin: 0; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+
+<span class="variation-label">Scandinavian / Hygge</span>
+<button class="theme-toggle" data-testid="theme-toggle" onclick="
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'light' ? 'dark' : 'light';
+  this.textContent = html.dataset.theme === 'light' ? 'Dark' : 'Light';
+">Dark</button>
+
+<!-- ─── HERO ─── -->
+<section class="hero" data-testid="hero">
+  <div class="container">
+    <span class="hero__badge">Design Review Toolkit</span>
+    <h1 class="hero__headline">Stop shipping<br><strong>AI slop</strong></h1>
+    <p class="hero__sub">
+      Catch generic design patterns before they reach production.
+      SLAP reviews your UI against 17 personas, 5 expert roles,
+      and a library of known AI-default indicators.
+    </p>
+    <div class="hero__actions">
+      <a href="#" class="btn btn--primary">Start free review</a>
+      <a href="#" class="btn btn--soft">View examples</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section class="features" data-testid="features">
+  <div class="container">
+    <div class="features__header">
+      <h2>How it works</h2>
+      <p style="color: var(--color-text-secondary); font-size: 0.9375rem;">Three tools that catch what human eyes miss</p>
+    </div>
+    <div class="features__grid">
+      <div class="feature-card">
+        <div class="feature-card__icon">&#9734;</div>
+        <h3 class="feature-card__title">Expert review panel</h3>
+        <p class="feature-card__desc">Five specialist roles — marketing, UX, product, technical, design — each score and annotate every section of your page.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">&#9786;</div>
+        <h3 class="feature-card__title">Persona stress test</h3>
+        <p class="feature-card__desc">Seventeen fictional users evaluate your interface from perspectives you cannot simulate alone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-card__icon">&#9888;</div>
+        <h3 class="feature-card__title">Slop detection engine</h3>
+        <p class="feature-card__desc">Flags known AI defaults: purple accents, system fonts, uniform border-radius, 0.2s-ease transitions.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRICING ─── -->
+<section class="pricing" data-testid="pricing">
+  <div class="container">
+    <div class="pricing__header">
+      <h2>Simple pricing</h2>
+      <p style="color: var(--color-text-secondary); font-size: 0.9375rem; margin-top: 4px;">Start free, upgrade when you are ready</p>
+    </div>
+    <div class="pricing__grid">
+      <div class="price-card">
+        <div class="price-card__name">Starter</div>
+        <div class="price-card__amount">$0</div>
+        <div class="price-card__period">Free forever</div>
+        <ul class="price-card__features">
+          <li>3 reviews / month</li>
+          <li>Expert panel only</li>
+          <li>Basic slop detection</li>
+        </ul>
+        <a href="#" class="btn btn--outline btn--small" style="width:100%;justify-content:center;">Get started</a>
+      </div>
+      <div class="price-card price-card--featured">
+        <div class="price-card__name">Professional</div>
+        <div class="price-card__amount">$29</div>
+        <div class="price-card__period">per month</div>
+        <ul class="price-card__features">
+          <li>Unlimited reviews</li>
+          <li>Expert + Persona panels</li>
+          <li>Full slop detection</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#" class="btn btn--primary btn--small" style="width:100%;justify-content:center;">Start free trial</a>
+      </div>
+      <div class="price-card">
+        <div class="price-card__name">Enterprise</div>
+        <div class="price-card__amount">$99</div>
+        <div class="price-card__period">per month</div>
+        <ul class="price-card__features">
+          <li>Everything in Pro</li>
+          <li>Custom personas</li>
+          <li>CI/CD integration</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a href="#" class="btn btn--outline btn--small" style="width:100%;justify-content:center;">Contact sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── TESTIMONIALS ─── -->
+<section class="testimonials" data-testid="testimonials">
+  <div class="container">
+    <div class="testimonials__header">
+      <h2>What teams say</h2>
+    </div>
+    <div class="testimonials__grid">
+      <div class="testimonial-card">
+        <p class="testimonial-card__quote">"We caught 14 AI-default patterns in our redesign before launch. The persona panel alone was worth it — our colorblind user persona found 3 issues we missed."</p>
+        <div class="testimonial-card__meta">
+          <div class="testimonial-card__avatar">SC</div>
+          <div>
+            <div class="testimonial-card__author">Sarah Chen</div>
+            <div class="testimonial-card__role">Design Lead, Vercel</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-card__quote">"SLAP forced us to justify every design decision. If the system flagged it as generic, we had to defend it or change it. Conversion rate went up 23%."</p>
+        <div class="testimonial-card__meta">
+          <div class="testimonial-card__avatar">MR</div>
+          <div>
+            <div class="testimonial-card__author">Marcus Rivera</div>
+            <div class="testimonial-card__role">VP Product, Linear</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SIGNUP ─── -->
+<section class="signup" data-testid="signup">
+  <div class="container">
+    <h2>Ready to start?</h2>
+    <p class="signup__sub">No credit card required. Free tier includes 3 reviews per month.</p>
+    <div class="signup__form">
+      <input type="email" class="signup__input" placeholder="Your email" data-testid="email-input">
+      <button class="btn btn--primary" data-testid="signup-btn">Get started</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PALETTE ─── -->
+<section class="palette">
+  <div class="container">
+    <div class="palette__label">Color Palette</div>
+    <div class="palette__row">
+      <div class="palette__swatch" style="background: #2D2D2D;">#2D2D2D</div>
+      <div class="palette__swatch" style="background: #5B7E6A;">#5B7E6A</div>
+      <div class="palette__swatch" style="background: #D4A59A;">#D4A59A</div>
+      <div class="palette__swatch" style="background: #C4A882;">#C4A882</div>
+      <div class="palette__swatch" style="background: #F5F0E8; color: #2D2D2D;">#F5F0E8</div>
+    </div>
+  </div>
+</section>
+
+<footer class="container footer">
+  <span>SLAP! Design Review Toolkit</span>
+  <span>Scandinavian / Hygge</span>
+</footer>
+
+</body>
+</html>

@@ -99,7 +99,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
             }}
             aria-label="Close cart"
           >
-            \u2715
+            {'\u00d7'}
           </button>
         </div>
 

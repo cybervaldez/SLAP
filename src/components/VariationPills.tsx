@@ -6,6 +6,7 @@ interface VariationPillsProps {
   activeVariation: string;
   onVariationChange: (id: string) => void;
   accent: string;
+  inline?: boolean;
 }
 
 const styles: Record<string, React.CSSProperties> = {
@@ -18,14 +19,24 @@ const styles: Record<string, React.CSSProperties> = {
     fontFamily: "'Courier New', monospace",
     justifyContent: 'center',
   },
+  barInline: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: '0.35rem',
+    padding: 0,
+    background: 'transparent',
+    fontFamily: "'Courier New', monospace",
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 };
 
-function pillStyle(isActive: boolean, accent: string): React.CSSProperties {
+function pillStyle(isActive: boolean, accent: string, inline?: boolean): React.CSSProperties {
   return {
     fontFamily: "'Courier New', monospace",
-    fontSize: '0.75rem',
+    fontSize: inline ? '0.7rem' : '0.75rem',
     fontWeight: 600,
-    padding: '0.3rem 0.85rem',
+    padding: inline ? '0.2rem 0.65rem' : '0.3rem 0.85rem',
     borderRadius: '999px',
     border: isActive ? `1px solid ${accent}` : '1px solid rgba(245, 240, 225, 0.4)',
     background: isActive ? accent : 'transparent',
@@ -41,13 +52,14 @@ export default function VariationPills({
   activeVariation,
   onVariationChange,
   accent,
+  inline,
 }: VariationPillsProps) {
   return (
-    <div style={styles.bar} data-testid="variation-pills">
+    <div style={inline ? styles.barInline : styles.bar} data-testid="variation-pills">
       {variations.map((v) => (
         <button
           key={v.id}
-          style={pillStyle(v.id === activeVariation, accent)}
+          style={pillStyle(v.id === activeVariation, accent, inline)}
           onClick={() => onVariationChange(v.id)}
           data-testid={`variation-pill-${v.id}`}
           onMouseEnter={(e) => {

@@ -214,7 +214,7 @@ const CheckoutFlow: React.FC<CheckoutFlowProps> = ({ cartTotal, onComplete }) =>
               fontSize: 28,
             }}
           >
-            \u2713
+            {'\u2713'}
           </div>
           <h3
             style={{

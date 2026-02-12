@@ -1,5 +1,7 @@
 import React from 'react';
 import { navigate } from '../router';
+import VariationPills from './VariationPills';
+import type { VariationDef } from '../types';
 
 const styles: Record<string, React.CSSProperties> = {
   bar: {
@@ -10,7 +12,6 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottom: '3px solid #FFD000',
   },
   backBtn: {
     background: 'none',
@@ -22,20 +23,32 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '0.35rem 0.75rem',
     cursor: 'pointer',
     letterSpacing: '0.05em',
+    flexShrink: 0,
   },
   title: {
     fontSize: '0.75rem',
     color: '#FF1493',
     letterSpacing: '0.1em',
     fontWeight: 'bold',
+    flexShrink: 0,
   },
 };
 
 interface RetroNavBarProps {
   archetypeName: string;
+  variations?: VariationDef[];
+  activeVariation?: string;
+  onVariationChange?: (id: string) => void;
+  accent?: string;
 }
 
-export default function RetroNavBar({ archetypeName }: RetroNavBarProps) {
+export default function RetroNavBar({
+  archetypeName,
+  variations,
+  activeVariation,
+  onVariationChange,
+  accent,
+}: RetroNavBarProps) {
   return (
     <nav style={styles.bar} data-testid="retro-nav-bar">
       <button
@@ -51,8 +64,17 @@ export default function RetroNavBar({ archetypeName }: RetroNavBarProps) {
           (e.target as HTMLButtonElement).style.color = '#FFD000';
         }}
       >
-        &laquo; Back to Gallery
+        &laquo; Gallery
       </button>
+      {variations && activeVariation && onVariationChange && accent && (
+        <VariationPills
+          variations={variations}
+          activeVariation={activeVariation}
+          onVariationChange={onVariationChange}
+          accent={accent}
+          inline
+        />
+      )}
       <span style={styles.title}>&#9733; {archetypeName.toUpperCase()}</span>
     </nav>
   );

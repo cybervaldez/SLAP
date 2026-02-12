@@ -16,9 +16,13 @@ const EXPERT_KEY_TO_SECTION: Record<string, SectionId> = {
   testimonials: 'testimonials',
   faq: 'faq',
   signup: 'signup',
+  // E-commerce mappings
+  products: 'products',
+  cart: 'cart',
+  checkout: 'checkout',
 };
 
-const ALL_SECTIONS: SectionId[] = ['hero', 'pricing', 'testimonials', 'faq', 'signup'];
+const ALL_SECTIONS: SectionId[] = ['hero', 'pricing', 'testimonials', 'faq', 'signup', 'products', 'cart', 'checkout'];
 
 function worstSeverity(lights: TrafficLight[]): TrafficLight {
   if (lights.includes('red')) return 'red';

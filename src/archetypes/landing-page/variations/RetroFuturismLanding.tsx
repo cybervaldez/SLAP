@@ -641,7 +641,7 @@ export default function RetroFuturismLanding() {
         <h2 style={styles.signupHeading}>Beam me up</h2>
         <p style={styles.signupSubtext}>Join the future. Get early access delivered straight to your inbox.</p>
         {submitted ? (
-          <p style={styles.successMessage}>{emailSignup.successMessage}</p>
+          <p style={styles.successMessage} role="status" aria-live="polite">{emailSignup.successMessage}</p>
         ) : (
           <form style={styles.signupForm} onSubmit={handleEmailSubmit}>
             <div style={styles.signupInputOuter}>
@@ -651,6 +651,7 @@ export default function RetroFuturismLanding() {
                 placeholder={emailSignup.placeholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                aria-label="Email address"
               />
             </div>
             <button

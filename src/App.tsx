@@ -185,11 +185,8 @@ export default function App() {
         />
         <DockBar
           mode={dockMode}
-          expertBubbles={expertBubbles}
-          personaBubbles={personaBubbles}
-          activeBubbleId={soloId}
           onModeChange={handleModeChange}
-          onBubbleClick={handleBubbleClick}
+          dark={variationDef?.dark}
         />
         <UIReviewOverlay
           isOpen={isOverlayOpen}
@@ -201,11 +198,16 @@ export default function App() {
           onSoloSelect={handleSoloSelect}
           onSoloClose={handleSoloClose}
           variationHook={variationDef?.hook ?? activeVariation}
+          variationId={activeVariation}
           expertFindings={allExpertFindings}
           reviewBundle={reviewBundle}
           personaFindings={allPersonaFindings}
           kaizenBundle={kaizenBundle}
           onFindingHover={handleFindingHover}
+          expertBubbles={expertBubbles}
+          personaBubbles={personaBubbles}
+          activeBubbleId={soloId}
+          onBubbleClick={handleBubbleClick}
         />
       </>
     );

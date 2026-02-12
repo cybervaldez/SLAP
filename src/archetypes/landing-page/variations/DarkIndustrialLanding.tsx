@@ -525,7 +525,7 @@ export default function DarkIndustrialLanding() {
         <div style={styles.sectionLabel}>SUBSCRIBE</div>
         <h2 style={styles.sectionHeading}>Get notified</h2>
         {submitted ? (
-          <p style={styles.signupSuccess}>{emailSignup.successMessage}</p>
+          <p style={styles.signupSuccess} role="status" aria-live="polite">{emailSignup.successMessage}</p>
         ) : (
           <form style={styles.signupForm} onSubmit={handleEmailSubmit}>
             <input
@@ -534,6 +534,7 @@ export default function DarkIndustrialLanding() {
               placeholder={emailSignup.placeholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              aria-label="Email address"
               onFocus={(e) => {
                 e.currentTarget.style.borderColor = ACCENT;
                 e.currentTarget.style.boxShadow = `0 0 12px rgba(212,165,116,0.15)`;
