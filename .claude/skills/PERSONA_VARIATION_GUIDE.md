@@ -601,6 +601,22 @@ Text-heavy pages are judged on SUSTAINED COMFORT:
 
 ---
 
+## Genre Shift: How Personas Adapt
+
+The persona roster and affinity matrix are genre-independent. Cultural identities and functional lenses don't change when the genre changes — only the content they're reacting to does.
+
+**Same persona, different genre (genre = content domain, not just entertainment):**
+
+| Persona | Comedy (current) | SaaS (hypothetical) | Healthcare (hypothetical) |
+|---------|-----------------|---------------------|--------------------------|
+| **Dorothy** | "The ALL CAPS headings feel like yelling" | "The ALL CAPS headings feel like a software warning" | "The ALL CAPS headings feel clinical, not caring" |
+| **Marcus** | "Low information density — like a game HUD with no data" | "Where's the API reference? This has three bullet points and a CTA" | "The sparse layout wastes space that could show my health data" |
+| **Carlos** | "This projects no authority" | "This doesn't project enterprise readiness" | "This doesn't project the trust a patient portal needs" |
+
+The functional observation (accessibility, usability, density) stays constant. The cultural framing shifts to match what the genre's content is trying to accomplish. Dorothy always wants warmth. Marcus always wants density. Carlos always wants authority. Genre just changes what "warmth," "density," and "authority" mean in context — whether that context is a comedy product page, a SaaS dashboard, or a healthcare portal.
+
+---
+
 ## See Also
 
 - `SLAPSTICK_CONCEPT.md` -- System architecture (18 personas, crew panel, affinity matrix)

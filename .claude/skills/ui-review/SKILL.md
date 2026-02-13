@@ -6,6 +6,8 @@ argument-hint: [preview file path]
 
 ## TL;DR
 
+**Phase:** Release
+
 **What:** AI slop detector. Catches generic design patterns, enforces styleguide compliance.
 
 **When:** After `/ui-planner` generates previews, before `/create-task`.

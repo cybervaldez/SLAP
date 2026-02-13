@@ -6,6 +6,8 @@ argument-hint: <UX question or feature to plan>
 
 ## TL;DR
 
+**Phase:** Development
+
 **What:** Conversational UX advisor. Asks questions, presents 2-3 options with tradeoffs.
 
 **When:** Before building features. Entry point for new functionality.

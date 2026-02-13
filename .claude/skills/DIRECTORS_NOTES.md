@@ -119,6 +119,30 @@ The landing page shouldn't describe what SLAP! does. It should BE what SLAP! doe
 
 ---
 
+## Act 7: Genre Independence (The Hidden Architecture)
+
+The comedy was always the demo, never the dependency. Slapstick is what makes SLAP! entertaining, but the structure underneath works for any genre:
+
+- **Swap the content** — Replace proud-slop comedy with real SaaS copy, healthcare messaging, fintech dashboards, or any other content domain. The `data.ts` files are the only genre-dependent layer. Genre doesn't have to mean entertainment — it means the content domain that runs through the pipeline.
+- **Recalibrate the tone** — Comedy's "roast" becomes a SaaS genre's "conversion audit" or healthcare's "compliance review." The three review panels (Panel, Crowd, Crew) stay structurally identical — only what "good" means for each expert lens shifts.
+- **Keep the variations** — Brutalist "exposes" content in any genre. Art Deco "elevates" it. The design-to-content relationship changes meaning without changing code.
+
+The whole production pipeline — Development, Production, Release phases, quality gates, persona roster, affinity matrix — is genre-agnostic. The film production metaphor gave us the foundation: a pipeline with reviewers who have varying lenses and biases. The comedy was the proof of concept. The pipeline is the product.
+
+### Pipeline Lineage (For Contributors)
+
+The three-phase pipeline absorbs the full film production lifecycle without adopting its vocabulary:
+
+| Film Phase | SLAP Phase | What It Covers |
+|------------|------------|----------------|
+| Development + Pre-production | **Development** | Concept, UX flows, visual identity, tech research |
+| Production | **Production** | Build features, audit code, verify observability |
+| Post-production + Distribution | **Release** | Design review, E2E testing, audience feedback |
+
+No additional phases needed — three phases, three quality gates, clean pipeline.
+
+---
+
 ## How to Use This Document
 
 ### For the Landing Page

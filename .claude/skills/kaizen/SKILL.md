@@ -6,6 +6,8 @@ argument-hint: [category] <what to review>
 
 ## TL;DR
 
+**Phase:** Release (also usable in any phase)
+
 **What:** Diverse user personas (Grandma Dorothy, colorblind Marcus, intern Tommy) give real-world reactions.
 
 **When:** User perspective questions, accessibility checks, usability feedback.

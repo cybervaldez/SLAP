@@ -2,6 +2,14 @@ import React from 'react';
 import type { Section } from '../data';
 import CollapsibleSection from './CollapsibleSection';
 
+const SECTION_DATA_MAP: Record<string, string> = {
+  'the-first-punchline-problem': 'opening',
+  'the-setup-nobody-notices': 'hierarchy',
+  'time-it-twice-land-it-once': 'measure',
+  'slapstick-vs-subtlety': 'ornament',
+  'the-last-laugh-is-a-design-decision': 'ending',
+};
+
 interface ArticleBodyProps {
   sections: Section[];
   openSections: Set<string>;
@@ -68,7 +76,7 @@ const ArticleBody: React.FC<ArticleBodyProps> = ({
         {sections.map((section) => {
           const isOpen = openSections.has(section.id);
           return (
-            <div key={section.id} id={`section-${section.id}`}>
+            <div key={section.id} id={`section-${section.id}`} data-section={SECTION_DATA_MAP[section.id]}>
               <div style={{ marginBottom: 16, border: '1px solid #E5E7EB', borderRadius: 8, overflow: 'hidden', backgroundColor: '#FFFFFF' }}>
                 <button
                   data-testid={`section-${section.id}-toggle`}
@@ -135,7 +143,7 @@ const ArticleBody: React.FC<ArticleBodyProps> = ({
   return (
     <div style={containerStyle}>
       {sections.map((section) => (
-        <div key={section.id} id={`section-${section.id}`}>
+        <div key={section.id} id={`section-${section.id}`} data-section={SECTION_DATA_MAP[section.id]}>
           <CollapsibleSection
             id={section.id}
             title={section.title}

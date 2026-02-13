@@ -405,8 +405,8 @@ const crewFindings: Record<string, CrewFinding> = {
 
   // ─── SLAP ─────────────────────────────────
   'e-commerce:slap:prompter': {
-    perspective: 'I asked for "premium product descriptions" and got "experience physical comedy the way it was meant to be performed." Every product has a proprietary technology name because the model thinks that\'s what "premium" means. SlipShield, AcoustiCraft -- they test well in copy evaluation frameworks.',
-    confession: 'SlipShield is not a real technology. AcoustiCraft is not a real technology. The model invented trademarked-sounding words because the training data associates premium products with proprietary terminology. I shipped fake technology names because they scored high on "perceived premium."',
+    perspective: 'I asked for "premium product descriptions" and got "experience physical comedy the way it was meant to be performed." The banana peel has a proprietary technology name because the model thinks that\'s what "premium" means. SlipShield\u2122 — it tests well in copy evaluation frameworks.',
+    confession: 'SlipShield is not a real technology. The model invented a trademarked-sounding word because the training data associates premium products with proprietary terminology. I shipped a fake technology name because it scored high on "perceived premium." Every product description reads like a Kickstarter stretch goal.',
     industryContext: 'AI product copy has created a naming crisis. Every AI-generated product description invents proprietary technology names, which means the market is filling with fake features that all sound equally impressive. When everything has a trademarked-sounding technology, nothing does.',
   },
   'e-commerce:slap:junior': {

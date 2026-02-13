@@ -349,6 +349,43 @@ Each variation has a different relationship to the proud-slop content. That rela
 
 ---
 
+## Genre Independence
+
+SLAP! uses slapstick comedy as its demo genre. The proud-slop content, the roast tone, the "performer on stage" metaphor — all comedy. But the underlying structure is genre-agnostic. Genre means **content domain** — not just entertainment themes (horror, sci-fi) but also real business verticals (SaaS, fintech, healthcare, developer tools):
+
+| Layer | Genre-Dependent | Genre-Independent |
+|-------|----------------|-------------------|
+| **Content** | Proud-slop comedy (the current demo genre) | Content data files (`data.ts`) — swap these to change genre |
+| **Design** | None — aesthetics are genre-neutral | 9 variations, design tokens, styleguide |
+| **Review panels** | Tone calibration (roast vs. analytical vs. atmospheric) | Panel structure, persona roster, affinity matrix, scoring system |
+| **Pipeline** | None | All skills, phases, quality gates |
+
+### How Genre Swapping Works
+
+To switch from comedy to another genre:
+
+1. **Replace content** in `src/archetypes/{archetype}/data.ts` — new headlines, articles, products matching the new genre
+2. **Recalibrate tone** in findings data — comedy's "roast" becomes a SaaS genre's "conversion audit" or healthcare's "compliance review"
+3. **Keep everything else** — the 9 variations, the three review panels, the pipeline, the archetypes all work unchanged
+
+The same Brutalist variation that "exposes slop harshly" in comedy would "strip away marketing fluff" in SaaS or "confront sentimentality" in romance. The design-to-content relationship changes meaning without changing structure.
+
+### Genre Examples
+
+| Genre (Content Domain) | E-Commerce Products | Landing Page Copy | Expert Tone |
+|------------------------|--------------------|--------------------|-------------|
+| Comedy (current demo) | SlipShield socks, NovaBurst headphones | Proud-slop buzzwords | Roast / mockery |
+| SaaS | Subscription tiers, API plans | B2B value propositions | Conversion audit |
+| Healthcare | Patient portal features, wellness plans | Trust-first messaging | Compliance review |
+| Developer Tools | CLI packages, SDK documentation | Technical positioning | Architecture critique |
+| Luxury / Fashion | Curated collections, limited editions | Aspirational lifestyle | Brand authority analysis |
+
+### Why This Matters
+
+Genre independence means SLAP! is a reusable framework, not a one-off comedy project. The comedy gets people in the door. The structure — a pipeline with expert reviewers who have varying lenses and biases — is what they take with them.
+
+---
+
 ## Data Architecture
 
 All findings data lives in `src/data/`:

@@ -6,6 +6,8 @@ argument-hint: [experts] <question or request>
 
 ## TL;DR
 
+**Phase:** Release (also usable in any phase)
+
 **What:** Expert personas (Marketing, UX, Product, Technical, etc.) give strategic advice.
 
 **When:** Strategic questions, positioning, pricing, architecture decisions.

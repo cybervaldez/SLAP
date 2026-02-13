@@ -1449,9 +1449,9 @@ const personaFindings: Record<string, PersonaEntry> = {
       },
       {
         category: 'LAYOUT',
-        observation: 'Generous whitespace consumes over 50% of the viewport on desktop product grid',
+        observation: 'Generous whitespace and padding means few products visible above the fold on desktop',
         verdict: 'needs-work',
-        comment: 'I am looking at eight products but only three are visible at a time because of the whitespace padding. In a manga volume, this would be like having three panels per page when the story needs six. All this negative space could hold comparison data, specs, or filters. Restraint is fine — emptiness is wasteful.',
+        comment: 'I am looking at eight products but only three are visible at a time because of the spacing and padding. In a manga volume, this would be like having three panels per page when the story needs six. All this negative space could hold comparison data, specs, or filters. Restraint is fine — emptiness is wasteful.',
       },
       {
         category: 'COMPONENTS',
@@ -1467,9 +1467,9 @@ const personaFindings: Record<string, PersonaEntry> = {
     observations: [
       {
         category: 'MOTION',
-        observation: 'No hover animations, no transitions, no interactive feedback beyond cursor change',
+        observation: 'Product cards have no hover animation — only the Add to Cart button responds with a color fill',
         verdict: 'needs-work',
-        comment: 'I hovered over every product card hoping for something — a zoom, a flip, a glow, anything. Nothing. Not even a shadow shift. This is the most static shopping experience I have ever seen. Shopping apps on my phone have more personality in their loading spinners.',
+        comment: 'The Add to Cart button changes color on hover, but the card itself? Dead. No zoom, no shadow lift, no glow. Shopping apps on my phone have more personality in their loading spinners. The button hover proves they know how to do transitions — they just chose not to for the cards.',
       },
       {
         category: 'COMPONENTS',
@@ -2077,9 +2077,9 @@ const personaFindings: Record<string, PersonaEntry> = {
     observations: [
       {
         category: 'LAYOUT',
-        observation: 'Asymmetric product grid with geometric interruptions creates an unprofessional presentation',
+        observation: 'Uniform product grid with rotating Memphis shadow colors creates a playful but unprofessional impression',
         verdict: 'needs-work',
-        comment: 'I screen-share product pages with clients regularly. This layout would prompt a "that is... creative" response — which in architecture means "I hate it but I am too polite to say so." The asymmetric grid does not communicate the reliability that commercial clients expect. Form should follow function; here, form follows fun.',
+        comment: 'I screen-share product pages with clients regularly. Pink, blue, yellow, and coral shadows rotating across identical cards would prompt a "that is... creative" response — which in architecture means "I hate it but I am too polite to say so." The candy-colored grid does not communicate the reliability that commercial clients expect. Form should follow function; here, form follows fun.',
       },
       {
         category: 'DECORATION',
@@ -2103,7 +2103,7 @@ const personaFindings: Record<string, PersonaEntry> = {
     observations: [
       {
         category: 'COMPONENTS',
-        observation: 'Product cards use gold-accented borders with geometric corner details and serif product names',
+        observation: 'Product cards use gold-accented double borders with serif product names',
         verdict: 'good',
         comment: 'Every product card feels like it belongs in a luxury catalog. The gold borders and serif names transform $12.99 banana peels into an investment piece. This is the Bloomberg Terminal of e-commerce — it communicates earned authority through visual precision. I would present this to a board of directors without a single qualifier.',
       },
@@ -2127,9 +2127,9 @@ const personaFindings: Record<string, PersonaEntry> = {
     observations: [
       {
         category: 'DECORATION',
-        observation: 'Geometric Art Deco patterns frame product cards with gold-accented corner motifs',
+        observation: 'Geometric Art Deco double borders frame each product card like a curated display case',
         verdict: 'good',
-        comment: 'The geometric corner motifs on each card are obsessively precise — every line at the same angle, every gold accent at the same weight. This is the Wes Anderson of e-commerce: perfectly symmetrical, deliberately crafted, delightful in its consistency. I want to frame the joy buzzer card and hang it in my kitchen.',
+        comment: 'The double gold borders on each card are obsessively precise — every line at the same weight, every gap the same width. This is the Wes Anderson of e-commerce: perfectly symmetrical, deliberately crafted, delightful in its consistency. I want to frame the joy buzzer card and hang it in my kitchen.',
       },
       {
         category: 'TYPOGRAPHY',

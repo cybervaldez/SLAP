@@ -4,49 +4,44 @@ Quick reference for all playbook skills. Use this to find the right skill for yo
 
 ## At a Glance
 
-| Skill | One-Liner | When to Use |
-|-------|-----------|-------------|
-| `/ux-planner` | Conversational UX advisor with options and tradeoffs | Planning new features |
-| `/ui-planner` | Visual design with ASCII galleries and previews | Establishing visual identity |
-| `/ui-review` | AI slop detector and styleguide compliance | After `/ui-planner`, before implementation |
-| `/create-task` | Implementation with built-in E2E tests | Building features |
-| `/coding-guard` | Anti-pattern scanner (fallbacks, silent failures) | After implementation |
-| `/cli-first` | Observability auditor (testIDs, state exposure) | After implementation |
-| `/ux-review` | Visual + behavioral UX verification via screenshots and navigation | After implementation |
-| `/e2e-guard` | Auto-generate missing E2E tests | After implementation |
-| `/e2e` | Full test orchestration with screenshots and click-through verification | Final verification |
-| `/e2e-investigate` | Root cause analysis for test failures | After `/e2e` fails 3+ times |
-| `/research` | Technology research and classification | Before using new tech |
-| `/team` | Expert personas for strategic advice | Strategic decisions |
-| `/kaizen` | User personas for real-world feedback | User perspective |
+| Skill | Phase | One-Liner | When to Use |
+|-------|-------|-----------|-------------|
+| `/ux-planner` | Development | Conversational UX advisor with options and tradeoffs | Planning new features |
+| `/ui-planner` | Development | Visual design with ASCII galleries and previews | Establishing visual identity |
+| `/research` | Development | Technology research and classification | Before using new tech |
+| `/create-task` | Production | Implementation with built-in E2E tests | Building features |
+| `/coding-guard` | Production | Anti-pattern scanner (fallbacks, silent failures) | After implementation |
+| `/cli-first` | Production | Observability auditor (testIDs, state exposure) | After implementation |
+| `/ui-review` | Release | AI slop detector and styleguide compliance | After `/ui-planner`, before implementation |
+| `/ux-review` | Release | Visual + behavioral UX verification via screenshots and navigation | After implementation |
+| `/e2e-guard` | Release | Auto-generate missing E2E tests | After implementation |
+| `/e2e` | Release | Full test orchestration with screenshots and click-through verification | Final verification |
+| `/e2e-investigate` | Release | Root cause analysis for test failures | After `/e2e` fails 3+ times |
+| `/team` | Any | Expert personas for strategic advice | Strategic decisions |
+| `/kaizen` | Any | User personas for real-world feedback | User perspective |
 
 ---
 
-## By Category
+## By Pipeline Phase
 
-### Planning Skills (Start Here)
+### Development (Plan & Design)
 - `/ux-planner` - Define interaction flows before building
 - `/ui-planner` - Establish visual identity and design tokens
-
-### Implementation Skill
-- `/create-task` - The main implementation skill with tests
-
-### Quality Gates (Run in Parallel)
-- `/coding-guard` - Code quality and anti-patterns
-- `/cli-first` - Observability for AI verification
-- `/ux-review` - User experience verification
-- `/e2e-guard` - Test coverage
-
-### Verification
-- `/e2e` - Full E2E test suite
-- `/e2e-investigate` - Debug test failures
-
-### Research
 - `/research` - Make skills tech-aware
 
-### Consultation (Anytime)
-- `/team` - Expert advice (Marketing, UX, Product, Technical)
-- `/kaizen` - User feedback (accessibility, usability)
+### Production (Build & Audit)
+- `/create-task` - The main implementation skill with tests
+- `/coding-guard` - Code quality and anti-patterns
+- `/cli-first` - Observability for AI verification
+
+### Release (Review & Feedback)
+- `/ui-review` - AI slop detection and styleguide compliance
+- `/ux-review` - User experience verification
+- `/e2e-guard` - Auto-generate missing E2E tests
+- `/e2e` - Full E2E test suite
+- `/e2e-investigate` - Debug test failures
+- `/team` - Expert panel advice (Marketing, UX, Product, Technical)
+- `/kaizen` - Audience feedback (accessibility, usability)
 
 ---
 

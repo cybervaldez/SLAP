@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="slop" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview I — The Toggle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   CSS CUSTOM PROPERTIES — THE DUAL STATE ENGINE
+   All visual properties defined as pairs. The data-mode attribute
+   on <html> controls which set is active.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Transition speed */
+  --t: 500ms;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── SLOP STATE (default) ─────────────────────────────────── */
+[data-mode="slop"] {
+  --bg: #f8f9fa;
+  --bg-alt: #ffffff;
+  --text: #333333;
+  --text-muted: #666666;
+  --accent: #6c5ce7;
+  --accent2: #a29bfe;
+  --accent-text: #ffffff;
+  --hero-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --hero-text: #ffffff;
+  --card-bg: rgba(255, 255, 255, 0.15);
+  --card-border: rgba(255, 255, 255, 0.25);
+  --card-bg-solid: #ffffff;
+  --card-border-solid: #e9ecef;
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --radius: 9999px;
+  --radius-card: 16px;
+  --radius-sm: 12px;
+  --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: monospace;
+  --font-weight-h: 600;
+  --letter-spacing-h: normal;
+  --text-transform-h: none;
+  --hero-h1-size: clamp(2rem, 5vw, 3rem);
+  --section-padding: 80px 24px;
+  --bar-bg: rgba(255, 255, 255, 0.85);
+  --bar-border: rgba(0, 0, 0, 0.08);
+  --bar-text: #333;
+  --toggle-track: #e0e0e0;
+  --toggle-knob: #6c5ce7;
+  --star-color: #ffc107;
+  --testimonial-bg: #f1f3f5;
+  --cta-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --border-width: 0px;
+  --border-color: transparent;
+}
+
+/* ─── STYLED STATE ─────────────────────────────────────────── */
+[data-mode="styled"] {
+  --bg: #1a1a2e;
+  --bg-alt: #16213e;
+  --text: #f5f0e8;
+  --text-muted: #b8b0a0;
+  --accent: #ffd700;
+  --accent2: #e6c200;
+  --accent-text: #1a1a2e;
+  --hero-bg: #1a1a2e;
+  --hero-text: #f5f0e8;
+  --card-bg: rgba(255, 215, 0, 0.05);
+  --card-border: rgba(255, 215, 0, 0.2);
+  --card-bg-solid: #16213e;
+  --card-border-solid: rgba(255, 215, 0, 0.15);
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  --radius: 0px;
+  --radius-card: 2px;
+  --radius-sm: 0px;
+  --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --font-weight-h: 700;
+  --letter-spacing-h: 0.05em;
+  --text-transform-h: uppercase;
+  --hero-h1-size: clamp(2.5rem, 7vw, 5rem);
+  --section-padding: 100px 24px;
+  --bar-bg: rgba(26, 26, 46, 0.95);
+  --bar-border: rgba(255, 215, 0, 0.15);
+  --bar-text: #f5f0e8;
+  --toggle-track: #2a2a4e;
+  --toggle-knob: #ffd700;
+  --star-color: #ffd700;
+  --testimonial-bg: #16213e;
+  --cta-bg: #1a1a2e;
+  --border-width: 2px;
+  --border-color: var(--accent);
+}
+
+/* ─── DARK THEME OVERRIDES (slop only) ─────────────────────── */
+[data-mode="slop"][data-theme="dark"] {
+  --bg: #1e1e2e;
+  --bg-alt: #2a2a3e;
+  --text: #e0e0e0;
+  --text-muted: #999;
+  --card-bg-solid: #2a2a3e;
+  --card-border-solid: #3a3a4e;
+  --card-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  --bar-bg: rgba(30, 30, 46, 0.9);
+  --bar-border: rgba(255,255,255,0.08);
+  --bar-text: #e0e0e0;
+  --testimonial-bg: #2a2a3e;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE RESET + TRANSITIONS
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+  transition: background var(--t) var(--ease), color var(--t) var(--ease);
+}
+
+/* Transition everything smoothly */
+section, .card, .toggle-bar, h1, h2, h3, p, a, button, input,
+.step, .logo-card, .testimonial-card, .cta-section {
+  transition: all var(--t) var(--ease);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTENT VISIBILITY — SLOP vs STYLED TEXT
+   ═══════════════════════════════════════════════════════════════ */
+.slop-content { display: block; }
+.styled-content { display: none; }
+[data-mode="styled"] .slop-content { display: none; }
+[data-mode="styled"] .styled-content { display: block; }
+
+/* Inline variants */
+span.slop-content { display: inline; }
+span.styled-content { display: none; }
+[data-mode="styled"] span.slop-content { display: none; }
+[data-mode="styled"] span.styled-content { display: inline; }
+
+/* ═══════════════════════════════════════════════════════════════
+   STICKY TOGGLE BAR
+   ═══════════════════════════════════════════════════════════════ */
+.toggle-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: var(--bar-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--bar-border);
+  color: var(--bar-text);
+  font-family: var(--font);
+}
+
+.bar-logo {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: var(--letter-spacing-h);
+}
+
+.bar-logo .logo-accent {
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+/* ─── MODE TOGGLE ──────────────────────────────────────────── */
+.mode-toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.mode-label {
+  opacity: 0.5;
+  transition: opacity var(--t) var(--ease);
+  cursor: default;
+  user-select: none;
+}
+
+.mode-label.active { opacity: 1; }
+
+.toggle-switch {
+  position: relative;
+  width: 56px;
+  height: 28px;
+  background: var(--toggle-track);
+  border-radius: 14px;
+  cursor: pointer;
+  border: 2px solid var(--card-border-solid);
+  transition: all var(--t) var(--ease);
+}
+
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  background: var(--toggle-knob);
+  border-radius: 50%;
+  transition: transform var(--t) var(--ease), background var(--t) var(--ease);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+[data-mode="styled"] .toggle-switch::after {
+  transform: translateX(28px);
+}
+
+/* ─── THEME TOGGLE ─────────────────────────────────────────── */
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--card-border-solid);
+  color: var(--bar-text);
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-family: var(--font);
+  transition: all var(--t) var(--ease);
+}
+.theme-toggle:hover { border-color: var(--accent); }
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTIONS — SHARED
+   ═══════════════════════════════════════════════════════════════ */
+section {
+  min-height: 100vh;
+  padding: var(--section-padding);
+  padding-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ─── FADE-IN ON SCROLL ────────────────────────────────────── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 1: HERO
+   ═══════════════════════════════════════════════════════════════ */
+.hero {
+  background: var(--hero-bg);
+  color: var(--hero-text);
+  text-align: center;
+  min-height: 100vh;
+  padding-top: 80px;
+}
+
+.hero h1 {
+  font-size: var(--hero-h1-size);
+  font-weight: var(--font-weight-h);
+  letter-spacing: var(--letter-spacing-h);
+  text-transform: var(--text-transform-h);
+  line-height: 1.1;
+  margin-bottom: 20px;
+  transition: all var(--t) var(--ease);
+}
+
+/* Styled state h1 uses monospace */
+[data-mode="styled"] .hero h1 {
+  font-family: var(--font-mono);
+}
+
+.hero .subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  max-width: 560px;
+  margin: 0 auto 36px;
+  opacity: 0.85;
+  line-height: 1.5;
+}
+
+.hero-btn {
+  display: inline-block;
+  padding: 14px 36px;
+  font-size: 1rem;
+  border-radius: var(--radius);
+  border: var(--border-width) solid var(--border-color);
+  cursor: pointer;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-family: var(--font);
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: var(--letter-spacing-h);
+  text-transform: var(--text-transform-h);
+  transition: all var(--t) var(--ease);
+}
+
+[data-mode="styled"] .hero-btn {
+  font-family: var(--font-mono);
+}
+
+.hero-btn:hover { opacity: 0.85; transform: translateY(-2px); }
+
+/* Glass cards in hero (slop only visual) */
+.glass-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-top: 48px;
+  width: 100%;
+  max-width: 700px;
+}
+
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all var(--t) var(--ease);
+  text-align: left;
+}
+
+[data-mode="styled"] .glass-card {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: var(--card-bg);
+  border: var(--border-width) solid var(--border-color);
+}
+
+.glass-card h3 { font-size: 1rem; margin-bottom: 6px; }
+.glass-card p { font-size: 0.85rem; opacity: 0.75; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 2: THE PROBLEM / WHY CHOOSE US
+   ═══════════════════════════════════════════════════════════════ */
+.problem-section {
+  background: var(--bg);
+}
+
+.section-heading {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.section-heading h2 {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: var(--font-weight-h);
+  letter-spacing: var(--letter-spacing-h);
+  text-transform: var(--text-transform-h);
+  margin-bottom: 12px;
+  transition: all var(--t) var(--ease);
+}
+
+[data-mode="styled"] .section-heading h2 {
+  font-family: var(--font-mono);
+}
+
+.section-heading p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: var(--card-bg-solid);
+  border: 1px solid var(--card-border-solid);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  box-shadow: var(--card-shadow);
+  transition: all var(--t) var(--ease);
+}
+
+[data-mode="styled"] .card {
+  border: var(--border-width) solid var(--border-color);
+}
+
+.card .emoji {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  display: block;
+  transition: all var(--t) var(--ease);
+}
+
+[data-mode="styled"] .card .emoji {
+  filter: grayscale(1) brightness(1.5);
+  opacity: 0.3;
+  font-size: 1.2rem;
+}
+
+.card h3 {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.card p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Strikethrough effect for styled mode */
+.buzzword {
+  transition: all var(--t) var(--ease);
+}
+
+[data-mode="styled"] .buzzword {
+  text-decoration: line-through;
+  opacity: 0.35;
+}
+
+.honest-text {
+  display: none;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+[data-mode="styled"] .honest-text {
+  display: inline;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 3: THE DISCOVERY / HOW IT WORKS
+   ═══════════════════════════════════════════════════════════════ */
+.discovery-section {
+  background: var(--bg-alt);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+  margin-top: 8px;
+}
+
+.step {
+  text-align: center;
+  padding: 32px;
+  position: relative;
+}
+
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  transition: all var(--t) var(--ease);
+}
+
+[data-mode="styled"] .step-number {
+  border-radius: 0;
+  font-family: var(--font-mono);
+}
+
+.step h3 {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.step p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 4: THE PROOF / TRUSTED BY
+   ═══════════════════════════════════════════════════════════════ */
+.proof-section {
+  background: var(--bg);
+}
+
+/* Slop: fake logos grid */
+.logos-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.logo-card {
+  background: var(--card-bg-solid);
+  border: 1px solid var(--card-border-solid);
+  border-radius: var(--radius-card);
+  padding: 20px 32px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  box-shadow: var(--card-shadow);
+  transition: all var(--t) var(--ease);
+}
+
+[data-mode="styled"] .logo-card {
+  border: var(--border-width) solid var(--border-color);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 16px 24px;
+}
+
+.rating-display {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-top: 16px;
+}
+
+.rating-display .stars {
+  color: var(--star-color);
+  font-size: 1.8rem;
+  letter-spacing: 4px;
+}
+
+/* Styled: variation score cards */
+.variation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.variation-card {
+  background: var(--card-bg-solid);
+  border: var(--border-width) solid var(--border-color);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  text-align: center;
+  transition: all var(--t) var(--ease);
+}
+
+.variation-card .var-name {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.variation-card .var-score {
+  font-size: 2rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text);
+}
+
+.variation-card .var-score span {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.variation-card .var-hook {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 5: THE TENSION / TESTIMONIALS
+   ═══════════════════════════════════════════════════════════════ */
+.tension-section {
+  background: var(--bg-alt);
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.testimonial-card {
+  background: var(--testimonial-bg);
+  border-radius: var(--radius-card);
+  padding: 32px;
+  position: relative;
+  border: 1px solid var(--card-border-solid);
+  transition: all var(--t) var(--ease);
+}
+
+[data-mode="styled"] .testimonial-card {
+  border: var(--border-width) solid var(--border-color);
+  background: var(--card-bg-solid);
+}
+
+.testimonial-card .quote-mark {
+  font-size: 3rem;
+  color: var(--accent);
+  line-height: 1;
+  opacity: 0.3;
+  margin-bottom: 8px;
+  transition: all var(--t) var(--ease);
+}
+
+[data-mode="styled"] .testimonial-card .quote-mark {
+  opacity: 0.6;
+  font-family: var(--font-mono);
+}
+
+.testimonial-card blockquote {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  font-style: italic;
+  color: var(--text);
+}
+
+[data-mode="styled"] .testimonial-card blockquote {
+  font-style: normal;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.testimonial-card .attribution {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+[data-mode="styled"] .testimonial-card .attribution {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTION 6: CTA
+   ═══════════════════════════════════════════════════════════════ */
+.cta-section {
+  background: var(--cta-bg);
+  text-align: center;
+  min-height: 60vh;
+}
+
+[data-mode="slop"] .cta-section {
+  color: #ffffff;
+}
+
+.cta-section h2 {
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: var(--font-weight-h);
+  letter-spacing: var(--letter-spacing-h);
+  text-transform: var(--text-transform-h);
+  margin-bottom: 16px;
+}
+
+[data-mode="styled"] .cta-section h2 {
+  font-family: var(--font-mono);
+}
+
+.cta-section p {
+  font-size: 1.1rem;
+  margin-bottom: 32px;
+  opacity: 0.85;
+}
+
+[data-mode="slop"] .cta-section p {
+  color: rgba(255,255,255,0.85);
+}
+
+.cta-form {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.cta-form input {
+  padding: 14px 20px;
+  font-size: 1rem;
+  border-radius: var(--radius);
+  border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-family: var(--font);
+  flex: 1;
+  min-width: 200px;
+  transition: all var(--t) var(--ease);
+  outline: none;
+}
+
+.cta-form input::placeholder { color: rgba(255,255,255,0.6); }
+.cta-form input:focus { border-color: rgba(255,255,255,0.6); }
+
+.cta-form button {
+  padding: 14px 32px;
+  font-size: 1rem;
+  border-radius: var(--radius);
+  border: none;
+  background: #fff;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all var(--t) var(--ease);
+}
+
+.cta-gallery-btn {
+  display: inline-block;
+  padding: 16px 40px;
+  font-size: 1.1rem;
+  border-radius: var(--radius);
+  border: var(--border-width) solid var(--border-color);
+  background: var(--accent);
+  color: var(--accent-text);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--t) var(--ease);
+}
+
+.cta-gallery-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FIRST-TOGGLE FLASH — the "wow" moment
+   ═══════════════════════════════════════════════════════════════ */
+.flash-overlay {
+  position: fixed;
+  inset: 0;
+  background: #ffd700;
+  z-index: 99999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+.flash-overlay.flash {
+  opacity: 0.15;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HINT PULSE — draws attention to the toggle
+   ═══════════════════════════════════════════════════════════════ */
+.hint-pulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 18px;
+  border: 2px solid var(--accent);
+  animation: hintPulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.08); }
+}
+
+.hint-pulse.dismissed { display: none; }
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════════════════ */
+footer {
+  padding: 32px 24px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  background: var(--bg);
+  border-top: 1px solid var(--card-border-solid);
+  transition: all var(--t) var(--ease);
+}
+
+footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .toggle-bar {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  .bar-logo { font-size: 12px; }
+  .mode-toggle-wrap { gap: 8px; font-size: 11px; }
+  .toggle-switch { width: 48px; height: 24px; }
+  .toggle-switch::after { width: 16px; height: 16px; }
+  [data-mode="styled"] .toggle-switch::after { transform: translateX(24px); }
+  .theme-toggle { padding: 4px 10px; font-size: 11px; }
+
+  section { padding: 60px 16px; padding-top: 80px; }
+  .feature-grid, .steps { grid-template-columns: 1fr; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .glass-cards { grid-template-columns: 1fr; }
+  .variation-grid { grid-template-columns: repeat(2, 1fr); }
+  .logos-grid { gap: 12px; }
+  .logo-card { padding: 14px 20px; font-size: 0.9rem; }
+}
+
+@media (max-width: 380px) {
+  .bar-logo .logo-subtitle { display: none; }
+  .variation-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ FLASH OVERLAY ═══ -->
+<div class="flash-overlay" id="flashOverlay"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     STICKY TOGGLE BAR
+     ═══════════════════════════════════════════════════════════════ -->
+<header class="toggle-bar">
+  <div class="bar-logo">
+    <span class="slop-content"><span class="logo-accent">SLAP!</span><span class="logo-subtitle"> &mdash; Design Study</span></span>
+    <span class="styled-content"><span class="logo-accent">SLAP!</span><span class="logo-subtitle"> &mdash; The Anti-Slop Design Study</span></span>
+  </div>
+
+  <div class="mode-toggle-wrap">
+    <span class="mode-label" id="labelSlop">SLOP</span>
+    <div class="toggle-switch" data-testid="slop-toggle" id="modeToggle" role="switch" aria-checked="false" tabindex="0" aria-label="Toggle between slop and styled modes">
+      <div class="hint-pulse" id="hintPulse"></div>
+    </div>
+    <span class="mode-label" id="labelStyled">STYLED</span>
+  </div>
+
+  <button class="theme-toggle" data-testid="theme-toggle" id="themeToggle" aria-label="Toggle light/dark theme">
+    <span class="slop-content">&#9790; Dark</span>
+    <span class="styled-content">THEME</span>
+  </button>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 1: HERO
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="hero" data-testid="section-title" id="sectionTitle">
+  <div class="container" style="display:flex;flex-direction:column;align-items:center;">
+
+    <!-- SLOP HERO -->
+    <div class="slop-content">
+      <h1>Revolutionize Your Design Workflow</h1>
+      <p class="subtitle">Empower your team to achieve more with our AI-powered design intelligence platform. Seamlessly integrate, effortlessly scale, endlessly innovate.</p>
+      <a href="#" class="hero-btn">Get Started Free</a>
+      <div class="glass-cards">
+        <div class="glass-card">
+          <h3>&#x2728; AI-Powered</h3>
+          <p>Leverage cutting-edge machine learning to transform your design process.</p>
+        </div>
+        <div class="glass-card">
+          <h3>&#x1F680; Lightning Fast</h3>
+          <p>Deploy in minutes. Scale to millions. No infrastructure needed.</p>
+        </div>
+        <div class="glass-card">
+          <h3>&#x1F504; Seamless</h3>
+          <p>Integrates with your existing workflow. Zero friction onboarding.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STYLED HERO -->
+    <div class="styled-content">
+      <h1>SLAP!</h1>
+      <p class="subtitle">The Anti-Slop Design Study. Same words. Nine designs. The difference is everything.</p>
+      <a href="#sectionCta" class="hero-btn">See the proof</a>
+      <div class="glass-cards">
+        <div class="glass-card">
+          <h3>The Performer</h3>
+          <p>Intentionally bad AI content. The constant in the experiment.</p>
+        </div>
+        <div class="glass-card">
+          <h3>The Critics</h3>
+          <p>Expert panel + real personas tearing it apart from every angle.</p>
+        </div>
+        <div class="glass-card">
+          <h3>The Redemption</h3>
+          <p>Eight design systems proving that aesthetics transform meaning.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 2: THE PROBLEM / WHY CHOOSE US
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="problem-section" data-testid="section-problem" id="sectionProblem">
+  <div class="container fade-in">
+
+    <div class="section-heading">
+      <!-- SLOP -->
+      <div class="slop-content">
+        <h2>Why Choose Us?</h2>
+        <p>Our platform delivers best-in-class solutions for modern teams.</p>
+      </div>
+      <!-- STYLED -->
+      <div class="styled-content">
+        <h2>The Problem</h2>
+        <p>Every AI-generated page looks the same. Here is what they all have in common.</p>
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <!-- Card 1 -->
+      <div class="card">
+        <span class="emoji">&#x1F4A1;</span>
+        <div class="slop-content">
+          <h3>Intelligent Insights</h3>
+          <p><span class="buzzword">Leverage actionable analytics</span> to drive meaningful engagement across your entire design ecosystem.</p>
+        </div>
+        <div class="styled-content">
+          <h3>The Purple Gradient</h3>
+          <p>135-degree linear gradient from #667eea to #764ba2. The single most common AI-generated color choice. <span class="honest-text">You just saw it in the hero above.</span></p>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="card">
+        <span class="emoji">&#x26A1;</span>
+        <div class="slop-content">
+          <h3>Blazing Performance</h3>
+          <p><span class="buzzword">Supercharge your workflow</span> with real-time collaboration and seamless deployment pipelines.</p>
+        </div>
+        <div class="styled-content">
+          <h3>The Rounded-Full Pill</h3>
+          <p>border-radius: 9999px on every button. No hierarchy, no intention, no design opinion. Just the default. <span class="honest-text">Every button above had it.</span></p>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="card">
+        <span class="emoji">&#x1F6E1;&#xFE0F;</span>
+        <div class="slop-content">
+          <h3>Enterprise Security</h3>
+          <p><span class="buzzword">Future-proof your infrastructure</span> with SOC2-compliant, military-grade encryption at every layer.</p>
+        </div>
+        <div class="styled-content">
+          <h3>The Glassmorphism Card</h3>
+          <p>backdrop-filter: blur(12px) over a gradient. Looks "modern." Says nothing. Content floats in frosted glass that obscures rather than frames. <span class="honest-text">Three of them were in the hero.</span></p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 3: THE DISCOVERY / HOW IT WORKS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="discovery-section" data-testid="section-discovery" id="sectionDiscovery">
+  <div class="container fade-in">
+
+    <div class="section-heading">
+      <div class="slop-content">
+        <h2>How It Works</h2>
+        <p>Three simple steps to transform your design process.</p>
+      </div>
+      <div class="styled-content">
+        <h2>The Discovery</h2>
+        <p>We built the worst page on purpose. Then we studied what happened.</p>
+      </div>
+    </div>
+
+    <div class="steps">
+      <!-- Step 1 -->
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="slop-content">
+          <h3>Sign Up</h3>
+          <p>Create your account in seconds. No credit card required. Start your free trial instantly.</p>
+        </div>
+        <div class="styled-content">
+          <h3>The Performer</h3>
+          <p>We wrote intentionally bad AI content &mdash; proud-slop that brags about qualities it doesn't have. It stays identical across all nine designs.</p>
+        </div>
+      </div>
+      <!-- Step 2 -->
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="slop-content">
+          <h3>Configure</h3>
+          <p>Customize your workspace. Set up integrations. Import your existing assets in one click.</p>
+        </div>
+        <div class="styled-content">
+          <h3>The Critics</h3>
+          <p>Five experts and eighteen personas evaluate each design. The Panel scores craft. The Crowd shares personal reactions. The Crew explains why slop ships.</p>
+        </div>
+      </div>
+      <!-- Step 3 -->
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="slop-content">
+          <h3>Scale</h3>
+          <p>Grow effortlessly. Our platform scales with your ambition. Enterprise-ready from day one.</p>
+        </div>
+        <div class="styled-content">
+          <h3>The Redemption</h3>
+          <p>Eight distinct design systems applied to the same content. Brutalist exposes. Neo-Minimal refines. Art Deco elevates. Same words, different worlds.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 4: THE PROOF / TRUSTED BY
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="proof-section" data-testid="section-proof" id="sectionProof">
+  <div class="container fade-in">
+
+    <div class="section-heading">
+      <div class="slop-content">
+        <h2>Trusted by Industry Leaders</h2>
+        <p>Join thousands of teams already transforming their workflow.</p>
+      </div>
+      <div class="styled-content">
+        <h2>The Proof</h2>
+        <p>Same words. Nine designs. The scores tell the story.</p>
+      </div>
+    </div>
+
+    <!-- SLOP: Fake logos + rating -->
+    <div class="slop-content">
+      <div class="logos-grid">
+        <div class="logo-card">Synergy Labs</div>
+        <div class="logo-card">NovaTech</div>
+        <div class="logo-card">Quantum Dynamics</div>
+        <div class="logo-card">Apex Solutions</div>
+        <div class="logo-card">Vertex AI</div>
+        <div class="logo-card">Pinnacle Corp</div>
+      </div>
+      <div class="rating-display">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>4.9 out of 5 &mdash; Based on 2,847 reviews</p>
+      </div>
+    </div>
+
+    <!-- STYLED: Variation scores -->
+    <div class="styled-content">
+      <div class="variation-grid">
+        <div class="variation-card">
+          <div class="var-name">SLAP!</div>
+          <div class="var-score">2.4 <span>/ 10</span></div>
+          <div class="var-hook">No design opinion</div>
+        </div>
+        <div class="variation-card">
+          <div class="var-name">Brutalist</div>
+          <div class="var-score">6.8 <span>/ 10</span></div>
+          <div class="var-hook">Raw &amp; honest</div>
+        </div>
+        <div class="variation-card">
+          <div class="var-name">Neo-Minimal</div>
+          <div class="var-score">7.2 <span>/ 10</span></div>
+          <div class="var-hook">Less is more</div>
+        </div>
+        <div class="variation-card">
+          <div class="var-name">Maximalist</div>
+          <div class="var-score">6.0 <span>/ 10</span></div>
+          <div class="var-hook">More is more</div>
+        </div>
+        <div class="variation-card">
+          <div class="var-name">Dark Industrial</div>
+          <div class="var-score">7.0 <span>/ 10</span></div>
+          <div class="var-hook">Built to spec</div>
+        </div>
+        <div class="variation-card">
+          <div class="var-name">Warm Organic</div>
+          <div class="var-score">6.6 <span>/ 10</span></div>
+          <div class="var-hook">Grown, not made</div>
+        </div>
+        <div class="variation-card">
+          <div class="var-name">Retro-Futurism</div>
+          <div class="var-score">5.8 <span>/ 10</span></div>
+          <div class="var-hook">Tomorrow, today</div>
+        </div>
+        <div class="variation-card">
+          <div class="var-name">Memphis</div>
+          <div class="var-score">5.4 <span>/ 10</span></div>
+          <div class="var-hook">Post-modern pop</div>
+        </div>
+        <div class="variation-card">
+          <div class="var-name">Art Deco</div>
+          <div class="var-score">7.6 <span>/ 10</span></div>
+          <div class="var-hook">Gilded geometry</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 5: THE TENSION / TESTIMONIALS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="tension-section" data-testid="section-tension" id="sectionTension">
+  <div class="container fade-in">
+
+    <div class="section-heading">
+      <div class="slop-content">
+        <h2>What Our Customers Say</h2>
+        <p>Don't take our word for it &mdash; hear from our amazing users.</p>
+      </div>
+      <div class="styled-content">
+        <h2>The Tension</h2>
+        <p>Each design has a different relationship to the same flawed content.</p>
+      </div>
+    </div>
+
+    <div class="testimonials-grid">
+      <!-- Testimonial 1 -->
+      <div class="testimonial-card">
+        <div class="quote-mark">&ldquo;</div>
+        <div class="slop-content">
+          <blockquote>This product completely transformed how our team collaborates. We saw a 300% increase in productivity within the first month. Absolutely game-changing.</blockquote>
+          <div class="attribution">&mdash; Jane D., CEO at InnovateCorp</div>
+        </div>
+        <div class="styled-content">
+          <blockquote>Brutalist exposes slop harshly. The 900-weight uppercase, the monospace accents, the stark black-and-white &mdash; there is nowhere for bad content to hide. The honest framing reveals the content's emptiness.</blockquote>
+          <div class="attribution">DESIGN EXPERT &mdash; ON BRUTALIST</div>
+        </div>
+      </div>
+      <!-- Testimonial 2 -->
+      <div class="testimonial-card">
+        <div class="quote-mark">&ldquo;</div>
+        <div class="slop-content">
+          <blockquote>I've tried every tool on the market, and nothing comes close. The seamless integration with our existing workflow made adoption effortless.</blockquote>
+          <div class="attribution">&mdash; Mark S., CTO at TechForward</div>
+        </div>
+        <div class="styled-content">
+          <blockquote>Warm Organic hides flaws gently. The earth tones, rounded edges, and soft shadows create comfort that makes slop almost tolerable. You don't notice the content is empty because the design feels like a hug.</blockquote>
+          <div class="attribution">UX EXPERT &mdash; ON WARM ORGANIC</div>
+        </div>
+      </div>
+      <!-- Testimonial 3 -->
+      <div class="testimonial-card">
+        <div class="quote-mark">&ldquo;</div>
+        <div class="slop-content">
+          <blockquote>Finally, a platform that actually delivers on its promises. Our design velocity doubled and our team has never been happier. Five stars, would recommend to everyone.</blockquote>
+          <div class="attribution">&mdash; Sarah L., Chief Innovation Officer at Synergy Labs</div>
+        </div>
+        <div class="styled-content">
+          <blockquote>Art Deco raises expectations it cannot meet. The gold accents and geometric patterns promise luxury, but the content underneath is still the same proud-slop. The gap between framing and substance becomes a broken promise.</blockquote>
+          <div class="attribution">PRODUCT EXPERT &mdash; ON ART DECO</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 6: CTA
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cta-section" data-testid="section-cta" id="sectionCta">
+  <div class="container fade-in">
+
+    <!-- SLOP CTA -->
+    <div class="slop-content">
+      <h2>Start Your Free Trial Today</h2>
+      <p>Join 10,000+ teams already transforming their design workflow. No credit card required.</p>
+      <div class="cta-form">
+        <input type="email" placeholder="Enter your email address" aria-label="Email address">
+        <button type="button">Get Started Free</button>
+      </div>
+    </div>
+
+    <!-- STYLED CTA -->
+    <div class="styled-content">
+      <h2>See for yourself.</h2>
+      <p>Same content. Nine costumes. The difference is the design.</p>
+      <a href="#" class="cta-gallery-btn" data-testid="cta-gallery">Enter the Gallery &rarr;</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="slop-content">
+    &copy; 2026 DesignFlow Inc. All rights reserved. &nbsp;|&nbsp; <a href="#">Privacy</a> &nbsp;|&nbsp; <a href="#">Terms</a> &nbsp;|&nbsp; <a href="#">Careers</a>
+  </div>
+  <div class="styled-content">
+    <a href="#">SLAP!</a> &mdash; The Anti-Slop Design Study. Design cannot save bad content, but it can expose or elevate it.
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+
+  const html = document.documentElement;
+  const modeToggle = document.getElementById('modeToggle');
+  const themeToggle = document.getElementById('themeToggle');
+  const labelSlop = document.getElementById('labelSlop');
+  const labelStyled = document.getElementById('labelStyled');
+  const hintPulse = document.getElementById('hintPulse');
+  const flashOverlay = document.getElementById('flashOverlay');
+
+  let hasToggledOnce = false;
+
+  // ─── MODE STATE ─────────────────────────────────────────────
+  function getMode() {
+    return html.getAttribute('data-mode');
+  }
+
+  function setMode(mode) {
+    html.setAttribute('data-mode', mode);
+    modeToggle.setAttribute('aria-checked', mode === 'styled' ? 'true' : 'false');
+    labelSlop.classList.toggle('active', mode === 'slop');
+    labelStyled.classList.toggle('active', mode === 'styled');
+
+    // Update theme toggle text
+    if (mode === 'slop') {
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      themeToggle.querySelector('.slop-content').innerHTML = isDark ? '&#9788; Light' : '&#9790; Dark';
+    }
+  }
+
+  function toggleMode() {
+    const current = getMode();
+    const next = current === 'slop' ? 'styled' : 'slop';
+
+    // First toggle: flash effect for the "wow" moment
+    if (!hasToggledOnce && next === 'styled') {
+      hasToggledOnce = true;
+      hintPulse.classList.add('dismissed');
+
+      // Brief gold flash
+      flashOverlay.classList.add('flash');
+      setTimeout(function() {
+        flashOverlay.classList.remove('flash');
+      }, 300);
+    }
+
+    setMode(next);
+  }
+
+  // ─── THEME STATE ────────────────────────────────────────────
+  function toggleTheme() {
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+
+    // Update button text for slop mode
+    const slopText = themeToggle.querySelector('.slop-content');
+    slopText.innerHTML = next === 'dark' ? '&#9788; Light' : '&#9790; Dark';
+  }
+
+  // ─── EVENT LISTENERS ───────────────────────────────────────
+  modeToggle.addEventListener('click', toggleMode);
+  modeToggle.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleMode();
+    }
+  });
+
+  themeToggle.addEventListener('click', toggleTheme);
+
+  // ─── SCROLL FADE-IN ────────────────────────────────────────
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -50px 0px'
+  });
+
+  document.querySelectorAll('.fade-in').forEach(function(el) {
+    observer.observe(el);
+  });
+
+  // ─── INITIALIZE ────────────────────────────────────────────
+  // Default: slop mode, light theme
+  setMode('slop');
+  labelSlop.classList.add('active');
+
+  // Start hint pulse after a short delay
+  setTimeout(function() {
+    if (!hasToggledOnce) {
+      hintPulse.style.opacity = '1';
+    }
+  }, 2000);
+
+})();
+</script>
+</body>
+</html>

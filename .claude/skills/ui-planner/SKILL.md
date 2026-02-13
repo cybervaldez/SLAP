@@ -6,6 +6,8 @@ argument-hint: [design context or feature description]
 
 ## TL;DR
 
+**Phase:** Development
+
 **What:** Interactive visual design advisor. ASCII galleries → user selects → HTML preview generated.
 
 **When:** After `/ux-planner` defines flows, before implementation.

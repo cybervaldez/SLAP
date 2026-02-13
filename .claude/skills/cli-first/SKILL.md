@@ -6,6 +6,8 @@ argument-hint: [--recent | --design "feature"]
 
 ## TL;DR
 
+**Phase:** Production
+
 **What:** Audit code for observability - testIDs, state exposure, token-efficient verification patterns.
 
 **When:** After `/create-task` (use `--recent`), or before implementation (use `--design`).

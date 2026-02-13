@@ -6,6 +6,8 @@ argument-hint: <technology name>
 
 ## TL;DR
 
+**Phase:** Development
+
 **What:** Research a technology, classify its domain, document pipeline impact.
 
 **When:** Before using a new library/framework. Enables tech-aware skills.

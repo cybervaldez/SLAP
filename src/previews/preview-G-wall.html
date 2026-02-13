@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Preview G: The Wall</title>
+<style>
+  :root {
+    --bg: #000;
+    --fg: #fff;
+    --red: #ff0000;
+    --border-w: 5px;
+    --sans: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+    --mono: 'Courier New', Courier, monospace;
+  }
+  [data-theme="light"] {
+    --bg: #fff;
+    --fg: #000;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.3;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 10000;
+    background: var(--fg);
+    color: var(--bg);
+    border: var(--border-w) solid var(--fg);
+    padding: 6px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 0;
+    line-height: 1;
+  }
+  .theme-toggle:hover {
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red);
+  }
+
+  /* ── SECTION BASE ── */
+  .section {
+    position: relative;
+    opacity: 0;
+  }
+  .section.visible {
+    opacity: 1;
+    transition: opacity 100ms step-end;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .label {
+    font-family: var(--mono);
+    font-size: clamp(11px, 1.2vw, 14px);
+    font-weight: 700;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 8px;
+    display: block;
+  }
+  .headline {
+    font-family: var(--sans);
+    font-weight: 900;
+    font-size: clamp(2.5rem, 9vw, 8rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin: 0;
+    padding: 0;
+  }
+  .headline--mega {
+    font-size: clamp(4rem, 18vw, 20rem);
+    line-height: 0.85;
+  }
+  .body-narrow {
+    max-width: 540px;
+    font-size: clamp(13px, 1.4vw, 16px);
+    line-height: 1.5;
+    font-family: var(--mono);
+  }
+  .body-narrow--left { margin-right: auto; }
+  .small {
+    font-family: var(--mono);
+    font-size: clamp(11px, 1.1vw, 13px);
+    letter-spacing: .05em;
+    line-height: 1.5;
+  }
+
+  /* ── FULL BLEED SECTION ── */
+  .full-bleed {
+    width: 100%;
+    padding: 60px 24px;
+    border-bottom: var(--border-w) solid var(--fg);
+  }
+  .full-bleed--tight {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+
+  /* ── THICK RED HR ── */
+  .hr-red {
+    border: none;
+    height: 6px;
+    background: var(--red);
+    margin: 20px 0;
+    border-radius: 0;
+  }
+
+  /* ── SPECIMEN BOX ── */
+  .specimen-box {
+    border: var(--border-w) solid var(--fg);
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+    margin: 24px 0;
+    max-width: 700px;
+  }
+  .specimen-stamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-18deg);
+    font-family: var(--sans);
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 6rem);
+    text-transform: uppercase;
+    color: var(--red);
+    border: 6px solid var(--red);
+    padding: 4px 24px;
+    letter-spacing: .15em;
+    opacity: 0.35;
+    pointer-events: none;
+    white-space: nowrap;
+    border-radius: 0;
+  }
+  .specimen-content {
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.6;
+  }
+  .specimen-content .fake-heading {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .specimen-content .fake-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 8px 24px;
+    background: linear-gradient(135deg, #a855f7, #6366f1);
+    color: #fff;
+    font-size: 13px;
+    border-radius: 9999px;
+    font-family: 'Inter', var(--sans);
+  }
+
+  /* ── LAYER BLOCKS ── */
+  .layer-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 32px 0;
+    max-width: 700px;
+  }
+  .layer {
+    border-left: 6px solid var(--fg);
+    padding: 16px 20px;
+    font-family: var(--mono);
+    font-size: clamp(13px, 1.3vw, 15px);
+    line-height: 1.5;
+  }
+  .layer + .layer {
+    border-top: 1px solid var(--fg);
+  }
+  .layer strong {
+    font-family: var(--sans);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    font-size: clamp(14px, 1.5vw, 17px);
+  }
+
+  /* ── VARIATION GRID ── */
+  .grid-9 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin: 32px 0;
+    max-width: 840px;
+  }
+  .grid-card {
+    border: var(--border-w) solid var(--fg);
+    padding: 20px 16px;
+    margin: calc(var(--border-w) * -0.5);
+    text-align: center;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .grid-card-name {
+    font-family: var(--sans);
+    font-weight: 900;
+    font-size: clamp(11px, 1.4vw, 16px);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    line-height: 1.2;
+  }
+  .grid-card-score {
+    font-family: var(--mono);
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    line-height: 1;
+  }
+  @media (max-width: 540px) {
+    .grid-9 { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ── TENSION ENTRIES ── */
+  .tension-list {
+    margin: 32px 0;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .tension-entry {
+    padding: 16px 0;
+    border-bottom: 2px solid var(--fg);
+    font-family: var(--mono);
+    font-size: clamp(13px, 1.4vw, 16px);
+    line-height: 1.5;
+  }
+  .tension-entry:first-child {
+    border-top: 2px solid var(--fg);
+  }
+  .tension-entry strong {
+    font-family: var(--sans);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .tension-arrow {
+    color: var(--red);
+    font-weight: 700;
+  }
+
+  /* ── INVERTED SECTION (author notes) ── */
+  .section--inverted {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .section--inverted .label {
+    color: var(--red);
+  }
+  .section--inverted .hr-red {
+    background: var(--red);
+  }
+  .section--inverted blockquote {
+    border-left: 6px solid var(--red);
+  }
+
+  /* ── BLOCKQUOTE ── */
+  blockquote {
+    border-left: 6px solid var(--fg);
+    padding: 12px 20px;
+    margin: 24px 0;
+    font-family: var(--mono);
+    font-size: clamp(13px, 1.4vw, 16px);
+    line-height: 1.5;
+    font-style: normal;
+    border-radius: 0;
+  }
+
+  /* ── CTA BUTTON ── */
+  .cta-btn {
+    display: inline-block;
+    padding: 16px 40px;
+    border: var(--border-w) solid var(--fg);
+    background: transparent;
+    color: var(--fg);
+    font-family: var(--sans);
+    font-weight: 900;
+    font-size: clamp(16px, 2vw, 22px);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 0;
+    transition: none;
+    margin: 16px 0;
+    line-height: 1;
+  }
+  .cta-btn:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .secondary-link {
+    display: block;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--fg);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    margin-top: 16px;
+    letter-spacing: .05em;
+  }
+  .secondary-link:hover {
+    color: var(--red);
+  }
+
+  /* ── SCORE HIGHLIGHT ── */
+  .red-text {
+    color: var(--red);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .full-bleed { padding: 40px 16px; }
+    .specimen-box { padding: 24px 16px; }
+    .layer { padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- THEME TOGGLE -->
+<button class="theme-toggle" data-testid="theme-toggle" onclick="toggleTheme()">INV</button>
+
+<!-- ═══════════ 1. TITLE ═══════════ -->
+<section class="section full-bleed" data-testid="section-title" style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;">
+  <div class="headline headline--mega">SLAP!</div>
+  <div class="small" style="margin-top:16px;">THE ANTI-SLOP DESIGN STUDY</div>
+  <hr class="hr-red" style="max-width:100%;">
+  <div class="small" style="margin-top:8px;max-width:540px;opacity:0.7;">What happens when you let AI write your website... and then roast it</div>
+</section>
+
+<!-- ═══════════ 2. THE PROBLEM ═══════════ -->
+<section class="section full-bleed" data-testid="section-problem">
+  <span class="label">PROBLEM</span>
+  <div class="headline" style="margin-bottom:32px;">EVERY AI PAGE LOOKS THE SAME.</div>
+
+  <div class="specimen-box">
+    <div class="specimen-stamp">SPECIMEN</div>
+    <div class="specimen-content">
+      <div class="fake-heading">Revolutionize Your Workflow</div>
+      <p>Unlock the power of next-generation AI to streamline your processes, boost productivity, and transform the way your team collaborates. Our cutting-edge platform leverages machine learning to deliver actionable insights in real time.</p>
+      <span class="fake-btn">Get Started Free</span>
+    </div>
+  </div>
+
+  <div class="body-narrow body-narrow--left" style="margin-top:24px;">
+    Purple gradient. Inter font. Rounded-full buttons. "Revolutionize your workflow." You've seen this page a thousand times.
+  </div>
+</section>
+
+<!-- ═══════════ 3. THE DISCOVERY ═══════════ -->
+<section class="section full-bleed" data-testid="section-discovery">
+  <span class="label">DISCOVERY</span>
+  <div class="headline" style="margin-bottom:32px;">WE BUILT THE WORST PAGE ON PURPOSE.</div>
+
+  <div class="layer-stack">
+    <div class="layer">
+      <strong>LAYER 1 &mdash; THE PERFORMER</strong><br>
+      AI copy. Unedited. Proud of itself.
+    </div>
+    <div class="layer">
+      <strong>LAYER 2 &mdash; THE CRITICS</strong><br>
+      Five expert personas. Zero mercy.
+    </div>
+    <div class="layer">
+      <strong>LAYER 3 &mdash; REDEMPTION</strong><br>
+      Can design rescue doomed content?
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 4. THE PROOF ═══════════ -->
+<section class="section full-bleed" data-testid="section-proof">
+  <span class="label">PROOF</span>
+  <div class="headline">SAME WORDS. NINE DESIGNS.</div>
+  <div class="headline red-text" style="font-size:clamp(1.5rem,5vw,4rem);margin-top:8px;margin-bottom:32px;">SCORES FROM 2 TO 8.</div>
+
+  <div class="grid-9">
+    <div class="grid-card">
+      <div class="grid-card-name">BRUTALIST</div>
+      <div class="grid-card-score">7</div>
+    </div>
+    <div class="grid-card">
+      <div class="grid-card-name">SWISS</div>
+      <div class="grid-card-score">8</div>
+    </div>
+    <div class="grid-card">
+      <div class="grid-card-name">GLASSMORPHISM</div>
+      <div class="grid-card-score">3</div>
+    </div>
+    <div class="grid-card">
+      <div class="grid-card-name">ART DECO</div>
+      <div class="grid-card-score">6</div>
+    </div>
+    <div class="grid-card">
+      <div class="grid-card-name">SCANDINAVIAN</div>
+      <div class="grid-card-score">5</div>
+    </div>
+    <div class="grid-card">
+      <div class="grid-card-name">MEMPHIS</div>
+      <div class="grid-card-score">4</div>
+    </div>
+    <div class="grid-card">
+      <div class="grid-card-name">NEO-POP</div>
+      <div class="grid-card-score">5</div>
+    </div>
+    <div class="grid-card">
+      <div class="grid-card-name">WARM ORGANIC</div>
+      <div class="grid-card-score">2</div>
+    </div>
+    <div class="grid-card">
+      <div class="grid-card-name">CORPORATE</div>
+      <div class="grid-card-score">3</div>
+    </div>
+  </div>
+
+  <div class="small" style="margin-top:16px;letter-spacing:.1em;">IDENTICAL CONTENT. WILDLY DIFFERENT REACTIONS.</div>
+</section>
+
+<!-- ═══════════ 5. THE TENSION ═══════════ -->
+<section class="section full-bleed" data-testid="section-tension">
+  <span class="label">TENSION</span>
+  <div class="headline">DESIGN CAN'T SAVE BAD CONTENT.</div>
+  <div class="body-narrow body-narrow--left" style="margin-top:16px;margin-bottom:24px;">But it can expose or elevate it.</div>
+
+  <div class="tension-list">
+    <div class="tension-entry">
+      <strong>BRUTALIST</strong> <span class="tension-arrow">&rarr;</span> <strong>EXPOSES</strong><br>
+      Strips away polish. Nowhere to hide. The words stand naked.
+    </div>
+    <div class="tension-entry">
+      <strong>WARM ORGANIC</strong> <span class="tension-arrow">&rarr;</span> <strong>HIDES</strong><br>
+      Wraps clich&eacute;s in comfort. Soft textures and earth tones make empty words feel cozy.
+    </div>
+    <div class="tension-entry">
+      <strong>ART DECO</strong> <span class="tension-arrow">&rarr;</span> <strong>RAISES EXPECTATIONS</strong><br>
+      Gilded framing makes mediocrity feel like a broken promise.
+    </div>
+  </div>
+
+  <div class="small" style="margin-top:24px;opacity:0.7;">Design is a lens, not a bandage.</div>
+</section>
+
+<!-- ═══════════ 6. AUTHOR NOTES ═══════════ -->
+<section class="section section--inverted full-bleed" data-testid="section-author">
+  <span class="label">CONFESSION</span>
+  <div class="headline" style="margin-bottom:24px;">WE ALMOST RUINED IT BY BEING TOO FUNNY.</div>
+
+  <div class="body-narrow body-narrow--left">
+    We started this project to prove a point about AI-generated design. Somewhere along the way, we got addicted to the comedy. The slapstick rewrites. The absurd personas. We had a mascot. We had catchphrases. We had a running gag about a sentient loading spinner. It was hilarious. It was also becoming exactly the kind of self-indulgent noise we were supposed to be criticizing.
+  </div>
+
+  <blockquote style="margin-top:24px;max-width:540px;">
+    "The irony of almost producing slop about slop was not lost on us."
+  </blockquote>
+
+  <div class="body-narrow body-narrow--left" style="margin-top:20px;">
+    So we killed the darlings. Cut the mascot. Stripped the tone back. What you're reading now is what survived.
+  </div>
+</section>
+
+<!-- ═══════════ 7. CTA ═══════════ -->
+<section class="section full-bleed" data-testid="section-cta" style="min-height:60vh;display:flex;flex-direction:column;justify-content:center;">
+  <div class="headline" style="margin-bottom:24px;">SEE FOR YOURSELF.</div>
+  <div class="body-narrow body-narrow--left" style="margin-bottom:32px;">Nine designs. Same slop. Wildly different scores.</div>
+
+  <div>
+    <a href="#" class="cta-btn" data-testid="cta-gallery">ENTER THE GALLERY &rarr;</a>
+    <a href="#" class="secondary-link">Read the methodology</a>
+  </div>
+</section>
+
+<script>
+  /* ── Theme toggle ── */
+  function toggleTheme() {
+    var html = document.documentElement;
+    var current = html.getAttribute('data-theme');
+    html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+  }
+
+  /* ── IntersectionObserver — abrupt reveal ── */
+  (function() {
+    var sections = document.querySelectorAll('.section');
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.08 });
+
+    sections.forEach(function(s) {
+      observer.observe(s);
+    });
+  })();
+</script>
+</body>
+</html>

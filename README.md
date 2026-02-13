@@ -28,7 +28,15 @@ Open `http://localhost:5173` and browse the archetype gallery.
 
 ## The Pipeline
 
-Three tools from the Cybervaldez Playbook, used in sequence:
+Three phases, borrowed from production workflows:
+
+| Phase | What Happens | Skills |
+|-------|-------------|--------|
+| **Development** | Plan UX flows, establish visual identity, research tech | `/ux-planner` `/ui-planner` `/research` |
+| **Production** | Build features, audit code, verify observability | `/create-task` `/coding-guard` `/cli-first` |
+| **Release** | Review design, test E2E, gather audience feedback | `/ui-review` `/ux-review` `/e2e` `/kaizen` `/team` |
+
+The core loop for anti-slop work:
 
 ```
 /ui-planner  →  pick aesthetic + layout, generate HTML previews
@@ -37,6 +45,10 @@ Three tools from the Cybervaldez Playbook, used in sequence:
       ↓
 /kaizen      →  17 fictional personas roast your UI from every angle
 ```
+
+## Genre Independence
+
+SLAP! uses slapstick comedy as its demo genre — proud-slop content, roast-style reviews, redemption through design. But the pipeline, archetypes, and review panels are genre-agnostic. Genre here means **content domain**: entertainment themes (horror, sci-fi, romance) or real business verticals (SaaS, fintech, healthcare, developer tools). Swap the genre and the content changes across all archetypes while the structure stays the same. The comedy is the demo, not the dependency.
 
 ## Archetypes
 

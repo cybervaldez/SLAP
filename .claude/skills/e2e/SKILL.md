@@ -6,6 +6,8 @@ argument-hint: [--phase <name> | --port <number> | --no-cleanup]
 
 ## TL;DR
 
+**Phase:** Release
+
 **What:** Full E2E test orchestration with screenshots. Clean state → run tests → generate report.
 
 **When:** Final verification gate after all parallel guards pass.

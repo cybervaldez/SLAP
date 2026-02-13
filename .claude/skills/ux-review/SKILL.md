@@ -5,6 +5,8 @@ description: Verify UI changes from user perspective via browser testing. Auto-s
 
 ## TL;DR
 
+**Phase:** Release
+
 **What:** Visual + behavioral UX verification via screenshots and navigation. Checks feedback, consistency, interactions, and click-through behavior.
 
 **When:** After `/create-task` completes (auto-suggested).

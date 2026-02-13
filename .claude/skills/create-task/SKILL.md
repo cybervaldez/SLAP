@@ -7,6 +7,8 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 
 ## TL;DR
 
+**Phase:** Production
+
 **What:** Implement features with built-in E2E tests. No screenshots, no manual verification.
 
 **When:** After `/ux-planner` defines flows, or directly for well-defined tasks.

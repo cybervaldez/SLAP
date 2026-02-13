@@ -4,6 +4,19 @@ Shared reference for `/ux-planner` and `/ui-planner` to classify projects by con
 
 ---
 
+## Archetype vs Genre
+
+Two orthogonal axes define content in SLAP!:
+
+- **Archetype** = structural pattern (text-heavy, e-commerce, landing-page). Determines layout, component composition, and test patterns. Genre-independent.
+- **Genre** = content domain. Can be entertainment themes (comedy, horror, sci-fi) or real business verticals (SaaS, fintech, healthcare, developer tools). Determines tone, copy, and review calibration. Archetype-independent.
+
+The same archetype hosts any genre. An `e-commerce` archetype works for comedy products (SlipShield socks), SaaS subscription tiers, or luxury fashion collections. The pipeline, variations, and review panels stay the same — only the content data files and reviewer tone calibration change.
+
+Current demo genre: **Slapstick comedy** (proud-slop content, roast-style reviews).
+
+---
+
 ## Content Archetype Taxonomy
 
 Every project maps to 1-2 archetypes. These drive layout/aesthetic recommendations — not restrictions.

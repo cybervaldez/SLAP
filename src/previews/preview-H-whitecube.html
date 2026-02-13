@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Preview H: The White Cube</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  /* ─── DESIGN TOKENS ─── */
+  :root {
+    --bg: #fafafa;
+    --bg-alt: #f0f0f0;
+    --text: #1a1a1a;
+    --text-secondary: #555;
+    --accent: #888;
+    --border: #d0d0d0;
+    --button-hover-bg: #1a1a1a;
+    --button-hover-text: #fafafa;
+    --toggle-bg: transparent;
+    --toggle-border: #ccc;
+    --toggle-text: #888;
+  }
+
+  [data-theme="dark"] {
+    --bg: #0a0a0a;
+    --bg-alt: #111;
+    --text: #e5e5e5;
+    --text-secondary: #999;
+    --accent: #888;
+    --border: #333;
+    --button-hover-bg: #e5e5e5;
+    --button-hover-text: #0a0a0a;
+    --toggle-bg: transparent;
+    --toggle-border: #444;
+    --toggle-text: #888;
+  }
+
+  /* ─── RESET ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
+    font-weight: 300;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+    transition: background 0.6s ease, color 0.6s ease;
+  }
+
+  /* ─── THEME TOGGLE ─── */
+  .theme-toggle {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 100;
+    background: var(--toggle-bg);
+    border: 1px solid var(--toggle-border);
+    color: var(--toggle-text);
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+  .theme-toggle:hover {
+    color: var(--text);
+    border-color: var(--text);
+  }
+
+  /* ─── CONTAINER ─── */
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    padding: 200px 0;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 800ms ease-in-out, transform 800ms ease-in-out;
+  }
+  .section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Title section gets extra top breathing room */
+  .section--title {
+    padding-top: 30vh;
+    padding-bottom: 240px;
+  }
+
+  /* Author section has subtle background shift */
+  .section--author {
+    background: var(--bg-alt);
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    padding-left: calc(50vw - 50%);
+    padding-right: calc(50vw - 50%);
+    transition: background 0.6s ease;
+  }
+  .section--author .section-inner {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* CTA section gets maximum whitespace */
+  .section--cta {
+    padding: 280px 0 200px;
+  }
+
+  /* ─── TYPOGRAPHY ─── */
+  .label {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 40px;
+  }
+
+  .headline {
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    font-weight: 400;
+    line-height: 1.4;
+    margin-bottom: 32px;
+    color: var(--text);
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+  }
+
+  .body-text {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+  .body-text + .body-text {
+    margin-top: 20px;
+  }
+
+  /* ─── TITLE SECTION ─── */
+  .title-main {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    text-align: center;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .title-sub {
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-align: center;
+    color: var(--accent);
+    margin-bottom: 80px;
+  }
+
+  .title-desc {
+    font-size: 0.85rem;
+    font-weight: 300;
+    text-align: center;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  /* ─── SPECIMEN (gallery piece mock) ─── */
+  .specimen {
+    margin: 48px auto 0;
+    max-width: 360px;
+  }
+  .specimen-frame {
+    border: 1px solid var(--border);
+    padding: 20px;
+    background: var(--bg);
+    transition: border-color 0.6s ease, background 0.6s ease;
+  }
+  .specimen-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .specimen-bar {
+    height: 6px;
+    border-radius: 2px;
+    background: var(--border);
+  }
+  .specimen-bar--short { width: 40%; }
+  .specimen-bar--medium { width: 65%; }
+  .specimen-bar--long { width: 90%; }
+  .specimen-bar--full { width: 100%; }
+  .specimen-bar--hero {
+    height: 48px;
+    width: 100%;
+    border-radius: 2px;
+  }
+  .specimen-bar--btn {
+    height: 20px;
+    width: 30%;
+    margin-top: 4px;
+    border-radius: 2px;
+  }
+  .specimen-row {
+    display: flex;
+    gap: 10px;
+  }
+  .specimen-row .specimen-bar { flex: 1; height: 40px; }
+  .specimen-caption {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--accent);
+    text-align: center;
+    margin-top: 14px;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    line-height: 1.6;
+  }
+
+  /* ─── DISCOVERY LAYERS ─── */
+  .layers {
+    margin-top: 48px;
+  }
+  .layer {
+    padding: 32px 0;
+  }
+  .layer + .layer {
+    border-top: none;
+  }
+  .layer-number {
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--accent);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+  .layer-name {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .layer-desc {
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  /* ─── PROOF LIST ─── */
+  .proof-list {
+    margin-top: 48px;
+    list-style: none;
+  }
+  .proof-item {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+    font-weight: 300;
+    transition: border-color 0.6s ease;
+  }
+  .proof-item:first-child {
+    border-top: 1px solid var(--border);
+  }
+  .proof-name {
+    flex: 0 0 auto;
+    min-width: 110px;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+  .proof-score {
+    flex: 0 0 auto;
+    min-width: 40px;
+    color: var(--accent);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+  }
+  .proof-note {
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+  .proof-caption {
+    margin-top: 32px;
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  /* ─── TENSION RELATIONSHIPS ─── */
+  .tension-list {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .tension-item {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .tension-item em {
+    font-style: italic;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  /* ─── CTA ─── */
+  .cta-text {
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 300;
+    color: var(--text);
+    margin-bottom: 40px;
+  }
+  .cta-button {
+    display: block;
+    margin: 0 auto 32px;
+    background: transparent;
+    border: 1px solid var(--text);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    padding: 14px 48px;
+    cursor: pointer;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+  .cta-button:hover {
+    background: var(--button-hover-bg);
+    color: var(--button-hover-text);
+  }
+  .cta-link {
+    display: block;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--border);
+    transition: color 0.3s ease, text-decoration-color 0.3s ease;
+  }
+  .cta-link:hover {
+    color: var(--text);
+    text-decoration-color: var(--text);
+  }
+
+  /* ─── CLOSING LINE ─── */
+  .closing {
+    font-style: italic;
+    margin-top: 32px;
+    color: var(--accent);
+    font-size: 0.8rem;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
+    .container { padding: 0 20px; }
+    .section { padding: 140px 0; }
+    .section--title { padding-top: 20vh; padding-bottom: 160px; }
+    .section--cta { padding: 180px 0 140px; }
+    .proof-item { flex-wrap: wrap; gap: 8px; }
+    .proof-name { min-width: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" data-testid="theme-toggle" onclick="toggleTheme()">Light</button>
+
+<div class="container">
+
+  <!-- ═══ 1. TITLE ═══ -->
+  <section class="section section--title" data-testid="section-title">
+    <h1 class="title-main">SLAP!</h1>
+    <p class="title-sub">The Anti-Slop Design Study</p>
+    <p class="title-desc">What happens when you let AI write your website... and then roast it</p>
+  </section>
+
+  <!-- ═══ 2. THE PROBLEM ═══ -->
+  <section class="section" data-testid="section-problem">
+    <p class="label">The Problem</p>
+    <h2 class="headline">Every AI page looks the same.</h2>
+    <p class="body-text">You have seen this page. The confident headline that says nothing. Three benefit cards with icons that could be anything. A testimonial from someone whose title sounds invented. A gradient button begging you to "Get Started." It is the default output of every AI writing tool, every template marketplace, every "ship fast" tutorial. Not bad, exactly. Just deeply, terminally familiar.</p>
+
+    <div class="specimen">
+      <div class="specimen-frame">
+        <div class="specimen-inner">
+          <div class="specimen-bar specimen-bar--hero"></div>
+          <div class="specimen-bar specimen-bar--medium"></div>
+          <div class="specimen-bar specimen-bar--short"></div>
+          <div style="height: 8px"></div>
+          <div class="specimen-row">
+            <div class="specimen-bar"></div>
+            <div class="specimen-bar"></div>
+            <div class="specimen-bar"></div>
+          </div>
+          <div style="height: 4px"></div>
+          <div class="specimen-bar specimen-bar--long"></div>
+          <div class="specimen-bar specimen-bar--medium"></div>
+          <div class="specimen-bar specimen-bar--btn"></div>
+        </div>
+      </div>
+      <p class="specimen-caption">Specimen: Generic AI Page, 2024<br>AI-generated, mixed media</p>
+    </div>
+  </section>
+
+  <!-- ═══ 3. THE DISCOVERY ═══ -->
+  <section class="section" data-testid="section-discovery">
+    <p class="label">The Discovery</p>
+    <h2 class="headline">We built the worst page on purpose.</h2>
+    <p class="body-text">Prompted an AI for a professional landing page. Accepted every default. Shipped the cliches as-is. Then we put it through three layers of structured criticism.</p>
+
+    <div class="layers">
+      <div class="layer">
+        <p class="layer-number">1</p>
+        <p class="layer-name">The Performer</p>
+        <p class="layer-desc">AI copy, unedited, proud of itself. Every buzzword intact. Every call-to-action gleaming with false urgency.</p>
+      </div>
+      <div class="layer">
+        <p class="layer-number">2</p>
+        <p class="layer-name">The Critics</p>
+        <p class="layer-desc">Five expert personas score every section. They disagree on almost everything except what is mediocre.</p>
+      </div>
+      <div class="layer">
+        <p class="layer-number">3</p>
+        <p class="layer-name">Redemption</p>
+        <p class="layer-desc">Can design rescue doomed content? We dressed the same words in nine different aesthetics to find out.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 4. THE PROOF ═══ -->
+  <section class="section" data-testid="section-proof">
+    <p class="label">The Proof</p>
+    <h2 class="headline">Same words. Nine designs. Scores from 2 to 8.</h2>
+
+    <ul class="proof-list">
+      <li class="proof-item">
+        <span class="proof-name">SLAP!</span>
+        <span class="proof-score">2.4</span>
+        <span class="proof-note">baseline</span>
+      </li>
+      <li class="proof-item">
+        <span class="proof-name">Brutalist</span>
+        <span class="proof-score">6.2</span>
+        <span class="proof-note">raw exposure</span>
+      </li>
+      <li class="proof-item">
+        <span class="proof-name">Neo-Minimal</span>
+        <span class="proof-score">7.1</span>
+        <span class="proof-note">quiet authority</span>
+      </li>
+      <li class="proof-item">
+        <span class="proof-name">Art Deco</span>
+        <span class="proof-score">5.8</span>
+        <span class="proof-note">gilded tension</span>
+      </li>
+      <li class="proof-item">
+        <span class="proof-name">Swiss</span>
+        <span class="proof-score">7.4</span>
+        <span class="proof-note">structured clarity</span>
+      </li>
+      <li class="proof-item">
+        <span class="proof-name">Glassmorphism</span>
+        <span class="proof-score">4.5</span>
+        <span class="proof-note">frosted distraction</span>
+      </li>
+      <li class="proof-item">
+        <span class="proof-name">Memphis</span>
+        <span class="proof-score">5.0</span>
+        <span class="proof-note">playful deflection</span>
+      </li>
+      <li class="proof-item">
+        <span class="proof-name">Scandinavian</span>
+        <span class="proof-score">6.8</span>
+        <span class="proof-note">warm concealment</span>
+      </li>
+      <li class="proof-item">
+        <span class="proof-name">Warm Organic</span>
+        <span class="proof-score">6.0</span>
+        <span class="proof-note">comfortable hiding</span>
+      </li>
+    </ul>
+    <p class="proof-caption">Identical content. Wildly different reactions.</p>
+  </section>
+
+  <!-- ═══ 5. THE TENSION ═══ -->
+  <section class="section" data-testid="section-tension">
+    <p class="label">The Tension</p>
+    <h2 class="headline">Design can't save bad content.</h2>
+    <p class="subtitle">But it can expose or elevate it.</p>
+
+    <div class="tension-list">
+      <p class="tension-item">Brutalist <em>exposes</em> — strips away polish, leaves the words nowhere to hide. Every cliche stands in the open.</p>
+      <p class="tension-item">Warm Organic <em>hides</em> — wraps cliches in comfort. Rounded corners and earth tones make mediocrity feel like a hug.</p>
+      <p class="tension-item">Art Deco <em>raises expectations</em> — gilded framing, broken promise. The higher the aesthetic standard, the worse generic copy performs.</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ═══ 6. AUTHOR NOTES ═══ -->
+<section class="section section--author" data-testid="section-author">
+  <div class="section-inner">
+    <p class="label">Author Notes</p>
+    <h2 class="headline">How we almost ruined it by being too funny.</h2>
+    <p class="body-text">The first version of this study was a comedy routine. Every heading had a punchline. Every data point came with a callback. The personas roasted each other in footnotes. Readers laughed, skimmed, and retained nothing.</p>
+    <p class="body-text">We rewrote it straight. Let the content failures be the humor. Turns out, a landing page that calls itself "the future of workflow synergy" is already funnier than anything we could add. The slapstick was always in the source material.</p>
+    <p class="closing">We stopped trying to be funny and started letting the evidence be absurd.</p>
+  </div>
+</section>
+
+<div class="container">
+
+  <!-- ═══ 7. CTA ═══ -->
+  <section class="section section--cta" data-testid="section-cta">
+    <p class="cta-text">See for yourself.</p>
+    <button class="cta-button" data-testid="cta-gallery">Enter the Gallery &rarr;</button>
+    <a href="#" class="cta-link">Read the methodology</a>
+  </section>
+
+</div>
+
+<script>
+  // ─── THEME TOGGLE ───
+  function toggleTheme() {
+    const html = document.documentElement;
+    const btn = document.querySelector('.theme-toggle');
+    if (html.getAttribute('data-theme') === 'light') {
+      html.setAttribute('data-theme', 'dark');
+      btn.textContent = 'Dark';
+    } else {
+      html.setAttribute('data-theme', 'light');
+      btn.textContent = 'Light';
+    }
+  }
+
+  // ─── INTERSECTION OBSERVER (slow fade-in) ───
+  document.addEventListener('DOMContentLoaded', () => {
+    const sections = document.querySelectorAll('.section');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.15,
+      rootMargin: '0px 0px -60px 0px'
+    });
+
+    sections.forEach(section => observer.observe(section));
+  });
+</script>
+</body>
+</html>

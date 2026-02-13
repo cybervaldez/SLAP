@@ -5,6 +5,8 @@ description: Investigate e2e test failures, diagnose root causes, and generate a
 
 ## TL;DR
 
+**Phase:** Release
+
 **What:** Root cause analysis for `/e2e` failures. Reads artifacts, diagnoses issues.
 
 **When:** After `/e2e` fails. Required after 3+ consecutive failures.

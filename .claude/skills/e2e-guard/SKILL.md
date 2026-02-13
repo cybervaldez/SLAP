@@ -5,6 +5,8 @@ description: Analyze code changes, auto-generate e2e tests, and run them. Use af
 
 ## TL;DR
 
+**Phase:** Release
+
 **What:** Auto-generate E2E tests for code changes. Ensures coverage exists.
 
 **When:** After `/create-task`, in parallel with other guards.

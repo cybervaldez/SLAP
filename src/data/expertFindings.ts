@@ -112,7 +112,7 @@ const expertFindings: Record<string, ExpertFinding> = {
     verdict: 'Dark hero is bold and distinctive \u2014 strong brand identity. But the features section is a wall of text selling a visual tool with zero visuals. Add screenshots or a before/after.',
     sections: {
       hero: [
-        { text: 'Strong visual identity \u2014 dark gradient + gold accent is distinctive', light: 'green', comment: "This doesn't look like generic SaaS. Good." },
+        { text: 'Strong visual identity \u2014 high-contrast black-on-white with red accent is uncompromising', light: 'green', comment: "This doesn't look like generic SaaS. The raw black+white+red palette takes a real stance." },
       ],
       features: [
         { text: 'Text-only feature cards lack visual interest', light: 'yellow', comment: 'Add icons or illustrations per card.' },

@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Preview F: The Editorial</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ─── PALETTE ─── */
+  :root {
+    --navy: #0d1b2a;
+    --navy-deep: #060f18;
+    --cream: #f5f0e8;
+    --cream-warm: #ebe5d6;
+    --coral: #e63946;
+    --gold: #d4a017;
+    --gold-dim: #a57c12;
+    --text: #f5f0e8;
+    --text-dim: #8a8579;
+    --text-body: #c8c2b8;
+    --bg: #0d1b2a;
+    --bg-alt: #111f30;
+    --bg-shift: #1a2a3a;
+    --rule: rgba(245, 240, 232, 0.12);
+    --rule-heavy: rgba(245, 240, 232, 0.25);
+    --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  [data-theme="light"] {
+    --text: #0d1b2a;
+    --text-dim: #5a5347;
+    --text-body: #3a352e;
+    --bg: #f5f0e8;
+    --bg-alt: #ebe5d6;
+    --bg-shift: #e0d8c8;
+    --rule: rgba(13, 27, 42, 0.10);
+    --rule-heavy: rgba(13, 27, 42, 0.20);
+  }
+
+  /* ─── RESET ─── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+    transition: background .5s, color .5s;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ─── THEME TOGGLE ─── */
+  .theme-toggle {
+    position: fixed; top: 24px; right: 24px; z-index: 10000;
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 8px 18px;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .3s;
+  }
+  .theme-toggle:hover {
+    background: var(--gold);
+    color: var(--navy);
+  }
+
+  /* ─── SECTIONS: fade-in on scroll ─── */
+  .ed-section {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity .9s cubic-bezier(0.23, 1, 0.32, 1),
+                transform .9s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  .ed-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* Stagger children */
+  .ed-section.visible .stagger { animation: staggerIn .7s ease both; }
+  .ed-section.visible .stagger:nth-child(1) { animation-delay: .1s; }
+  .ed-section.visible .stagger:nth-child(2) { animation-delay: .25s; }
+  .ed-section.visible .stagger:nth-child(3) { animation-delay: .4s; }
+  .ed-section.visible .stagger:nth-child(4) { animation-delay: .55s; }
+  .ed-section.visible .stagger:nth-child(5) { animation-delay: .7s; }
+  .ed-section.visible .stagger:nth-child(6) { animation-delay: .85s; }
+  @keyframes staggerIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── TYPOGRAPHY ─── */
+  .serif { font-family: var(--serif); }
+  .sans { font-family: var(--sans); }
+  .label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+  .deck {
+    font-family: var(--sans);
+    font-size: clamp(14px, 2vw, 18px);
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .body-text {
+    font-family: var(--sans);
+    font-size: clamp(15px, 1.6vw, 17px);
+    line-height: 1.85;
+    color: var(--text-body);
+    max-width: 620px;
+  }
+  .pull-quote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: clamp(22px, 3.5vw, 36px);
+    line-height: 1.4;
+    color: var(--text);
+    position: relative;
+    padding: 32px 0;
+  }
+  .pull-quote::before {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: var(--gold);
+    margin-bottom: 24px;
+  }
+  .pull-quote-source {
+    display: block;
+    margin-top: 16px;
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* ─── DECORATIVE RULES ─── */
+  .rule { border: none; border-top: 1px solid var(--rule); margin: 0; }
+  .rule--heavy { border-top-width: 3px; border-color: var(--rule-heavy); }
+  .rule--gold { border-color: var(--gold); }
+  .rule--coral { border-color: var(--coral); opacity: 0.5; }
+  .rule--ornament {
+    border: none;
+    text-align: center;
+    margin: 48px 0;
+    color: var(--text-dim);
+    font-size: 18px;
+    letter-spacing: 12px;
+  }
+  .rule--ornament::before { content: '\2666  \2666  \2666'; }
+
+  /* ─── CONTAINER WIDTHS ─── */
+  .contain       { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .contain--wide { max-width: 1300px; margin: 0 auto; padding: 0 24px; }
+  .contain--narrow { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+
+  /* ═══════════════════════════════════════════════════
+     SECTION 1: TITLE HERO
+     ═══════════════════════════════════════════════════ */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 80px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(214,160,23,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-overline {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeIn 1.2s .3s ease both;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-size: clamp(72px, 15vw, 180px);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -2px;
+    color: var(--text);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeIn 1.2s .6s ease both;
+  }
+  .hero-title span {
+    color: var(--coral);
+  }
+  .hero-deck {
+    font-family: var(--serif);
+    font-size: clamp(16px, 2.5vw, 24px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-dim);
+    max-width: 560px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeIn 1.2s .9s ease both;
+  }
+  .hero-tagline {
+    font-family: var(--sans);
+    font-size: clamp(13px, 1.4vw, 15px);
+    color: var(--text-dim);
+    max-width: 480px;
+    line-height: 1.8;
+    opacity: 0;
+    animation: fadeIn 1.2s 1.3s ease both;
+  }
+  .hero-byline {
+    margin-top: 64px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    opacity: 0;
+    animation: fadeIn 1.2s 1.6s ease both;
+  }
+  .hero-byline::before,
+  .hero-byline::after {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--rule-heavy);
+  }
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    opacity: 0;
+    animation: fadeIn 1.5s 2.2s ease both, floatHint 2.5s 3.5s ease-in-out infinite;
+  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes floatHint {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     SECTION 2: THE PROBLEM
+     ═══════════════════════════════════════════════════ */
+  .problem {
+    padding: 120px 0 80px;
+  }
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: start;
+    margin-top: 48px;
+  }
+  .problem h2 {
+    font-family: var(--serif);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    grid-column: 1 / -1;
+  }
+  /* Slop mock */
+  .slop-mock {
+    background: linear-gradient(135deg, #6c3fb5 0%, #a855f7 50%, #7c3aed 100%);
+    border-radius: 16px;
+    padding: 40px 32px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(124, 58, 237, 0.3);
+  }
+  .slop-mock::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .slop-mock-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .slop-mock-nav .logo { letter-spacing: 1px; }
+  .slop-mock-nav .links { display: flex; gap: 16px; font-size: 12px; opacity: 0.7; }
+  .slop-mock h3 {
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .slop-mock p.sub {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  .slop-mock-btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .slop-pill {
+    display: inline-block;
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: default;
+  }
+  .slop-pill--primary { background: #fff; color: #6c3fb5; }
+  .slop-pill--ghost { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .slop-mock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.15);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+  .slop-mock-caption {
+    margin-top: 16px;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-style: italic;
+    color: var(--text-dim);
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+
+  .problem-text-col {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     SECTION 3: THE DISCOVERY
+     ═══════════════════════════════════════════════════ */
+  .discovery {
+    padding: 80px 0 100px;
+    border-top: 1px solid var(--rule);
+  }
+  .discovery h2 {
+    font-family: var(--serif);
+    font-size: clamp(32px, 4.5vw, 52px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+  .discovery-intro {
+    max-width: 580px;
+    margin-bottom: 64px;
+  }
+  .layer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    position: relative;
+  }
+  .layer-card {
+    padding: 40px 32px;
+    position: relative;
+    border-left: 1px solid var(--rule);
+  }
+  .layer-card:first-child { border-left: none; }
+  .layer-num {
+    font-family: var(--serif);
+    font-size: 72px;
+    font-weight: 900;
+    color: var(--rule-heavy);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .layer-name {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .layer-subtitle {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 16px;
+  }
+  .layer-desc {
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-body);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     SECTION 4: THE PROOF — variation grid
+     ═══════════════════════════════════════════════════ */
+  .proof {
+    padding: 100px 0;
+    border-top: 3px solid var(--rule-heavy);
+  }
+  .proof h2 {
+    font-family: var(--serif);
+    font-size: clamp(30px, 4vw, 48px);
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .proof-deck {
+    margin-bottom: 56px;
+  }
+  .var-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .var-card {
+    padding: 28px 24px;
+    position: relative;
+    transition: transform .3s ease, box-shadow .3s ease;
+    overflow: hidden;
+  }
+  .var-card:hover { transform: translateY(-4px); }
+  .var-card-label {
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .var-card-name {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .var-card-score {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .var-card-word {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  /* Individual card styles that hint at their aesthetic */
+  .var-card--slap {
+    background: var(--bg-alt);
+    border: 1px solid var(--coral);
+    color: var(--text);
+  }
+  .var-card--slap .var-card-label { color: var(--coral); }
+  .var-card--slap .var-card-word { color: var(--coral); }
+
+  .var-card--brutalist {
+    background: #fff;
+    border: 4px solid #000;
+    color: #000;
+  }
+  .var-card--brutalist .var-card-name { text-transform: uppercase; letter-spacing: 1px; }
+  .var-card--brutalist .var-card-label { color: #000; }
+  .var-card--brutalist .var-card-word { color: #000; font-style: normal; font-weight: 700; text-transform: uppercase; }
+
+  .var-card--neo-minimal {
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    color: #222;
+  }
+  .var-card--neo-minimal .var-card-label { color: #999; }
+  .var-card--neo-minimal .var-card-word { color: #666; }
+
+  .var-card--maximalist {
+    background: linear-gradient(135deg, #1a0a2e 0%, #2d1854 100%);
+    border: 2px solid #a855f7;
+    color: #f0e6ff;
+  }
+  .var-card--maximalist .var-card-label { color: #c084fc; }
+  .var-card--maximalist .var-card-word { color: #e9d5ff; }
+
+  .var-card--dark-industrial {
+    background: #111;
+    border: 1px solid #333;
+    color: #bbb;
+    font-family: 'Courier New', monospace;
+  }
+  .var-card--dark-industrial .var-card-name { font-family: 'Courier New', monospace; }
+  .var-card--dark-industrial .var-card-label { color: #d4a017; font-family: 'Courier New', monospace; }
+  .var-card--dark-industrial .var-card-word { color: #d4a017; font-family: 'Courier New', monospace; }
+
+  .var-card--warm-organic {
+    background: #f5efe6;
+    border: 1px solid #d4c5a9;
+    color: #4a3f35;
+    border-radius: 8px;
+  }
+  .var-card--warm-organic .var-card-label { color: #8b7355; }
+  .var-card--warm-organic .var-card-name { font-family: Georgia, serif; }
+  .var-card--warm-organic .var-card-word { color: #6b5b4a; }
+
+  .var-card--retro-futurism {
+    background: #0a0a1a;
+    border: 1px solid #39ff14;
+    color: #39ff14;
+  }
+  .var-card--retro-futurism .var-card-label { color: #ff1493; }
+  .var-card--retro-futurism .var-card-name { font-family: 'Courier New', monospace; text-transform: uppercase; }
+  .var-card--retro-futurism .var-card-word { color: #00ffff; }
+
+  .var-card--memphis {
+    background: #ffe8ec;
+    border: 3px solid #222;
+    color: #222;
+    transform: rotate(-1deg);
+    border-radius: 0;
+  }
+  .var-card--memphis:hover { transform: rotate(-1deg) translateY(-4px); }
+  .var-card--memphis .var-card-label { color: #e63946; }
+  .var-card--memphis .var-card-word { color: #2563eb; font-weight: 700; font-style: normal; }
+  .var-card--memphis::after {
+    content: '';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    background: #ffd700;
+    border-radius: 50%;
+    border: 2px solid #222;
+  }
+
+  .var-card--art-deco {
+    background: #1a1a2e;
+    border: 2px solid var(--gold);
+    color: var(--cream);
+    position: relative;
+  }
+  .var-card--art-deco::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px solid var(--gold-dim);
+    pointer-events: none;
+  }
+  .var-card--art-deco .var-card-label { color: var(--gold); }
+  .var-card--art-deco .var-card-name { font-family: var(--serif); }
+  .var-card--art-deco .var-card-word { color: var(--gold); }
+
+  .proof-caption {
+    font-family: var(--serif);
+    font-size: clamp(16px, 2vw, 20px);
+    font-style: italic;
+    color: var(--text-dim);
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     SECTION 5: THE TENSION
+     ═══════════════════════════════════════════════════ */
+  .tension {
+    padding: 100px 0 80px;
+    border-top: 1px solid var(--rule);
+  }
+  .tension h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 900;
+    line-height: 1.15;
+    max-width: 700px;
+    margin-bottom: 56px;
+  }
+  .tension-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .tension-example {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 32px;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+  .tension-example:first-child {
+    border-top: 1px solid var(--rule);
+  }
+  .tension-variation {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .tension-arrow {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-top: 4px;
+  }
+  .tension-desc {
+    font-family: var(--serif);
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--text-body);
+  }
+  .tension-closing {
+    margin-top: 56px;
+    padding-top: 40px;
+    border-top: 3px solid var(--gold);
+    max-width: 600px;
+  }
+  .tension-closing p {
+    font-family: var(--serif);
+    font-size: clamp(20px, 3vw, 28px);
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     SECTION 6: AUTHOR NOTES
+     ═══════════════════════════════════════════════════ */
+  .author {
+    padding: 100px 0;
+    background: var(--bg-shift);
+    position: relative;
+    transition: background .5s;
+  }
+  /* Paper-stock texture hint */
+  .author::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1' height='1' x='2' y='2' fill='%23888' fill-opacity='.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .author-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 64px;
+    align-items: start;
+  }
+  .author h2 {
+    font-family: var(--serif);
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 900;
+    font-style: italic;
+    line-height: 1.2;
+    margin-bottom: 24px;
+  }
+  .author .body-text {
+    max-width: none;
+  }
+  .author-sidebar-quote {
+    font-family: var(--serif);
+    font-size: clamp(20px, 2.5vw, 26px);
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--text);
+    padding: 32px;
+    border-left: 3px solid var(--coral);
+    position: relative;
+  }
+  .author-sidebar-source {
+    display: block;
+    margin-top: 16px;
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     SECTION 7: CTA
+     ═══════════════════════════════════════════════════ */
+  .cta {
+    padding: 120px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid var(--rule);
+    position: relative;
+  }
+  .cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(230,57,70,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta h2 {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .cta-subtitle {
+    font-family: var(--serif);
+    font-size: clamp(16px, 2vw, 20px);
+    font-style: italic;
+    color: var(--text-dim);
+    margin-bottom: 48px;
+    max-width: 480px;
+  }
+  .cta-btn {
+    display: inline-block;
+    padding: 16px 48px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--navy);
+    background: var(--gold);
+    border: none;
+    cursor: pointer;
+    transition: all .3s;
+    position: relative;
+  }
+  .cta-btn:hover {
+    background: var(--cream);
+    color: var(--navy);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(212, 160, 23, 0.3);
+  }
+  .cta-secondary {
+    display: inline-block;
+    margin-top: 24px;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2px;
+    transition: color .3s, border-color .3s;
+  }
+  .cta-secondary:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+
+  /* ─── FOOTER COLOPHON ─── */
+  .colophon {
+    padding: 32px 24px;
+    text-align: center;
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     RESPONSIVE
+     ═══════════════════════════════════════════════════ */
+  @media (max-width: 900px) {
+    .problem-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .layer-grid {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .layer-card {
+      border-left: none;
+      border-bottom: 1px solid var(--rule);
+      padding: 32px 0;
+    }
+    .layer-card:last-child { border-bottom: none; }
+    .var-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .author-layout {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .tension-example {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+  @media (max-width: 560px) {
+    .var-grid {
+      grid-template-columns: 1fr;
+    }
+    .hero-title {
+      letter-spacing: -1px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- THEME TOGGLE -->
+<button class="theme-toggle" data-testid="theme-toggle">Light</button>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 1: TITLE HERO
+     ═══════════════════════════════════════════════════════ -->
+<section class="hero ed-section" data-testid="section-title">
+  <div class="hero-overline">An Anti-Slop Design Study</div>
+  <h1 class="hero-title">SLAP<span>!</span></h1>
+  <p class="hero-deck">The Anti-Slop Design Study</p>
+  <p class="hero-tagline">What happens when you let AI write your website... and then roast it.</p>
+  <div class="hero-byline">
+    <span>A Design Research Project</span>
+  </div>
+  <div class="hero-scroll-hint">Scroll to begin</div>
+</section>
+
+<hr class="rule rule--ornament">
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 2: THE PROBLEM
+     ═══════════════════════════════════════════════════════ -->
+<section class="ed-section" data-testid="section-problem">
+  <div class="contain">
+    <div class="problem">
+      <span class="label stagger">The Problem</span>
+      <h2 class="stagger">Every AI page looks the same.</h2>
+
+      <div class="problem-grid">
+        <div class="problem-text-col">
+          <p class="body-text stagger">
+            Purple gradients. Inter font. Rounded pill buttons. A hero section that says
+            "Revolutionize Your Workflow" in 48px bold, followed by a paragraph nobody reads,
+            followed by two buttons -- one filled, one ghost.
+          </p>
+          <p class="body-text stagger">
+            The AI doesn't lack vocabulary. It lacks taste. It reaches for the most
+            statistically likely design pattern and produces something that is technically
+            correct, aesthetically generic, and emotionally bankrupt.
+          </p>
+          <p class="body-text stagger">
+            We call it <strong style="color:var(--coral)">slop</strong>. Not because it's broken.
+            Because it could belong to anyone.
+          </p>
+        </div>
+
+        <div class="stagger">
+          <div class="slop-mock">
+            <div class="slop-mock-nav">
+              <span class="logo">SynergyAI</span>
+              <span class="links">
+                <span>Features</span>
+                <span>Pricing</span>
+                <span>About</span>
+              </span>
+            </div>
+            <div class="slop-mock-badge">&#10024; Now with AI-Powered Insights</div>
+            <h3>Revolutionize Your<br>Workflow Today</h3>
+            <p class="sub">Leverage cutting-edge AI to streamline operations, boost productivity, and unlock unprecedented growth for your team.</p>
+            <div class="slop-mock-btns">
+              <span class="slop-pill slop-pill--primary">Get Started Free</span>
+              <span class="slop-pill slop-pill--ghost">Watch Demo</span>
+            </div>
+          </div>
+          <p class="slop-mock-caption">Every AI landing page. Literally every one.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:64px; max-width:700px;" class="stagger">
+        <div class="pull-quote">
+          If your landing page could belong to any competitor, it belongs to none of them.
+          <span class="pull-quote-source">Product Expert</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule rule--ornament">
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 3: THE DISCOVERY
+     ═══════════════════════════════════════════════════════ -->
+<section class="ed-section" data-testid="section-discovery">
+  <div class="contain">
+    <div class="discovery">
+      <span class="label stagger">The Discovery</span>
+      <h2 class="stagger">We built the worst page on purpose.</h2>
+      <p class="body-text discovery-intro stagger">
+        One page. Unedited AI copy. Nine radically different design treatments.
+        Five expert critics scoring every section. The result was a controlled experiment
+        in how much design actually matters.
+      </p>
+
+      <div class="layer-grid">
+        <div class="layer-card stagger">
+          <div class="layer-num">1</div>
+          <div class="layer-name">The Performer</div>
+          <div class="layer-subtitle">AI Copy, Unedited</div>
+          <p class="layer-desc">
+            We asked AI to write a landing page, a product catalog, and a long-form article.
+            We didn't edit a single word. The copy arrived proud of itself -- full of
+            synergy, disruption, and artisanal hand-crafted blockchain-adjacent word salad.
+          </p>
+        </div>
+        <div class="layer-card stagger">
+          <div class="layer-num">2</div>
+          <div class="layer-name">The Critics</div>
+          <div class="layer-subtitle">Five Expert Personas</div>
+          <p class="layer-desc">
+            Marketing, UX, Product, Technical, and Design experts each scored the same content.
+            They disagreed constantly. A 9/10 from the brand expert was a 3/10 from the
+            engineer. The tension was the finding.
+          </p>
+        </div>
+        <div class="layer-card stagger">
+          <div class="layer-num">3</div>
+          <div class="layer-name">Redemption</div>
+          <div class="layer-subtitle">Can Design Rescue Content?</div>
+          <p class="layer-desc">
+            Same words, nine costumes. We dressed the copy in Brutalist severity, Art Deco
+            glamour, Memphis chaos, and six others. Scores shifted by as much as 6 points.
+            Design didn't just change how it looked. It changed how it read.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule rule--heavy" style="max-width: 200px; margin: 0 auto;">
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 4: THE PROOF
+     ═══════════════════════════════════════════════════════ -->
+<section class="ed-section" data-testid="section-proof">
+  <div class="contain--wide">
+    <div class="proof">
+      <div class="contain--narrow" style="padding:0;">
+        <span class="label stagger">The Proof</span>
+        <h2 class="stagger">Same words. Nine designs.<br>Scores from 2 to 8.</h2>
+        <p class="body-text proof-deck stagger">
+          Each card below represents one design variation applied to identical content.
+          The scores reflect averaged expert ratings across all sections.
+        </p>
+      </div>
+
+      <div class="var-grid">
+        <div class="var-card var-card--slap stagger">
+          <div class="var-card-label">Variation 01</div>
+          <div class="var-card-name">SLAP!</div>
+          <div class="var-card-score">Score: 5 -- 7</div>
+          <div class="var-card-word">Baseline</div>
+        </div>
+        <div class="var-card var-card--brutalist stagger">
+          <div class="var-card-label">Variation 02</div>
+          <div class="var-card-name">Brutalist</div>
+          <div class="var-card-score">Score: 3 -- 7</div>
+          <div class="var-card-word">UNFORGIVING</div>
+        </div>
+        <div class="var-card var-card--neo-minimal stagger">
+          <div class="var-card-label">Variation 03</div>
+          <div class="var-card-name">Neo-Minimal</div>
+          <div class="var-card-score">Score: 4 -- 7</div>
+          <div class="var-card-word">Restrained</div>
+        </div>
+        <div class="var-card var-card--maximalist stagger">
+          <div class="var-card-label">Variation 04</div>
+          <div class="var-card-name">Maximalist</div>
+          <div class="var-card-score">Score: 3 -- 8</div>
+          <div class="var-card-word">Overwhelming</div>
+        </div>
+        <div class="var-card var-card--dark-industrial stagger">
+          <div class="var-card-label">Variation 05</div>
+          <div class="var-card-name">Dark Industrial</div>
+          <div class="var-card-score">Score: 4 -- 7</div>
+          <div class="var-card-word">Engineered</div>
+        </div>
+        <div class="var-card var-card--warm-organic stagger">
+          <div class="var-card-label">Variation 06</div>
+          <div class="var-card-name">Warm Organic</div>
+          <div class="var-card-score">Score: 5 -- 8</div>
+          <div class="var-card-word">Comforting</div>
+        </div>
+        <div class="var-card var-card--retro-futurism stagger">
+          <div class="var-card-label">Variation 07</div>
+          <div class="var-card-name">Retro-Futurism</div>
+          <div class="var-card-score">Score: 3 -- 7</div>
+          <div class="var-card-word">Neon-drenched</div>
+        </div>
+        <div class="var-card var-card--memphis stagger">
+          <div class="var-card-label">Variation 08</div>
+          <div class="var-card-name">Memphis</div>
+          <div class="var-card-score">Score: 2 -- 7</div>
+          <div class="var-card-word">Playful</div>
+        </div>
+        <div class="var-card var-card--art-deco stagger">
+          <div class="var-card-label">Variation 09</div>
+          <div class="var-card-name">Art Deco</div>
+          <div class="var-card-score">Score: 4 -- 8</div>
+          <div class="var-card-word">Gilded</div>
+        </div>
+      </div>
+
+      <p class="proof-caption stagger">
+        Identical content. Wildly different reactions. Design is not decoration.
+      </p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule rule--ornament">
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 5: THE TENSION
+     ═══════════════════════════════════════════════════════ -->
+<section class="ed-section" data-testid="section-tension">
+  <div class="contain">
+    <div class="tension">
+      <span class="label stagger">The Tension</span>
+      <h2 class="stagger">Design can't save bad content. But it can expose or elevate it.</h2>
+
+      <div class="tension-examples">
+        <div class="tension-example stagger">
+          <div>
+            <div class="tension-variation">Brutalist</div>
+            <div class="tension-arrow">Exposes</div>
+          </div>
+          <p class="tension-desc">
+            Strips away polish, forces the reader to confront hollow words naked.
+            There is nowhere to hide when the frame is raw concrete and the type
+            is screaming in uppercase. Bad content doesn't just look bad here --
+            it looks dishonest.
+          </p>
+        </div>
+        <div class="tension-example stagger">
+          <div>
+            <div class="tension-variation">Warm Organic</div>
+            <div class="tension-arrow">Hides</div>
+          </div>
+          <p class="tension-desc">
+            Wraps clich&eacute;s in soft textures until they feel like wisdom.
+            Rounded corners, earthy tones, and generous whitespace give even the
+            emptiest phrases a sense of groundedness. The design is doing all the
+            emotional labor the words refused to do.
+          </p>
+        </div>
+        <div class="tension-example stagger">
+          <div>
+            <div class="tension-variation">Art Deco</div>
+            <div class="tension-arrow">Raises Expectations</div>
+          </div>
+          <p class="tension-desc">
+            Gilded framing makes mediocre copy feel like a broken promise.
+            When the border is gold leaf and the typography is Gatsby-era
+            grandeur, the reader expects substance. The gap between
+            presentation and content becomes the critique itself.
+          </p>
+        </div>
+      </div>
+
+      <div class="tension-closing stagger">
+        <p>This is the core finding. Design is a lens, not a bandage.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 6: AUTHOR NOTES
+     ═══════════════════════════════════════════════════════ -->
+<section class="author ed-section" data-testid="section-author">
+  <div class="contain">
+    <div class="author-layout">
+      <div>
+        <span class="label stagger">Author Notes</span>
+        <h2 class="stagger">How we almost ruined it by being too funny.</h2>
+        <p class="body-text stagger">
+          It started as a study. Then the roast got good. The AI-generated copy was so
+          perfectly, earnestly terrible that the expert commentary became a comedy act.
+          The Marketing persona was sarcastic. The Design persona was withering. The
+          Product expert delivered deadpan one-liners about synergy metrics.
+        </p>
+        <p class="body-text stagger" style="margin-top:20px;">
+          We had a problem: people were laughing instead of learning. The engagement
+          was high but the insight was getting buried under punchlines. We had accidentally
+          optimized for entertainment when the real story was about how design choices
+          shape perception at a structural level.
+        </p>
+        <p class="body-text stagger" style="margin-top:20px;">
+          So we pulled back. Found the balance between sharp enough to engage and
+          structured enough to teach. The comedy stayed, but as seasoning, not the
+          main course.
+        </p>
+      </div>
+      <div class="stagger">
+        <div class="author-sidebar-quote">
+          We were producing slop about slop. The irony was so thick you could style
+          it with a serif font and call it editorial.
+          <span class="author-sidebar-source">Internal review, Week 3</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 7: CTA
+     ═══════════════════════════════════════════════════════ -->
+<section class="cta ed-section" data-testid="section-cta">
+  <span class="label stagger">The Gallery</span>
+  <h2 class="stagger">See for yourself.</h2>
+  <p class="cta-subtitle stagger">Nine designs. Same slop. Wildly different scores.</p>
+  <a href="#" class="cta-btn stagger" data-testid="cta-gallery">Enter the Gallery &rarr;</a>
+  <a href="#" class="cta-secondary stagger">Read the methodology</a>
+</section>
+
+<!-- COLOPHON -->
+<div class="colophon">
+  SLAP! Anti-Slop Design Study &mdash; Preview F: The Editorial
+</div>
+
+<script>
+(function() {
+  // Theme toggle
+  var toggle = document.querySelector('[data-testid="theme-toggle"]');
+  var root = document.documentElement;
+  toggle.addEventListener('click', function() {
+    var isDark = root.getAttribute('data-theme') === 'dark';
+    root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    toggle.textContent = isDark ? 'Dark' : 'Light';
+  });
+
+  // IntersectionObserver for section fade-in
+  var sections = document.querySelectorAll('.ed-section');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  sections.forEach(function(section) {
+    observer.observe(section);
+  });
+
+  // Make the hero section visible immediately (it's the first thing you see)
+  var hero = document.querySelector('.hero');
+  if (hero) hero.classList.add('visible');
+})();
+</script>
+</body>
+</html>

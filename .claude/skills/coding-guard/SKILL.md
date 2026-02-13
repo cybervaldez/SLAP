@@ -5,6 +5,8 @@ description: Audit recent code changes for coding convention violations. Use aft
 
 ## TL;DR
 
+**Phase:** Production
+
 **What:** Scan code for anti-patterns - fallback defaults, silent failures, state pollution.
 
 **When:** After `/create-task` completes, before committing.

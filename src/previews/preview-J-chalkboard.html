@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Preview J: The Chalkboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  /* ── THEME TOKENS ── */
+  :root {
+    --bg: #2d4a3e;
+    --bg-alt: #243d33;
+    --bg-erased: #35564a;
+    --text: #f5f0e8;
+    --text-dim: rgba(245,240,232,.55);
+    --chalk-yellow: #ffd700;
+    --chalk-pink: #ff6b9d;
+    --chalk-blue: #87ceeb;
+    --chalk-orange: #ff8c42;
+    --chalk-green: #a8e6cf;
+    --hand: 'Patrick Hand', cursive;
+    --body: 'Nunito', system-ui, sans-serif;
+    --toggle-label: 'MARKER';
+    --grid-opacity: 0;
+    --grain-opacity: .18;
+    --circle-color: var(--chalk-yellow);
+    --underline-color: var(--chalk-pink);
+    --arrow-color: var(--chalk-orange);
+    --x-color: #ff4444;
+    --bar-label: var(--text);
+  }
+  [data-theme="light"] {
+    --bg: #f5f0e8;
+    --bg-alt: #ebe5d6;
+    --bg-erased: #e0dace;
+    --text: #333;
+    --text-dim: rgba(51,51,51,.45);
+    --chalk-yellow: #ff9800;
+    --chalk-pink: #e63946;
+    --chalk-blue: #2196F3;
+    --chalk-orange: #ff9800;
+    --chalk-green: #4caf50;
+    --toggle-label: 'CHALK';
+    --grid-opacity: .12;
+    --grain-opacity: .06;
+    --circle-color: var(--chalk-pink);
+    --underline-color: var(--chalk-blue);
+    --arrow-color: var(--chalk-green);
+    --x-color: #e63946;
+    --bar-label: #333;
+  }
+
+  /* ── RESET ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+    min-height: 100vh;
+    transition: background .5s, color .5s;
+  }
+
+  /* ── CHALKBOARD TEXTURE (CSS grain + dust) ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    opacity: var(--grain-opacity);
+    pointer-events: none;
+    z-index: 10000;
+  }
+
+  /* ── WHITEBOARD GRID (light mode only) ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,var(--grid-opacity)) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,var(--grid-opacity)) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001;
+    background: transparent;
+    color: var(--text);
+    border: 2px solid var(--text);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: var(--hand);
+    font-size: 16px;
+    letter-spacing: .05em;
+    cursor: pointer;
+    transition: background .3s, color .3s, border-color .3s;
+  }
+  .theme-toggle:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  /* ── LECTURE LABEL (corner) ── */
+  .lecture-label {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10001;
+    font-family: var(--hand);
+    font-size: 14px;
+    color: var(--text-dim);
+    letter-spacing: .08em;
+  }
+
+  /* ── LAYOUT ── */
+  .board {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 100px 24px 60px;
+    position: relative;
+  }
+
+  /* ── SECTION BASE ── */
+  .section {
+    position: relative;
+    margin-bottom: 100px;
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── SECTION WITH ANNOTATIONS ── */
+  .annotated {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 32px;
+    align-items: start;
+  }
+  .annotated--left {
+    grid-template-columns: 200px 1fr;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .chalk-heading {
+    font-family: var(--hand);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.15;
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+  }
+  .chalk-heading--mega {
+    font-size: clamp(4rem, 12vw, 9rem);
+    line-height: .95;
+    letter-spacing: -.02em;
+  }
+  .chalk-subheading {
+    font-family: var(--hand);
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+  .chalk-body {
+    font-family: var(--body);
+    font-size: clamp(15px, 1.6vw, 18px);
+    line-height: 1.8;
+    max-width: 620px;
+  }
+  .annotation {
+    font-family: var(--hand);
+    font-size: clamp(13px, 1.4vw, 16px);
+    color: var(--text-dim);
+    line-height: 1.5;
+    position: relative;
+    padding-top: 8px;
+  }
+  .annotation--colored { color: var(--chalk-yellow); }
+  .annotation .arrow-left::before {
+    content: '\2190 ';
+  }
+  .annotation .arrow-right::after {
+    content: ' \2192';
+  }
+
+  /* ── CHALK DECORATIVE ELEMENTS ── */
+
+  /* Circle around text */
+  .circled {
+    position: relative;
+    display: inline-block;
+    padding: 2px 8px;
+  }
+  .circled::after {
+    content: '';
+    position: absolute;
+    inset: -6px -12px;
+    border: 2px solid var(--circle-color);
+    border-radius: 50% 45% 55% 40% / 50% 55% 45% 50%;
+    transform: rotate(-2deg);
+    pointer-events: none;
+  }
+
+  /* Wavy underline */
+  .wavy {
+    text-decoration: underline wavy var(--underline-color);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  /* Strike through (big chalk X) */
+  .strikethrough {
+    position: relative;
+  }
+  .strikethrough::before,
+  .strikethrough::after {
+    content: '';
+    position: absolute;
+    left: -10%;
+    top: -10%;
+    width: 120%;
+    height: 120%;
+    border-top: 4px solid var(--x-color);
+    pointer-events: none;
+    opacity: .7;
+  }
+  .strikethrough::before {
+    transform: rotate(15deg);
+    top: 40%;
+  }
+  .strikethrough::after {
+    transform: rotate(-15deg);
+    top: 40%;
+  }
+
+  /* Hand-drawn box */
+  .chalk-box {
+    border: 2px solid var(--text-dim);
+    border-radius: 4px 8px 2px 6px;
+    padding: 20px 24px;
+    position: relative;
+    transform: rotate(-.3deg);
+  }
+
+  /* Chalk star annotation */
+  .star::after {
+    content: ' \2605';
+    color: var(--chalk-yellow);
+  }
+
+  /* Colored chalk */
+  .yellow { color: var(--chalk-yellow); }
+  .pink { color: var(--chalk-pink); }
+  .blue { color: var(--chalk-blue); }
+  .orange { color: var(--chalk-orange); }
+  .green { color: var(--chalk-green); }
+
+  /* ── DOODLES ── */
+  .doodle {
+    font-family: var(--hand);
+    font-size: 28px;
+    opacity: .35;
+    position: absolute;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ── NUMBERED LIST (hand-drawn) ── */
+  .chalk-list {
+    list-style: none;
+    counter-reset: chalk;
+    padding-left: 0;
+    font-family: var(--hand);
+    font-size: clamp(16px, 1.8vw, 20px);
+    line-height: 2.2;
+  }
+  .chalk-list li {
+    counter-increment: chalk;
+    position: relative;
+    padding-left: 48px;
+    margin-bottom: 12px;
+  }
+  .chalk-list li::before {
+    content: counter(chalk) '.';
+    position: absolute;
+    left: 0;
+    font-size: 1.4em;
+    font-weight: 700;
+    color: var(--chalk-yellow);
+  }
+
+  /* ── FLOW ARROW ── */
+  .flow-arrow {
+    font-family: var(--hand);
+    font-size: 28px;
+    text-align: center;
+    color: var(--arrow-color);
+    margin: 8px 0;
+    letter-spacing: .2em;
+  }
+
+  /* ── SKETCH: GENERIC AI PAGE ── */
+  .sketch {
+    position: relative;
+    max-width: 360px;
+    margin: 24px auto;
+    padding: 20px;
+    border: 2px dashed var(--text-dim);
+    border-radius: 6px 10px 4px 8px;
+    transform: rotate(-.8deg);
+  }
+  .sketch-hero {
+    height: 48px;
+    background: linear-gradient(135deg, rgba(128,0,255,.25) 0%, rgba(200,100,255,.15) 100%);
+    border: 1px dashed var(--text-dim);
+    border-radius: 4px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .sketch-hero .sketch-label {
+    position: absolute;
+    right: -140px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--hand);
+    font-size: 13px;
+    color: var(--chalk-pink);
+    white-space: nowrap;
+  }
+  .sketch-hero .sketch-label::before {
+    content: '\2190 ';
+  }
+  .sketch-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .sketch-pill {
+    height: 20px;
+    width: 72px;
+    border: 1px dashed var(--text-dim);
+    border-radius: 999px;
+    position: relative;
+  }
+  .sketch-pill .sketch-label {
+    position: absolute;
+    left: -150px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--hand);
+    font-size: 13px;
+    color: var(--chalk-blue);
+    white-space: nowrap;
+  }
+  .sketch-pill .sketch-label::after {
+    content: ' \2192';
+  }
+  .sketch-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .sketch-card {
+    height: 36px;
+    border: 1px dashed var(--text-dim);
+    border-radius: 4px;
+  }
+  .sketch-cards-label {
+    font-family: var(--hand);
+    font-size: 13px;
+    color: var(--chalk-orange);
+    text-align: center;
+    margin-top: 6px;
+  }
+  .sketch-cards-label::before { content: '\2191 '; }
+
+  /* ── BAR CHART ── */
+  .bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 520px;
+    margin: 24px 0;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .bar-name {
+    font-family: var(--hand);
+    font-size: 14px;
+    width: 110px;
+    text-align: right;
+    flex-shrink: 0;
+    color: var(--bar-label);
+  }
+  .bar-track {
+    flex: 1;
+    height: 22px;
+    background: rgba(255,255,255,.08);
+    border-radius: 3px 6px 4px 5px;
+    position: relative;
+    overflow: hidden;
+  }
+  [data-theme="light"] .bar-track {
+    background: rgba(0,0,0,.06);
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px 6px 4px 5px;
+    transition: width 1.2s ease;
+    width: 0;
+  }
+  .section.visible .bar-fill { width: var(--w); }
+  .bar-score {
+    font-family: var(--hand);
+    font-size: 15px;
+    width: 72px;
+    flex-shrink: 0;
+    color: var(--bar-label);
+  }
+
+  /* ── OBSERVATION CARDS ── */
+  .obs-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .obs-item {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    font-family: var(--hand);
+    font-size: clamp(16px, 1.8vw, 20px);
+  }
+  .obs-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    flex-shrink: 0;
+  }
+  .obs-arrow { color: var(--arrow-color); }
+  .obs-desc { opacity: .85; }
+
+  /* ── ERASED AREA ── */
+  .erased-area {
+    background: var(--bg-erased);
+    padding: 40px 36px;
+    border-radius: 4px;
+    position: relative;
+    margin-top: 20px;
+  }
+  .erased-area::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,.02) 50%, transparent 70%);
+    pointer-events: none;
+    border-radius: 4px;
+  }
+
+  /* ── CTA BUTTON ── */
+  .cta-button {
+    display: inline-block;
+    font-family: var(--hand);
+    font-size: clamp(20px, 2.5vw, 28px);
+    color: var(--text);
+    background: transparent;
+    border: 3px solid var(--text);
+    border-radius: 6px 10px 4px 8px;
+    padding: 14px 36px;
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    transition: background .3s, color .3s, transform .15s;
+    transform: rotate(-.5deg);
+  }
+  .cta-button:hover {
+    background: var(--text);
+    color: var(--bg);
+    transform: rotate(.5deg) scale(1.03);
+  }
+  .cta-link {
+    font-family: var(--hand);
+    font-size: 16px;
+    color: var(--text-dim);
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-underline-offset: 4px;
+    cursor: pointer;
+    transition: color .3s;
+    background: none;
+    border: none;
+    display: inline-block;
+    margin-top: 16px;
+  }
+  .cta-link:hover { color: var(--text); }
+
+  /* ── POINTING HAND ── */
+  .point-hand {
+    font-size: 32px;
+    display: inline-block;
+    transform: rotate(-15deg);
+    animation: point 2s ease-in-out infinite;
+  }
+  @keyframes point {
+    0%,100% { transform: rotate(-15deg) translateX(0); }
+    50% { transform: rotate(-15deg) translateX(8px); }
+  }
+
+  /* ── BIG QUESTION MARK DOODLE ── */
+  .big-q {
+    font-family: var(--hand);
+    font-size: clamp(3rem, 6vw, 5rem);
+    color: var(--chalk-pink);
+    opacity: .3;
+    line-height: 1;
+    margin-left: 12px;
+    display: inline-block;
+    transform: rotate(8deg);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .annotated {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .annotated--left {
+      grid-template-columns: 1fr;
+    }
+    .annotated--left .annotation { order: 2; }
+    .annotation {
+      padding-left: 20px;
+      border-left: 2px solid var(--text-dim);
+    }
+    .sketch-hero .sketch-label,
+    .sketch-pill .sketch-label {
+      position: static;
+      transform: none;
+      display: block;
+      margin-top: 4px;
+    }
+    .sketch-hero .sketch-label::before { content: '\2193 '; }
+    .sketch-pill .sketch-label::after { content: ''; }
+    .sketch-pill .sketch-label::before { content: '\2193 '; }
+    .bar-name { width: 80px; font-size: 12px; }
+    .bar-score { width: 56px; font-size: 13px; }
+    .board { padding-top: 80px; }
+    .lecture-label { font-size: 12px; }
+  }
+  @media (max-width: 480px) {
+    .chalk-heading--mega { font-size: 3.2rem; }
+    .erased-area { padding: 24px 20px; }
+    .cta-button { padding: 12px 24px; }
+    .doodle { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Lecture label -->
+<div class="lecture-label" aria-hidden="true">LECTURE 01 &mdash; TODAY'S LESSON</div>
+
+<!-- Theme Toggle -->
+<button class="theme-toggle" data-testid="theme-toggle" onclick="toggleTheme()">CHALK</button>
+
+<!-- ================================================================ -->
+<!-- BOARD -->
+<!-- ================================================================ -->
+<div class="board">
+
+  <!-- ──────────────── SECTION 1: TITLE ──────────────── -->
+  <section class="section" data-testid="section-title" style="margin-bottom:120px;">
+    <div class="annotated">
+      <div>
+        <div class="chalk-heading chalk-heading--mega" style="margin-bottom:8px;">SLAP!</div>
+        <div class="chalk-subheading" style="margin-top:4px; margin-bottom:0;">The Anti-Slop Design Study</div>
+      </div>
+      <div class="annotation" style="padding-top:24px;">
+        <span class="arrow-left">yes, we're making fun of AI</span>
+        <br><br>
+        <span style="font-size:13px; opacity:.6;">(and having a great time doing it)</span>
+      </div>
+    </div>
+    <div class="doodle" style="right: -10px; top: -20px; transform: rotate(12deg);" aria-hidden="true">&#9733;</div>
+  </section>
+
+  <!-- ──────────────── SECTION 2: THE PROBLEM ──────────────── -->
+  <section class="section" data-testid="section-problem">
+    <div class="annotated">
+      <div>
+        <div class="chalk-heading yellow">The Problem</div>
+        <p class="chalk-body" style="margin-bottom:24px;">
+          <span class="wavy" style="font-family:var(--hand); font-size:1.3em;">Every AI page looks the same.</span>
+        </p>
+
+        <!-- Sketch of a generic AI page -->
+        <div class="sketch strikethrough">
+          <div class="sketch-hero">
+            <span class="sketch-label">purple gradient</span>
+          </div>
+          <div class="sketch-buttons">
+            <div class="sketch-pill">
+              <span class="sketch-label">rounded-full buttons</span>
+            </div>
+            <div class="sketch-pill"></div>
+          </div>
+          <div class="sketch-cards">
+            <div class="sketch-card"></div>
+            <div class="sketch-card"></div>
+            <div class="sketch-card"></div>
+          </div>
+          <div class="sketch-cards-label">card grid (always three)</div>
+          <div style="font-family:var(--hand); font-size:12px; margin-top:8px; text-align:center; opacity:.5;">font: Inter, obviously</div>
+        </div>
+      </div>
+      <div class="annotation">
+        <span class="arrow-left">this is what AI thinks design looks like</span>
+        <br><br>
+        <span style="font-size:22px; opacity:.4;" aria-hidden="true">&#10060;</span>
+      </div>
+    </div>
+    <div class="doodle" style="left:-30px; bottom:20px; transform:rotate(-8deg); font-size:22px;" aria-hidden="true">?!</div>
+  </section>
+
+  <!-- ──────────────── SECTION 3: THE DISCOVERY ──────────────── -->
+  <section class="section" data-testid="section-discovery">
+    <div class="annotated">
+      <div>
+        <div class="chalk-heading blue">The Experiment</div>
+        <p class="chalk-body" style="margin-bottom:24px;">
+          We built the <span class="circled">worst</span> page on purpose.
+        </p>
+
+        <ol class="chalk-list">
+          <li>
+            <strong>The Performer</strong> &mdash; bad content
+            <span class="circled" style="margin-left:4px; font-size:.85em;">"proud-slop"</span>
+          </li>
+          <li>
+            <strong>The Critics</strong> &mdash; 5 experts score it
+          </li>
+          <li>
+            <strong>Redemption</strong> &mdash; can design save it?
+            <span class="big-q" aria-hidden="true">?</span>
+          </li>
+        </ol>
+
+        <div class="flow-arrow" aria-hidden="true">1 &rarr; 2 &rarr; 3</div>
+      </div>
+      <div class="annotation">
+        <span class="arrow-left" class="annotation--colored" style="color:var(--chalk-pink);">zero mercy</span>
+        <br><br>
+        <span style="font-size:13px; opacity:.6;">(they really didn't hold back)</span>
+        <br><br>
+        <span style="font-size:20px;" aria-hidden="true">&#128064;</span>
+      </div>
+    </div>
+    <div class="doodle" style="right:0; top:-10px; font-size:20px; transform:rotate(20deg);" aria-hidden="true">&#128161;</div>
+  </section>
+
+  <!-- ──────────────── SECTION 4: THE PROOF ──────────────── -->
+  <section class="section" data-testid="section-proof">
+    <div class="annotated">
+      <div>
+        <div class="chalk-heading pink">Results</div>
+        <p class="chalk-body" style="margin-bottom:8px;">
+          Same words. <span class="wavy">Nine designs.</span>
+        </p>
+
+        <!-- Bar chart -->
+        <div class="bar-chart">
+          <div class="bar-row">
+            <span class="bar-name">Brutalist</span>
+            <div class="bar-track"><div class="bar-fill" style="--w:25%; background:var(--chalk-pink);"></div></div>
+            <span class="bar-score yellow">2 &mdash; <em>yikes</em></span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">Glassmorphism</span>
+            <div class="bar-track"><div class="bar-fill" style="--w:38%; background:var(--chalk-blue);"></div></div>
+            <span class="bar-score">3</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">Swiss</span>
+            <div class="bar-track"><div class="bar-fill" style="--w:50%; background:var(--chalk-green);"></div></div>
+            <span class="bar-score">4</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">Memphis</span>
+            <div class="bar-track"><div class="bar-fill" style="--w:50%; background:var(--chalk-orange);"></div></div>
+            <span class="bar-score">4</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">Scandinavian</span>
+            <div class="bar-track"><div class="bar-fill" style="--w:63%; background:var(--chalk-blue);"></div></div>
+            <span class="bar-score">5</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">Art Deco</span>
+            <div class="bar-track"><div class="bar-fill" style="--w:63%; background:var(--chalk-yellow);"></div></div>
+            <span class="bar-score">5</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">Warm Organic</span>
+            <div class="bar-track"><div class="bar-fill" style="--w:75%; background:var(--chalk-green);"></div></div>
+            <span class="bar-score">6</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">Retro Terminal</span>
+            <div class="bar-track"><div class="bar-fill" style="--w:88%; background:var(--chalk-pink);"></div></div>
+            <span class="bar-score">7</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-name">Text-Heavy</span>
+            <div class="bar-track"><div class="bar-fill" style="--w:100%; background:var(--chalk-yellow);"></div></div>
+            <span class="bar-score yellow">8 &mdash; <em>not bad!</em></span>
+          </div>
+        </div>
+
+        <p class="chalk-body">
+          <span class="wavy" style="font-family:var(--hand); font-size:1.1em;">Scores from 2 to 8</span>
+          &mdash; same content, different lens.
+        </p>
+      </div>
+      <div class="annotation" style="padding-top:80px;">
+        <span class="star">Design is doing <strong>HEAVY</strong> lifting here</span>
+        <br><br>
+        <span style="font-size:13px; opacity:.6;">(the words didn't change &mdash; not a single comma)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ──────────────── SECTION 5: THE TENSION ──────────────── -->
+  <section class="section" data-testid="section-tension">
+    <div class="annotated">
+      <div>
+        <div class="chalk-heading orange">The Finding</div>
+        <p class="chalk-body" style="margin-bottom:20px; font-family:var(--hand); font-size:1.3em;">
+          Design <em>can't</em> save bad content.
+        </p>
+        <p style="font-family:var(--hand); font-size:clamp(1.5rem,3.5vw,2.2rem); margin-bottom:24px; letter-spacing:.02em;">
+          BUT <span class="orange" style="font-size:1.3em;">&rarr;</span>
+        </p>
+
+        <div class="obs-grid">
+          <div class="obs-item">
+            <span class="obs-label yellow">BRUTALIST</span>
+            <span class="obs-arrow">&rarr;</span>
+            <span class="obs-desc yellow">exposes the slop</span>
+          </div>
+          <div class="obs-item">
+            <span class="obs-label pink">WARM ORGANIC</span>
+            <span class="obs-arrow">&rarr;</span>
+            <span class="obs-desc pink">hides it in comfort</span>
+          </div>
+          <div class="obs-item">
+            <span class="obs-label blue">ART DECO</span>
+            <span class="obs-arrow">&rarr;</span>
+            <span class="obs-desc blue">raises expectations</span>
+          </div>
+        </div>
+
+        <div class="chalk-box" style="margin-top:32px; display:inline-block;">
+          <span class="circled" style="font-family:var(--hand); font-size:clamp(16px,1.8vw,20px);">design = lens, not bandage</span>
+          <span style="color:var(--chalk-yellow); margin-left:8px;" aria-hidden="true">&#9733;&#9733;</span>
+        </div>
+      </div>
+      <div class="annotation" style="padding-top:40px;">
+        <span class="arrow-left" style="color:var(--chalk-green);">this changes everything</span>
+        <br><br>
+        <span style="font-size:13px; opacity:.6;">the frame matters as much as the picture</span>
+      </div>
+    </div>
+    <div class="doodle" style="left:-20px; top:60px; font-size:18px; transform:rotate(-12deg);" aria-hidden="true">&#10024;</div>
+  </section>
+
+  <!-- ──────────────── SECTION 6: AUTHOR NOTES ──────────────── -->
+  <section class="section" data-testid="section-author">
+    <div class="erased-area">
+      <div class="annotated">
+        <div>
+          <div class="chalk-heading green" style="font-size:clamp(1.5rem,3.5vw,2.2rem);">Confession</div>
+          <p class="chalk-body" style="margin-bottom:16px; font-family:var(--hand); font-size:1.2em;">
+            We almost ruined it by being <span class="wavy">too funny.</span>
+          </p>
+          <p class="chalk-body" style="margin-bottom:12px;">
+            The slapstick concept was supposed to prove that bad content is bad content no matter what you dress it in. But somewhere around draft three, we started genuinely enjoying the jokes. The comedy became the point instead of the evidence.
+          </p>
+          <p class="chalk-body">
+            We caught ourselves. Barely. The humor stays &mdash; but it serves the argument now, not the other way around. Every punchline earns its place by making the finding clearer.
+          </p>
+        </div>
+        <div class="annotation" style="padding-top:30px;">
+          <span class="arrow-left" style="color:var(--chalk-pink);">yes we know this is ironic</span>
+          <br><br>
+          <span style="font-size:13px; opacity:.6;">a design study about self-awareness that almost lacked self-awareness</span>
+          <br><br>
+          <span style="font-size:20px; opacity:.4;" aria-hidden="true">&#128514;</span>
+        </div>
+      </div>
+    </div>
+    <div class="doodle" style="right:10px; top:-15px; font-size:20px; transform:rotate(15deg);" aria-hidden="true">&#9998;</div>
+  </section>
+
+  <!-- ──────────────── SECTION 7: CTA ──────────────── -->
+  <section class="section" data-testid="section-cta" style="text-align:center; padding: 40px 0 80px;">
+    <div class="chalk-heading" style="font-size:clamp(2rem,5vw,3.2rem); margin-bottom:32px;">
+      See for yourself.
+    </div>
+
+    <div style="position:relative; display:inline-block;">
+      <a class="cta-button" data-testid="cta-gallery" href="#">Enter the Gallery &rarr;</a>
+      <div style="position:absolute; bottom:-40px; right:-50px;" aria-hidden="true">
+        <span class="point-hand">&#9758;</span>
+      </div>
+    </div>
+
+    <div style="margin-top:52px;">
+      <a class="cta-link" href="#">read the methodology</a>
+    </div>
+
+    <div style="margin-top:60px; font-family:var(--hand); font-size:13px; color:var(--text-dim);">
+      <span aria-hidden="true">&#9998;</span> built with chalk dust &amp; conviction
+    </div>
+  </section>
+
+</div><!-- /.board -->
+
+<!-- ================================================================ -->
+<!-- SCRIPT -->
+<!-- ================================================================ -->
+<script>
+  // Theme toggle
+  function toggleTheme() {
+    var html = document.documentElement;
+    var btn = document.querySelector('[data-testid="theme-toggle"]');
+    if (html.getAttribute('data-theme') === 'dark') {
+      html.setAttribute('data-theme', 'light');
+      btn.textContent = 'MARKER';
+    } else {
+      html.setAttribute('data-theme', 'dark');
+      btn.textContent = 'CHALK';
+    }
+  }
+
+  // IntersectionObserver for scroll reveal
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.section').forEach(function(section) {
+    observer.observe(section);
+  });
+</script>
+</body>
+</html>
