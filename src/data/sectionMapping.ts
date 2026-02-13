@@ -20,9 +20,15 @@ const EXPERT_KEY_TO_SECTION: Record<string, SectionId> = {
   products: 'products',
   cart: 'cart',
   checkout: 'checkout',
+  // Text-heavy mappings
+  opening: 'opening',
+  hierarchy: 'hierarchy',
+  measure: 'measure',
+  ornament: 'ornament',
+  ending: 'ending',
 };
 
-const ALL_SECTIONS: SectionId[] = ['hero', 'pricing', 'testimonials', 'faq', 'signup', 'products', 'cart', 'checkout'];
+const ALL_SECTIONS: SectionId[] = ['hero', 'pricing', 'testimonials', 'faq', 'signup', 'products', 'cart', 'checkout', 'opening', 'hierarchy', 'measure', 'ornament', 'ending'];
 
 function worstSeverity(lights: TrafficLight[]): TrafficLight {
   if (lights.includes('red')) return 'red';

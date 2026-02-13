@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Preview A: The Ticker Tape</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1a1a2e; --bg-alt: #16213e; --text: #f5f0e8; --text-dim: #a09a8e;
+    --yellow: #ffd700; --pink: #ff1493; --green: #39ff14; --red: #ff4444;
+    --font-mono: 'Space Mono', 'Courier New', monospace;
+    --font-display: 'VT323', 'Courier New', monospace;
+    --ticker-h: 36px; --scanline: rgba(245,240,232,0.03);
+  }
+  [data-theme="light"] {
+    --bg: #f5f0e8; --bg-alt: #e8e0d0; --text: #1a1a2e;
+    --text-dim: #5a5670; --scanline: rgba(26,26,46,0.04);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+  body { font-family: var(--font-mono); background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+    background: repeating-linear-gradient(0deg, var(--scanline) 0px, var(--scanline) 1px, transparent 1px, transparent 3px);
+  }
+  /* ─── TICKER ─── */
+  .ticker {
+    position: fixed; top: 0; left: 0; right: 0; height: var(--ticker-h);
+    background: #0d0d1a; border-bottom: 1px solid var(--yellow);
+    overflow: hidden; z-index: 1000; display: flex; align-items: center;
+  }
+  [data-theme="light"] .ticker { background: #2a2a3e; }
+  .ticker-label {
+    background: var(--pink); color: #fff; padding: 0 10px; flex-shrink: 0;
+    font: 700 11px/var(--ticker-h) var(--font-mono); text-transform: uppercase; letter-spacing: 1px;
+  }
+  .ticker-track { flex: 1; overflow: hidden; position: relative; height: 100%; }
+  .ticker-content {
+    display: inline-block; white-space: nowrap; padding-left: 100%;
+    animation: scroll-ticker 30s linear infinite;
+    font: 400 13px/var(--ticker-h) var(--font-mono); color: var(--yellow);
+  }
+  @keyframes scroll-ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  .ticker-content .critic { color: var(--pink); font-weight: 700; }
+  .ticker-content .sep { color: var(--text-dim); padding: 0 1.5em; }
+  /* ─── TOGGLE ─── */
+  .theme-toggle {
+    position: fixed; top: 44px; right: 16px; z-index: 1001;
+    background: var(--bg-alt); border: 1px solid var(--yellow); color: var(--yellow);
+    font: 700 11px var(--font-mono); padding: 4px 10px; cursor: pointer;
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+  .theme-toggle:hover { background: var(--yellow); color: var(--bg); }
+  /* ─── SECTIONS ─── */
+  .section {
+    min-height: 100vh; scroll-snap-align: start;
+    padding: calc(var(--ticker-h) + 24px) 24px 24px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+  }
+  .section-inner { max-width: 800px; width: 100%; }
+  .section-label {
+    font: 700 11px var(--font-mono); color: var(--pink);
+    text-transform: uppercase; letter-spacing: 3px; margin-bottom: 0.5em;
+  }
+  .section h2 { font: 700 clamp(1.5rem,4vw,2.4rem) var(--font-display); color: var(--yellow); margin-bottom: 0.5em; }
+  .section p { font-size: 0.9rem; color: var(--text); margin-bottom: 1em; }
+  /* ─── TITLE ─── */
+  .title-screen h1 {
+    font: 700 clamp(4rem,12vw,9rem)/0.95 var(--font-display); color: var(--yellow);
+    text-shadow: 0 0 30px rgba(255,215,0,0.4); letter-spacing: 0.05em;
+  }
+  .title-screen .subtitle { font-size: clamp(1rem,2.5vw,1.4rem); color: var(--pink); margin: 0.5em 0 1.5em; }
+  .title-screen .tagline { font-size: 0.85rem; color: var(--text-dim); max-width: 500px; }
+  .cursor-blink::after { content: '\2588'; animation: blink 1s step-end infinite; color: var(--green); }
+  @keyframes blink { 50% { opacity: 0; } }
+  /* ─── PROBLEM ─── */
+  .fake-ai-page {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe); border-radius: 12px; padding: 24px;
+    margin: 1.5em 0; color: #fff; font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.8rem; line-height: 1.5; position: relative; overflow: hidden;
+  }
+  .fake-ai-page::before {
+    content: 'SPECIMEN: GENERIC AI PAGE'; position: absolute; top: 0; left: 0; right: 0;
+    background: var(--red); color: #fff; font: 700 10px var(--font-mono);
+    padding: 3px 10px; letter-spacing: 2px; text-align: center;
+  }
+  .fake-ai-page .fake-btn {
+    display: inline-block; background: #fff; color: #6c5ce7;
+    border-radius: 9999px; padding: 6px 18px; font-weight: 700; font-size: 0.75rem; margin-top: 10px;
+  }
+  /* ─── DISCOVERY ─── */
+  .layers { display: flex; flex-direction: column; gap: 12px; margin: 1.5em 0; font-size: 0.85rem; }
+  .layer { border-left: 3px solid var(--yellow); padding: 10px 16px; background: rgba(255,215,0,0.05); }
+  .layer.l2 { border-color: var(--pink); background: rgba(255,20,147,0.05); }
+  .layer.l3 { border-color: var(--green); background: rgba(57,255,20,0.05); }
+  .layer strong { display: block; margin-bottom: 2px; }
+  .layer strong .num { color: var(--yellow); }
+  .layer.l2 strong .num { color: var(--pink); }
+  .layer.l3 strong .num { color: var(--green); }
+  /* ─── PROOF ─── */
+  .variation-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 1.5em 0; }
+  .v-card {
+    padding: 14px 10px; text-align: center; font-size: 0.75rem;
+    border: 1px solid var(--text-dim); transition: border-color 0.2s;
+  }
+  .v-card:hover { border-color: var(--yellow); }
+  .v-card .v-name { font-weight: 700; font-size: 0.8rem; margin-bottom: 4px; }
+  .v-card .v-score { color: var(--yellow); font-weight: 700; }
+  .v-card:nth-child(1) { border-color: var(--yellow); background: rgba(255,215,0,0.08); }
+  .v-card:nth-child(2) { border-color: var(--red); background: rgba(255,68,68,0.06); font-family: 'Courier New', monospace; text-transform: uppercase; }
+  .v-card:nth-child(3) { border-color: var(--text-dim); }
+  .v-card:nth-child(4) { border-color: var(--pink); background: rgba(255,20,147,0.06); }
+  .v-card:nth-child(5) { border-color: #666; background: rgba(255,255,255,0.03); }
+  .v-card:nth-child(6) { border-color: #c8a96e; background: rgba(200,169,110,0.06); border-radius: 8px; }
+  .v-card:nth-child(7) { border-color: var(--green); background: rgba(57,255,20,0.05); }
+  .v-card:nth-child(8) { border-color: #ff6b9d; background: rgba(255,107,157,0.08); transform: rotate(-1deg); }
+  .v-card:nth-child(9) { border-color: #d4a017; background: rgba(212,160,23,0.06); }
+  /* ─── TENSION ─── */
+  .tension-examples { display: flex; flex-direction: column; gap: 14px; margin: 1.5em 0; }
+  .t-example { display: flex; align-items: baseline; gap: 12px; font-size: 0.85rem; }
+  .t-example .t-name { font-weight: 700; min-width: 110px; flex-shrink: 0; }
+  .t-example .t-verb { color: var(--pink); font-weight: 700; }
+  /* ─── AUTHOR ─── */
+  .author-section { background: #0a0a14; border: 1px solid var(--green); }
+  [data-theme="light"] .author-section { background: #1a2a1a; }
+  .author-section .section-inner { color: var(--green); }
+  .author-section p { color: rgba(57,255,20,0.8); font-size: 0.85rem; }
+  .author-section .prompt { color: var(--green); }
+  .author-section .prompt::before { content: '> '; }
+  /* ─── CTA ─── */
+  .cta-btn {
+    display: inline-block; background: var(--yellow); color: var(--bg);
+    font: 700 1.1rem var(--font-mono); padding: 14px 36px; text-decoration: none;
+    text-transform: uppercase; letter-spacing: 2px; border: none; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .cta-btn:hover { background: #fff; transform: translateY(-2px); }
+  .cta-secondary {
+    display: inline-block; color: var(--text-dim); font-size: 0.8rem;
+    margin-top: 1em; text-decoration: underline; text-underline-offset: 3px;
+  }
+  .cta-secondary:hover { color: var(--yellow); }
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .ticker-content { font-size: 11px; }
+    .ticker-label { font-size: 9px; padding: 0 6px; }
+    .variation-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .v-card { padding: 8px 4px; font-size: 0.65rem; }
+    .t-example { flex-direction: column; gap: 2px; }
+    .section { padding-left: 16px; padding-right: 16px; }
+  }
+</style>
+</head>
+<body>
+<!-- TICKER BAR -->
+<div class="ticker" data-testid="ticker-bar">
+  <div class="ticker-label">SLAP! LIVE</div>
+  <div class="ticker-track">
+    <span class="ticker-content" data-testid="ticker-content">
+      <span class="critic">MARKETING:</span> "In today's rapidly evolving digital landscape" is the single most parodied opener in content marketing.
+      <span class="sep">///</span>
+      <span class="critic">UX:</span> Generic hero sections train users to scroll past value propositions without reading.
+      <span class="sep">///</span>
+      <span class="critic">DESIGN:</span> Purple gradients with rounded-full buttons: the new Comic Sans of SaaS.
+      <span class="sep">///</span>
+      <span class="critic">PRODUCT:</span> If your landing page could belong to any competitor, it belongs to none of them.
+      <span class="sep">///</span>
+      <span class="critic">TECHNICAL:</span> CSS-in-JS bundle for a static marketing page. Peak over-engineering.
+      <span class="sep">///</span>
+    </span>
+  </div>
+</div>
+<!-- THEME TOGGLE -->
+<button class="theme-toggle" data-testid="theme-toggle" onclick="toggleTheme()">CRT / LCD</button>
+<!-- SECTION 1: TITLE -->
+<section class="section title-screen" data-section="title" data-testid="section-title">
+  <div class="section-inner">
+    <h1>SLAP!</h1>
+    <p class="subtitle">The Anti-Slop Design Study</p>
+    <p class="tagline cursor-blink">What happens when you let AI write your website... and then roast it</p>
+  </div>
+</section>
+<!-- SECTION 2: THE PROBLEM -->
+<section class="section" data-section="problem" data-testid="section-problem">
+  <div class="section-inner">
+    <div class="section-label">The Problem</div>
+    <h2>Every AI page looks the same.</h2>
+    <p>Purple gradient. Inter font. Rounded-full buttons. "Revolutionize your workflow." You've seen this page a thousand times. That's because AI wrote it a thousand times.</p>
+    <div class="fake-ai-page">
+      <div style="padding-top:18px">
+        <b style="font-size:1.2em">Revolutionize Your Workflow</b><br>
+        <span style="opacity:0.8">In today's rapidly evolving digital landscape, our cutting-edge platform leverages next-generation AI to seamlessly transform your business operations.</span><br>
+        <span class="fake-btn">Get Started Free</span>
+      </div>
+    </div>
+    <p style="font-size:0.8rem;color:var(--text-dim)">Actual output from a leading AI model, asked to "write a SaaS landing page." Zero edits.</p>
+  </div>
+</section>
+<!-- SECTION 3: THE DISCOVERY -->
+<section class="section" data-section="discovery" data-testid="section-discovery">
+  <div class="section-inner">
+    <div class="section-label">The Discovery</div>
+    <h2>We built the worst page on purpose.</h2>
+    <p>The content is intentionally bad AI writing &mdash; proud-slop, the kind that sounds confident while saying nothing. Then we fed it through three layers:</p>
+    <div class="layers">
+      <div class="layer l1">
+        <strong><span class="num">Layer 1</span> &mdash; The Performer</strong>
+        AI-generated marketing copy. Unedited. Proud of itself.
+      </div>
+      <div class="layer l2">
+        <strong><span class="num">Layer 2</span> &mdash; The Critics</strong>
+        Five expert personas score every section. Marketing, UX, Design, Product, Technical.
+      </div>
+      <div class="layer l3">
+        <strong><span class="num">Layer 3</span> &mdash; Redemption</strong>
+        Can visual design rescue doomed content? Or does it just put lipstick on slop?
+      </div>
+    </div>
+  </div>
+</section>
+<!-- SECTION 4: THE PROOF -->
+<section class="section" data-section="proof" data-testid="section-proof">
+  <div class="section-inner">
+    <div class="section-label">The Proof</div>
+    <h2>Same words. Nine designs. Scores from 2 to 8.</h2>
+    <p>Identical content. Wildly different reactions. Design is not decoration.</p>
+    <div class="variation-grid" data-testid="variation-grid">
+      <div class="v-card"><div class="v-name">SLAP!</div><div class="v-score">6 &ndash; 8</div><div>CRT Terminal</div></div>
+      <div class="v-card"><div class="v-name">BRUTALIST</div><div class="v-score">5 &ndash; 7</div><div>Raw exposure</div></div>
+      <div class="v-card"><div class="v-name">Neo-Minimal</div><div class="v-score">4 &ndash; 6</div><div>Swiss calm</div></div>
+      <div class="v-card"><div class="v-name">Maximalist</div><div class="v-score">3 &ndash; 7</div><div>Sensory overload</div></div>
+      <div class="v-card"><div class="v-name">Dark Industrial</div><div class="v-score">4 &ndash; 6</div><div>Steel + grit</div></div>
+      <div class="v-card"><div class="v-name">Warm Organic</div><div class="v-score">3 &ndash; 5</div><div>Earthy comfort</div></div>
+      <div class="v-card"><div class="v-name">Retro-Futurism</div><div class="v-score">5 &ndash; 7</div><div>Neon nostalgia</div></div>
+      <div class="v-card"><div class="v-name">Memphis</div><div class="v-score">2 &ndash; 6</div><div>Playful chaos</div></div>
+      <div class="v-card"><div class="v-name">Art Deco</div><div class="v-score">5 &ndash; 8</div><div>Gilded frame</div></div>
+    </div>
+  </div>
+</section>
+<!-- SECTION 5: THE TENSION -->
+<section class="section" data-section="tension" data-testid="section-tension">
+  <div class="section-inner">
+    <div class="section-label">The Tension</div>
+    <h2>Design can't save bad content.<br>But it can expose or elevate it.</h2>
+    <p>The same empty paragraph reads completely differently depending on its frame:</p>
+    <div class="tension-examples">
+      <div class="t-example">
+        <span class="t-name" style="color:var(--red)">Brutalist</span>
+        <span><span class="t-verb">exposes</span> &mdash; strips away polish, forces the reader to confront hollow words naked.</span>
+      </div>
+      <div class="t-example">
+        <span class="t-name" style="color:#c8a96e">Warm Organic</span>
+        <span><span class="t-verb">hides</span> &mdash; wraps clich&eacute;s in soft textures until they feel like wisdom.</span>
+      </div>
+      <div class="t-example">
+        <span class="t-name" style="color:#d4a017">Art Deco</span>
+        <span><span class="t-verb">raises expectations</span> &mdash; gilded framing makes mediocre copy feel like a broken promise.</span>
+      </div>
+    </div>
+    <p style="font-size:0.8rem;color:var(--text-dim);margin-top:1em;">This is the core finding. Design is a lens, not a bandage.</p>
+  </div>
+</section>
+<!-- SECTION 6: AUTHOR NOTES -->
+<section class="section author-section" data-section="author" data-testid="section-author">
+  <div class="section-inner">
+    <div class="section-label" style="color:var(--green)">Author Notes</div>
+    <h2 style="color:var(--green)">How we almost ruined it by being too funny.</h2>
+    <p class="prompt">Confession time.</p>
+    <p>Halfway through the study, the critics got too good at roasting. We were laughing so hard at Marketing Persona's takedowns that we started optimizing for comedy instead of insight.</p>
+    <p>The UX Persona would say something devastating like "This hero section has the information density of a fortune cookie" and we'd high-five instead of fixing the methodology.</p>
+    <p>We had to pull back. The comedy was a symptom of the same disease we were studying &mdash; prioritizing surface over substance. We kept the jokes. But we made sure the scores were honest.</p>
+    <p class="prompt" style="margin-top:1em;">The irony of almost producing slop about slop was not lost on us.</p>
+  </div>
+</section>
+<!-- SECTION 7: CTA -->
+<section class="section" data-section="cta" data-testid="section-cta">
+  <div class="section-inner" style="text-align:center">
+    <div class="section-label">Enter the Gallery</div>
+    <h2>See for yourself.</h2>
+    <p>Nine designs. Same slop. Wildly different scores. Decide which frame changes the content.</p>
+    <div style="margin-top:1.5em">
+      <a href="#/" class="cta-btn" data-testid="cta-gallery">Enter the Gallery &rarr;</a>
+    </div>
+    <a href="methodology" class="cta-secondary" data-testid="cta-methodology">Read the methodology</a>
+  </div>
+</section>
+<script>
+function toggleTheme() {
+  var r = document.documentElement;
+  r.setAttribute('data-theme', r.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+var Q = {
+  title: ['SYSTEM: Booting SLAP! anti-slop detection array...', 'DESIGN: CRT aesthetic detected. Nostalgia shield: engaged.'],
+  problem: ['MARKETING: "In today\'s rapidly evolving digital landscape" is the single most parodied opener in content marketing.', 'UX: Generic hero sections train users to scroll past value propositions without reading.', 'DESIGN: Purple gradients with rounded-full buttons: the new Comic Sans of SaaS.'],
+  discovery: ['PRODUCT: Three-layer architecture turns bad content into a controlled experiment.', 'TECHNICAL: Persona scoring system: five critics, zero mercy, full reproducibility.', 'UX: Users don\'t read hero copy. But they feel when it\'s hollow.'],
+  proof: ['DESIGN: Art Deco scored highest \u2014 gilded frames set expectations that even slop can almost meet.', 'MARKETING: Memphis scored 2 on trust. Nobody trusts confetti with their credit card.', 'PRODUCT: Score variance of 6 points across identical content. Design is doing heavy lifting.'],
+  tension: ['UX: Brutalist design is an honesty engine. Bad content can\'t hide behind raw concrete.', 'DESIGN: Warm Organic is the most dangerous archetype \u2014 it makes emptiness feel cozy.', 'TECHNICAL: Design as lens, not bandage. File under: things we should have known.'],
+  author: ['SYSTEM: Author honesty module activated. Cringe suppression: OFF.', 'MARKETING: Comedy-to-insight ratio exceeded safe thresholds in sprint 3.', 'PRODUCT: Meta-slop paradox detected and contained. Barely.'],
+  cta: ['UX: Gallery awaits. Nine variations. One question: does the frame change the painting?', 'DESIGN: You\'ve read the theory. Now see the specimens.', 'SYSTEM: SLAP! gallery loaded. Anti-slop defenses: nominal. Enter when ready.']
+};
+var tickerEl = document.querySelector('[data-testid="ticker-content"]');
+function updateTicker(name) {
+  var quotes = Q[name];
+  if (!quotes) return;
+  var html = quotes.map(function(q) {
+    var parts = q.split(': ');
+    return '<span class="critic">' + parts[0] + ':</span> ' + parts.slice(1).join(': ') + ' <span class="sep">///</span> ';
+  }).join('');
+  tickerEl.innerHTML = html + html;
+}
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) updateTicker(e.target.getAttribute('data-section'));
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.section[data-section]').forEach(function(s) { observer.observe(s); });
+</script>
+</body>
+</html>

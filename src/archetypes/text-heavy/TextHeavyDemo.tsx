@@ -151,6 +151,17 @@ const TextHeavyDemo: React.FC<ArchetypeDemoProps> = (_props) => {
       {/* Header */}
       <header style={headerStyle}>
         <h1 style={titleStyle}>{article.title}</h1>
+        {article.subtitle && (
+          <p style={{
+            fontSize: 18,
+            color: '#6B7280',
+            margin: '0 0 16px',
+            lineHeight: 1.5,
+            fontStyle: 'italic',
+          }}>
+            {article.subtitle}
+          </p>
+        )}
         <div style={metaStyle}>
           <span>{article.author}</span>
           <span style={metaDotStyle} />

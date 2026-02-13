@@ -60,7 +60,7 @@ export interface ConsensusItem { text: string; type: 'agree' | 'disagree'; }
 export interface ActionItem { priority: 'high' | 'med' | 'low'; text: string; }
 export interface ReviewBundle { consensus: ConsensusItem[]; actions: ActionItem[]; }
 
-export type SectionId = 'hero' | 'pricing' | 'testimonials' | 'faq' | 'signup' | 'products' | 'cart' | 'checkout';
+export type SectionId = 'hero' | 'pricing' | 'testimonials' | 'faq' | 'signup' | 'products' | 'cart' | 'checkout' | 'opening' | 'hierarchy' | 'measure' | 'ornament' | 'ending';
 
 export interface SectionFindingSummary {
   sectionId: SectionId;

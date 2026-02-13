@@ -11,6 +11,25 @@ import RealTimeDemo from './real-time/RealTimeDemo';
 
 export const archetypes: ArchetypeEntry[] = [
   {
+    slug: 'text-heavy',
+    name: 'Text Heavy',
+    description: 'Long-form content with TOC, search & collapsible sections',
+    icon: '\u{1F4D6}',
+    accent: '#2563EB',
+    component: TextHeavyDemo,
+    variations: [
+      { id: 'slap', hook: 'SLAP!' },
+      { id: 'brutalist', hook: 'Raw & Honest' },
+      { id: 'neo-minimal', hook: 'Less is More' },
+      { id: 'maximalist', hook: 'More is More' },
+      { id: 'dark-industrial', hook: 'Built to Spec', dark: true },
+      { id: 'warm-organic', hook: 'Grown, Not Made' },
+      { id: 'retro-futurism', hook: 'Tomorrow, Today', dark: true },
+      { id: 'memphis', hook: 'Post-Modern Pop' },
+      { id: 'art-deco', hook: 'Gilded Geometry' },
+    ],
+  },
+  {
     slug: 'landing-page',
     name: 'Landing Page',
     description: 'Hero sections, pricing tables, testimonials & CTAs',
@@ -28,14 +47,6 @@ export const archetypes: ArchetypeEntry[] = [
       { id: 'memphis', hook: 'Post-Modern Pop' },
       { id: 'art-deco', hook: 'Gilded Geometry' },
     ],
-  },
-  {
-    slug: 'text-heavy',
-    name: 'Text Heavy',
-    description: 'Long-form content with TOC, search & collapsible sections',
-    icon: '\u{1F4D6}',
-    accent: '#2563EB',
-    component: TextHeavyDemo,
   },
   {
     slug: 'e-commerce',

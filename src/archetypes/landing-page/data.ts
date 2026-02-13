@@ -27,38 +27,38 @@ export interface Testimonial {
 }
 
 export const heroData: HeroData = {
-  headline: 'Ship beautiful products faster than ever',
+  headline: 'Empower Your Team to Achieve More, Together',
   subheadline:
-    'The modern platform that helps teams design, build, and launch world-class digital experiences with confidence.',
-  ctaPrimary: 'Request a Demo',
-  ctaSecondary: 'Learn More',
+    'Our innovative, best-in-class platform leverages cutting-edge technology to seamlessly streamline your workflow, drive meaningful engagement, and deliver transformative results across every touchpoint in your organization\u2019s digital journey.',
+  ctaPrimary: 'Start Your Journey',
+  ctaSecondary: 'See the Difference',
 };
 
 export const faqItems: FAQItem[] = [
   {
-    question: 'How does the 14-day free trial work?',
+    question: 'What makes your platform different from the competition?',
     answer:
-      'You get full access to all features for 14 days with no credit card required. At the end of the trial you can choose a plan that fits your needs or continue with our free tier.',
+      'Great question. Our platform is built from the ground up with a customer-first philosophy that prioritizes user experience, innovation, and scalability. We believe that the best products are the ones that just work \u2014 and we are confident that ours does.',
   },
   {
-    question: 'Can I change my plan later?',
+    question: 'How quickly can my team get started?',
     answer:
-      'Absolutely. You can upgrade, downgrade, or cancel your plan at any time from your account settings. Changes take effect at the start of your next billing cycle.',
+      'Getting started could not be easier. Our streamlined onboarding process has been optimized to minimize time-to-value and maximize your team\u2019s productivity from day one. Most teams are fully operational within minutes.',
   },
   {
-    question: 'Is there a limit on team members?',
+    question: 'Is my data secure?',
     answer:
-      'The Starter plan supports up to 5 team members. The Pro plan supports up to 25, and the Enterprise plan offers unlimited seats along with advanced role-based permissions.',
+      'Security is not just a feature \u2014 it is a core pillar of everything we build. Our platform employs industry-leading encryption, SOC 2 compliance, and a zero-trust architecture that ensures your data is always protected. We take security seriously.',
   },
   {
-    question: 'Do you offer refunds?',
+    question: 'What if I need to scale?',
     answer:
-      'Yes. If you are not satisfied within the first 30 days of a paid plan we will issue a full refund, no questions asked.',
+      'We designed our platform with scalability as a foundational principle. Whether you are a team of five or an organization of five thousand, our infrastructure scales seamlessly to meet your evolving needs. Growing with you is what we do.',
   },
   {
-    question: 'What kind of support do you provide?',
+    question: 'Do you really offer a free trial with no strings attached?',
     answer:
-      'All plans include email support with a 24-hour response time. Pro plans add live chat during business hours, and Enterprise customers receive a dedicated account manager with priority SLA.',
+      'Absolutely. We are so confident in the value our platform delivers that we offer a full-featured 14-day trial with zero commitment. No credit card required, no hidden fees, no surprises. We believe the product speaks for itself.',
   },
 ];
 
@@ -68,24 +68,24 @@ export const pricingPlans: PricingPlan[] = [
     price: '$9',
     period: '/month',
     features: [
-      'Up to 5 team members',
-      '10 GB storage',
-      'Basic analytics',
-      'Email support',
-      'API access',
+      'Seamless onboarding experience',
+      'Intuitive analytics dashboard',
+      'World-class email support',
+      'Robust API framework',
+      'Industry-standard security',
     ],
     highlighted: false,
   },
   {
-    name: 'Pro',
+    name: 'Growth',
     price: '$29',
     period: '/month',
     features: [
-      'Up to 25 team members',
-      '100 GB storage',
-      'Advanced analytics',
-      'Priority support',
-      'Custom integrations',
+      'Everything in Starter, plus more',
+      'Advanced AI-powered insights',
+      'Priority white-glove support',
+      'Seamless third-party integrations',
+      'Collaborative team workspace',
     ],
     highlighted: true,
   },
@@ -94,11 +94,11 @@ export const pricingPlans: PricingPlan[] = [
     price: '$99',
     period: '/month',
     features: [
-      'Unlimited team members',
-      '1 TB storage',
-      'Enterprise analytics',
-      'Dedicated account manager',
-      'SSO & audit logs',
+      'Everything in Growth, elevated',
+      'Bespoke solutions tailored to you',
+      'Dedicated success partner',
+      'Enterprise-grade compliance',
+      'Custom SLA guarantees',
     ],
     highlighted: false,
   },
@@ -106,41 +106,41 @@ export const pricingPlans: PricingPlan[] = [
 
 export const testimonials: Testimonial[] = [
   {
-    name: 'Sarah Chen',
-    role: 'VP of Product',
-    company: 'Luminary Inc.',
+    name: 'Sarah M.',
+    role: 'Chief Innovation Officer',
+    company: 'Synergy Labs',
     quote:
-      'This platform transformed how our team collaborates. We shipped our last release two weeks ahead of schedule.',
+      'This platform completely revolutionized how we think about thinking about our workflow. Our team alignment went from good to incredible. We could not be more thrilled with the results.',
     avatarInitial: 'S',
   },
   {
-    name: 'Marcus Rivera',
-    role: 'Engineering Lead',
-    company: 'NovaTech',
+    name: 'David K.',
+    role: 'VP of Digital Transformation',
+    company: 'NexusPoint',
     quote:
-      'The developer experience is outstanding. Our onboarding time dropped from days to hours after switching.',
+      'After evaluating numerous solutions in the space, we chose this platform and have never looked back. The impact on our bottom line has been significant and measurable.',
+    avatarInitial: 'D',
+  },
+  {
+    name: 'Priya R.',
+    role: 'Head of Strategic Initiatives',
+    company: 'Luminos Group',
+    quote:
+      'The seamless integration capabilities alone made this a game-changer for our organization. Our stakeholders were impressed from day one.',
+    avatarInitial: 'P',
+  },
+  {
+    name: 'Michael T.',
+    role: 'Director of Operational Excellence',
+    company: 'Pinnacle Systems',
+    quote:
+      'We saw a meaningful improvement in team productivity almost immediately. This platform truly understands the modern enterprise.',
     avatarInitial: 'M',
-  },
-  {
-    name: 'Aisha Patel',
-    role: 'Head of Design',
-    company: 'Craft Studio',
-    quote:
-      'Finally a tool that designers and developers both love. The handoff process is seamless.',
-    avatarInitial: 'A',
-  },
-  {
-    name: 'James Okonkwo',
-    role: 'CTO',
-    company: 'ScaleForge',
-    quote:
-      'We evaluated a dozen platforms before choosing this one. Best decision we made all year.',
-    avatarInitial: 'J',
   },
 ];
 
 export const emailSignup = {
-  placeholder: 'Enter your email address',
-  buttonText: 'Get Early Access',
-  successMessage: 'Thanks for signing up!',
+  placeholder: 'Enter your email to get started',
+  buttonText: 'Unlock Your Potential',
+  successMessage: 'Welcome to the journey!',
 };

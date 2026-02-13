@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview C — The Split Screen | SLAP!</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#1a1a2e;--fg:#f5f0e8;--yellow:#ffd700;--pink:#ff1493;--green:#39ff14;--amber:#ffb000;--panel-l:#12121f;--panel-r:#0d0d18;--divider:#ffd700}
+[data-theme="light"]{--bg:#f5f0e8;--fg:#1a1a2e;--panel-l:#ede8dc;--panel-r:#e4dfd3;--divider:#b8860b;--green:#006400;--amber:#996600;--pink:#c0105a}
+body{font-family:'Courier New',Courier,monospace;background:var(--bg);color:var(--fg);overflow-x:hidden;line-height:1.6}
+/* ── Theme toggle ── */
+.theme-toggle{position:fixed;top:12px;right:16px;z-index:10000;background:var(--panel-r);border:1px solid var(--yellow);color:var(--yellow);font-family:inherit;font-size:.75rem;padding:4px 10px;cursor:pointer;border-radius:2px}
+.theme-toggle:hover{background:var(--yellow);color:var(--bg)}
+/* ── Scanlines (left panel) ── */
+.scanlines{position:relative}
+.scanlines::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);z-index:1}
+/* ── Split layout ── */
+.split{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.left-panel{border-right:2px dashed var(--divider);padding:2.5rem 2rem;position:relative}
+.right-panel{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;padding:2.5rem 2rem;overflow:hidden}
+/* ── Terminal chrome (right panel) ── */
+.terminal-bar{background:var(--panel-r);border:1px solid var(--green);border-radius:3px 3px 0 0;padding:4px 10px;font-size:.65rem;color:var(--green);margin-bottom:0;display:flex;gap:8px;align-items:center}
+.terminal-bar .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.terminal-bar .dot:nth-child(1){background:#ff5f56}.terminal-bar .dot:nth-child(2){background:#ffbd2e}.terminal-bar .dot:nth-child(3){background:#27c93f}
+.terminal-body{border:1px solid var(--green);border-top:none;border-radius:0 0 3px 3px;padding:1.5rem;flex:1;max-height:70vh;overflow-y:auto;background:rgba(0,0,0,.25)}
+/* ── Commentary blocks ── */
+.commentary{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease;margin-bottom:1.2rem}
+.commentary.visible{opacity:1;transform:translateY(0)}
+.commentary .label{color:var(--yellow);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.commentary .quote{color:var(--green);font-size:.85rem;line-height:1.5}
+[data-theme="light"] .commentary .quote{color:var(--green)}
+.prompt{color:var(--amber);font-size:.85rem}
+.prompt .cursor{display:inline-block;width:8px;height:14px;background:var(--green);animation:blink 1s step-end infinite;vertical-align:text-bottom;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+/* ── Left panel typography ── */
+.section-left{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:2rem 0}
+.section-left h2{font-size:1.6rem;color:var(--yellow);margin-bottom:1rem;text-transform:uppercase;letter-spacing:.08em}
+.section-left h3{font-size:1rem;color:var(--pink);margin-bottom:.6rem}
+.slop-text{background:rgba(255,20,147,.06);border-left:3px solid var(--pink);padding:.8rem 1rem;margin-bottom:1rem;font-size:.85rem;color:var(--fg);opacity:.92}
+/* ── Title section (full-width) ── */
+.title-section{display:grid;grid-template-columns:1fr 1fr;min-height:100vh;align-items:center}
+.title-left{padding:3rem;border-right:2px dashed var(--divider)}
+.title-right{padding:3rem}
+.title-left h1{font-size:clamp(3rem,8vw,6rem);color:var(--yellow);line-height:.95;letter-spacing:-.04em}
+.title-left .subtitle{color:var(--pink);font-size:1rem;margin-top:.5rem;text-transform:uppercase;letter-spacing:.15em}
+/* ── Model diagram ── */
+.diagram{border:1px solid var(--yellow);padding:1.2rem;margin:1rem 0;font-size:.8rem;line-height:1.8;color:var(--fg)}
+.diagram .layer{color:var(--green)}.diagram .arrow{color:var(--yellow);text-align:center;display:block}
+/* ── Variation cards ── */
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:1rem 0}
+.v-card{border:1px solid var(--yellow);padding:.6rem;font-size:.7rem;line-height:1.4}
+.v-card .name{color:var(--yellow);font-weight:bold;text-transform:uppercase;font-size:.65rem}.v-card .score{color:var(--green)}.v-card .dna{color:var(--fg);opacity:.8;font-size:.65rem}
+/* ── Bar chart ── */
+.bar-chart{display:flex;flex-direction:column;gap:6px;margin:1rem 0}
+.bar-row{display:flex;align-items:center;gap:8px;font-size:.7rem}
+.bar-label{width:80px;text-align:right;color:var(--fg);opacity:.8;flex-shrink:0}
+.bar{height:14px;border-radius:1px;transition:width .6s ease}
+.bar-val{color:var(--green);width:24px;font-size:.65rem}
+/* ── Full-width sections ── */
+.full-section{padding:3rem 2.5rem;min-height:60vh;display:flex;flex-direction:column;justify-content:center;max-width:860px;margin:0 auto}
+.full-section h2{font-size:1.4rem;color:var(--green);margin-bottom:1rem;text-transform:uppercase;letter-spacing:.08em}
+.full-section p{font-size:.88rem;margin-bottom:.8rem;line-height:1.7;opacity:.9}
+.confession{border-left:3px solid var(--green);padding-left:1rem;margin:1rem 0;color:var(--amber);font-size:.85rem;line-height:1.7}
+/* ── CTA section ── */
+.cta-section{text-align:center;padding:4rem 2rem;min-height:50vh;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.cta-bezel{border:3px solid var(--fg);border-radius:8px;padding:3rem 2.5rem;box-shadow:inset 0 0 40px rgba(0,0,0,.15),0 0 0 1px var(--yellow);max-width:560px}
+.cta-section h2{font-size:1.8rem;color:var(--yellow);margin-bottom:1.5rem}
+.cta-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem}
+.btn{font-family:inherit;font-size:.85rem;padding:.7rem 1.6rem;cursor:pointer;border:2px solid var(--yellow);text-decoration:none;transition:all .2s}
+.btn-primary{background:var(--yellow);color:var(--bg)}.btn-primary:hover{background:var(--pink);border-color:var(--pink);color:#fff}
+.btn-secondary{background:transparent;color:var(--yellow)}.btn-secondary:hover{background:var(--yellow);color:var(--bg)}
+/* ── Mobile ── */
+@media(max-width:767px){
+  .split{grid-template-columns:1fr}
+  .left-panel{border-right:none;border-bottom:2px dashed var(--divider)}
+  .right-panel{position:relative;height:auto;min-height:auto;padding:1.5rem}
+  .title-section{grid-template-columns:1fr}
+  .title-left{border-right:none;border-bottom:2px dashed var(--divider)}
+  .card-grid{grid-template-columns:repeat(2,1fr)}
+  .terminal-body{max-height:none}
+}
+</style>
+</head>
+<body>
+<button class="theme-toggle" data-testid="theme-toggle" onclick="toggleTheme()">LIGHT</button>
+
+<!-- ═══ SECTION 1: TITLE ═══ -->
+<section class="title-section" data-testid="section-title">
+  <div class="title-left scanlines">
+    <h1>SLAP!</h1>
+    <p class="subtitle">The Anti-Slop Design Study</p>
+  </div>
+  <div class="title-right" style="display:flex;flex-direction:column;justify-content:center">
+    <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span> critics.sh</div>
+    <div class="terminal-body">
+      <p class="prompt" data-testid="intro-prompt">LOADING CRITICS PANEL... READY.<br>Scroll to begin.<span class="cursor"></span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 2: THE SLOP ═══ -->
+<div class="split" data-testid="section-slop">
+  <div class="left-panel scanlines">
+    <div class="section-left" data-left="slop-1">
+      <h2>The Slop</h2>
+      <h3>Hero Headline</h3>
+      <div class="slop-text">"Empower Your Team to Achieve More, Together"</div>
+      <div class="slop-text">"Our innovative, best-in-class platform leverages cutting-edge technology to seamlessly streamline your workflow, drive meaningful engagement, and deliver transformative results across every touchpoint in your organization's digital journey."</div>
+    </div>
+    <div class="section-left" data-left="slop-2">
+      <h3>Testimonials</h3>
+      <div class="slop-text">"This platform completely revolutionized how we think about thinking about our workflow." &mdash; Sarah M., Chief Innovation Officer, Synergy Labs</div>
+      <div class="slop-text">"The seamless integration capabilities alone made this a game-changer for our organization." &mdash; Priya R., Head of Strategic Initiatives, Luminos Group</div>
+    </div>
+    <div class="section-left" data-left="slop-3">
+      <h3>Feature Copy</h3>
+      <div class="slop-text">"Seamless onboarding experience"</div>
+      <div class="slop-text">"Advanced AI-powered insights"</div>
+      <div class="slop-text">"Bespoke solutions tailored to you"</div>
+      <div class="slop-text">"Enterprise-grade compliance"</div>
+      <div class="slop-text">Every bullet is a buzzword. Zero specifics. Zero proof.</div>
+    </div>
+  </div>
+  <div class="right-panel" data-testid="critics-slop">
+    <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span> expert_review.sh</div>
+    <div class="terminal-body">
+      <div class="commentary" data-for="slop-1">
+        <p class="label">Marketing</p>
+        <p class="quote">"Seven buzzwords in one subheadline. That's not a value prop, that's a word cloud. No one will remember what you actually do."</p>
+      </div>
+      <div class="commentary" data-for="slop-2">
+        <p class="label">UX</p>
+        <p class="quote">"Zero visual hierarchy. Where do I look first? Everywhere and nowhere. The testimonials read like they were generated by the same model that wrote the landing page."</p>
+      </div>
+      <div class="commentary" data-for="slop-3">
+        <p class="label">Design</p>
+        <p class="quote">"This is what happens when you accept every AI default. No color system, no spacing rhythm, no typographic scale. It's a template wearing a mask."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 3: THE MODEL ═══ -->
+<div class="split" data-testid="section-model">
+  <div class="left-panel scanlines">
+    <div class="section-left" data-left="model-1">
+      <h2>The Model</h2>
+      <p style="margin-bottom:1rem;font-size:.88rem">Three layers. One methodology. The SLAPstick framework dissects AI-generated content through escalating lenses of critique.</p>
+      <div class="diagram">
+        <p class="layer">LAYER 1: THE PERFORMER</p>
+        <p style="font-size:.75rem;opacity:.8;margin-left:1rem">Proud-slop content &mdash; the AI's best effort, unedited</p>
+        <span class="arrow">&darr;</span>
+        <p class="layer">LAYER 2: THE CRITICS</p>
+        <p style="font-size:.75rem;opacity:.8;margin-left:1rem">Expert panels + user personas roast every section</p>
+        <span class="arrow">&darr;</span>
+        <p class="layer">LAYER 3: THE REDEMPTION</p>
+        <p style="font-size:.75rem;opacity:.8;margin-left:1rem">9 styled variations &mdash; same words, transformed design</p>
+      </div>
+    </div>
+    <div class="section-left" data-left="model-2">
+      <h3>Why This Works</h3>
+      <p style="font-size:.85rem;margin-bottom:.8rem">The slop is the control group. The critics are the diagnosis. The variations are the proof that design &mdash; not better copy &mdash; is the cure.</p>
+      <p style="font-size:.85rem;opacity:.8">Each variation keeps the identical text. Only the visual design system changes. Scores shift from 2-3 to 5-8.</p>
+    </div>
+  </div>
+  <div class="right-panel" data-testid="critics-model">
+    <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span> persona_panel.sh</div>
+    <div class="terminal-body">
+      <div class="commentary" data-for="model-1">
+        <p class="label">Dorothy (68, non-technical)</p>
+        <p class="quote">"What does synergy mean? I just wanted to read about the product. The page made me feel like I walked into a meeting I wasn't invited to."</p>
+      </div>
+      <div class="commentary" data-for="model-1">
+        <p class="label">Frank (frustrated user)</p>
+        <p class="quote">"I scanned for 3 seconds and found zero useful information. Three. Seconds. That's all you get, and you wasted every one."</p>
+      </div>
+      <div class="commentary" data-for="model-2">
+        <p class="label">Marcus (colorblind)</p>
+        <p class="quote">"At least the contrast is readable. That's the only thing working here. The red CTAs are a gamble for my eyes though."</p>
+      </div>
+      <div class="commentary" data-for="model-2">
+        <p class="label">Carlos (brand director)</p>
+        <p class="quote">"The typographic hierarchy is razor-sharp in Brutalist. But where is the brand warmth? We need at least one human element."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 4: THE PROOF ═══ -->
+<div class="split" data-testid="section-proof">
+  <div class="left-panel scanlines">
+    <div class="section-left" data-left="proof-1">
+      <h2>The Proof</h2>
+      <p style="font-size:.85rem;margin-bottom:1rem">Nine design systems. Identical copy. Scores tell the story.</p>
+      <div class="card-grid">
+        <div class="v-card"><p class="name">SLAP (Baseline)</p><p class="score">2 &ndash; 3</p><p class="dna">Default AI output, no design system</p></div>
+        <div class="v-card"><p class="name">Brutalist</p><p class="score">5 &ndash; 7</p><p class="dna">Raw borders, monospace authority</p></div>
+        <div class="v-card"><p class="name">Neo-Minimal</p><p class="score">5 &ndash; 7</p><p class="dna">Whitespace as content, muted palette</p></div>
+        <div class="v-card"><p class="name">Maximalist</p><p class="score">5 &ndash; 7</p><p class="dna">Layered gradients, saturated energy</p></div>
+        <div class="v-card"><p class="name">Dark Industrial</p><p class="score">5 &ndash; 7</p><p class="dna">Steel textures, amber warnings</p></div>
+        <div class="v-card"><p class="name">Warm Organic</p><p class="score">5 &ndash; 7</p><p class="dna">Rounded, earthy, hand-drawn feel</p></div>
+        <div class="v-card"><p class="name">Retro-Futurism</p><p class="score">6 &ndash; 8</p><p class="dna">Neon grid, CRT glow nostalgia</p></div>
+        <div class="v-card"><p class="name">Memphis / NeoPop</p><p class="score">5 &ndash; 7</p><p class="dna">Bold shapes, clashing color joy</p></div>
+        <div class="v-card"><p class="name">Art Deco</p><p class="score">7 &ndash; 8</p><p class="dna">Gold lines, geometric luxury</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="right-panel" data-testid="critics-proof">
+    <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span> scores.sh</div>
+    <div class="terminal-body">
+      <div class="commentary visible" data-for="proof-1">
+        <p class="label" style="margin-bottom:.8rem">Same Words. Nine Designs.</p>
+        <div class="bar-chart">
+          <div class="bar-row"><span class="bar-label">SLAP</span><div class="bar" style="width:22%;background:var(--pink)"></div><span class="bar-val">2-3</span></div>
+          <div class="bar-row"><span class="bar-label">Brutalist</span><div class="bar" style="width:55%;background:var(--yellow)"></div><span class="bar-val">5-7</span></div>
+          <div class="bar-row"><span class="bar-label">Neo-Min</span><div class="bar" style="width:55%;background:var(--yellow)"></div><span class="bar-val">5-7</span></div>
+          <div class="bar-row"><span class="bar-label">Maximalist</span><div class="bar" style="width:55%;background:var(--yellow)"></div><span class="bar-val">5-7</span></div>
+          <div class="bar-row"><span class="bar-label">Dk Indust</span><div class="bar" style="width:55%;background:var(--yellow)"></div><span class="bar-val">5-7</span></div>
+          <div class="bar-row"><span class="bar-label">Warm Org</span><div class="bar" style="width:55%;background:var(--yellow)"></div><span class="bar-val">5-7</span></div>
+          <div class="bar-row"><span class="bar-label">Retro-Fut</span><div class="bar" style="width:66%;background:var(--green)"></div><span class="bar-val">6-8</span></div>
+          <div class="bar-row"><span class="bar-label">Memphis</span><div class="bar" style="width:55%;background:var(--yellow)"></div><span class="bar-val">5-7</span></div>
+          <div class="bar-row"><span class="bar-label">Art Deco</span><div class="bar" style="width:75%;background:var(--green)"></div><span class="bar-val">7-8</span></div>
+        </div>
+        <p class="quote" style="margin-top:1rem;font-size:.78rem">Design is not decoration. It is the difference between a 2 and an 8.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION 5: AUTHOR NOTES (full-width) ═══ -->
+<section class="full-section" data-testid="section-notes" style="border-top:2px dashed var(--divider)">
+  <h2>// How We Almost Ruined It</h2>
+  <div class="confession">
+    <p>The roast was so good people forgot we were demonstrating design skills.</p>
+    <p style="margin-top:.6rem">The expert panels landed. The persona quotes were sharp. The comedy hit. But somewhere along the way the project started reading as standup comedy, not a design study.</p>
+    <p style="margin-top:.6rem">We had to recalibrate &mdash; less comedy set, more design critique with personality. The humor stays, but it serves the argument now, not the other way around.</p>
+  </div>
+  <p style="margin-top:1rem;font-size:.82rem;opacity:.7">The hardest part was not writing the slop. It was resisting the urge to fix it before the critics had their say.</p>
+</section>
+
+<!-- ═══ SECTION 6: CTA (full-width) ═══ -->
+<section class="cta-section" data-testid="section-cta">
+  <div class="cta-bezel">
+    <h2>See for yourself.</h2>
+    <p style="font-size:.88rem;opacity:.8;margin-bottom:1.2rem">Nine variations. Four expert lenses. Six user personas. One question: does design save slop?</p>
+    <div class="cta-buttons">
+      <a href="#" class="btn btn-primary" data-testid="cta-gallery">Enter the Gallery &rarr;</a>
+      <a href="#" class="btn btn-secondary" data-testid="cta-methodology">Read the Methodology</a>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ── Theme toggle ── */
+function toggleTheme(){
+  const root=document.documentElement;
+  const btn=document.querySelector('[data-testid="theme-toggle"]');
+  if(root.getAttribute('data-theme')==='dark'){root.setAttribute('data-theme','light');btn.textContent='DARK'}
+  else{root.setAttribute('data-theme','dark');btn.textContent='LIGHT'}
+}
+
+/* ── Intersection Observer: left sections drive right-panel commentary ── */
+(function(){
+  const leftSections=document.querySelectorAll('[data-left]');
+  const allCommentary=document.querySelectorAll('.commentary');
+
+  function showFor(key){
+    allCommentary.forEach(function(c){
+      if(c.getAttribute('data-for')===key){c.classList.add('visible')}
+      else{c.classList.remove('visible')}
+    });
+  }
+
+  if(!leftSections.length)return;
+
+  const observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        showFor(entry.target.getAttribute('data-left'));
+      }
+    });
+  },{rootMargin:'-30% 0px -30% 0px',threshold:0.01});
+
+  leftSections.forEach(function(s){observer.observe(s)});
+
+  /* Also handle the proof section bar chart animation */
+  const proofSection=document.querySelector('[data-testid="section-proof"]');
+  if(proofSection){
+    const bars=proofSection.querySelectorAll('.bar');
+    bars.forEach(function(b){
+      const w=b.style.width;b.style.width='0';
+      b.setAttribute('data-target-width',w);
+    });
+    const proofObs=new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          bars.forEach(function(b){b.style.width=b.getAttribute('data-target-width')});
+          proofObs.unobserve(entry.target);
+        }
+      });
+    },{threshold:0.2});
+    proofObs.observe(proofSection);
+  }
+})();
+</script>
+</body>
+</html>

@@ -969,49 +969,49 @@ const personaFindings: Record<string, PersonaEntry> = {
   },
 
   'landing-page:slap:dorothy': {
-    tagline: 'It works, but I have already forgotten what it looked like',
+    tagline: 'Lots of big words but I still do not know what this product does',
     observations: [
       {
-        category: 'LAYOUT',
-        observation: 'Layout is clear and scannable — standard single-column flow guides the eye',
-        verdict: 'good',
-        comment: 'I can follow the page from top to bottom without confusion. The sections are in the order I expected.',
+        category: 'TYPOGRAPHY',
+        observation: 'The headline says "Empower Your Team to Achieve More, Together" but never explains what the product is',
+        verdict: 'needs-work',
+        comment: 'I read the whole page and I genuinely do not know what this company sells. Is it software? A service? The big words sound important but they do not explain anything.',
       },
       {
         category: 'COMPONENTS',
-        observation: 'Nothing on the page guides my attention — no visual anchor, no emphasis, no hierarchy beyond size',
+        observation: '"Unlock Your Potential" button — potential for what? I do not know what happens if I click',
         verdict: 'needs-work',
-        comment: 'I read the whole page but nothing stuck. There is no moment where the design says "look here" — everything has the same visual weight.',
+        comment: 'I am not going to give my email to "unlock my potential." That could mean anything. Just tell me what I will receive.',
       },
       {
-        category: 'COLOR',
-        observation: 'Success state after signup uses Tailwind default green — feels like a system message, not a celebration',
+        category: 'LAYOUT',
+        observation: 'The testimonials sound like they were written by the same person — all the same tone and length',
         verdict: 'needs-work',
-        comment: 'After I signed up, the green checkmark felt like a browser confirmation, not a welcome moment. I expected something branded.',
+        comment: 'Real people do not talk like this. "Meaningful improvement in team productivity" — that sounds like a press release, not a customer.',
       },
     ],
   },
 
   'landing-page:slap:carlos': {
-    tagline: 'This is what AI generates when you do not give it a brief',
+    tagline: '"Chief Innovation Officer at Synergy Labs" — I know an AI testimonial when I see one',
     observations: [
       {
         category: 'TYPOGRAPHY',
-        observation: 'System font stack conveys zero brand personality — it is the absence of a typographic choice',
+        observation: 'The hero subhead packs seven buzzwords into one sentence — "innovative, best-in-class, cutting-edge, seamlessly, transformative, touchpoint, digital journey"',
         verdict: 'needs-work',
-        comment: 'System fonts are fast but they communicate nothing. Every OS renders this differently — there is no consistent brand voice across platforms.',
+        comment: 'I count buzzwords for a living. This subheadline is a masterclass in saying nothing confidently. If this landed on my desk I would send it back.',
       },
       {
-        category: 'COLOR',
-        observation: 'Purple #8B5CF6 with no supporting palette is not a color system — it is a placeholder',
+        category: 'LAYOUT',
+        observation: 'Testimonials from "VP of Digital Transformation at NexusPoint" and "Chief Innovation Officer at Synergy Labs" — these companies do not exist',
         verdict: 'needs-work',
-        comment: 'One purple accent on a white page is not a brand. It is what happens when AI picks a color and nobody refines it.',
+        comment: 'I have been in business for twenty years. "Synergy Labs" and "NexusPoint" sound like AI-generated company names because they are. Real social proof uses real companies.',
       },
       {
-        category: 'DECORATION',
-        observation: '8px border-radius on every element makes the page indistinguishable from 10,000 other AI-generated sites',
+        category: 'COMPONENTS',
+        observation: 'FAQ asks "What makes you different?" and the answer is "We believe the best products just work"',
         verdict: 'needs-work',
-        comment: 'The uniform radius is the design equivalent of beige paint — safe, forgettable, and intentionally inoffensive. Our brand deserves a point of view.',
+        comment: 'That is not a competitive advantage. That is a bumper sticker. If a board member asked me what differentiates our product and I said this, I would be fired.',
       },
     ],
   },
@@ -1091,7 +1091,7 @@ const personaFindings: Record<string, PersonaEntry> = {
   },
 
   'e-commerce:slap:dorothy': {
-    tagline: 'Looks like a homework assignment, not a real store',
+    tagline: 'Fancy words for simple things and colored blocks where pictures should be',
     observations: [
       {
         category: 'DECORATION',
@@ -1101,39 +1101,39 @@ const personaFindings: Record<string, PersonaEntry> = {
       },
       {
         category: 'TYPOGRAPHY',
-        observation: 'Product names are small and descriptions are minimal — hard to know what I am buying',
+        observation: 'Product descriptions use words like "artisan" and "curated" but do not tell me if the jacket will fit',
         verdict: 'needs-work',
-        comment: 'I cannot tell much about the products from a short name and one sentence. I need more detail to feel confident purchasing.',
+        comment: 'I read "A timeless silhouette reimagined for the modern individual" and I still do not know if it comes in my size. Just tell me what I am buying.',
       },
       {
         category: 'LAYOUT',
         observation: 'No browse guidance — no categories, no "start here," no featured products',
         verdict: 'needs-work',
-        comment: 'I landed on the page and just saw a grid of colored blocks. Nobody told me where to start or what is popular.',
+        comment: 'I landed on the page and just saw a grid of colored blocks with fancy descriptions. Nobody told me where to start or what is popular.',
       },
     ],
   },
 
   'e-commerce:slap:carlos': {
-    tagline: 'No brand, no story, no reason to shop here',
+    tagline: 'The copy says "artisan" and "curated" but the store says "template"',
     observations: [
       {
         category: 'COLOR',
-        observation: 'Generic red #EF4444 accent says "template store" — zero brand identity in the shopping experience',
+        observation: 'Product descriptions claim premium positioning but the red #EF4444 design says bargain bin',
         verdict: 'needs-work',
-        comment: 'The red accent could belong to any e-commerce template. There is no visual merchandising, no brand story, nothing that says why this store exists.',
+        comment: 'You cannot call your candles a "Curated Aromatherapy Collection" and present them on a Shopify default template. The copy writes checks the design cannot cash.',
       },
       {
         category: 'LAYOUT',
-        observation: 'No visual merchandising — products are in a flat grid with no hierarchy or curation',
+        observation: 'Every product description uses the same AI copywriting formula — adjective, noun, buzzword, lifestyle promise',
         verdict: 'needs-work',
-        comment: 'Real stores create visual stories — featured items, editorial layouts, curated collections. This is just a database dump into cards.',
+        comment: 'I can see the ChatGPT prompt from here. "Write a premium product description for a $25 t-shirt." The copy is interchangeable — swap any description onto any product and nobody would notice.',
       },
       {
         category: 'COMPONENTS',
-        observation: 'Cart drawer has no brand treatment — white panel with plain text and a red button',
+        observation: 'Cart drawer has no brand treatment — premium copy meets bargain-bin presentation',
         verdict: 'needs-work',
-        comment: 'The cart is where purchase intent peaks. This cart feels like a spreadsheet. Add brand presence where it matters most.',
+        comment: 'The cart shows "Heritage Denim Jacket" in a plain white drawer with a red button. The disconnect between the copy and the presentation is embarrassing.',
       },
     ],
   },
@@ -2154,6 +2154,1104 @@ const personaFindings: Record<string, PersonaEntry> = {
         observation: 'Cart drawer animation is smooth and the gradient badge renders crisply on mobile screens',
         verdict: 'good',
         comment: 'The cart drawer is snappy and the gradient counter badge looks sharp on my phone screen — high-DPI rendering works well for gradients.',
+      },
+    ],
+  },
+
+  // ─── TEXT-HEAVY SLAP ─────────────────────────────────────────
+
+  'text-heavy:slap:marcus': {
+    tagline: 'The performer promised a visual feast and delivered a monochrome wall',
+    observations: [
+      {
+        category: 'COLOR',
+        observation: 'Zero color differentiation between sections — the entire article is one gray-on-white slab',
+        verdict: 'needs-work',
+        comment: 'The article brags about its "clear visual roadmap" but I see nothing to distinguish one section from another. For someone with color vision deficiency, structural cues matter even more — and there are none.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'The article claims "precisely differentiated heading levels" but heading weights appear identical',
+        verdict: 'needs-work',
+        comment: 'I am squinting at this. The headings and body text are the same visual weight. If I cannot tell where a section starts, I am lost — and the article is telling me this is intentional design.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'No icons, dividers, or non-text visual markers to break up the wall of content',
+        verdict: 'blocker',
+        comment: 'Every section looks identical. I rely on structural cues beyond color — shapes, spacing changes, borders — and this article provides none while insisting it provides all of them.',
+      },
+    ],
+  },
+
+  'text-heavy:slap:dorothy': {
+    tagline: 'I watched the whole show and I still do not know what it was about',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Article uses jargon like "measure", "leading", "touchpoint", "user journey" without ever explaining them',
+        verdict: 'needs-work',
+        comment: 'I read the whole thing. What is a "measure"? What is "leading"? The article defines them in passing but in a way that assumes I already know. If I already knew, why would I be reading?',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Every paragraph looks the same length and style — no visual variety to guide my attention',
+        verdict: 'needs-work',
+        comment: 'I do not know which parts are important and which parts are filler. It all looks the same. When everything is equally formatted, nothing stands out.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'No table of contents, no progress indicator, no "you are here" marker in a 12-minute article',
+        verdict: 'blocker',
+        comment: 'I scrolled for a long time and had no idea how much was left. When the article ended, I was surprised — not because it was good, but because nothing told me the end was coming.',
+      },
+    ],
+  },
+
+  'text-heavy:slap:carlos': {
+    tagline: 'This is every all-hands presentation I have ever sat through — confident and empty',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'The article uses authoritative language but delivers zero measurable claims or evidence',
+        verdict: 'blocker',
+        comment: 'I have sat through hundreds of presentations like this. "We believe this sets a new standard" — what standard? Measured how? Against what benchmark? This article would not survive a board meeting.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Five sections of content with no data, no charts, no pull quotes, no evidence of any kind',
+        verdict: 'needs-work',
+        comment: 'Where are the receipts? Show me a readability score. Show me a user test result. Show me anything except more paragraphs telling me how great the paragraphs are.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'The tags at the bottom ("Leveraging Synergies", "Thought Leadership") are corporate buzzword bingo',
+        verdict: 'needs-work',
+        comment: 'If I saw these tags on a LinkedIn post, I would keep scrolling. "Leveraging Synergies" as a tag is a red flag that nobody edited this with fresh eyes.',
+      },
+    ],
+  },
+
+  'text-heavy:slap:frank': {
+    tagline: 'I want my twelve minutes back',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Article promises "maximum value" in the opening and delivers twelve minutes of self-congratulation',
+        verdict: 'blocker',
+        comment: 'I am genuinely angry. I read this entire thing expecting to learn something about typography. Instead, every section told me how great the section I was reading is. That is not a guide. That is a mirror.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'No scannable structure — no bullet points, no bold key phrases, no TL;DR — forces linear reading of empty content',
+        verdict: 'blocker',
+        comment: 'I cannot skim this to find the useful parts because there are no useful parts to find. The uniform formatting hides this fact beautifully — you have to read every word to discover that none of them matter.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Article ending asks me to "explore the design variations" — the only honest sentence because it admits the content itself is not the point',
+        verdict: 'needs-work',
+        comment: 'The final sentence is actually correct: the writing does not matter, only the visual treatment matters. At least something in this article is self-aware.',
+      },
+    ],
+  },
+
+  'text-heavy:slap:sam': {
+    tagline: 'Watching this show on a small screen and there is nothing to see',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Dense paragraphs with no visual breaks create endless scroll on mobile — no pull quotes, no images, no breathing room',
+        verdict: 'blocker',
+        comment: 'On my phone this is a scroll tunnel. Paragraph after paragraph of identical-looking text with nothing to anchor my eye. I lost my place three times.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'No responsive type scale — the body text that works on desktop becomes a dense wall on a 375px viewport',
+        verdict: 'needs-work',
+        comment: 'The text size is technically readable but the line length relative to screen width gives me about 15 words per line on my phone. That is borderline too dense for comfortable mobile reading.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Tags at the bottom wrap to six lines on mobile, pushing the page footer way down',
+        verdict: 'needs-work',
+        comment: 'Seven tags that each take a full line on a narrow screen. The tag section is nearly as tall as an entire article section. This is not optimized for the device most people read on.',
+      },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: BRUTALIST ─────────────────────────────────
+
+  'text-heavy:brutalist:marcus': {
+    tagline: 'High contrast fortress — my eyes can rest easy here',
+    observations: [
+      {
+        category: 'COLOR',
+        observation: 'Pure black text on white background with no mid-tone grays anywhere in the layout',
+        verdict: 'good',
+        comment: 'This is the highest contrast text I have encountered in any variation. The stark black-on-white means I never have to squint or guess at a boundary.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Thick 3-4px black borders delineate every section without relying on color coding',
+        verdict: 'good',
+        comment: 'The heavy borders give me structural cues that are completely independent of color. I can navigate by shape and weight alone, which is exactly what I need.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: '900-weight uppercase headings create extreme hierarchy but reduce letter-shape distinction',
+        verdict: 'needs-work',
+        comment: 'The heavy weight is great for contrast, but ALL CAPS reduces the unique shapes of letters that help me parse words quickly. Mixed case at this weight would be ideal.',
+      },
+    ],
+  },
+
+  'text-heavy:brutalist:dorothy': {
+    tagline: 'Why is everything shouting at me?',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'All headings are uppercase 900-weight, creating an aggressive visual tone throughout the article',
+        verdict: 'needs-work',
+        comment: 'Every heading feels like it is yelling at me. I understand emphasis, but when everything is bold and capitalized, nothing feels calm enough to settle into reading.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Heavy black borders and zero rounded corners give the page a rigid, unfinished appearance',
+        verdict: 'needs-work',
+        comment: 'My first thought was that the styling had not loaded properly. The thick black lines and sharp corners make it look like a form from the tax office, not an article I want to read.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Monospace accents on labels and metadata contrast sharply with body text',
+        verdict: 'needs-work',
+        comment: 'Some of the smaller text looks like it belongs on a computer terminal. It is readable, but it feels cold and unwelcoming for something I am supposed to enjoy reading.',
+      },
+    ],
+  },
+
+  'text-heavy:brutalist:carlos': {
+    tagline: 'Decisive and authoritative — this commands the room',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: '900-weight uppercase headings project maximum typographic authority and decisiveness',
+        verdict: 'good',
+        comment: 'This typography does not apologize for itself. The heavy weight and capitalization project the kind of confidence I want in any executive-facing document.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Stark black-and-white palette with thick borders creates an unmistakable visual identity',
+        verdict: 'good',
+        comment: 'There is zero ambiguity in this design. Every element knows its place, every boundary is clear. This is the kind of decisiveness that survives a board presentation.',
+      },
+      {
+        category: 'DECORATION',
+        observation: 'Complete absence of decorative elements — no gradients, shadows, or rounded corners anywhere',
+        verdict: 'needs-work',
+        comment: 'The restraint is admirable but borders on austere. A touch of warmth or brand color would make this feel intentionally bold rather than accidentally stripped down.',
+      },
+    ],
+  },
+
+  'text-heavy:brutalist:frank': {
+    tagline: 'Extreme hierarchy means I find what I need fast',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Weight contrast between 900-weight headings and regular body text creates instant scannable hierarchy',
+        verdict: 'good',
+        comment: 'I can jump from heading to heading in seconds. The weight difference is so extreme that my eyes grab the next section title without any effort.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Thick border separators between sections create hard visual breaks that segment content clearly',
+        verdict: 'good',
+        comment: 'Each section is boxed off like its own unit. I do not have to guess where one topic ends and another begins — the borders do that work for me.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Monospace font for body text reduces reading speed compared to proportional typefaces',
+        verdict: 'needs-work',
+        comment: 'The headings are fast to scan but the body text slows me down. Monospace characters take more horizontal space and my reading rhythm suffers on longer paragraphs.',
+      },
+    ],
+  },
+
+  'text-heavy:brutalist:sam': {
+    tagline: 'Heavy type and thick borders fight for space on my phone',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Uppercase 900-weight headings wrap to 3-4 lines on a 375px viewport due to wide character spacing',
+        verdict: 'needs-work',
+        comment: 'The bold uppercase headings that look powerful on desktop become multi-line blocks on my phone. A single heading can eat up a quarter of my screen before I even reach the content.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Thick 3-4px borders consume significant horizontal padding on narrow screens',
+        verdict: 'needs-work',
+        comment: 'Those thick black borders that define the desktop layout eat into my already-limited screen width. The content area feels cramped because the borders refuse to yield.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Monospace text blocks run wider than proportional text, causing potential horizontal overflow',
+        verdict: 'needs-work',
+        comment: 'Monospace text is wider character-for-character than regular fonts. On my phone, longer code-style labels push right up against the border or wrap awkwardly mid-word.',
+      },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: NEO-MINIMAL ───────────────────────────────
+
+  'text-heavy:neo-minimal:marcus': {
+    tagline: 'Elegant but dangerously thin for my eyes',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Font weights of 200-300 reduce contrast ratio between text and background below comfortable thresholds',
+        verdict: 'blocker',
+        comment: 'The thin letterforms look sophisticated, but at 200-weight the strokes nearly vanish against the background for me. I have to lean in and concentrate just to read the headings.',
+      },
+      {
+        category: 'COLOR',
+        observation: 'Restrained palette uses subtle gray tones that provide minimal contrast differentiation',
+        verdict: 'needs-work',
+        comment: 'The muted grays are barely distinguishable from each other. I appreciate the restraint in principle, but I need more contrast between text levels to navigate confidently.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Subtle 1px borders create section divisions that are nearly invisible at low contrast sensitivity',
+        verdict: 'needs-work',
+        comment: 'I can see something is there, but the 1px dividers are so faint they might as well not exist. I need heavier structural cues to understand the page layout.',
+      },
+    ],
+  },
+
+  'text-heavy:neo-minimal:dorothy': {
+    tagline: 'Beautiful but I cannot tell what to do next',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Thin font weights throughout make body text appear faded and difficult to read at smaller sizes',
+        verdict: 'needs-work',
+        comment: 'The text looks lovely from a distance but when I try to actually read it, the thin letters strain my eyes. I keep increasing my screen brightness hoping that will help.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Generous whitespace creates a calm reading environment but leaves interactive elements ambiguous',
+        verdict: 'needs-work',
+        comment: 'Everything is so subtle and spaced out that I am not sure where one section ends and another begins. It is calming but also a little disorienting.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Minimal visual hierarchy between headings and body text due to similar thin weights',
+        verdict: 'needs-work',
+        comment: 'The headings and the regular text look almost the same to me. I keep losing my place because nothing stands out enough to anchor my reading.',
+      },
+    ],
+  },
+
+  'text-heavy:neo-minimal:carlos': {
+    tagline: 'Refined luxury — this whispers quality',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Thin elegant typefaces with generous letter-spacing project high-end editorial refinement',
+        verdict: 'good',
+        comment: 'This typography says premium without trying too hard. The thin weights and breathing room between letters feel like a luxury publication — exactly the brand impression I want.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Narrow content width with extensive margins creates a focused, curated reading experience',
+        verdict: 'good',
+        comment: 'The generous margins frame the content like a gallery exhibition. It communicates that every word was chosen carefully and deserves its space on the page.',
+      },
+      {
+        category: 'DECORATION',
+        observation: 'Complete absence of decorative elements lets typography and whitespace carry the entire design',
+        verdict: 'needs-work',
+        comment: 'The restraint is masterful, but at a certain point the design feels so minimal it could belong to anyone. A single brand element would anchor this to our identity.',
+      },
+    ],
+  },
+
+  'text-heavy:neo-minimal:frank': {
+    tagline: 'Clean layout, but I am squinting to read it',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Clean grid structure with minimal distractions enables rapid visual scanning of page structure',
+        verdict: 'good',
+        comment: 'There is nothing competing for my attention here. The clean layout lets me quickly identify where each section starts, which is exactly what I want.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: '200-300 weight fonts reduce reading speed due to decreased legibility at body text sizes',
+        verdict: 'needs-work',
+        comment: 'The layout is efficient but the actual reading is slow. These whisper-thin fonts force me to concentrate on each word instead of flowing through the content naturally.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Subtle hierarchy between heading levels requires close inspection to distinguish content structure',
+        verdict: 'needs-work',
+        comment: 'I have to study the page to figure out the hierarchy. When everything is thin and delicate, the difference between an h2 and an h3 becomes a guessing game.',
+      },
+    ],
+  },
+
+  'text-heavy:neo-minimal:sam': {
+    tagline: 'Finally, a variation that respects my screen size',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Narrow content width of approximately 600px translates naturally to a 375px mobile viewport',
+        verdict: 'good',
+        comment: 'The narrow content column that looks intentional on desktop just works on my phone. No awkward reflow, no horizontal scrolling — the content fits like it was made for mobile.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Generous line spacing and letter spacing maintain readability on small screens',
+        verdict: 'good',
+        comment: 'The breathing room between lines makes reading on my phone comfortable. I can follow each line without accidentally jumping to the next one.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Thin font weights that look elegant on desktop become harder to render on mobile pixel densities',
+        verdict: 'needs-work',
+        comment: 'Those delicate thin fonts that look great on a high-res desktop monitor get a bit ragged on my phone. Some characters look uneven at smaller rendering sizes.',
+      },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: MAXIMALIST ────────────────────────────────
+
+  'text-heavy:maximalist:marcus': {
+    tagline: 'Rich palette mostly works, but coral and gold blur together',
+    observations: [
+      {
+        category: 'COLOR',
+        observation: 'Coral (#FF6B6B) and gold (#FFD93D) accent colors share similar luminance values, reducing distinguishability',
+        verdict: 'needs-work',
+        comment: 'The navy anchors everything well, but the coral and gold accents melt into one muddy warm tone for me. I cannot tell which accent is being used for what purpose.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Mixed serif and sans-serif pairing creates distinct visual channels that aid navigation',
+        verdict: 'good',
+        comment: 'The serif-for-headings and sans-serif-for-body split gives me two distinct texture cues to navigate by. Even without color, I can tell what role each text block plays.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Decorative elements use color coding without redundant shape or pattern alternatives',
+        verdict: 'needs-work',
+        comment: 'The decorative accents rely entirely on their color to communicate meaning. Adding a pattern or shape variation would make these elements accessible regardless of color vision.',
+      },
+    ],
+  },
+
+  'text-heavy:maximalist:dorothy': {
+    tagline: 'This feels like a real magazine — I trust it',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Editorial-density layout with mixed column widths mimics familiar print magazine conventions',
+        verdict: 'good',
+        comment: 'This reminds me of the magazines I read at home. The layout feels familiar and trustworthy — I know where to look because I have seen designs like this my whole life.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Serif headings with generous sizing create a warm, literary reading experience',
+        verdict: 'good',
+        comment: 'The headings look like they belong in a proper publication. The serif fonts make everything feel more considered and intentional — like someone cared about the words.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Rich color palette and decorative elements create visual complexity that can overwhelm in long passages',
+        verdict: 'needs-work',
+        comment: 'It is gorgeous in small doses, but after scrolling through several sections, all the colors and decorations start to tire my eyes. I need some quieter stretches in between.',
+      },
+    ],
+  },
+
+  'text-heavy:maximalist:carlos': {
+    tagline: 'Editorial richness that projects premium authority',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Sophisticated serif/sans-serif pairing with editorial-grade sizing signals professional publishing standards',
+        verdict: 'good',
+        comment: 'This is how I want our content to look in every client-facing context. The typographic sophistication communicates that we invest in quality at every level.',
+      },
+      {
+        category: 'DECORATION',
+        observation: 'Navy, coral, and gold palette creates a rich, distinctive visual identity',
+        verdict: 'good',
+        comment: 'The color palette feels curated and intentional. It projects warmth without sacrificing authority — exactly the balance that makes clients feel confident in our brand.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Dense editorial layout with many competing visual elements risks looking cluttered in formal contexts',
+        verdict: 'needs-work',
+        comment: 'The richness is impressive in a magazine context, but in a board presentation, the density could feel chaotic. Knowing when to dial back would make this even more powerful.',
+      },
+    ],
+  },
+
+  'text-heavy:maximalist:frank': {
+    tagline: 'Beautiful but exhausting for a long read',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Multiple decorative elements and color accents compete for attention alongside body text',
+        verdict: 'needs-work',
+        comment: 'I came to read the content but the decorative elements keep pulling my eyes away from the text. Every paragraph feels like it is competing with the design for my attention.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Serif/sans-serif pairing creates clear hierarchy between headings and body text',
+        verdict: 'good',
+        comment: 'I can tell headings from body text instantly because the font families are completely different. That saves me time when scanning for the section I need.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Decorative pull quotes and accent bars interrupt the linear reading flow of long-form content',
+        verdict: 'needs-work',
+        comment: 'The pull quotes and colored bars look editorial, but they break my reading momentum. I keep having to re-find my place in the body text after each decorative interruption.',
+      },
+    ],
+  },
+
+  'text-heavy:maximalist:sam': {
+    tagline: 'Magazine density needs a mobile editor',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Dense editorial layout with multi-column elements does not collapse gracefully to single-column mobile',
+        verdict: 'needs-work',
+        comment: 'The magazine-style layout that works on desktop becomes a chaotic stack on my phone. Elements that sat side-by-side now pile up vertically without enough spacing between them.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Decorative accent bars and pull quotes consume disproportionate screen real estate on 375px viewport',
+        verdict: 'needs-work',
+        comment: 'A pull quote that takes one line on desktop becomes a three-line block on my phone, pushing the actual content further down. The decorative elements need a mobile-specific scale.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Serif fonts maintain readability at mobile sizes but line lengths need tighter control',
+        verdict: 'needs-work',
+        comment: 'The serif fonts are still readable on my phone, which is good, but the line lengths vary wildly between sections. Some paragraphs feel comfortable while others cram too many words per line.',
+      },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: DARK-INDUSTRIAL ───────────────────────────
+
+  'text-heavy:dark-industrial:marcus': {
+    tagline: 'Gold on dark is a contrast gamble for my eyes',
+    observations: [
+      {
+        category: 'COLOR',
+        observation: 'Gold/amber (#FFB800) accent text on dark (#1A1A2E) backgrounds produces contrast ratios that vary by context',
+        verdict: 'needs-work',
+        comment: 'The gold on dark background works for large headings but gets risky at smaller sizes. My eyes strain to pick up the amber accents when they appear as labels or metadata text.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Monospace font throughout provides consistent character width that aids letter-by-letter reading',
+        verdict: 'good',
+        comment: 'Monospace fonts give every character the same width, which actually helps me parse words more carefully. The consistent spacing reduces the ambiguity I sometimes feel with proportional fonts.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Terminal-style labels use color-coded status indicators without redundant text or icon cues',
+        verdict: 'needs-work',
+        comment: 'The terminal-style labels rely on their gold color to stand out from the surrounding text. A bracket prefix or icon would give me a non-color way to identify these elements.',
+      },
+    ],
+  },
+
+  'text-heavy:dark-industrial:dorothy': {
+    tagline: 'This feels like staring at a computer from the 1980s',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Dark background with light text inverts the familiar reading pattern of print-based media',
+        verdict: 'needs-work',
+        comment: 'I have spent my whole life reading dark text on light pages. This bright-on-dark setup feels backwards and makes my eyes tired after just a few paragraphs.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Monospace font throughout creates a technical, terminal-like reading experience unfamiliar to general audiences',
+        verdict: 'needs-work',
+        comment: 'All the text looks like it belongs on a programmer\'s screen, not in something I would choose to read. The even spacing of every letter feels mechanical and cold.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Terminal-style section labels with technical formatting conventions add cognitive overhead',
+        verdict: 'needs-work',
+        comment: 'The labels look like computer commands. I do not know if I am supposed to click them or if they are just headings. The technical styling makes simple things feel complicated.',
+      },
+    ],
+  },
+
+  'text-heavy:dark-industrial:carlos': {
+    tagline: 'Technical precision impresses engineers but alienates everyone else',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Monospace typography and terminal aesthetics project technical credibility and engineering culture',
+        verdict: 'needs-work',
+        comment: 'This design screams technical competence, which works for an engineering blog. But for general business content, it alienates the 80% of our audience who are not developers.',
+      },
+      {
+        category: 'DECORATION',
+        observation: 'Gold/amber accent system creates a distinctive, memorable brand identity against the dark background',
+        verdict: 'good',
+        comment: 'The gold-on-dark palette is distinctive and memorable. If our brand leans technical, this color system would be instantly recognizable across any touchpoint.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Dark industrial aesthetic limits the contexts where this design can be deployed professionally',
+        verdict: 'needs-work',
+        comment: 'I cannot use this for a client presentation or an annual report. The dark terminal aesthetic works in one very specific context and falls flat everywhere else.',
+      },
+    ],
+  },
+
+  'text-heavy:dark-industrial:frank': {
+    tagline: 'Labels are efficient but monospace slows my reading',
+    observations: [
+      {
+        category: 'COMPONENTS',
+        observation: 'Terminal-style section labels provide instant categorical identification for rapid scanning',
+        verdict: 'good',
+        comment: 'The bracketed labels at the top of each section tell me exactly what I am looking at. No guessing, no interpreting decorative headings — just clear, direct identification.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Monospace body text reduces reading speed by 10-15% compared to proportional typefaces',
+        verdict: 'needs-work',
+        comment: 'Scanning the headings is fast, but reading the actual paragraphs is slow. Every character taking the same width means my eyes cannot find their natural reading rhythm.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Dark background reduces eye fatigue during long reading sessions in low-light environments',
+        verdict: 'good',
+        comment: 'If I am reading this late at night, the dark background is actually easier on my eyes than a bright white page. The reduced glare helps me sustain longer reading sessions.',
+      },
+    ],
+  },
+
+  'text-heavy:dark-industrial:sam': {
+    tagline: 'Dark mode is great at night but monospace runs wide',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Dark background theme is comfortable for nighttime mobile reading and reduces screen glare',
+        verdict: 'good',
+        comment: 'Reading this on my phone at night feels natural. The dark background matches my phone\'s dark mode and the reduced brightness means I am not blinding myself in bed.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Monospace characters are uniformly wider than proportional fonts, causing text to run wider on narrow viewports',
+        verdict: 'needs-work',
+        comment: 'Monospace text on my 375px screen means fewer words per line and more vertical scrolling. What fits in one line with a normal font wraps to two lines with monospace.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Gold/amber accent elements maintain visibility on dark backgrounds across varying mobile screen brightnesses',
+        verdict: 'good',
+        comment: 'The gold accents are bright enough to stay visible even when my phone brightness is turned way down. That consistent visibility at any brightness level is something most designs miss.',
+      },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: WARM-ORGANIC ──────────────────────────────
+
+  'text-heavy:warm-organic:marcus': {
+    tagline: 'Earth tones are tricky, but the warm contrast pulls through',
+    observations: [
+      {
+        category: 'COLOR',
+        observation: 'Earth tone palette (browns, greens, tans) occupies similar hue ranges that can be difficult to distinguish',
+        verdict: 'needs-work',
+        comment: 'Browns and greens sit close together in my color perception. The earthy palette looks harmonious for most people, but for me several elements blend into one muddy warm tone.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Warm-toned text on cream background maintains sufficient contrast ratios for comfortable reading',
+        verdict: 'good',
+        comment: 'The dark brown text on cream background gives me enough contrast to read comfortably. The warmth of both colors does not sacrifice the contrast ratio I need.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Rounded containers with soft shadows create structural boundaries that do not depend on color alone',
+        verdict: 'good',
+        comment: 'The rounded containers and soft shadows create visible boundaries regardless of my color perception. I can navigate the page structure by shape and shadow, which is ideal.',
+      },
+    ],
+  },
+
+  'text-heavy:warm-organic:dorothy': {
+    tagline: 'This is the first variation that feels like home',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Comfortable spacing with rounded edges and soft shadows creates a welcoming, non-technical reading environment',
+        verdict: 'good',
+        comment: 'This is the first variation that made me want to keep reading. The rounded edges and gentle spacing feel warm and inviting — like sitting down with a good book.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Warm serif-like fonts at comfortable sizes create a literary, approachable reading experience',
+        verdict: 'good',
+        comment: 'The text looks like it belongs in a nicely printed book. The size is comfortable and the warm font style feels familiar — I do not have to adjust to anything unusual.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Natural texture backgrounds and earth tones may reduce perceived contrast for aging eyes',
+        verdict: 'needs-work',
+        comment: 'The warm colors are lovely, but some of the lighter earth tones blend together a bit for me. A little more contrast between the background and the text would help my old eyes.',
+      },
+    ],
+  },
+
+  'text-heavy:warm-organic:carlos': {
+    tagline: 'Approachable and trustworthy — like a well-crafted annual report',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Organic design language with rounded shapes and warm palette projects approachability and trust',
+        verdict: 'good',
+        comment: 'This design communicates trustworthiness without being stiff. The warm palette and organic shapes feel like a company that cares about its customers — not just its shareholders.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Comfortable reading typography balances professionalism with warmth',
+        verdict: 'good',
+        comment: 'The typography strikes the right balance between professional and approachable. It would work in an annual report, a blog post, or a client presentation without modification.',
+      },
+      {
+        category: 'DECORATION',
+        observation: 'Soft shadows and natural textures create depth without the aggressive contrasts of more dramatic styles',
+        verdict: 'needs-work',
+        comment: 'The warmth is a strength, but the design may be too comfortable — it lacks the visual punch needed to command attention in competitive contexts where authority matters more than warmth.',
+      },
+    ],
+  },
+
+  'text-heavy:warm-organic:frank': {
+    tagline: 'Comfortable but nothing pushes me forward',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Gentle, even spacing throughout creates a consistent but undifferentiated reading rhythm',
+        verdict: 'needs-work',
+        comment: 'Everything is evenly spaced and softly rounded, which means nothing stands out. I lose the urgency to keep reading because the design treats every section with the same gentle importance.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Warm fonts at comfortable sizes prioritize reading comfort over scanning efficiency',
+        verdict: 'needs-work',
+        comment: 'This is designed for someone who wants to linger over every paragraph. I do not. I need sharper heading contrast to jump to what matters instead of wading through the warmth.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Rounded containers provide clear section boundaries for content navigation',
+        verdict: 'good',
+        comment: 'The rounded containers at least tell me where each section starts and ends. I can use those boundaries to skip ahead when the gentle pacing is testing my patience.',
+      },
+    ],
+  },
+
+  'text-heavy:warm-organic:sam': {
+    tagline: 'Rounded containers and soft spacing were made for mobile',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Rounded containers with comfortable padding translate naturally to a single-column mobile layout',
+        verdict: 'good',
+        comment: 'The rounded containers stack perfectly on my phone. Each section feels like its own card, and the padding means nothing bumps up against the screen edges.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Comfortable font sizing and line height maintain readability without adjustment on mobile viewports',
+        verdict: 'good',
+        comment: 'The text is immediately readable on my phone without any pinching or zooming. The line height gives each line enough room to breathe on a small screen.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Soft shadows and rounded edges render cleanly on mobile screens without pixelation or overflow',
+        verdict: 'good',
+        comment: 'The soft shadows and rounded corners look crisp on my phone screen. No jagged edges, no overflow — this is one of the cleanest mobile rendering experiences across all the variations.',
+      },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: RETRO-FUTURISM ────────────────────────────
+
+  'text-heavy:retro-futurism:marcus': {
+    tagline: 'Teal and purple are my worst nightmare palette',
+    observations: [
+      {
+        category: 'COLOR',
+        observation: 'Teal (#2DD4BF) and purple (#A78BFA) palette relies on hue distinction that is compromised in deuteranopia',
+        verdict: 'blocker',
+        comment: 'Teal and purple are nearly indistinguishable for me. When the design uses these two colors to differentiate elements, I am effectively seeing one color applied everywhere.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Gradient text effects reduce legibility by varying contrast across individual characters',
+        verdict: 'needs-work',
+        comment: 'The gradient headings look creative, but some portions of each letter are lower contrast than others. I am reading words where half the letters are clear and half fade into the background.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Rounded containers with solid borders provide structural cues independent of the color palette',
+        verdict: 'good',
+        comment: 'Despite the color issues, the rounded containers with their borders give me enough structural information to navigate. I can follow the layout by shape even when the colors fail me.',
+      },
+    ],
+  },
+
+  'text-heavy:retro-futurism:dorothy': {
+    tagline: 'The bouncing is playful but I cannot focus on the words',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Bouncy entrance animations on scroll trigger cause content to shift position as the user reads',
+        verdict: 'needs-work',
+        comment: 'Every time I scroll, things bounce and slide into view. It is playful the first time, but by the third paragraph I just want things to stay still so I can read in peace.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Gradient text on headings reduces readability, especially for users with vision changes',
+        verdict: 'needs-work',
+        comment: 'The colorful gradient text on the headings looks blurry to me. I cannot quite focus on letters that change color mid-word — it is like reading through a rainbow-tinted window.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Rounded, colorful containers with 70s/80s aesthetic create a distinctive but unfamiliar visual language',
+        verdict: 'needs-work',
+        comment: 'The bubbly shapes and bright colors remind me of a children\'s toy. It is charming in a way, but I do not take the content as seriously when it is packaged like this.',
+      },
+    ],
+  },
+
+  'text-heavy:retro-futurism:carlos': {
+    tagline: 'Fun and distinctive, but hard to take seriously',
+    observations: [
+      {
+        category: 'DECORATION',
+        observation: 'Retro-futuristic aesthetic with gradients and bouncy animations projects playfulness over authority',
+        verdict: 'needs-work',
+        comment: 'This design has genuine personality and would stand out in a crowded market. But when I imagine presenting this to the board, the bouncy animations and gradients undermine the authority of our content.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Teal/purple gradient headings are distinctive but sacrifice legibility for visual impact',
+        verdict: 'needs-work',
+        comment: 'The gradient headings are memorable and Instagram-worthy, but in a professional context, readability should never be traded for visual flair. The headings need to be read, not just admired.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Rounded containers and vibrant palette create a cohesive retro-futuristic brand identity',
+        verdict: 'good',
+        comment: 'I will give credit where it is due — the visual identity is cohesive and distinctive. If our brand is about playful innovation, this aesthetic could absolutely work in the right context.',
+      },
+    ],
+  },
+
+  'text-heavy:retro-futurism:frank': {
+    tagline: 'I came to read, not watch a light show',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Scroll-triggered bounce animations delay content visibility and disrupt scanning flow',
+        verdict: 'blocker',
+        comment: 'Every time I scroll, I have to wait for the content to bounce into place before I can read it. I am fighting the design just to get through the article at my own pace.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Gradient text effects force the eye to re-adjust contrast expectations mid-word',
+        verdict: 'needs-work',
+        comment: 'My reading speed drops every time I hit a gradient heading. My eyes have to recalibrate for the changing contrast, which breaks the scanning rhythm I rely on for efficiency.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Colorful rounded containers provide clear visual grouping of content sections',
+        verdict: 'good',
+        comment: 'The rounded containers at least group the content logically. Once the bouncing stops and things settle, I can use the container boundaries to jump between sections.',
+      },
+    ],
+  },
+
+  'text-heavy:retro-futurism:sam': {
+    tagline: 'Gradients are fine but the bounce causes scroll jank',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Bouncy scroll animations cause visible jank and frame drops on mid-range mobile devices',
+        verdict: 'needs-work',
+        comment: 'The bounce animations that feel smooth on desktop cause my phone to stutter. Scrolling becomes jerky and unpredictable — I keep overshooting the section I want to read.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Gradient text renders acceptably on mobile screens but loses detail at smaller heading sizes',
+        verdict: 'needs-work',
+        comment: 'The gradients still look colorful on my phone, but at smaller mobile heading sizes the color transitions happen over fewer pixels. The effect looks muddy instead of smooth.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Rounded containers with visible padding maintain comfortable touch target spacing on mobile',
+        verdict: 'good',
+        comment: 'The generous padding inside each rounded container means interactive elements have plenty of breathing room. My fingers do not accidentally tap the wrong thing.',
+      },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: MEMPHIS ───────────────────────────────────
+
+  'text-heavy:memphis:marcus': {
+    tagline: 'Primary colors are the easiest palette for my eyes',
+    observations: [
+      {
+        category: 'COLOR',
+        observation: 'Primary color palette (red, blue, yellow) provides maximum hue distinction for all forms of color vision deficiency',
+        verdict: 'good',
+        comment: 'Red, blue, and yellow are the three colors I can most reliably distinguish. This is the one palette where I can confidently tell every accent apart — it is a relief.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Bold geometric shapes (circles, triangles, squares) provide distinct non-color visual markers',
+        verdict: 'good',
+        comment: 'Each decorative element has a unique shape in addition to its color. Even if I confuse two colors, the circle versus triangle versus square distinction tells me which element is which.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Bold sans-serif headings maintain good contrast but geometric decorations can overlap text areas',
+        verdict: 'needs-work',
+        comment: 'The headings are clear and bold, but some of the geometric shapes sit close to or behind the text. When a colored shape touches a letterform, it creates a contrast conflict for my eyes.',
+      },
+    ],
+  },
+
+  'text-heavy:memphis:dorothy': {
+    tagline: 'The shapes are fun but I do not know what they mean',
+    observations: [
+      {
+        category: 'COMPONENTS',
+        observation: 'Geometric decorative elements (triangles, circles, zigzags) are scattered throughout without clear semantic meaning',
+        verdict: 'needs-work',
+        comment: 'There are colorful triangles and circles all over the page. They are cheerful but I keep wondering if I am supposed to click them or if they mean something. It is distracting.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Asymmetric layout breaks conventional reading flow patterns that experienced readers depend on',
+        verdict: 'needs-work',
+        comment: 'The layout jumps around in unexpected ways. I am used to reading left to right, top to bottom, but this design seems to push things off-center on purpose. It makes me feel lost.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Bold, playful headings in primary colors create an energetic but informal reading atmosphere',
+        verdict: 'needs-work',
+        comment: 'The colorful headings remind me of a children\'s classroom. It is lively and fun, but it makes me wonder if this content is meant for someone much younger than me.',
+      },
+    ],
+  },
+
+  'text-heavy:memphis:carlos': {
+    tagline: 'Creative energy without the authority to match',
+    observations: [
+      {
+        category: 'DECORATION',
+        observation: 'Memphis-style geometric elements project creative energy and design-forward brand identity',
+        verdict: 'good',
+        comment: 'The creative energy is undeniable — this design signals innovation and boldness. For a design agency or creative brand, this visual language would be perfect.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Asymmetric post-modern layout challenges conventional professional content expectations',
+        verdict: 'needs-work',
+        comment: 'In creative industries, this asymmetry shows confidence. In most business contexts, it reads as chaotic. The layout needs to earn its unconventional choices with flawless execution.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Bold primary-colored headings are attention-grabbing but reduce perceived gravitas of the content',
+        verdict: 'needs-work',
+        comment: 'The bold colors demand attention, which is valuable. But the playful primary palette makes our content feel like a pitch deck for a startup, not a position paper from an established brand.',
+      },
+    ],
+  },
+
+  'text-heavy:memphis:frank': {
+    tagline: 'Shapes in the margins keep stealing my focus',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Geometric decorative elements positioned near content areas create visual competition with body text',
+        verdict: 'needs-work',
+        comment: 'I am trying to read the article but my peripheral vision keeps snagging on triangles and circles in the margins. Every paragraph feels like it has a competing visual distraction nearby.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Bold headings in contrasting colors create strong section entry points for scanning',
+        verdict: 'good',
+        comment: 'The colored headings are easy to spot when I am scanning through the article. The bold weight plus the color shift makes each section start unmissable.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Asymmetric element positioning makes content flow unpredictable, slowing vertical scanning',
+        verdict: 'needs-work',
+        comment: 'I cannot just scroll straight down and read efficiently because elements keep appearing in unexpected positions. My scanning pattern has to adapt to each section, which wastes my time.',
+      },
+    ],
+  },
+
+  'text-heavy:memphis:sam': {
+    tagline: 'Asymmetric layout collapses into chaos on my phone',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Asymmetric desktop layout loses its intentional composition when collapsed to single-column mobile',
+        verdict: 'blocker',
+        comment: 'The playful asymmetry that works on a wide screen becomes random-looking chaos on my phone. Elements that were intentionally off-center just look broken on a 375px viewport.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Geometric decorative shapes overlap body text on narrow viewports where margin space disappears',
+        verdict: 'needs-work',
+        comment: 'The triangles and circles that sat in the margins on desktop now overlap with my text on mobile. I am literally reading through geometric shapes because there is no margin space left.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Bold colored headings remain scannable on mobile despite the layout issues',
+        verdict: 'good',
+        comment: 'Despite the layout chaos, the bold colored headings still stand out on my phone. I can at least find section boundaries even when the decorative elements are misbehaving.',
+      },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: ART-DECO ─────────────────────────────────
+
+  'text-heavy:art-deco:marcus': {
+    tagline: 'Gold on dark can be low-contrast, but the serifs help',
+    observations: [
+      {
+        category: 'COLOR',
+        observation: 'Gold (#D4AF37) accent text on dark backgrounds produces borderline contrast ratios at smaller sizes',
+        verdict: 'needs-work',
+        comment: 'The gold accents look luxurious but at smaller type sizes the contrast against dark backgrounds drops below my comfort threshold. Large gold headings work fine, but gold labels do not.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Elegant serif fonts with high x-height provide strong letter differentiation for reading',
+        verdict: 'good',
+        comment: 'The serif letterforms have distinctive shapes that make each character easy to identify. The high x-height means even at moderate sizes, I can clearly distinguish similar letters.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Geometric border patterns use gold lines that may be invisible at low contrast sensitivity',
+        verdict: 'needs-work',
+        comment: 'The geometric Art Deco border patterns are beautiful in concept, but the thin gold lines can disappear for me. I sometimes miss where a decorative frame starts because the lines are too subtle.',
+      },
+    ],
+  },
+
+  'text-heavy:art-deco:dorothy': {
+    tagline: 'Elegant and luxurious — like reading a beautiful book',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Classic serif typography with generous sizing evokes traditional book design and print quality',
+        verdict: 'good',
+        comment: 'This feels like reading a beautifully printed book. The serif fonts are exactly what I am used to from a lifetime of reading, and the generous sizing means I never strain my eyes.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Symmetrical balanced layout with centered headings follows traditional formal publishing conventions',
+        verdict: 'good',
+        comment: 'Everything is centered and balanced, which feels orderly and trustworthy. I always know where to look next because the layout follows the same familiar pattern throughout.',
+      },
+      {
+        category: 'COMPONENTS',
+        observation: 'Geometric Art Deco border patterns add visual richness that enhances the reading experience',
+        verdict: 'good',
+        comment: 'The decorative borders make each section feel special, like the chapter headings in an expensive book. They add beauty without confusing me about what to do or where to read next.',
+      },
+    ],
+  },
+
+  'text-heavy:art-deco:carlos': {
+    tagline: 'Premium authority — the gold and serifs project exactly the right image',
+    observations: [
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Serif typography with gold accents projects luxury, authority, and established brand confidence',
+        verdict: 'good',
+        comment: 'This is the design I would put in front of the board without hesitation. The serif typography and gold accents project exactly the established authority and premium quality our brand needs.',
+      },
+      {
+        category: 'DECORATION',
+        observation: 'Art Deco geometric patterns create a distinctive visual identity rooted in design history',
+        verdict: 'good',
+        comment: 'The Art Deco patterns reference a design tradition of luxury and craftsmanship. This is not trendy — it is timeless, and timeless design is the safest investment for brand credibility.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Symmetrical, formal layout may feel rigid in contexts that require modern dynamism',
+        verdict: 'needs-work',
+        comment: 'The formal symmetry is perfect for annual reports and client presentations. But for a blog or social content, this level of formality could feel stiff. Knowing when to deploy it is key.',
+      },
+    ],
+  },
+
+  'text-heavy:art-deco:frank': {
+    tagline: 'Symmetrical and predictable — my eyes know exactly where to go',
+    observations: [
+      {
+        category: 'LAYOUT',
+        observation: 'Symmetrical layout with consistent heading placement creates a predictable, efficient scanning pattern',
+        verdict: 'good',
+        comment: 'Every section follows the same structure: centered heading, body text, next section. My eyes lock into a rhythm and I can scan the entire article without a single moment of confusion.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Serif body text at comfortable sizes enables natural reading rhythm for extended content',
+        verdict: 'good',
+        comment: 'The serif fonts feel natural for long reading. My eyes flow through the paragraphs at full speed because the typography is optimized for reading, not just for looking pretty.',
+      },
+      {
+        category: 'DECORATION',
+        observation: 'Geometric Art Deco border patterns between sections provide clear visual breaks without interrupting reading flow',
+        verdict: 'good',
+        comment: 'The decorative borders between sections are beautiful and functional. They give me a clear stopping point between topics without the harsh interruption of a thick horizontal rule.',
+      },
+    ],
+  },
+
+  'text-heavy:art-deco:sam': {
+    tagline: 'Geometric borders scale well and serifs stay readable',
+    observations: [
+      {
+        category: 'COMPONENTS',
+        observation: 'Geometric Art Deco border patterns scale proportionally and render cleanly at mobile viewport widths',
+        verdict: 'good',
+        comment: 'The Art Deco border patterns shrink gracefully to my phone screen. The geometric lines maintain their precision at 375px without becoming pixelated or overlapping the content.',
+      },
+      {
+        category: 'TYPOGRAPHY',
+        observation: 'Serif fonts maintain legibility at mobile sizes due to strong letter differentiation and adequate x-height',
+        verdict: 'good',
+        comment: 'The serif fonts that look elegant on desktop are still perfectly readable on my phone. The letter shapes are distinct enough that even at smaller mobile sizes, nothing blurs together.',
+      },
+      {
+        category: 'LAYOUT',
+        observation: 'Centered symmetrical layout translates naturally to narrow screens but reduces usable text width',
+        verdict: 'needs-work',
+        comment: 'The centered layout works fine on mobile, but the symmetrical margins on both sides eat into my already-narrow screen. The actual text column ends up narrower than it needs to be.',
       },
     ],
   },

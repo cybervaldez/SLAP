@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview B — The Morph</title>
+<style>
+  :root {
+    --morph-progress: 0;
+    --slop-pct: 100%;
+    --slap-pct: 0%;
+    --morph-bg: #667eea;
+    --morph-bg2: #764ba2;
+    --morph-text: #333333;
+    --morph-accent: #764ba2;
+    --morph-accent2: #667eea;
+    --morph-radius: 9999px;
+    --morph-card-radius: 16px;
+    --morph-card-bg: rgba(255,255,255,0.15);
+    --morph-card-border: rgba(255,255,255,0.25);
+    --morph-font: 'Inter', 'Segoe UI', sans-serif;
+    --morph-hero-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --scan-opacity: 0;
+    --bezel-opacity: 0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: var(--morph-font);
+    background: var(--morph-bg);
+    color: var(--morph-text);
+    overflow-x: hidden;
+    transition: font-family 0.3s;
+  }
+  /* Progress bar */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px; z-index: 10000;
+    background: var(--morph-accent);
+    width: 0%; transition: width 0.05s linear;
+  }
+  #progress-label {
+    position: fixed; top: 6px; left: 12px; z-index: 10000;
+    font-size: 10px; font-family: 'Courier New', monospace;
+    color: var(--morph-accent); opacity: 0.7;
+  }
+  /* Theme toggle */
+  #theme-toggle {
+    position: fixed; top: 12px; right: 16px; z-index: 10000;
+    background: var(--morph-card-bg); border: 1px solid var(--morph-card-border);
+    color: var(--morph-text); padding: 6px 14px; cursor: pointer;
+    border-radius: var(--morph-card-radius); font-size: 12px;
+    font-family: var(--morph-font); backdrop-filter: blur(8px);
+    transition: all 0.3s;
+  }
+  /* Sections */
+  section { min-height: 100vh; padding: 80px 24px; position: relative; }
+  .container { max-width: 900px; margin: 0 auto; }
+  /* HERO */
+  #hero {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center;
+    background: var(--morph-hero-bg); min-height: 100vh;
+  }
+  #hero h1 { font-size: clamp(2rem, 6vw, 3.5rem); margin-bottom: 20px; line-height: 1.15; }
+  #hero p { font-size: clamp(1rem, 2.5vw, 1.25rem); max-width: 560px; margin-bottom: 32px; opacity: 0.85; }
+  .pill-btn {
+    display: inline-block; padding: 14px 36px; font-size: 1rem;
+    border-radius: var(--morph-radius); border: none; cursor: pointer;
+    background: var(--morph-accent); color: #fff; font-family: var(--morph-font);
+    font-weight: 600; transition: all 0.3s;
+  }
+  .glass-cards {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px; margin-top: 48px; width: 100%; max-width: 700px;
+  }
+  .glass-card {
+    background: var(--morph-card-bg); border: 1px solid var(--morph-card-border);
+    border-radius: var(--morph-card-radius); padding: 24px;
+    backdrop-filter: blur(12px); transition: all 0.3s;
+  }
+  .glass-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+  .glass-card p { font-size: 0.85rem; opacity: 0.8; }
+  /* STAMP */
+  #slop-stamp {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-15deg) scale(0);
+    border: 5px solid #ff1744; color: #ff1744; padding: 12px 32px;
+    font-size: clamp(2rem, 5vw, 3rem); font-family: 'Courier New', monospace;
+    font-weight: 900; text-transform: uppercase; letter-spacing: 4px;
+    opacity: 0; pointer-events: none; z-index: 50;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+  }
+  #slop-stamp.visible { opacity: 1; transform: translate(-50%, -50%) rotate(-15deg) scale(1); }
+  /* CRACK */
+  #crack { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .struck { text-decoration: line-through; opacity: 0.4; }
+  .replacement { color: var(--morph-accent); font-family: 'Courier New', monospace; }
+  .crack-line { font-size: clamp(1.2rem, 3vw, 1.8rem); margin: 12px 0; line-height: 1.5; }
+  .crack-line .replacement { display: none; }
+  .crack-line.revealed .replacement { display: inline; }
+  .crack-line.revealed .original { text-decoration: line-through; opacity: 0.35; }
+  /* ROAST */
+  #roast { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .roast-quote {
+    font-size: clamp(1rem, 2.5vw, 1.3rem); margin: 20px 0; padding: 20px 28px;
+    border-left: 3px solid var(--morph-accent); max-width: 640px;
+    opacity: 0; transform: translateX(-40px); transition: all 0.6s ease-out;
+  }
+  .roast-quote:nth-child(even) { transform: translateX(40px); }
+  .roast-quote.visible { opacity: 1; transform: translateX(0); }
+  .roast-quote .label {
+    display: block; font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;
+    color: var(--morph-accent); font-family: 'Courier New', monospace;
+  }
+  /* REVEAL */
+  #reveal { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .crt-title {
+    font-size: clamp(3rem, 10vw, 6rem); font-family: 'Courier New', monospace;
+    font-weight: 900; letter-spacing: 8px; position: relative;
+    overflow: hidden; color: #ffd700;
+  }
+  .crt-title .scan-line {
+    position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+    background: rgba(255, 255, 255, 0.4); opacity: var(--scan-opacity);
+    animation: scanDown 1.5s linear infinite;
+  }
+  @keyframes scanDown { 0% { top: -4px; } 100% { top: 100%; } }
+  .reveal-sub { font-size: clamp(1rem, 2.5vw, 1.3rem); margin: 24px 0 40px; max-width: 520px; }
+  .model-flow {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    justify-content: center; font-family: 'Courier New', monospace;
+  }
+  .model-step {
+    padding: 12px 24px; border: 2px solid var(--morph-accent);
+    border-radius: var(--morph-card-radius); font-weight: 700; font-size: 0.95rem;
+  }
+  .model-arrow { font-size: 1.5rem; color: var(--morph-accent); }
+  /* PROOF */
+  #proof { padding-top: 60px; padding-bottom: 60px; }
+  #proof h2 {
+    text-align: center; font-family: 'Courier New', monospace;
+    font-size: clamp(1.5rem, 4vw, 2.2rem); margin-bottom: 40px;
+  }
+  .variation-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px; max-width: 900px; margin: 0 auto; position: relative;
+  }
+  .variation-card {
+    background: var(--morph-card-bg); border: 1px solid var(--morph-card-border);
+    border-radius: var(--morph-card-radius); padding: 20px; position: relative;
+    transition: all 0.3s;
+  }
+  .variation-card h3 { font-size: 1rem; margin-bottom: 6px; font-family: 'Courier New', monospace; }
+  .variation-card p { font-size: 0.8rem; opacity: 0.7; }
+  .score-badge {
+    position: absolute; top: 12px; right: 12px; width: 36px; height: 36px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 900; font-family: 'Courier New', monospace;
+    background: var(--morph-accent); color: #1a1a2e;
+  }
+  .grid-scan {
+    position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+    background: linear-gradient(90deg, transparent 0%, #ffd700 50%, transparent 100%);
+    opacity: var(--scan-opacity); animation: scanDown 3s linear infinite;
+    pointer-events: none;
+  }
+  /* AUTHOR NOTES */
+  #author {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: 'Courier New', monospace;
+  }
+  .terminal-block {
+    background: rgba(0, 20, 0, 0.85); border: 1px solid #0f0;
+    border-radius: 4px; padding: 32px; max-width: 680px; width: 100%;
+    color: #0f0; font-size: clamp(0.85rem, 2vw, 1rem); line-height: 1.7;
+  }
+  .terminal-block .file-header {
+    display: block; font-weight: 700; margin-bottom: 16px;
+    color: #4caf50; font-size: 0.8rem; letter-spacing: 1px;
+  }
+  /* CTA */
+  #cta {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; text-align: center; min-height: 60vh;
+  }
+  #cta h2 { font-size: clamp(1.8rem, 5vw, 3rem); margin-bottom: 32px; font-family: 'Courier New', monospace; }
+  .cta-bezel {
+    border: 6px solid #f5f0e8; padding: 32px 48px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.3), 0 0 40px rgba(255,215,0,0.1);
+    opacity: var(--bezel-opacity); transition: opacity 0.4s;
+  }
+  .cta-btn {
+    display: inline-block; padding: 16px 40px; font-size: 1.1rem;
+    font-family: 'Courier New', monospace; font-weight: 700;
+    background: #ffd700; color: #1a1a2e; border: none; cursor: pointer;
+    border-radius: var(--morph-card-radius); letter-spacing: 1px;
+    transition: all 0.3s;
+  }
+  .cta-btn:hover { background: #ff1493; color: #fff; }
+  /* Glitch flicker class */
+  .glitching { animation: glitchFlicker 0.15s steps(2) infinite; }
+  @keyframes glitchFlicker {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; transform: translateX(-1px); }
+    100% { opacity: 1; transform: translateX(1px); }
+  }
+  /* Light theme overrides */
+  [data-theme="light"] { --morph-text: #1a1a2e; }
+  [data-theme="light"] .terminal-block { background: rgba(240,240,230,0.95); color: #2e7d32; border-color: #2e7d32; }
+  [data-theme="light"] .terminal-block .file-header { color: #1b5e20; }
+  /* Mobile */
+  @media (max-width: 600px) {
+    section { padding: 60px 16px; }
+    .glass-cards { grid-template-columns: 1fr; }
+    .variation-grid { grid-template-columns: 1fr 1fr; }
+    .model-flow { flex-direction: column; }
+    .model-arrow { transform: rotate(90deg); }
+    .cta-bezel { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+  <div id="progress-bar" data-testid="progress-bar"></div>
+  <span id="progress-label">0%</span>
+  <button id="theme-toggle" data-testid="theme-toggle">light</button>
+
+  <!-- 1. HERO -->
+  <section id="hero" data-testid="section-hero">
+    <div id="slop-stamp">SLOP DETECTED</div>
+    <h1 id="hero-title">Empower Your Design Journey Today</h1>
+    <p>Harness the power of AI-driven design intelligence to create stunning, conversion-optimized experiences that delight your users and drive measurable results.</p>
+    <button class="pill-btn" data-testid="hero-cta">Get Started Free</button>
+    <div class="glass-cards">
+      <div class="glass-card"><h3>AI-Powered</h3><p>Leverage cutting-edge machine learning for pixel-perfect layouts.</p></div>
+      <div class="glass-card"><h3>Lightning Fast</h3><p>Deploy in seconds with our zero-config pipeline.</p></div>
+      <div class="glass-card"><h3>Enterprise Ready</h3><p>Scale to millions of users with SOC2 compliance built in.</p></div>
+    </div>
+  </section>
+
+  <!-- 2. THE CRACK -->
+  <section id="crack" data-testid="section-crack">
+    <div class="container">
+      <div class="crack-line"><span class="original">Empower Your Design Journey</span> <span class="replacement">What if AI design is just... lazy?</span></div>
+      <div class="crack-line"><span class="original">AI-Powered Intelligence Platform</span> <span class="replacement">Copy-pasted from 10,000 other sites</span></div>
+      <div class="crack-line"><span class="original">Get Started Free &mdash; No Credit Card</span> <span class="replacement">The call-to-action that means nothing</span></div>
+      <div class="crack-line"><span class="original">Trusted by Industry Leaders</span> <span class="replacement">Citation: absolutely none</span></div>
+    </div>
+  </section>
+
+  <!-- 3. THE ROAST -->
+  <section id="roast" data-testid="section-roast">
+    <div class="container">
+      <div class="roast-quote" data-testid="roast-marketing"><span class="label">Marketing</span>This hero section commits every clich&eacute; simultaneously. Purple gradient, pill button, glass cards &mdash; it is a bingo card of design slop.</div>
+      <div class="roast-quote" data-testid="roast-ux"><span class="label">UX Research</span>Zero information hierarchy. Users scan for 3 seconds and leave. There is no reason to stay because nothing says anything real.</div>
+      <div class="roast-quote" data-testid="roast-dev"><span class="label">Engineering</span>Backdrop-filter blur on three cards, gradient background, and a 9999px border-radius &mdash; all to say absolutely nothing of substance.</div>
+      <div class="roast-quote" data-testid="roast-brand"><span class="label">Brand Strategy</span>This page could belong to any product in any industry. That is not versatility. That is the absence of identity.</div>
+    </div>
+  </section>
+
+  <!-- 4. THE REVEAL -->
+  <section id="reveal" data-testid="section-reveal">
+    <div class="container" style="display:flex;flex-direction:column;align-items:center;">
+      <div class="crt-title">SLAP!<div class="scan-line"></div></div>
+      <p class="reveal-sub">We built the worst page on purpose.<br>Then we built 8 more.</p>
+      <div class="model-flow">
+        <span class="model-step">Performer</span>
+        <span class="model-arrow">&rarr;</span>
+        <span class="model-step">Critics</span>
+        <span class="model-arrow">&rarr;</span>
+        <span class="model-step">Redemption</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. THE PROOF -->
+  <section id="proof" data-testid="section-proof">
+    <h2>9 Variations. 1 Anti-Slop System.</h2>
+    <div class="variation-grid">
+      <div class="grid-scan"></div>
+      <div class="variation-card"><div class="score-badge">94</div><h3>SLAP!</h3><p>CRT retro terminal. The original anti-slop identity.</p></div>
+      <div class="variation-card"><div class="score-badge">91</div><h3>Brutalist</h3><p>Raw HTML energy. Exposed structure as aesthetic.</p></div>
+      <div class="variation-card"><div class="score-badge">89</div><h3>Neo-Minimal</h3><p>Less than less. Negative space as content.</p></div>
+      <div class="variation-card"><div class="score-badge">87</div><h3>Maximalist</h3><p>Everything everywhere. Controlled chaos.</p></div>
+      <div class="variation-card"><div class="score-badge">90</div><h3>Dark Industrial</h3><p>Steel and shadow. Function over form.</p></div>
+      <div class="variation-card"><div class="score-badge">88</div><h3>Warm Organic</h3><p>Earth tones and hand-drawn edges.</p></div>
+      <div class="variation-card"><div class="score-badge">86</div><h3>Retro-Futurism</h3><p>Tomorrow as imagined yesterday.</p></div>
+      <div class="variation-card"><div class="score-badge">85</div><h3>Memphis</h3><p>Geometric pop. Anti-corporate maximalism.</p></div>
+      <div class="variation-card"><div class="score-badge">92</div><h3>Art Deco</h3><p>Gilt precision. Symmetry as statement.</p></div>
+    </div>
+  </section>
+
+  <!-- 6. AUTHOR NOTES -->
+  <section id="author" data-testid="section-author">
+    <div class="terminal-block">
+      <span class="file-header">// AUTHOR_NOTES.md</span>
+      We almost ruined this project by being too funny.<br><br>
+      The roast was so good that people forgot we were demonstrating design skills.
+      Every critic persona we built started writing zingers instead of analysis.
+      The Performer kept generating slop that was <em>accidentally</em> funnier than the critiques.<br><br>
+      So we pulled it back. Made the system honest. Each persona attacks the design
+      from their real discipline &mdash; marketing, UX, engineering, brand &mdash; and the
+      Performer has to actually fix the problems, not just acknowledge them.<br><br>
+      The result is 9 variations that look nothing alike but share one thing: none of
+      them are slop. Every choice is intentional. Every pixel has a reason.<br><br>
+      <span style="opacity:0.5">// That is the whole point of SLAP.</span>
+    </div>
+  </section>
+
+  <!-- 7. CTA -->
+  <section id="cta" data-testid="section-cta">
+    <h2>See for yourself.</h2>
+    <div class="cta-bezel">
+      <button class="cta-btn" data-testid="gallery-cta">Enter the Gallery &rarr;</button>
+    </div>
+  </section>
+
+<script>
+(function () {
+  const root = document.documentElement;
+  const bar = document.getElementById('progress-bar');
+  const label = document.getElementById('progress-label');
+  const toggle = document.getElementById('theme-toggle');
+
+  // Color helpers
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function hexToRgb(h) {
+    const v = parseInt(h.slice(1), 16);
+    return [(v >> 16) & 255, (v >> 8) & 255, v & 255];
+  }
+  function rgbToHex(r, g, b) {
+    return '#' + [r, g, b].map(c => Math.round(c).toString(16).padStart(2, '0')).join('');
+  }
+  function lerpColor(hexA, hexB, t) {
+    const a = hexToRgb(hexA), b = hexToRgb(hexB);
+    return rgbToHex(lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t));
+  }
+
+  // Slop palette                  // SLAP palette
+  const SLOP_BG = '#667eea';       const SLAP_BG = '#1a1a2e';
+  const SLOP_BG2 = '#764ba2';      const SLAP_BG2 = '#16213e';
+  const SLOP_TEXT = '#ffffff';      const SLAP_TEXT = '#f5f0e8';
+  const SLOP_ACCENT = '#764ba2';    const SLAP_ACCENT = '#ffd700';
+  const SLOP_ACCENT2 = '#667eea';   const SLAP_ACCENT2 = '#ff1493';
+
+  // Theme toggle
+  toggle.addEventListener('click', function () {
+    const current = root.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    toggle.textContent = next === 'dark' ? 'light' : 'dark';
+  });
+
+  // Scroll handler
+  function onScroll() {
+    const scrollH = document.body.scrollHeight - window.innerHeight;
+    const t = Math.min(Math.max(window.scrollY / scrollH, 0), 1);
+
+    // Progress bar
+    bar.style.width = (t * 100) + '%';
+    label.textContent = Math.round(t * 100) + '%';
+
+    // Morph progress (core variable)
+    root.style.setProperty('--morph-progress', t);
+
+    // Colors
+    const bg = lerpColor(SLOP_BG, SLAP_BG, t);
+    const bg2 = lerpColor(SLOP_BG2, SLAP_BG2, t);
+    const text = lerpColor(SLOP_TEXT, SLAP_TEXT, t);
+    const accent = lerpColor(SLOP_ACCENT, SLAP_ACCENT, t);
+    const accent2 = lerpColor(SLOP_ACCENT2, SLAP_ACCENT2, t);
+
+    root.style.setProperty('--morph-bg', bg);
+    root.style.setProperty('--morph-bg2', bg2);
+    root.style.setProperty('--morph-text', text);
+    root.style.setProperty('--morph-accent', accent);
+    root.style.setProperty('--morph-accent2', accent2);
+
+    // Background and text
+    document.body.style.background = t < 0.5
+      ? 'linear-gradient(135deg, ' + bg + ' 0%, ' + bg2 + ' 100%)'
+      : bg;
+    document.body.style.color = text;
+
+    // Border radius morph
+    const radius = Math.round(9999 * (1 - t));
+    const cardRadius = Math.round(16 * (1 - t));
+    root.style.setProperty('--morph-radius', radius + 'px');
+    root.style.setProperty('--morph-card-radius', cardRadius + 'px');
+
+    // Font switch at 0.45 threshold
+    const font = t > 0.45 ? "'Courier New', monospace" : "'Inter', 'Segoe UI', sans-serif";
+    root.style.setProperty('--morph-font', font);
+    document.body.style.fontFamily = font;
+
+    // Card styling morph
+    const cardBg = t < 0.5
+      ? 'rgba(255,255,255,' + (0.15 - t * 0.2).toFixed(2) + ')'
+      : 'rgba(245,240,232,' + (0.04 + (t - 0.5) * 0.12).toFixed(2) + ')';
+    const cardBorder = t < 0.5
+      ? 'rgba(255,255,255,' + (0.25 - t * 0.3).toFixed(2) + ')'
+      : accent;
+    root.style.setProperty('--morph-card-bg', cardBg);
+    root.style.setProperty('--morph-card-border', cardBorder);
+
+    // Hero gradient morph
+    root.style.setProperty('--morph-hero-bg',
+      t < 0.3 ? 'linear-gradient(135deg, ' + bg + ' 0%, ' + bg2 + ' 100%)' : bg);
+
+    // Scan line & bezel opacity
+    root.style.setProperty('--scan-opacity', t > 0.5 ? Math.min((t - 0.5) * 4, 1) : 0);
+    root.style.setProperty('--bezel-opacity', t > 0.9 ? Math.min((t - 0.9) * 10, 1) : 0);
+
+    // === Section-specific triggers ===
+
+    // STAMP (15-30%)
+    var stamp = document.getElementById('slop-stamp');
+    if (t >= 0.12 && t < 0.35) { stamp.classList.add('visible'); }
+    else { stamp.classList.remove('visible'); }
+
+    // CRACK lines reveal (15-30%)
+    var cracks = document.querySelectorAll('.crack-line');
+    cracks.forEach(function (el, i) {
+      var threshold = 0.15 + i * 0.04;
+      if (t >= threshold) el.classList.add('revealed');
+      else el.classList.remove('revealed');
+    });
+
+    // Glitch effect in transition zone (25-55%)
+    var heroTitle = document.getElementById('hero-title');
+    if (t > 0.25 && t < 0.55) { heroTitle.classList.add('glitching'); }
+    else { heroTitle.classList.remove('glitching'); }
+
+    // Roast quotes (30-50%)
+    var quotes = document.querySelectorAll('.roast-quote');
+    quotes.forEach(function (el, i) {
+      var threshold = 0.28 + i * 0.05;
+      if (t >= threshold) el.classList.add('visible');
+      else el.classList.remove('visible');
+    });
+  }
+
+  // Debounced scroll
+  var ticking = false;
+  window.addEventListener('scroll', function () {
+    if (!ticking) {
+      requestAnimationFrame(function () { onScroll(); ticking = false; });
+      ticking = true;
+    }
+  }, { passive: true });
+
+  // Initial state
+  onScroll();
+})();
+</script>
+</body>
+</html>

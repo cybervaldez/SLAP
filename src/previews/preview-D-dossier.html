@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Preview D: The Dossier</title>
+<style>
+  :root {
+    --bg: #1a1a2e;
+    --paper: #f5f0e8;
+    --paper-alt: #ebe5d6;
+    --text: #f5f0e8;
+    --text-dark: #1a1a2e;
+    --red: #dc2626;
+    --yellow: #ffd700;
+    --pink: #ff1493;
+    --green: #22c55e;
+    --mono: 'Courier New', Courier, monospace;
+    --scanline: rgba(255,255,255,0.03);
+  }
+  [data-theme="light"] {
+    --bg: #d6d0c4;
+    --text: #1a1a2e;
+    --scanline: rgba(0,0,0,0.02);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; scroll-behavior: smooth; }
+  body {
+    font-family: var(--mono);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    transition: background .4s, color .4s;
+  }
+  /* Scan lines overlay */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 9998;
+    background: repeating-linear-gradient(0deg, var(--scanline) 0px, var(--scanline) 1px, transparent 1px, transparent 3px);
+    pointer-events: none;
+  }
+  /* Timestamp */
+  .timestamp {
+    position: fixed; bottom: 12px; right: 12px; z-index: 9999;
+    font-size: 11px; color: var(--green); letter-spacing: .1em;
+    font-family: var(--mono);
+  }
+  /* Recording indicator */
+  .recording {
+    position: fixed; top: 14px; left: 16px; z-index: 9999;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--red); letter-spacing: .15em; text-transform: uppercase;
+  }
+  .recording::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--red); animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  /* Theme toggle */
+  .theme-toggle {
+    position: fixed; top: 14px; right: 16px; z-index: 9999;
+    background: var(--red); color: #fff; border: none;
+    padding: 6px 14px; font-family: var(--mono); font-size: 10px;
+    letter-spacing: .15em; text-transform: uppercase; cursor: pointer;
+  }
+  /* Container */
+  .container { max-width: 820px; margin: 0 auto; padding: 80px 20px 60px; }
+  /* Section base */
+  .section {
+    position: relative; margin-bottom: 60px;
+    opacity: 0; transform: translateY(24px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .section.visible { opacity: 1; transform: translateY(0); }
+  /* Paper card */
+  .paper {
+    background: var(--paper); color: var(--text-dark);
+    padding: 36px 32px; position: relative;
+    box-shadow: 2px 3px 12px rgba(0,0,0,.25);
+    /* paper grain texture */
+    background-image: url("data:image/svg+xml,%3Csvg width='4' height='4' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='1' height='1' x='1' y='1' fill='%23d4cec0' fill-opacity='.3'/%3E%3C/svg%3E");
+  }
+  /* Manila tab */
+  .tab {
+    display: inline-block; background: var(--paper-alt); color: var(--text-dark);
+    padding: 6px 18px; font-size: 12px; font-weight: bold;
+    letter-spacing: .15em; text-transform: uppercase;
+    border-radius: 6px 6px 0 0; margin-bottom: -1px;
+    border: 1px solid #c9c2b4; border-bottom: none;
+  }
+  /* Stamp */
+  .stamp {
+    position: absolute; font-size: 38px; font-weight: bold;
+    text-transform: uppercase; letter-spacing: .12em;
+    border: 4px solid; padding: 4px 16px; border-radius: 6px;
+    opacity: .25; pointer-events: none; z-index: 2;
+  }
+  .stamp-red { color: var(--red); border-color: var(--red); }
+  .stamp-green { color: var(--green); border-color: var(--green); }
+  /* Watermark */
+  .watermark {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%) rotate(-35deg);
+    font-size: 64px; font-weight: bold; letter-spacing: .2em;
+    color: var(--red); opacity: .07; pointer-events: none;
+    white-space: nowrap; text-transform: uppercase; z-index: 1;
+  }
+  /* Paperclip */
+  .paperclip::before {
+    content: ''; position: absolute; top: -10px; right: 24px;
+    width: 22px; height: 48px; border: 3px solid #999;
+    border-radius: 0 0 11px 11px; border-top: none; z-index: 3;
+  }
+  .paperclip::after {
+    content: ''; position: absolute; top: -10px; right: 28px;
+    width: 14px; height: 28px; border: 3px solid #aaa;
+    border-radius: 0 0 7px 7px; border-top: none; z-index: 4;
+  }
+  /* Coffee stain */
+  .coffee-stain::after {
+    content: ''; position: absolute; bottom: 30px; left: 40px;
+    width: 80px; height: 80px; border-radius: 50%;
+    background: radial-gradient(circle, transparent 50%, rgba(139,90,43,.06) 52%, rgba(139,90,43,.1) 56%, transparent 60%);
+    pointer-events: none; z-index: 1;
+  }
+  /* Highlight */
+  .hl { background: linear-gradient(180deg, transparent 55%, rgba(255,215,0,.35) 55%); }
+  /* Redacted */
+  .redacted { background: var(--text-dark); color: var(--text-dark); border-radius: 2px; padding: 0 4px; cursor: default; }
+  .redacted:hover { background: var(--red); color: #fff; }
+  /* Evidence marker */
+  .marker {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; background: var(--yellow); color: #000;
+    font-weight: bold; font-size: 14px; border-radius: 50%;
+    margin-right: 8px; flex-shrink: 0;
+  }
+  .evidence-item { display: flex; align-items: flex-start; margin-bottom: 16px; position: relative; }
+  .evidence-box {
+    background: #fff; border: 2px solid #ddd; padding: 14px 16px;
+    font-size: 13px; line-height: 1.5; flex: 1;
+  }
+  .evidence-note { font-size: 11px; color: #666; margin-top: 4px; font-style: italic; }
+  /* Sidebar note */
+  .sidebar-note {
+    font-style: italic; font-size: 12px; color: #555;
+    transform: rotate(-1.5deg); border-left: 2px solid var(--pink);
+    padding: 8px 12px; margin-top: 16px; background: rgba(255,20,147,.04);
+  }
+  /* Phase list */
+  .phase { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; font-size: 14px; }
+  .checkbox { color: var(--green); font-size: 16px; flex-shrink: 0; }
+  /* Suspect grid */
+  .suspect-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px; margin-top: 20px;
+  }
+  .suspect-card {
+    background: #fff; border: 1px solid #ccc; padding: 12px; text-align: center;
+    position: relative; font-size: 12px;
+  }
+  .suspect-card .swatch { height: 40px; margin-bottom: 8px; border-radius: 2px; }
+  .suspect-card .name { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
+  .suspect-card .score { font-size: 20px; font-weight: bold; margin: 4px 0; }
+  .suspect-card .tag {
+    display: inline-block; font-size: 10px; padding: 2px 8px;
+    letter-spacing: .1em; text-transform: uppercase; border-radius: 2px;
+  }
+  .tag-control { background: var(--red); color: #fff; }
+  .tag-default { background: #e5e5e5; color: #333; }
+  /* Finding */
+  .finding-item { margin-bottom: 12px; padding-left: 16px; border-left: 3px solid var(--yellow); font-size: 13px; }
+  /* Terminal text */
+  .terminal { color: var(--green); font-size: 13px; line-height: 1.7; white-space: pre-wrap; }
+  /* CTA section */
+  .cta-btn {
+    display: inline-block; background: var(--text-dark); color: var(--paper);
+    padding: 14px 32px; font-family: var(--mono); font-size: 14px;
+    letter-spacing: .15em; text-transform: uppercase; text-decoration: none;
+    border: 2px solid var(--text-dark); cursor: pointer; transition: all .2s;
+  }
+  .cta-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
+  /* Typewriter */
+  .typewriter { overflow: hidden; white-space: nowrap; border-right: 2px solid var(--text); width: 0; }
+  .typewriter.typing { animation: typeOut 2.5s steps(40,end) forwards, cursorBlink .7s step-end infinite; }
+  @keyframes typeOut { to { width: 100% } }
+  @keyframes cursorBlink { 50% { border-color: transparent } }
+  /* Header styles */
+  h1 { font-size: clamp(24px,5vw,42px); letter-spacing: .1em; text-transform: uppercase; line-height: 1.2; }
+  h2 { font-size: 18px; letter-spacing: .15em; text-transform: uppercase; margin-bottom: 16px; border-bottom: 2px solid currentColor; padding-bottom: 8px; }
+  h3 { font-size: 14px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 12px; }
+  p { margin-bottom: 12px; }
+  /* Responsive */
+  @media (max-width: 600px) {
+    .paper { padding: 24px 18px; }
+    .stamp { font-size: 24px; padding: 2px 10px; }
+    .watermark { font-size: 36px; }
+    .suspect-grid { grid-template-columns: 1fr 1fr; }
+    .container { padding: 70px 12px 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="recording" data-testid="recording-indicator">REC</div>
+<button class="theme-toggle" data-testid="theme-toggle" onclick="toggleTheme()">Light Mode</button>
+<div class="timestamp" data-testid="timestamp"></div>
+
+<div class="container">
+
+  <!-- COVER PAGE -->
+  <section class="section" data-testid="section-cover">
+    <div class="paper" style="text-align:center; padding:60px 32px;">
+      <div class="stamp stamp-red" style="top:20px;left:20px;transform:rotate(-12deg);">Classified</div>
+      <div class="watermark">Top Secret</div>
+      <div style="font-size:11px;letter-spacing:.2em;margin-bottom:24px;color:#888;">DEPARTMENT OF DESIGN INTEGRITY &mdash; ANTI-SLOP DIVISION</div>
+      <div style="font-size:12px;color:#999;margin-bottom:8px;">FILE NO. SLAP-2024-<span class="redacted">0042</span> &nbsp;|&nbsp; DATE: 2024-11-15</div>
+      <h1 style="margin:20px 0 12px;">CASE FILE:<br>SLAP-2024</h1>
+      <div style="font-size:13px;max-width:500px;margin:0 auto 20px;">SUBJECT: Systematic Analysis of AI-Generated Design Patterns</div>
+      <div style="font-size:16px;letter-spacing:.3em;color:var(--red);font-weight:bold;">CLASSIFICATION: <span class="hl">ANTI-SLOP</span></div>
+      <div class="typewriter" data-testid="typewriter-cover" style="margin:24px auto 0;font-size:13px;max-width:460px;text-align:left;">
+        Investigating the hypothesis that design treatment alone cannot redeem AI-generated content...
+      </div>
+    </div>
+  </section>
+
+  <!-- EXHIBIT A -->
+  <section class="section" data-testid="section-exhibit-a">
+    <div class="tab">Exhibit A</div>
+    <div class="paper paperclip">
+      <div class="watermark" style="font-size:48px;">Top Secret</div>
+      <h2>The Crime Scene</h2>
+      <p style="font-size:13px;margin-bottom:20px;">SUBJECT exhibited classic symptoms of <span class="hl">AI slop generation</span>. The following evidence was catalogued at the scene:</p>
+      <div class="evidence-item">
+        <span class="marker">A</span>
+        <div>
+          <div class="evidence-box">"Our innovative, best-in-class platform leverages cutting-edge technology to seamlessly streamline your workflow."</div>
+          <div class="evidence-note">A: "Best-in-class" + "cutting-edge" + "seamlessly" &mdash; detected in 94% of AI-generated landing pages.</div>
+        </div>
+      </div>
+      <div class="evidence-item">
+        <span class="marker">B</span>
+        <div>
+          <div class="evidence-box">"This platform completely revolutionized how we think about thinking about our workflow."</div>
+          <div class="evidence-note">B: Circular self-referential testimonial. Classic fabrication pattern.</div>
+        </div>
+      </div>
+      <div class="evidence-item">
+        <span class="marker">C</span>
+        <div>
+          <div class="evidence-box">"Empower Your Team to Achieve More, Together"</div>
+          <div class="evidence-note">C: Generic hero headline. Indistinguishable from 10,000 other SaaS pages.</div>
+        </div>
+      </div>
+      <div class="sidebar-note">CASE OFFICER NOTE: "The content reads like it was generated by a model that has never experienced the product it describes. Every sentence optimizes for vague positivity." &mdash; Dr. Amara Osei, UX Research</div>
+    </div>
+  </section>
+
+  <!-- EXHIBIT B -->
+  <section class="section" data-testid="section-exhibit-b">
+    <div class="tab">Exhibit B</div>
+    <div class="paper coffee-stain">
+      <h2>Investigation Protocol</h2>
+      <p style="font-size:13px;margin-bottom:20px;">The three-phase methodology was executed as follows:</p>
+      <div class="phase"><span class="checkbox">[x]</span><div><strong>PHASE 1: Establish the baseline.</strong><br>Deploy proud-slop content &mdash; AI-generated copy used as-is, without editing, across three archetypes (Landing Page, E-Commerce, Text-Heavy).</div></div>
+      <div class="phase"><span class="checkbox">[x]</span><div><strong>PHASE 2: Assemble review panel.</strong><br>5 expert lenses (Marketing, UX, Product, Technical, Accessibility) + 5 persona lenses (First-time visitor, Power user, Skeptic, Executive, Developer).</div></div>
+      <div class="phase"><span class="checkbox">[x]</span><div><strong>PHASE 3: Apply design treatments.</strong><br>8 styled variations (Brutalist, Neo-Minimal, Maximalist, Dark-Industrial, Warm-Organic, Retro-Futurism, Memphis, Art Deco) + the SLAP baseline. Total: <span class="hl">9 treatments per archetype</span>.</div></div>
+      <div class="sidebar-note" style="transform:rotate(0.8deg);">ADDENDUM: Initial experimental design called for 12 variations. Three were culled during pilot for insufficient differentiation. &mdash; Case Officer</div>
+    </div>
+  </section>
+
+  <!-- EXHIBIT C -->
+  <section class="section" data-testid="section-exhibit-c">
+    <div class="tab">Exhibit C</div>
+    <div class="paper">
+      <h2>Comparative Analysis</h2>
+      <p style="font-size:13px;margin-bottom:16px;">Evidence comparison board &mdash; 9 variations, composite expert scores (Landing Page archetype):</p>
+      <div class="suspect-grid" data-testid="suspect-grid">
+        <div class="suspect-card"><div class="swatch" style="background:linear-gradient(135deg,#ff1493,#ff6b35);"></div><div class="name">SLAP!</div><div class="score">7.2</div><span class="tag tag-control">CONTROL</span></div>
+        <div class="suspect-card"><div class="swatch" style="background:#1a1a1a;"></div><div class="name">Brutalist</div><div class="score">6.5</div><span class="tag tag-default">Raw & Honest</span></div>
+        <div class="suspect-card"><div class="swatch" style="background:linear-gradient(135deg,#f8f8f8,#e0e0e0);"></div><div class="name">Neo-Minimal</div><div class="score">7.0</div><span class="tag tag-default">Less is More</span></div>
+        <div class="suspect-card"><div class="swatch" style="background:linear-gradient(135deg,#ff006e,#8338ec,#3a86ff);"></div><div class="name">Maximalist</div><div class="score">5.8</div><span class="tag tag-default">More is More</span></div>
+        <div class="suspect-card"><div class="swatch" style="background:linear-gradient(135deg,#0a0a0a,#1a1a2e);"></div><div class="name">Dark Industrial</div><div class="score">6.8</div><span class="tag tag-default">Built to Spec</span></div>
+        <div class="suspect-card"><div class="swatch" style="background:linear-gradient(135deg,#f5e6d3,#e8d5b7);"></div><div class="name">Warm Organic</div><div class="score">6.2</div><span class="tag tag-default">Grown, Not Made</span></div>
+        <div class="suspect-card"><div class="swatch" style="background:linear-gradient(135deg,#0a0a2e,#1a0a3e);"></div><div class="name">Retro-Futurism</div><div class="score">7.4</div><span class="tag tag-default">Tomorrow, Today</span></div>
+        <div class="suspect-card"><div class="swatch" style="background:linear-gradient(135deg,#ff6b6b,#ffd93d,#6bcb77);"></div><div class="name">Memphis</div><div class="score">5.5</div><span class="tag tag-default">Post-Modern Pop</span></div>
+        <div class="suspect-card"><div class="swatch" style="background:linear-gradient(135deg,#1B2838,#B8860B);"></div><div class="name">Art Deco</div><div class="score">7.8</div><span class="tag tag-default">Gilded Geometry</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINDINGS -->
+  <section class="section" data-testid="section-findings">
+    <div class="tab">Findings</div>
+    <div class="paper" style="position:relative;">
+      <div class="stamp stamp-green" style="top:16px;right:20px;transform:rotate(8deg);font-size:28px;">Confirmed</div>
+      <h2>Conclusion of Investigation</h2>
+      <p style="font-size:15px;font-weight:bold;margin-bottom:16px;" class="hl">Design cannot save bad content, but it can expose or elevate it.</p>
+      <div class="finding-item"><strong>Art Deco & Retro-Futurism</strong> scored highest &mdash; strong visual identity created enough friction to slow readers down, making them <em>notice</em> the content rather than skim past it.</div>
+      <div class="finding-item"><strong>Maximalist & Memphis</strong> scored lowest &mdash; visual noise amplified the emptiness of the copy. More decoration on hollow words made the hollowness louder.</div>
+      <div class="finding-item"><strong>Brutalist</strong> was the most honest frame &mdash; it stripped away every decoration, leaving the AI slop nowhere to hide. Experts found it "refreshingly transparent."</div>
+      <div class="finding-item"><strong>Neo-Minimal</strong> created a false sense of authority. Clean whitespace made generic copy <em>feel</em> more credible than it deserved. <span class="hl">This is the most dangerous pattern.</span></div>
+      <div class="finding-item"><strong>SLAP baseline</strong> with intentional anti-slop callouts performed well: the meta-commentary forced readers to engage critically rather than passively.</div>
+    </div>
+  </section>
+
+  <!-- ADDENDUM -->
+  <section class="section" data-testid="section-addendum">
+    <div class="tab">Addendum</div>
+    <div class="paper" style="background:#0a0a14;border:1px solid #1a3a1a;">
+      <h2 style="color:var(--green);border-color:#1a3a1a;">Personal Observations &mdash; Off the Record</h2>
+      <div class="terminal" data-testid="terminal-notes">$ cat /var/log/investigator/personal_notes.log
+
+[2024-11-15 23:47:02] Initial approach prioritized
+comedic value over analytical rigor. Recalibration
+was required when test subjects focused on humor
+rather than design methodology.
+
+[2024-11-15 23:52:18] The proud-slop content was
+harder to write than expected. You have to actively
+resist the urge to fix it. Every "leverage" and
+"seamlessly" felt like a small crime.
+
+[2024-11-16 00:14:33] Unexpected finding: reviewers
+who scored Brutalist highest were also the most
+critical of Neo-Minimal. They share a philosophy
+but diverge on honesty.
+
+[2024-11-16 01:02:07] Note to self &mdash; the real
+product of this study is not a scoring matrix.
+It is the awareness that design is not decoration.
+It is editorial. EOF</div>
+    </div>
+  </section>
+
+  <!-- ACCESS GRANTED -->
+  <section class="section" data-testid="section-cta">
+    <div class="paper" style="text-align:center;position:relative;">
+      <div class="stamp stamp-green" style="top:12px;left:16px;transform:rotate(-8deg);font-size:26px;">Declassified</div>
+      <h2 style="border:none;padding:0;margin-bottom:8px;">Access Granted</h2>
+      <p style="font-size:14px;margin-bottom:24px;">You now have clearance to view the <span class="hl">full evidence archive</span>.</p>
+      <a href="#" class="cta-btn" data-testid="cta-gallery">Enter the Gallery &rarr;</a>
+      <p style="font-size:11px;color:#888;margin-top:16px;">CLEARANCE LEVEL: PUBLIC &nbsp;|&nbsp; DECLASSIFICATION DATE: 2024-12-01</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // Theme toggle
+  function toggleTheme() {
+    const html = document.documentElement;
+    const btn = document.querySelector('[data-testid="theme-toggle"]');
+    if (html.getAttribute('data-theme') === 'dark') {
+      html.setAttribute('data-theme', 'light');
+      btn.textContent = 'Dark Mode';
+    } else {
+      html.setAttribute('data-theme', 'dark');
+      btn.textContent = 'Light Mode';
+    }
+  }
+  // Timestamp
+  (function tick() {
+    const el = document.querySelector('[data-testid="timestamp"]');
+    if (el) {
+      const d = new Date();
+      el.textContent = d.toISOString().replace('T',' ').slice(0,19) + ' UTC';
+    }
+    setTimeout(tick, 1000);
+  })();
+  // Intersection Observer for reveal
+  const obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        // Trigger typewriter if present
+        const tw = e.target.querySelector('.typewriter');
+        if (tw) tw.classList.add('typing');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.section').forEach(function(s) { obs.observe(s); });
+</script>
+</body>
+</html>

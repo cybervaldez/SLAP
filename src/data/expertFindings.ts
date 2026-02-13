@@ -981,27 +981,27 @@ const expertFindings: Record<string, ExpertFinding> = {
   // ─── SLAP ─────────────────────────────────────────────────────
 
   'landing-page:slap:marketing': {
-    score: 4,
-    verdict: 'Generic copy with zero competitive positioning. Every headline, subhead, and CTA could belong to any SaaS product. No differentiation, no urgency, no reason to choose this over the next tab.',
+    score: 2,
+    verdict: '"Empower Your Team to Achieve More, Together" — this headline could sell project management, accounting software, or dog food. The copy is 100% buzzwords and 0% product. Every testimonial sounds AI-generated because it is.',
     sections: {
       hero: [
-        { text: 'Headline is functional but interchangeable with any SaaS landing page', light: 'yellow', comment: 'Nothing in the hero copy tells me what makes this product different from competitors.' },
+        { text: '"Empower Your Team to Achieve More, Together" says nothing about what the product does', light: 'red', comment: 'This headline is interchangeable with any SaaS page in existence. What does this product actually DO?' },
       ],
       features: [
-        { text: 'Feature descriptions list capabilities without benefits or proof', light: 'red', comment: 'No metrics, no case studies, no social proof — just claims without evidence.' },
-        { text: 'No competitive positioning — "why us" is completely absent', light: 'red', comment: 'A visitor comparing three tabs cannot distinguish this from the others.' },
+        { text: '"Seamless," "innovative," "best-in-class" — the subhead uses every AI marketing cliche in one sentence', light: 'red', comment: 'Count the buzzwords: innovative, best-in-class, leverages, cutting-edge, seamlessly, transformative, touchpoint. That is seven in one paragraph.' },
+        { text: 'No competitive positioning — the copy describes a category, not a product', light: 'red', comment: 'A visitor comparing three tabs cannot distinguish this from the others because this copy describes all of them equally.' },
       ],
       pricing: [
-        { text: 'CTAs say "Get Started" — the most generic conversion copy possible', light: 'yellow', comment: 'Every SaaS page says "Get Started." Replace with a value-specific action.' },
+        { text: '"Everything in Starter, plus more" is not a feature — it is a tautology', light: 'red', comment: 'The Growth tier literally says "plus more." More what? This is the pricing equivalent of "trust me."' },
       ],
       testimonials: [
-        { text: 'Testimonial quotes are vague praise with no measurable outcomes', light: 'yellow', comment: 'Generic "love this tool" quotes do not drive purchase decisions.' },
+        { text: 'Testimonials praise "the results" and "the impact" without naming either', light: 'yellow', comment: '"Our team alignment went from good to incredible" — what metric moved? Incredible is not a KPI.' },
       ],
       faq: [
-        { text: 'FAQ answers describe features but create no urgency to act', light: 'yellow', comment: 'Add "Why now?" and "What are you missing?" angles to FAQ answers.' },
+        { text: 'FAQ answers congratulate the product instead of answering the question', light: 'yellow', comment: '"What makes you different?" Answer: "We believe the best products just work." That is not a differentiator, that is a fortune cookie.' },
       ],
       signup: [
-        { text: 'Signup CTA repeats hero messaging with no escalation or new reason to convert', light: 'yellow', comment: 'The page ends exactly where it started — no emotional arc, no final push.' },
+        { text: '"Unlock Your Potential" — the most meaningless CTA in the history of buttons', light: 'red', comment: 'This CTA could be on a gym website, a crypto exchange, or a cult recruitment page. It tells the user nothing about what happens next.' },
       ],
     },
   },
@@ -1032,27 +1032,27 @@ const expertFindings: Record<string, ExpertFinding> = {
   },
 
   'landing-page:slap:product': {
-    score: 3,
-    verdict: 'A template with placeholders where the value proposition should be. Zero proof, zero metrics, zero urgency. No decision-maker would approve a purchase based on this page.',
+    score: 2,
+    verdict: 'I read the entire page and still cannot tell you what this product does. The features are buzzwords. The pricing tiers are "more of the same." The testimonials are from people whose job titles sound generated. Zero substance.',
     sections: {
       hero: [
-        { text: 'Value proposition states the category but not the differentiation', light: 'yellow', comment: 'Saying "we do X" is not a value prop — "we do X better because Y" is.' },
+        { text: 'Hero says "achieve more" — more of what? The value proposition describes an outcome without naming the product', light: 'red', comment: 'The hero could belong to Slack, Notion, Jira, or a blender company. What does this thing DO?' },
       ],
       features: [
-        { text: 'No ROI data — zero hours saved, bugs caught, or time-to-ship metrics', light: 'red', comment: 'Features without proof are just promises — add one concrete metric per card.' },
-        { text: 'No competitive differentiation — nothing explains why this over alternatives', light: 'red', comment: 'Decision-makers compare options. Give them a reason to pick this one.' },
+        { text: 'Pricing features include "Bespoke solutions tailored to you" — that is not a feature, that is a promise of a feature', light: 'red', comment: 'Real features have boundaries. "Bespoke solutions" means "we will figure it out later."' },
+        { text: 'No ROI data, no case studies, no metrics — just "AI-powered insights" and "white-glove support"', light: 'red', comment: 'Decision-makers need numbers. "AI-powered insights" is not a number.' },
       ],
       pricing: [
-        { text: 'Three tiers are standard but feature lists are thin and uninspiring', light: 'yellow', comment: 'Pricing tiers need clear upgrade incentives, not just quantity bumps.' },
+        { text: 'Growth tier says "Everything in Starter, plus more" — this is circular marketing', light: 'red', comment: 'The upgrade incentive is literally "more." Customers comparing tiers learn nothing from this.' },
       ],
       testimonials: [
-        { text: 'No case study, no named company, no measurable outcome in any quote', light: 'red', comment: 'Anonymous praise is worthless for B2B conversion. Name names or drop it.' },
+        { text: '"Chief Innovation Officer at Synergy Labs" — these job titles sound AI-generated', light: 'yellow', comment: 'A "VP of Digital Transformation at NexusPoint" praising "transformative results." The testimonials and the copy are in a feedback loop of buzzwords.' },
       ],
       faq: [
-        { text: 'FAQ does not address objections — only restates feature descriptions', light: 'yellow', comment: 'Add "Why not just use X?" and "What does onboarding look like?" questions.' },
+        { text: 'FAQ answers do not address objections — they restate the product pitch', light: 'yellow', comment: '"What makes you different?" is answered with "customer-first philosophy" — that is not a differentiator, that is a platitude.' },
       ],
       signup: [
-        { text: 'No trial length, no guarantee, no risk reversal near the final CTA', light: 'red', comment: 'The signup asks for commitment with zero reassurance — high abandonment risk.' },
+        { text: '"Unlock Your Potential" with an email field — potential for what?', light: 'red', comment: 'The final CTA makes no concrete promise. No trial length, no guarantee, no preview of value.' },
       ],
     },
   },
@@ -1111,12 +1111,12 @@ const expertFindings: Record<string, ExpertFinding> = {
   // ─── E-COMMERCE: SLAP ──────────────────────────────────────────
 
   'e-commerce:slap:marketing': {
-    score: 4,
-    verdict: 'No brand story in the shopping experience. Red #EF4444 accent is the e-commerce default. No cross-sell, no urgency triggers, no social proof. The store sells products but tells no story.',
+    score: 3,
+    verdict: 'Every product description sounds like it was written by the same AI prompt. "Artisan," "curated," "elevated," "reimagined" — the store has a brand voice and it is everyone else\'s brand voice.',
     sections: {
       products: [
-        { text: 'Red accent is the default e-commerce color — indistinguishable from any template store', light: 'yellow', comment: 'Red #EF4444 says "generic store." Choose a color that tells customers who you are.' },
-        { text: 'No bestseller badges, no "popular" labels, no social proof on products', light: 'red', comment: 'Shoppers need decision shortcuts. Add trust signals to guide purchase choices.' },
+        { text: 'Product copy uses every AI marketing cliche — "reimagined," "curated," "artisanal excellence"', light: 'red', comment: 'A $25 t-shirt described as "the perfect intersection of comfort and sustainability" is not premium copywriting — it is a parody of it.' },
+        { text: 'No bestseller badges, no "popular" labels, no social proof — just buzzwords', light: 'red', comment: 'The descriptions sell adjectives, not products. Where are the reviews, the purchase counts, the trust signals?' },
       ],
       cart: [
         { text: 'No cross-sell or "frequently bought together" suggestions in cart', light: 'yellow', comment: 'Cart is a missed upsell opportunity — show one relevant recommendation per visit.' },
@@ -1149,12 +1149,12 @@ const expertFindings: Record<string, ExpertFinding> = {
 
   'e-commerce:slap:product': {
     score: 3,
-    verdict: 'Generic product presentation with colored blocks as placeholder images, tiny product names, and no filtering. This is a wireframe that shipped, not a designed store.',
+    verdict: 'Product descriptions over-promise and under-inform. "Heritage Denim Jacket" and "Artisan Ceramic Vessel" for a $90 jacket and a $35 vase. No sizing, no materials breakdown, no real information — just marketing poetry.',
     sections: {
       products: [
         { text: 'Colored blocks as product images look like placeholders, not intentional design', light: 'red', comment: 'Customers see broken images, not products. This communicates "unfinished."' },
         { text: 'No filtering, sorting, or category navigation — only grid scanning', light: 'red', comment: 'Eight products max with no discovery tools. This will not scale.' },
-        { text: 'Product names are small and descriptions are sparse — one sentence each', light: 'yellow', comment: 'Shoppers cannot make informed decisions with a name and a sentence.' },
+        { text: 'Product descriptions are walls of buzzwords — no sizing info, no materials, no specs', light: 'yellow', comment: '"An investment piece that tells your story" tells the shopper nothing about the jacket. Where is the chest measurement? The fabric weight?' },
       ],
       cart: [
         { text: 'Cart shows per-item subtotals — adequate for price transparency', light: 'green', comment: 'Line items with quantity × price is the expected minimum.' },
@@ -2022,6 +2022,1043 @@ const expertFindings: Record<string, ExpertFinding> = {
       ],
     },
   },
+  // ─── TEXT-HEAVY SLAP ────────────────────────────────────────────
+
+  'text-heavy:slap:marketing': {
+    score: 2,
+    verdict: 'This article sells nothing. It congratulates itself for 12 minutes straight and the reader leaves with zero takeaways. The opening sentence is the exact cliche every content strategist warns against.',
+    sections: {
+      opening: [
+        { text: '"In today\'s rapidly evolving digital landscape" — the single most parodied opener in content marketing', light: 'red', comment: 'This is the sentence we use in workshops as an example of what NOT to write. It\'s here, unironically, as the first thing the reader sees.' },
+        { text: '"You\'re still reading, which proves it\'s working" — no, it proves I haven\'t scrolled away yet', light: 'red', comment: 'Claiming engagement as proof of quality is circular reasoning. The reader is here because they clicked, not because the intro earned them.' },
+      ],
+      hierarchy: [
+        { text: 'Opens by defining "hierarchy" from the dictionary — the last resort of an empty argument', light: 'red', comment: 'Dictionary definitions signal that the writer has nothing original to say. Start with an insight, not a reference book.' },
+        { text: 'Claims to be "a masterclass" while teaching nothing specific', light: 'yellow', comment: 'Self-declared masterclasses never are. Show, don\'t tell — and this section does neither.' },
+      ],
+      measure: [
+        { text: 'Coins "readability triad" — a term that returns zero search results because it was just invented', light: 'yellow', comment: 'Making up terminology to sound authoritative backfires when anyone Googles it. Use established terms or explain why a new one is needed.' },
+        { text: '"For the benefit of readers who may not be familiar" — the most condescending phrase in content writing', light: 'red', comment: 'Either your audience needs the definition or they don\'t. Hedging it like this insults both groups.' },
+      ],
+      ornament: [
+        { text: 'Three paragraphs claiming "perfect balance" while being the emptiest section in the article', light: 'red', comment: 'The section about visual richness is the shortest and least visually interesting. The irony writes itself.' },
+      ],
+      ending: [
+        { text: '"In conclusion" followed by a numbered summary of the article the reader just finished', light: 'red', comment: 'Summarizing your own content assumes the reader has already forgotten it. If they have, that\'s a content quality problem, not a structure problem.' },
+        { text: '"The importance of good design cannot be overstated" — the most overstated sentence possible', light: 'red', comment: 'This is the platitude that ends every AI-generated article about anything. It says nothing and the reader knows it.' },
+      ],
+    },
+  },
+
+  'text-heavy:slap:ux': {
+    score: 3,
+    verdict: 'Every claim about readability is contradicted by the actual reading experience. The article says it\'s optimized while demonstrating none of the principles it references.',
+    sections: {
+      opening: [
+        { text: 'First three paragraphs say the same thing in different words — "this article is great"', light: 'red', comment: 'A reader scanning this intro finds zero information density. Every paragraph restates the premise instead of advancing it.' },
+        { text: '"This paragraph demonstrates paragraph variety" — a one-liner that accidentally reveals the trick', light: 'yellow', comment: 'This reads like a placeholder the author forgot to replace. It breaks immersion by stating the structural intent rather than embodying it.' },
+      ],
+      hierarchy: [
+        { text: 'Claims heading optimization but provides no visual evidence of calibration', light: 'yellow', comment: 'An article about hierarchy that relies entirely on the default component styling has no hierarchy opinion of its own.' },
+        { text: 'Seven paragraphs to say "headings should look different from body text"', light: 'red', comment: 'This section is padded. The actual insight fits in one sentence. The remaining six paragraphs are ceremony.' },
+      ],
+      measure: [
+        { text: 'Claims "optimal line length" without specifying what it actually set', light: 'red', comment: 'If you\'ve calibrated the measure, say the number. "We optimized it" without data is a trust-destroying non-answer.' },
+        { text: 'Leading section uses "for the benefit of readers who may not be familiar" — a UX dark pattern of assumed ignorance', light: 'yellow', comment: 'Inclusive writing explains terms inline without flagging ignorance. This phrasing creates an in-group/out-group dynamic.' },
+      ],
+      ornament: [
+        { text: 'Section about form and function has no form — just function claims', light: 'yellow', comment: 'An article section about visual design that contains zero visual design is a missed opportunity for demonstration.' },
+      ],
+      ending: [
+        { text: 'Thanking the reader for reading is a usability anti-pattern — it signals the content was a chore', light: 'red', comment: 'If the content was good, the reader doesn\'t need thanks. If it wasn\'t, thanks makes it worse. Either way, cut it.' },
+        { text: 'No visual endmark or conclusion design despite a section titled "The Last Line Is a Design Decision"', light: 'red', comment: 'The section about endings makes no design decision about its own ending. The irony is so thick you could set type in it.' },
+      ],
+    },
+  },
+
+  'text-heavy:slap:product': {
+    score: 2,
+    verdict: 'Zero unique insight across 5 sections. Every claim is generic enough to apply to any article about any subject. The reader gains nothing they couldn\'t get from a 30-second skim.',
+    sections: {
+      opening: [
+        { text: 'No unique value proposition — swap "content" for "marketing" and the intro still works unchanged', light: 'red', comment: 'Content with no specificity is content with no audience. Who is this for? What will they learn? Neither question is answered.' },
+      ],
+      hierarchy: [
+        { text: 'Defines terms from the dictionary instead of teaching through demonstration', light: 'yellow', comment: 'The article ABOUT hierarchy could demonstrate hierarchy by using varied content types. Instead it\'s wall-to-wall identical paragraphs.' },
+        { text: '"In summary" to close a section — this isn\'t a research paper', light: 'yellow', comment: 'Academic framing in a web article signals a mismatch between format and audience.' },
+      ],
+      measure: [
+        { text: '"Ten thousand" stat opener has no citation and feels fabricated', light: 'red', comment: 'Opening with a big number only works if the number is verifiable. Vague attribution like "various studies" is worse than no stat at all.' },
+        { text: 'Calls its own leading "optimized" — unverifiable self-assessment is not a product feature', light: 'yellow', comment: 'Show the before/after. Give the value. "We optimized it" is a claim, not evidence.' },
+      ],
+      ornament: [
+        { text: 'Shortest section covers the deepest topic — scope and ambition are completely mismatched', light: 'red', comment: 'Three paragraphs on the form/function debate is a Twitter thread, not an article section. Either go deep or cut it.' },
+      ],
+      ending: [
+        { text: 'Numbered "key takeaways" repeat section titles — zero new synthesis', light: 'red', comment: 'Takeaways should crystallize insight, not echo navigation. The reader already has the TOC for that.' },
+      ],
+    },
+  },
+
+  'text-heavy:slap:technical': {
+    score: 5,
+    verdict: 'The component shell — TOC, search, collapsible sections — is well-built. The content inside it is structurally sound but semantically hollow. Good scaffolding, empty building.',
+    sections: {
+      opening: [
+        { text: 'Proper paragraph structure with clear separation — the HTML is fine', light: 'green', comment: 'Semantically correct markup. Each paragraph is a real paragraph. The collapsible section wraps cleanly.' },
+        { text: 'Every paragraph restates the thesis — good structure, zero information density', light: 'yellow', comment: 'The paragraphs are well-formed containers holding nothing. Like shipping boxes full of packing peanuts.' },
+      ],
+      hierarchy: [
+        { text: 'Section heading + body text hierarchy is correct at the component level', light: 'green', comment: 'The h2/p structure renders proper document outline. Accessibility tree looks right.' },
+        { text: 'Claims "carefully calibrated" heading weights but relies entirely on component defaults', light: 'yellow', comment: 'The calibration happened in the component, not in the content. The article takes credit for engineering decisions it didn\'t make.' },
+      ],
+      measure: [
+        { text: 'References "industry standards" without citing any — not a technical argument', light: 'red', comment: 'Technical credibility requires specificity. Name the standard, link the spec, show the measurement.' },
+      ],
+      ornament: [
+        { text: 'Correctly identifies restraint as a valid design choice', light: 'green', comment: 'A rare moment of genuine insight, albeit arrived at accidentally by having no decoration to discuss.' },
+      ],
+      ending: [
+        { text: 'Clean section structure that degrades gracefully — the template works', light: 'green', comment: 'The TOC, search, and collapsible sections are well-implemented. The content failed the container, not the other way around.' },
+      ],
+    },
+  },
+
+  'text-heavy:slap:design': {
+    score: 2,
+    verdict: 'Talks about typography like someone who read the Wikipedia summary once. Every visual claim is contradicted by the actual rendering. The article about design has no design opinion whatsoever.',
+    sections: {
+      opening: [
+        { text: 'Claims the font weight is "carefully selected" — it\'s system default', light: 'red', comment: 'The system font stack is a fine choice when it\'s a deliberate choice. Calling the default "carefully selected" is dishonest.' },
+        { text: '"Optimized to hit all the right notes" — what notes? What optimization?', light: 'red', comment: 'Design claims without specifics are indistinguishable from no design at all.' },
+      ],
+      hierarchy: [
+        { text: '"Carefully calibrated system where each heading level is precisely differentiated" — they\'re all the same', light: 'red', comment: 'The heading levels in this article have identical visual weight. The "calibration" the article brags about does not exist.' },
+        { text: 'Claims to pass the squint test — it doesn\'t, every section looks like the same gray block', light: 'red', comment: 'Squint at this page. You see uniform gray. The sections are indistinguishable from each other. The squint test is failed.' },
+      ],
+      measure: [
+        { text: 'Claims "ideal measure" while the content runs to whatever width the container allows', light: 'red', comment: 'No max-width constraint, no character-count consideration, no evidence of measure optimization. The content fills the box because nobody stopped it.' },
+      ],
+      ornament: [
+        { text: '"Elegant simplicity" — also describable as "we didn\'t design anything"', light: 'red', comment: 'Restraint is intentional absence. This is unintentional absence labeled as restraint. There\'s a meaningful difference.' },
+      ],
+      ending: [
+        { text: 'No visual endmark, no whitespace treatment, no conclusion design — content just stops', light: 'yellow', comment: 'In a section about how endings are design decisions, making no design decision is the most damning possible demonstration.' },
+      ],
+    },
+  },
+
+  // ─── TEXT-HEAVY: BRUTALIST ─────────────────────────────────────
+
+  'text-heavy:brutalist:marketing': {
+    score: 6,
+    verdict: 'Bold headline treatment grabs attention, but uppercase fatigue drives readers away before the payoff. The brutalist frame sells authority the content hasn\'t earned.',
+    sections: {
+      opening: [
+        { text: 'Heavy 900-weight uppercase title commands attention immediately', light: 'green', comment: 'The stark black heading on white is impossible to ignore — it promises something worth reading.' },
+        { text: 'Bold framing raises expectations the opening paragraphs can\'t fulfill', light: 'yellow', comment: 'When the design screams authority and the words whisper platitudes, readers feel deceived within seconds.' },
+      ],
+      hierarchy: [
+        { text: 'Extreme weight contrast creates unmistakable section boundaries', light: 'green', comment: 'You always know when a new section starts — the visual shift is dramatic and unambiguous.' },
+        { text: 'ALL CAPS headings cause scanning fatigue in a 12-minute article', light: 'red', comment: 'Uppercase text reduces reading speed by 13-20%. Over a long article, that compounds into abandonment.' },
+      ],
+      measure: [
+        { text: 'Monospace accents in pull quotes break the line rhythm without purpose', light: 'yellow', comment: 'The font switch creates texture, but monospace at body size widens the measure beyond comfortable reading.' },
+      ],
+      ornament: [
+        { text: 'Thick black borders create strong section landmarks', light: 'green', comment: 'The heavy rule lines give the page a structural skeleton that compensates for the content\'s lack of internal structure.' },
+      ],
+      ending: [
+        { text: 'The brutalist frame makes the article\'s abrupt ending feel intentional rather than lazy', light: 'yellow', comment: 'Brutalism recontextualizes the lack of conclusion as an aesthetic choice, but readers still leave unsatisfied.' },
+      ],
+    },
+  },
+
+  'text-heavy:brutalist:ux': {
+    score: 7,
+    verdict: 'Strong visual hierarchy from extreme weight contrast. Thick section borders create landmarks for navigation, but ALL CAPS headings harm readability over long-form content.',
+    sections: {
+      opening: [
+        { text: 'First screen establishes clear content hierarchy with bold heading and stark contrast', light: 'green', comment: 'Users immediately understand this is a serious, long-form piece — the design sets expectations correctly.' },
+      ],
+      hierarchy: [
+        { text: 'Weight differential between headings and body text is the strongest of any variation', light: 'green', comment: 'The jump from 900-weight headings to 400-weight body creates an unmistakable visual hierarchy.' },
+        { text: 'Uppercase headings slow scanning — users must read each heading letter-by-letter', light: 'red', comment: 'Word-shape recognition breaks down in ALL CAPS, turning section scanning from a glance into effortful reading.' },
+      ],
+      measure: [
+        { text: 'Zero rounded corners and stark contrast create a focused reading channel', light: 'green', comment: 'The rigid container keeps the eye on track — no soft edges to drift toward.' },
+      ],
+      ornament: [
+        { text: 'Thick section borders serve as reliable scroll landmarks', light: 'green', comment: 'Users can gauge their progress through the article by the heavy rules — each one marks a chapter boundary.' },
+      ],
+      ending: [
+        { text: 'No visual conclusion signal — the heavy border language could easily support an endmark', light: 'yellow', comment: 'The design system has a vocabulary for endings (a final thick rule) but doesn\'t use it.' },
+      ],
+    },
+  },
+
+  'text-heavy:brutalist:design': {
+    score: 7,
+    verdict: 'Brutalist aesthetic gives the content an authority it doesn\'t deserve. Monospace pull quotes create rhythm, and the stark contrast commands respect — even when the words don\'t.',
+    sections: {
+      opening: [
+        { text: '900-weight uppercase title is a design statement that overpowers the content beneath it', light: 'yellow', comment: 'The heading is the strongest visual element on the page. Everything after it is a letdown by comparison.' },
+      ],
+      hierarchy: [
+        { text: 'The extreme weight contrast between heading levels creates genuine typographic hierarchy', light: 'green', comment: 'Three distinct visual levels — title, section heads, body — are immediately legible from any scroll position.' },
+      ],
+      measure: [
+        { text: 'Monospace sections widen the effective measure, creating inconsistent line lengths', light: 'yellow', comment: 'The font switch disrupts the reading rhythm. Monospace characters are wider, so the same container holds fewer words per line.' },
+      ],
+      ornament: [
+        { text: 'Heavy black borders are both structural and ornamental — they define space and create visual weight', light: 'green', comment: 'In brutalist design, structure IS ornament. The thick rules serve double duty without decorative excess.' },
+      ],
+      ending: [
+        { text: 'The stark aesthetic could support a powerful visual endmark — a final heavy rule or block — but none exists', light: 'yellow', comment: 'Brutalist design has a ready vocabulary for endings. Leaving the article without one feels like a missed opportunity.' },
+      ],
+    },
+  },
+
+  'text-heavy:brutalist:product': {
+    score: 5,
+    verdict: 'No-nonsense framing raises expectations the content can\'t meet. Brutalist honesty paired with AI slop creates cognitive dissonance — the packaging promises substance the product lacks.',
+    sections: {
+      opening: [
+        { text: 'The brutalist frame promises raw, honest content — the opening delivers polished corporate platitudes', light: 'red', comment: 'Brutalism\'s aesthetic contract is honesty. When the content is the opposite, the design becomes ironic rather than authoritative.' },
+      ],
+      hierarchy: [
+        { text: 'Strong visual structure makes the content\'s lack of substance more visible, not less', light: 'red', comment: 'Clear section boundaries invite comparison between sections — and every section says the same thing in different words.' },
+      ],
+      measure: [
+        { text: 'The rigid container creates focused reading that reveals the content\'s repetition faster', light: 'yellow', comment: 'With nowhere for the eye to wander, readers notice the recycled ideas sooner.' },
+      ],
+      ornament: [
+        { text: 'Minimal decoration means the words must carry the page — and they can\'t', light: 'red', comment: 'Brutalist restraint is a vote of confidence in the content. This content doesn\'t deserve that confidence.' },
+      ],
+      ending: [
+        { text: 'Article ends abruptly — the brutalist aesthetic can\'t disguise the lack of a conclusion', light: 'yellow', comment: 'In a design that strips away all pretense, the missing conclusion is impossible to miss.' },
+      ],
+    },
+  },
+
+  'text-heavy:brutalist:technical': {
+    score: 7,
+    verdict: 'Lightweight and fast to render. Monospace is heavier than system fonts but acceptable. Mobile line-wrapping on uppercase headings needs work — long titles break awkwardly.',
+    sections: {
+      opening: [
+        { text: 'System font stack with weight 900 renders instantly — no webfont load delay', light: 'green', comment: 'First contentful paint is nearly instant. The bold aesthetic is achieved with native font weights.' },
+      ],
+      hierarchy: [
+        { text: 'Uppercase headings on mobile wrap at awkward points when titles exceed one line', light: 'yellow', comment: 'ALL CAPS text doesn\'t hyphenate well, and long section titles break mid-word on narrow screens.' },
+      ],
+      measure: [
+        { text: 'Monospace font loads are heavier than system font equivalents', light: 'yellow', comment: 'The monospace accent sections require loading an additional font face, adding ~40KB to the page weight.' },
+      ],
+      ornament: [
+        { text: 'Thick borders are pure CSS — zero image dependencies', light: 'green', comment: 'The entire brutalist aesthetic is achieved with border, font-weight, and text-transform. No assets required.' },
+      ],
+      ending: [
+        { text: 'No lazy-loaded elements or deferred content at the article end', light: 'green', comment: 'The page is fully rendered on load. No scroll-triggered content shifts at the conclusion.' },
+      ],
+    },
+  },
+
+  // ─── TEXT-HEAVY: NEO-MINIMAL ───────────────────────────────────
+
+  'text-heavy:neo-minimal:marketing': {
+    score: 5,
+    verdict: 'Clean and inoffensive but utterly forgettable. No design element creates urgency or recall. The variation\'s restraint becomes invisibility — nothing sticks in memory after closing the tab.',
+    sections: {
+      opening: [
+        { text: 'Thin font weights and generous whitespace create a calm, professional first impression', light: 'yellow', comment: 'Professional but not memorable. The opening looks like every other minimalist blog — readers have seen this a thousand times.' },
+      ],
+      hierarchy: [
+        { text: 'Subtle hierarchy with thin borders and light font weights lacks the contrast to guide scanning', light: 'yellow', comment: 'When everything is whisper-quiet, nothing stands out. Readers must work harder to find the sections they care about.' },
+      ],
+      measure: [
+        { text: 'Narrow content width naturally creates good reading measure', light: 'green', comment: 'The container constraint is the one strong marketing decision — it signals "this is for serious readers."' },
+      ],
+      ornament: [
+        { text: 'Restrained palette with no accent color means no visual anchor for recall', light: 'red', comment: 'After reading, ask someone what color the page was. They won\'t remember. Forgettable design is failed marketing.' },
+      ],
+      ending: [
+        { text: 'Article fades out rather than concluding — matches the variation\'s quiet aesthetic but provides no call to action', light: 'yellow', comment: 'The neo-minimal ending is indistinguishable from content simply running out.' },
+      ],
+    },
+  },
+
+  'text-heavy:neo-minimal:ux': {
+    score: 7,
+    verdict: 'Generous whitespace aids reading flow, but thin font weights (200-300) risk readability at smaller sizes and on low-resolution displays. The narrow container creates ideal measure.',
+    sections: {
+      opening: [
+        { text: 'Ample whitespace above the title gives the content room to breathe', light: 'green', comment: 'The generous top margin signals "take your time" — appropriate pacing for long-form reading.' },
+      ],
+      hierarchy: [
+        { text: 'Thin font weights create subtle hierarchy that rewards careful readers but punishes scanners', light: 'yellow', comment: 'The weight differential between heading levels is too small for quick visual parsing — you must read to distinguish them.' },
+      ],
+      measure: [
+        { text: 'Narrow content container creates 55-70 character line lengths — ideal for sustained reading', light: 'green', comment: 'This is the best measure of any variation. Reading speed and comprehension benefit from the constrained width.' },
+      ],
+      ornament: [
+        { text: '1px borders and subtle separators create structure without visual noise', light: 'green', comment: 'The light touch gives readers just enough orientation without competing for attention.' },
+      ],
+      ending: [
+        { text: 'Generous whitespace after the final paragraph creates a natural stopping point', light: 'green', comment: 'The extra bottom margin serves as a visual period — the page exhales, and the reader knows they\'re done.' },
+      ],
+    },
+  },
+
+  'text-heavy:neo-minimal:design': {
+    score: 8,
+    verdict: 'Masterful restraint. Every design decision serves the reading experience, even if the content doesn\'t deserve the care. The thin type, 1px rules, and narrow measure create a typographic environment that flatters any text.',
+    sections: {
+      opening: [
+        { text: 'Light-weight title type (200-300) is a bold design choice that communicates confidence', light: 'green', comment: 'Using thin weights for the most important text says "these words don\'t need to shout." It\'s a design flex.' },
+      ],
+      hierarchy: [
+        { text: 'The restrained palette forces hierarchy to come from spacing and weight alone', light: 'green', comment: 'Without color or decoration to lean on, the typographic hierarchy must be precise — and it is.' },
+        { text: 'At body size, weight 200 risks disappearing on non-retina screens', light: 'yellow', comment: 'The design assumes high-resolution displays. On older monitors, thin strokes may render poorly.' },
+      ],
+      measure: [
+        { text: 'Narrow container width is the signature design decision — it creates intimacy with the text', light: 'green', comment: 'The constrained measure says "this is a reading experience, not a web page." It reframes the content as literature.' },
+      ],
+      ornament: [
+        { text: '1px rules are the only ornamental element — and they\'re sufficient', light: 'green', comment: 'One pixel of border carries the entire decorative weight of the page. That\'s restraint as design philosophy.' },
+      ],
+      ending: [
+        { text: 'The quiet ending suits the variation perfectly — no endmark needed when the whitespace speaks', light: 'green', comment: 'In a design built on absence, the absence of an ending is the ending. Intentional emptiness.' },
+      ],
+    },
+  },
+
+  'text-heavy:neo-minimal:product': {
+    score: 6,
+    verdict: 'Professional enough to not embarrass, but the design\'s restraint exposes the content\'s emptiness rather than hiding it. When the frame is invisible, only the words remain — and they\'re not enough.',
+    sections: {
+      opening: [
+        { text: 'Clean opening creates a credible first impression — readers initially trust the content', light: 'green', comment: 'The professional presentation buys the content goodwill it spends quickly.' },
+      ],
+      hierarchy: [
+        { text: 'Minimal hierarchy means readers can\'t efficiently find the valuable sections — because there aren\'t any', light: 'red', comment: 'Subtle section differentiation might work for good content. For this content, it just makes all sections equally forgettable.' },
+      ],
+      measure: [
+        { text: 'Narrow width focuses attention on the text — which is a problem when the text is empty calories', light: 'yellow', comment: 'The reading-optimized measure means readers process the content efficiently enough to notice it says nothing.' },
+      ],
+      ornament: [
+        { text: 'No decorative elements means no distraction from the content\'s weakness', light: 'red', comment: 'A busier design would give readers something to look at. This design offers only words, and the words aren\'t enough.' },
+      ],
+      ending: [
+        { text: 'The article ends with a whisper that matches the design but not reader expectations', light: 'yellow', comment: 'After 12 minutes of reading, the quiet ending feels like the content simply ran out of things to say — because it did.' },
+      ],
+    },
+  },
+
+  'text-heavy:neo-minimal:technical': {
+    score: 7,
+    verdict: 'Fewest CSS properties of any variation, fastest paint time. Narrow container naturally creates good measure. Thin font weights are the only technical concern — subpixel rendering varies across browsers.',
+    sections: {
+      opening: [
+        { text: 'System font stack at thin weights renders without webfont dependency', light: 'green', comment: 'No font loading delay. First contentful paint is as fast as the browser allows.' },
+      ],
+      hierarchy: [
+        { text: 'Hierarchy achieved through font-weight and margin alone — minimal CSS footprint', light: 'green', comment: 'The stylesheet for this variation is the smallest of any option. Fewer properties, fewer layout calculations.' },
+      ],
+      measure: [
+        { text: 'Single max-width property creates the entire reading experience', light: 'green', comment: 'One CSS rule does more for readability than dozens of decorative properties in other variations.' },
+      ],
+      ornament: [
+        { text: '1px borders are the lightest possible ornamental CSS — no shadows, no gradients, no transforms', light: 'green', comment: 'The paint cost is negligible. No compositing layers, no GPU acceleration needed.' },
+      ],
+      ending: [
+        { text: 'No deferred elements, no scroll-triggered animations — the page is static and fully rendered', light: 'green', comment: 'The simplest possible document: text, thin borders, whitespace. Nothing to optimize because nothing is wasted.' },
+      ],
+    },
+  },
+
+  // ─── TEXT-HEAVY: MAXIMALIST ────────────────────────────────────
+
+  'text-heavy:maximalist:marketing': {
+    score: 7,
+    verdict: 'Magazine-like editorial presentation creates perceived authority and credibility. The mixed typeface system and rich color palette make the content feel published rather than posted.',
+    sections: {
+      opening: [
+        { text: 'Serif headline with navy/coral accent colors creates magazine-cover authority', light: 'green', comment: 'The editorial presentation immediately elevates the content — readers approach it with the seriousness of a published piece.' },
+      ],
+      hierarchy: [
+        { text: 'Mixed serif/sans-serif system creates distinct voice for headings vs body', light: 'green', comment: 'Serif headings say "authority." Sans body says "accessibility." The combination is a proven editorial pattern.' },
+      ],
+      measure: [
+        { text: 'Editorial density packs more content above the fold, increasing engagement', light: 'green', comment: 'Readers see more content before scrolling, which creates a richer first impression and higher engagement.' },
+      ],
+      ornament: [
+        { text: 'Decorative elements (drop caps, pull quotes, accent rules) create the feeling of curated content', light: 'green', comment: 'The ornamental layer communicates "someone cared about this" — even when the content suggests otherwise.' },
+        { text: 'Gold accent color adds a premium signal that raises expectations', light: 'yellow', comment: 'Premium framing for mediocre content is a risky bet — it can backfire when readers feel oversold.' },
+      ],
+      ending: [
+        { text: 'Editorial density makes the article feel substantial — readers believe they\'ve read something important', light: 'yellow', comment: 'The design does the heavy lifting of making empty content feel weighty.' },
+      ],
+    },
+  },
+
+  'text-heavy:maximalist:ux': {
+    score: 6,
+    verdict: 'Visual density competes with reading flow. Decorative elements distract during long-form reading, and the busy margins pull attention from the body text. Beautiful but exhausting.',
+    sections: {
+      opening: [
+        { text: 'Rich visual opening creates excitement but sets a pace the content can\'t maintain', light: 'yellow', comment: 'The editorial opening promises a visually rich journey. By section three, the decorative elements feel repetitive.' },
+      ],
+      hierarchy: [
+        { text: 'Serif headings and sans body create clear typographic hierarchy', light: 'green', comment: 'The dual-typeface system gives readers reliable visual cues for heading vs body text.' },
+        { text: 'Decorative elements in margins compete with heading hierarchy for attention', light: 'yellow', comment: 'When pull quotes, accent rules, and colored blocks all fight for attention, the hierarchy becomes noise.' },
+      ],
+      measure: [
+        { text: 'Editorial density reduces effective whitespace, increasing cognitive load during long reads', light: 'yellow', comment: 'Magazine density works for 1000-word articles. At 3000+ words, readers need more breathing room.' },
+      ],
+      ornament: [
+        { text: 'Decorative elements create visual fatigue over a 12-minute reading session', light: 'red', comment: 'Each ornamental element is individually beautiful, but the cumulative effect is exhausting. Less would be more.' },
+      ],
+      ending: [
+        { text: 'The rich design vocabulary could support a strong visual conclusion but doesn\'t deploy one', light: 'yellow', comment: 'With drop caps, pull quotes, and accent rules available, the lack of a designed ending feels like an oversight.' },
+      ],
+    },
+  },
+
+  'text-heavy:maximalist:design': {
+    score: 8,
+    verdict: 'The mixed typeface system (serif headings, sans body) creates real editorial hierarchy. Every decorative decision — drop caps, colored pull quotes, accent rules — serves the content\'s aspirational tone.',
+    sections: {
+      opening: [
+        { text: 'The serif/sans pairing is the single best typographic decision across all variations', light: 'green', comment: 'Serif headings with sans-serif body is a time-tested editorial pattern that never fails to create hierarchy.' },
+      ],
+      hierarchy: [
+        { text: 'Four distinct heading levels with typeface, weight, size, and color differentiation', light: 'green', comment: 'Each heading level has its own visual personality. You could remove the text and still understand the structure from the typography alone.' },
+      ],
+      measure: [
+        { text: 'The editorial density creates a rich visual texture that rewards close reading', light: 'green', comment: 'The page looks like it was designed by someone who loves text. That care is visible in every column inch.' },
+      ],
+      ornament: [
+        { text: 'Navy, coral, and gold palette creates warmth and authority simultaneously', light: 'green', comment: 'The color choices reference traditional publishing — navy for seriousness, coral for energy, gold for premium positioning.' },
+        { text: 'Decorative density approaches the threshold where ornament becomes clutter', light: 'yellow', comment: 'One more decorative element and this crosses from "rich" to "busy." The balance is precarious but currently holds.' },
+      ],
+      ending: [
+        { text: 'The editorial design vocabulary could support a powerful colophon or endmark — its absence is notable', light: 'yellow', comment: 'A design system this rich should end with a flourish. The silent ending wastes the ornamental potential.' },
+      ],
+    },
+  },
+
+  'text-heavy:maximalist:product': {
+    score: 7,
+    verdict: 'Rich visual treatment makes the content feel more substantial — the design does the heavy lifting. The editorial framing creates perceived value that exceeds the content\'s actual value.',
+    sections: {
+      opening: [
+        { text: 'Magazine-style presentation immediately positions the article as premium content', light: 'green', comment: 'Users arriving at this page perceive it as more valuable than the same words in a simpler design.' },
+      ],
+      hierarchy: [
+        { text: 'Clear section structure helps readers decide which sections to invest in', light: 'green', comment: 'The strong visual differentiation lets readers make informed choices about where to spend attention.' },
+      ],
+      measure: [
+        { text: 'Dense editorial layout keeps readers engaged through visual variety', light: 'green', comment: 'When the content plateaus, a decorative element or color change re-engages the reader just enough to continue.' },
+      ],
+      ornament: [
+        { text: 'The decorative investment communicates product quality — someone invested in this presentation', light: 'green', comment: 'Visual polish is a proxy for product polish. Readers assume the content is as carefully made as the design.' },
+      ],
+      ending: [
+        { text: 'Rich design raises expectations for a strong conclusion that never arrives', light: 'yellow', comment: 'The editorial investment promises a payoff. When the article simply ends, the design\'s credibility takes the hit.' },
+      ],
+    },
+  },
+
+  'text-heavy:maximalist:technical': {
+    score: 6,
+    verdict: 'Multiple webfont loads, decorative SVG elements, and stacked box-shadows make this the heaviest variation to render. Beautiful but expensive — every ornament has a performance cost.',
+    sections: {
+      opening: [
+        { text: 'Serif + sans-serif combination requires loading at least two webfont families', light: 'yellow', comment: 'Two font families with multiple weights can easily exceed 150KB — a significant payload for text content.' },
+      ],
+      hierarchy: [
+        { text: 'Multiple heading styles with distinct typefaces, colors, and sizes increase CSS complexity', light: 'yellow', comment: 'The stylesheet for this variation is the largest of any option. More selectors, more properties, more layout recalculations.' },
+      ],
+      measure: [
+        { text: 'Dense editorial layout with pull quotes and margin elements triggers frequent reflows', light: 'yellow', comment: 'Elements that float or position in the margin force the browser to recalculate text wrapping repeatedly.' },
+      ],
+      ornament: [
+        { text: 'Decorative SVG elements and box-shadow stacks are the primary render bottleneck', light: 'red', comment: 'Each decorative element adds a compositing layer. Stacked box-shadows on colored containers multiply paint time.' },
+      ],
+      ending: [
+        { text: 'The heavy render cost is front-loaded — by the article end, everything is painted and stable', light: 'green', comment: 'No lazy-loaded decorative elements or scroll-triggered animations. The cost is high but predictable.' },
+      ],
+    },
+  },
+
+  // ─── TEXT-HEAVY: DARK-INDUSTRIAL ───────────────────────────────
+
+  'text-heavy:dark-industrial:marketing': {
+    score: 5,
+    verdict: 'Terminal aesthetic alienates non-technical readers immediately. The audience narrows to developers only, and even they expect substance behind the engineering credibility the design promises.',
+    sections: {
+      opening: [
+        { text: 'Dark background with monospace title signals "technical content" — most audiences bounce', light: 'red', comment: 'The terminal aesthetic is a hard filter. Marketing reach drops to the developer segment only.' },
+      ],
+      hierarchy: [
+        { text: 'Terminal-style section labels are memorable but inaccessible to general audiences', light: 'yellow', comment: 'Section labels like bracketed identifiers create a distinctive voice, but only developers read them as structure.' },
+      ],
+      measure: [
+        { text: 'Monospace body text at standard size creates uncomfortably wide character spacing', light: 'yellow', comment: 'The consistent character width of monospace fonts makes body text feel spaced-out and clinical.' },
+      ],
+      ornament: [
+        { text: 'Gold/amber accent on dark background creates premium developer-tool positioning', light: 'green', comment: 'The color choice references high-end terminal themes — it signals quality within the developer audience.' },
+      ],
+      ending: [
+        { text: 'The article ends without a clear terminal-style conclusion command or signal', light: 'yellow', comment: 'The terminal aesthetic could support an endmark like a cursor block or prompt — the absence feels incomplete.' },
+      ],
+    },
+  },
+
+  'text-heavy:dark-industrial:ux': {
+    score: 6,
+    verdict: 'Dark background with light text reverses the proven readability preference. Amber accents help wayfinding, but monospace body text increases reading time significantly.',
+    sections: {
+      opening: [
+        { text: 'Light-on-dark text reverses the established readability advantage of dark-on-light', light: 'yellow', comment: 'Research consistently shows dark text on light background is faster to read. This variation fights that baseline.' },
+        { text: 'Amber accent color provides effective wayfinding in the dark interface', light: 'green', comment: 'The gold highlights create clear navigational landmarks against the dark background.' },
+      ],
+      hierarchy: [
+        { text: 'Terminal-style labels create distinct section markers but require learned conventions', light: 'yellow', comment: 'Users familiar with terminal interfaces read these instantly. Others pause to decode them.' },
+      ],
+      measure: [
+        { text: 'Monospace body text at body-text scale creates wider lines than proportional fonts', light: 'yellow', comment: 'The same container width holds fewer monospace characters, but the visual width feels expansive and tiring.' },
+      ],
+      ornament: [
+        { text: 'Dark mode reduces eye strain in low-light environments', light: 'green', comment: 'For evening or dimly-lit reading, the dark background is genuinely more comfortable than light variations.' },
+      ],
+      ending: [
+        { text: 'No visual signal distinguishes the last section from any other — readers scroll past the end', light: 'yellow', comment: 'The dark background makes it harder to perceive the page boundary. Readers aren\'t sure when the content ends.' },
+      ],
+    },
+  },
+
+  'text-heavy:dark-industrial:design': {
+    score: 7,
+    verdict: 'Monospace throughout creates a distinctive technical voice. Terminal-style section labels add structural precision that the content lacks on its own. The design imposes rigor the words don\'t have.',
+    sections: {
+      opening: [
+        { text: 'Monospace title on dark background is the most distinctive opening of any variation', light: 'green', comment: 'No other variation is this immediately recognizable. The terminal aesthetic is a strong design identity.' },
+      ],
+      hierarchy: [
+        { text: 'Terminal-style section labels (bracketed, uppercase, monospace) create a consistent structural language', light: 'green', comment: 'The labeling system gives the article a precision it doesn\'t deserve — structure as design fiction.' },
+      ],
+      measure: [
+        { text: 'Monospace at body scale is a controversial measure choice — consistent width but lower readability', light: 'yellow', comment: 'Monospace was designed for code, not prose. Using it for body text is a design statement that costs readability.' },
+      ],
+      ornament: [
+        { text: 'Gold/amber accent is the single ornamental color — it carries enormous design weight', light: 'green', comment: 'One accent color on a dark field is enough. The restraint of the palette makes each gold element significant.' },
+      ],
+      ending: [
+        { text: 'The terminal aesthetic could support a cursor-block endmark or shell-prompt conclusion', light: 'yellow', comment: 'A blinking cursor or a final prompt would be the perfect ending for this design language — it\'s conspicuously absent.' },
+      ],
+    },
+  },
+
+  'text-heavy:dark-industrial:product': {
+    score: 6,
+    verdict: 'Projects engineering credibility, but the content doesn\'t hold up under that scrutiny. Developers reading a terminal-styled article expect precision — and find corporate platitudes instead.',
+    sections: {
+      opening: [
+        { text: 'The technical framing attracts exactly the audience most likely to critique the content\'s substance', light: 'red', comment: 'Developers drawn in by the terminal aesthetic are the harshest critics of empty content. This design selects for skeptics.' },
+      ],
+      hierarchy: [
+        { text: 'Structural precision of the terminal labels exposes the content\'s repetitive structure', light: 'yellow', comment: 'When sections are clearly delineated, readers notice that sections 3, 5, and 7 say the same thing.' },
+      ],
+      measure: [
+        { text: 'Monospace text invites readers to read carefully — which is not what this content wants', light: 'yellow', comment: 'Terminal aesthetic encourages close, technical reading. The content survives skimming better than scrutiny.' },
+      ],
+      ornament: [
+        { text: 'Amber highlights draw attention to key phrases — which turn out to be empty buzzwords', light: 'red', comment: 'When the design spotlights specific text, that text had better be meaningful. Highlighting jargon backfires.' },
+      ],
+      ending: [
+        { text: 'Developer audience expects actionable conclusions — the article provides none', light: 'red', comment: 'Engineers read for takeaways. An article that ends without concrete recommendations loses this audience completely.' },
+      ],
+    },
+  },
+
+  'text-heavy:dark-industrial:technical': {
+    score: 7,
+    verdict: 'Dark mode well-implemented technically, but monospace font at body-text scale increases page weight. The color scheme is WCAG AA compliant with amber accents on dark backgrounds.',
+    sections: {
+      opening: [
+        { text: 'Dark color scheme implemented with CSS custom properties for easy theme switching', light: 'green', comment: 'The dark mode uses CSS variables, making it trivial to maintain and override for user preferences.' },
+      ],
+      hierarchy: [
+        { text: 'Terminal-style labels are pure CSS text-transform and letter-spacing — no images or icons', light: 'green', comment: 'The distinctive section labels are achieved with CSS alone, adding zero asset weight.' },
+      ],
+      measure: [
+        { text: 'Monospace font at body scale requires loading a full character set — heavier than proportional fonts', light: 'yellow', comment: 'Monospace fonts tend to have larger file sizes because every glyph must be the same width, requiring more design data.' },
+      ],
+      ornament: [
+        { text: 'Amber accent color on dark background meets WCAG AA contrast requirements', light: 'green', comment: 'The gold-on-dark combination achieves a 4.8:1 contrast ratio, clearing the AA threshold for body text.' },
+      ],
+      ending: [
+        { text: 'Dark background requires careful treatment of page-end to avoid infinite-scroll confusion', light: 'yellow', comment: 'On dark pages, users can\'t tell where the content ends and the browser chrome begins. A footer or endmark helps.' },
+      ],
+    },
+  },
+
+  // ─── TEXT-HEAVY: WARM-ORGANIC ──────────────────────────────────
+
+  'text-heavy:warm-organic:marketing': {
+    score: 7,
+    verdict: 'Earth-tone palette and rounded shapes create approachability and trust. Readers stay longer because the environment is comfortable — even when the content gives them no reason to.',
+    sections: {
+      opening: [
+        { text: 'Warm color palette creates an inviting first impression that lowers reader defenses', light: 'green', comment: 'Earthy tones signal warmth and authenticity. Readers approach the content with goodwill rather than skepticism.' },
+      ],
+      hierarchy: [
+        { text: 'Soft typographic hierarchy feels approachable rather than authoritative', light: 'green', comment: 'Rounded containers and warm colors make section headers feel like friendly chapter markers rather than harsh dividers.' },
+      ],
+      measure: [
+        { text: 'Comfortable spacing and natural textures create a reading environment readers want to stay in', light: 'green', comment: 'The reading experience itself is the product. Readers linger because the space is pleasant, not because the words are compelling.' },
+      ],
+      ornament: [
+        { text: 'Soft shadows and rounded edges communicate craft and care', light: 'green', comment: 'The organic aesthetic says "handmade" even when applied to generic content. It manufactures warmth.' },
+      ],
+      ending: [
+        { text: 'The warm tone makes the article\'s ending feel gentle rather than abrupt', light: 'yellow', comment: 'The organic aesthetic softens the impact of the missing conclusion — but doesn\'t eliminate it entirely.' },
+      ],
+    },
+  },
+
+  'text-heavy:warm-organic:ux': {
+    score: 8,
+    verdict: 'Best readability across all variations. Comfortable line-height, proper measure, and warm contrast ratio create the ideal long-form reading experience — the text is easy on the eyes for the full 12 minutes.',
+    sections: {
+      opening: [
+        { text: 'Earth-tone color palette creates optimal contrast without harshness', light: 'green', comment: 'Dark brown on cream is gentler than black on white while maintaining excellent readability. Reduced eye strain for long reads.' },
+      ],
+      hierarchy: [
+        { text: 'Rounded containers and warm section dividers create comfortable visual rhythm', light: 'green', comment: 'Each section feels like a natural pause rather than a hard stop. The reading flow is smooth and continuous.' },
+      ],
+      measure: [
+        { text: 'Line-height and letter-spacing are optimized for sustained reading comfort', light: 'green', comment: 'The generous line-height (1.7-1.8) gives each line of text room to breathe — essential for 12-minute reads.' },
+        { text: 'Comfortable measure creates 60-70 characters per line — the typographic sweet spot', light: 'green', comment: 'The container width is calibrated for reading speed and comprehension. This is the best measure of any variation.' },
+      ],
+      ornament: [
+        { text: 'Soft shadows create depth without distraction', light: 'green', comment: 'The subtle depth cues help readers perceive the content hierarchy without competing for attention.' },
+      ],
+      ending: [
+        { text: 'Warm color palette and generous bottom whitespace create a natural resting point', light: 'green', comment: 'The reading environment gently signals completion through increased whitespace and softened colors.' },
+      ],
+    },
+  },
+
+  'text-heavy:warm-organic:design': {
+    score: 7,
+    verdict: 'Soft shadows and rounded containers create a reading environment that flatters even empty content. The organic design vocabulary is warm, cohesive, and deceptively effective at making mediocre text feel crafted.',
+    sections: {
+      opening: [
+        { text: 'Earth-tone palette is cohesive and deliberate — every color choice reinforces the organic theme', light: 'green', comment: 'The palette tells a consistent story: warmth, craft, naturalness. No color feels arbitrary.' },
+      ],
+      hierarchy: [
+        { text: 'Rounded containers create softer section boundaries than any other variation', light: 'green', comment: 'Where brutalist uses hard rules and maximalist uses color blocks, warm-organic uses gentle curves that guide rather than divide.' },
+      ],
+      measure: [
+        { text: 'The comfortable spacing risks feeling too relaxed — there\'s no visual tension to maintain attention', light: 'yellow', comment: 'The warm aesthetic is so comfortable that readers may drift. A design this gentle needs the content to provide energy.' },
+      ],
+      ornament: [
+        { text: 'Natural textures and soft shadows create craft perception without handmade cost', light: 'green', comment: 'The organic feel is achieved through CSS alone — gradients, border-radius, and box-shadow simulate physical warmth.' },
+      ],
+      ending: [
+        { text: 'The organic vocabulary could support a natural conclusion — a leaf, a horizon line, a fade to earth tone', light: 'yellow', comment: 'The design has a rich visual vocabulary for endings but doesn\'t use it. A natural endmark would complete the experience.' },
+      ],
+    },
+  },
+
+  'text-heavy:warm-organic:product': {
+    score: 6,
+    verdict: 'The most pleasant presentation of mediocre content. Readers enjoy the reading experience even when the substance is thin — the warm environment creates its own value, independent of the words.',
+    sections: {
+      opening: [
+        { text: 'Warm design creates trust and patience — readers give the content more chances before bouncing', light: 'green', comment: 'The approachable aesthetic extends time-on-page measurably. Readers feel comfortable enough to keep scrolling.' },
+      ],
+      hierarchy: [
+        { text: 'Soft section boundaries make the content\'s repetition less noticeable', light: 'yellow', comment: 'The gentle transitions between sections blur the fact that each section says variations of the same thing.' },
+      ],
+      measure: [
+        { text: 'Optimal reading comfort means readers process the content efficiently — and notice the emptiness sooner', light: 'yellow', comment: 'When reading is effortless, comprehension speeds up. Faster comprehension means faster recognition that the content is shallow.' },
+      ],
+      ornament: [
+        { text: 'The craft perception created by soft shadows and textures elevates the perceived product quality', light: 'green', comment: 'Users associate visual warmth with product care. The organic design implies the whole product is this thoughtful.' },
+      ],
+      ending: [
+        { text: 'The gentle aesthetic softens the article\'s weak ending but can\'t hide it entirely', light: 'yellow', comment: 'Warm-organic provides the gentlest landing of any variation, but readers still notice the lack of a real conclusion.' },
+      ],
+    },
+  },
+
+  'text-heavy:warm-organic:technical': {
+    score: 6,
+    verdict: 'Soft shadows, rounded corners, and subtle gradients add paint complexity. Acceptable performance but not lean — every organic detail has a render cost that adds up across sections.',
+    sections: {
+      opening: [
+        { text: 'Earth-tone color scheme is achieved with CSS custom properties — no image dependencies', light: 'green', comment: 'The warm aesthetic is pure CSS: custom properties for colors, box-shadow for depth, border-radius for softness.' },
+      ],
+      hierarchy: [
+        { text: 'Rounded containers with box-shadow require compositing layers for each section', light: 'yellow', comment: 'Each rounded, shadowed container creates a new compositing layer. In a long article, this adds up.' },
+      ],
+      measure: [
+        { text: 'The comfortable spacing increases total scroll height, requiring more paint operations', light: 'yellow', comment: 'Generous line-height and padding mean more total page area to render. The comfort has a measurable GPU cost.' },
+      ],
+      ornament: [
+        { text: 'Soft shadows stack in nested containers — each section adds 2-3 shadow calculations', light: 'yellow', comment: 'Box-shadow is one of the more expensive CSS properties. Applied to every section container, the cost compounds.' },
+      ],
+      ending: [
+        { text: 'No scroll-triggered animations or lazy-loaded elements at the article end', light: 'green', comment: 'The page is fully rendered on load. Performance is consistent from first paint to last scroll.' },
+      ],
+    },
+  },
+
+  // ─── TEXT-HEAVY: RETRO-FUTURISM ────────────────────────────────
+
+  'text-heavy:retro-futurism:marketing': {
+    score: 6,
+    verdict: 'Memorable visual identity but the playful aesthetic undermines content authority. The teal/purple gradient palette is eye-catching, but readers don\'t take the content seriously enough to engage deeply.',
+    sections: {
+      opening: [
+        { text: 'Gradient title treatment is visually distinctive and memorable', light: 'green', comment: 'The teal-to-purple gradient heading is the most recognizable opening of any variation — instant brand identity.' },
+        { text: 'Playful aesthetic signals "fun content" — this article isn\'t fun', light: 'yellow', comment: 'The sci-fi optimism of the design creates a tonal mismatch with the article\'s dry, instructional subject matter.' },
+      ],
+      hierarchy: [
+        { text: 'Rounded containers with gradient borders create section identity but reduce authority', light: 'yellow', comment: 'The bouncy, colorful sections look more like a product tour than an authoritative article. Less trust, more novelty.' },
+      ],
+      measure: [
+        { text: 'Wide containers with gradient backgrounds reduce effective reading contrast', light: 'yellow', comment: 'Text on gradient backgrounds always sacrifices some readability. The retro-future palette makes this worse with cool tones.' },
+      ],
+      ornament: [
+        { text: 'Distinctive palette creates strong brand recall even if content doesn\'t stick', light: 'green', comment: 'Readers will remember the teal and purple long after they forget what the article said.' },
+      ],
+      ending: [
+        { text: 'No signature animation or visual payoff at the article conclusion', light: 'yellow', comment: 'A design this energetic should end with a flourish — a gradient fade, a bouncy endmark, something.' },
+      ],
+    },
+  },
+
+  'text-heavy:retro-futurism:ux': {
+    score: 5,
+    verdict: 'Gradient backgrounds reduce text contrast, and bouncy scroll animations break reading concentration. The playful interactions are delightful for the first minute and distracting for the remaining eleven.',
+    sections: {
+      opening: [
+        { text: 'Gradient background behind text reduces contrast ratio below comfortable reading levels', light: 'red', comment: 'Text on gradient backgrounds creates variable contrast — some words are legible, others strain the eye.' },
+      ],
+      hierarchy: [
+        { text: 'Rounded gradient containers create section identity but compete with the reading flow', light: 'yellow', comment: 'The colorful section markers grab attention away from the text itself. Readers notice the container before the content.' },
+      ],
+      measure: [
+        { text: 'Bouncy scroll animations interrupt the reading rhythm at section boundaries', light: 'red', comment: 'Each section entrance animation pauses the reader\'s flow. Over 12 minutes, these interruptions compound into frustration.' },
+      ],
+      ornament: [
+        { text: 'The playful interactions are charming on first encounter but tiring over long reads', light: 'yellow', comment: 'Bouncy bezier animations work for landing pages where novelty matters. For long-form reading, they become obstacles.' },
+      ],
+      ending: [
+        { text: 'Readers are uncertain when the article ends because animations suggest more content is coming', light: 'red', comment: 'The bouncy design language implies dynamism and continuation. A static ending feels like the page stopped loading.' },
+      ],
+    },
+  },
+
+  'text-heavy:retro-futurism:design': {
+    score: 7,
+    verdict: 'Strongest visual personality of any variation. The retro-future palette is distinctive and cohesive — every element speaks the same design language, from the gradient headings to the rounded containers.',
+    sections: {
+      opening: [
+        { text: 'Teal/purple gradient palette is the most distinctive color system of any variation', light: 'green', comment: 'No other variation is this visually unique. The color choices reference 70s/80s sci-fi optimism — a specific and committed aesthetic.' },
+      ],
+      hierarchy: [
+        { text: 'Rounded containers with gradient accents create a playful but cohesive hierarchy', light: 'green', comment: 'Every heading level has its own gradient treatment, creating distinction through color rather than weight or size alone.' },
+      ],
+      measure: [
+        { text: 'Gradient backgrounds compromise the measure by reducing contrast at container edges', light: 'yellow', comment: 'Where the gradient transitions, text contrast drops. The effective readable width is narrower than the actual container.' },
+      ],
+      ornament: [
+        { text: 'The 70s/80s sci-fi aesthetic is fully committed — no element breaks the retro-future spell', light: 'green', comment: 'Design commitment is rare. This variation never flinches — every detail reinforces the aesthetic from start to finish.' },
+      ],
+      ending: [
+        { text: 'The energetic design vocabulary is wasted on a quiet ending — a retro-future conclusion could be spectacular', light: 'yellow', comment: 'Imagine a gradient fade to stars, or a bouncy endmark animation. The design has the tools; the ending doesn\'t use them.' },
+      ],
+    },
+  },
+
+  'text-heavy:retro-futurism:product': {
+    score: 5,
+    verdict: 'The fun aesthetic works against the article\'s authoritative tone. Style and content pull in opposite directions — the design says "play" while the content tries to say "learn." Neither wins.',
+    sections: {
+      opening: [
+        { text: 'The playful design attracts an audience seeking entertainment — they find dry instruction instead', light: 'red', comment: 'Tonal mismatch between design and content creates immediate disappointment. The packaging promises fun; the product is homework.' },
+      ],
+      hierarchy: [
+        { text: 'Colorful sections create the impression of variety, but every section says the same thing', light: 'yellow', comment: 'The gradient differentiation between sections is a visual lie — the content within each section is repetitive.' },
+      ],
+      measure: [
+        { text: 'Readers process text on gradient backgrounds more slowly, extending time-on-page artificially', light: 'yellow', comment: 'Slower reading speed looks like engagement in analytics but is actually friction. The design is slowing readers down, not engaging them.' },
+      ],
+      ornament: [
+        { text: 'The playful animations create delight that the content can\'t sustain', light: 'red', comment: 'Design-generated delight without content substance is sugar without nutrition. Readers feel entertained but unsatisfied.' },
+      ],
+      ending: [
+        { text: 'The bouncy aesthetic raises expectations for a satisfying conclusion that never arrives', light: 'red', comment: 'A design this energetic implies a crescendo. The flat ending is the biggest tonal letdown of any variation.' },
+      ],
+    },
+  },
+
+  'text-heavy:retro-futurism:technical': {
+    score: 6,
+    verdict: 'Gradient rendering, CSS animations, and custom bezier timing functions add render cost. The playful interactions require JavaScript for scroll observation and animation triggering.',
+    sections: {
+      opening: [
+        { text: 'Gradient text requires background-clip: text — a CSS property with inconsistent browser support', light: 'yellow', comment: 'The gradient heading effect needs -webkit-background-clip: text, which is non-standard and requires fallback colors.' },
+      ],
+      hierarchy: [
+        { text: 'Multiple gradient definitions increase stylesheet size and paint complexity', light: 'yellow', comment: 'Each section\'s unique gradient adds CSS weight. Unlike solid colors, gradients require interpolation calculations during paint.' },
+      ],
+      measure: [
+        { text: 'Scroll-triggered animations require IntersectionObserver JavaScript', light: 'yellow', comment: 'The bouncy section entrances need JavaScript scroll observation — adding a runtime dependency other variations avoid.' },
+      ],
+      ornament: [
+        { text: 'Custom cubic-bezier timing functions add animation calculation overhead', light: 'yellow', comment: 'The bouncy easing curves require more interpolation frames than standard ease-in-out, increasing animation render cost.' },
+      ],
+      ending: [
+        { text: 'Animation event listeners persist through the entire page lifecycle', light: 'yellow', comment: 'Scroll observers remain active even after all sections have animated in. Cleanup on completion would reduce memory usage.' },
+      ],
+    },
+  },
+
+  // ─── TEXT-HEAVY: MEMPHIS ───────────────────────────────────────
+
+  'text-heavy:memphis:marketing': {
+    score: 6,
+    verdict: 'Geometric decorations grab attention but compete with the headline for focus. The bold primary colors create instant visual impact, but the chaotic energy overwhelms the content\'s message.',
+    sections: {
+      opening: [
+        { text: 'Bold geometric shapes and primary colors create an unmissable first impression', light: 'green', comment: 'The Memphis aesthetic is impossible to scroll past. The visual energy grabs attention more effectively than any headline could.' },
+        { text: 'Geometric decorations compete with the title for visual priority', light: 'yellow', comment: 'When a pink triangle and a blue circle frame the heading, readers look at the shapes first and the words second.' },
+      ],
+      hierarchy: [
+        { text: 'Asymmetric layouts create visual energy but undermine scannable structure', light: 'yellow', comment: 'The playful asymmetry means sections don\'t start in predictable positions — readers must search for each new section.' },
+      ],
+      measure: [
+        { text: 'Geometric margin elements reduce the effective reading width inconsistently', light: 'yellow', comment: 'Decorative shapes in the margins push the text into a narrower channel, but the width varies by section.' },
+      ],
+      ornament: [
+        { text: 'Primary color palette is the most energetic and attention-grabbing of any variation', light: 'green', comment: 'Red, blue, and yellow geometric forms create the kind of visual excitement that makes content shareable on screenshots alone.' },
+      ],
+      ending: [
+        { text: 'The energetic design creates expectations for a playful conclusion that doesn\'t materialize', light: 'yellow', comment: 'Memphis design has a rich vocabulary for endings — a geometric burst, a confetti pattern — but none is deployed.' },
+      ],
+    },
+  },
+
+  'text-heavy:memphis:ux': {
+    score: 5,
+    verdict: 'Asymmetric layouts disrupt the reading rhythm, and bold shapes in margins create visual noise. The Memphis aesthetic works for short bursts — posters, headers — but exhausts over a 12-minute read.',
+    sections: {
+      opening: [
+        { text: 'Bold geometric shapes in the viewport create immediate visual excitement but fragment attention', light: 'yellow', comment: 'The eye bounces between shapes before settling on the text. The opening creates energy but delays reading engagement.' },
+      ],
+      hierarchy: [
+        { text: 'Asymmetric section layouts break the predictable reading pattern', light: 'red', comment: 'Readers expect sections to start in the same position. The Memphis variation moves section origins unpredictably.' },
+        { text: 'Bold color-block section backgrounds create strong visual separation', light: 'green', comment: 'Despite the asymmetry, the color shifts clearly signal "new section" — readers always know when content changes.' },
+      ],
+      measure: [
+        { text: 'Margin decorations create inconsistent line lengths across sections', light: 'red', comment: 'Geometric shapes protruding into the text area create per-section measure changes that disrupt reading flow.' },
+      ],
+      ornament: [
+        { text: 'Visual noise from geometric shapes creates reading fatigue over long sessions', light: 'red', comment: 'Each decorative element adds cognitive load. In a 12-minute article, the cumulative effect is exhaustion.' },
+      ],
+      ending: [
+        { text: 'No visual quieting at the article end — the geometric energy continues to the last pixel', light: 'yellow', comment: 'The constant visual stimulation means readers don\'t feel the natural deceleration that signals an ending.' },
+      ],
+    },
+  },
+
+  'text-heavy:memphis:design': {
+    score: 7,
+    verdict: 'Fearless use of primary color and geometric forms. Every section has visual energy, and the post-modern playfulness is fully committed. The Memphis style is a design flex that demands attention.',
+    sections: {
+      opening: [
+        { text: 'The boldest design statement of any variation — geometric shapes, primary colors, asymmetric layout', light: 'green', comment: 'No other variation takes this many visual risks. The Memphis opening is a declaration of design confidence.' },
+      ],
+      hierarchy: [
+        { text: 'Each section has its own geometric personality — different shapes, different color dominance', light: 'green', comment: 'The section-level variation keeps the design fresh through a long article. No two sections look the same.' },
+      ],
+      measure: [
+        { text: 'Asymmetric text wrapping around geometric shapes creates dynamic but unpredictable measure', light: 'yellow', comment: 'The text-shape interaction is visually interesting but creates reading measure that changes mid-paragraph.' },
+      ],
+      ornament: [
+        { text: 'Post-modern decorative philosophy — ornament as content, shape as communication', light: 'green', comment: 'Memphis design treats decoration as the primary visual language. The geometric forms aren\'t embellishment; they\'re the design.' },
+      ],
+      ending: [
+        { text: 'The relentless visual energy deserves a geometric crescendo at the conclusion', light: 'yellow', comment: 'A Memphis ending should be an explosion of shapes — a visual exclamation point. The quiet ending betrays the aesthetic.' },
+      ],
+    },
+  },
+
+  'text-heavy:memphis:product': {
+    score: 5,
+    verdict: 'Playful post-modern design contradicts the article\'s serious tone about typography craft. The Memphis aesthetic promises a fun, irreverent take — the content delivers earnest, dry instruction.',
+    sections: {
+      opening: [
+        { text: 'The playful geometric aesthetic attracts an audience expecting irreverent, fun content', light: 'yellow', comment: 'Memphis design signals humor and post-modern wit. The article delivers neither — it\'s unironically earnest about typography.' },
+      ],
+      hierarchy: [
+        { text: 'Visual variety across sections creates the illusion of content variety — which doesn\'t exist', light: 'red', comment: 'Different geometric treatments per section suggest different ideas, but the content repeats itself throughout.' },
+      ],
+      measure: [
+        { text: 'Inconsistent reading width across sections makes the content feel more fragmented than it is', light: 'yellow', comment: 'Variable measure creates the impression of short, digestible chunks — but the content is actually one long repetitive argument.' },
+      ],
+      ornament: [
+        { text: 'The chaotic energy of Memphis design makes the content harder to take seriously', light: 'red', comment: 'When geometric shapes dance around a sentence about font-weight selection, the sentence loses all gravity.' },
+      ],
+      ending: [
+        { text: 'Readers finish exhausted by the visual noise and disappointed by the content\'s emptiness', light: 'red', comment: 'The double fatigue of visual overload and content underdelivery makes this the most tiring variation to complete.' },
+      ],
+    },
+  },
+
+  'text-heavy:memphis:technical': {
+    score: 6,
+    verdict: 'SVG geometric shapes, custom grid layouts, and color-block backgrounds add DOM complexity. The asymmetric layouts require more CSS grid calculations than any other variation.',
+    sections: {
+      opening: [
+        { text: 'SVG geometric decorations add DOM nodes and render complexity', light: 'yellow', comment: 'Each geometric shape is an SVG element in the DOM — circles, triangles, and rectangles add to the node count significantly.' },
+      ],
+      hierarchy: [
+        { text: 'Custom CSS grid layouts per section increase stylesheet size and layout calculation cost', light: 'yellow', comment: 'Each section\'s unique asymmetric grid requires its own layout rules. The CSS is the most complex of any variation.' },
+      ],
+      measure: [
+        { text: 'Text wrapping around positioned SVG elements triggers multiple reflow calculations', light: 'red', comment: 'Floated or absolutely positioned geometric shapes force the browser to recalculate text wrapping for every affected paragraph.' },
+      ],
+      ornament: [
+        { text: 'Color-block backgrounds with SVG overlays create multiple compositing layers per section', light: 'yellow', comment: 'The combination of background color, SVG shapes, and text creates 3+ compositing layers per section.' },
+      ],
+      ending: [
+        { text: 'All geometric shapes are rendered on initial paint — no lazy loading of decorative elements', light: 'green', comment: 'Despite the DOM complexity, everything renders in one pass. No scroll-triggered SVG loads or animation triggers.' },
+      ],
+    },
+  },
+
+  // ─── TEXT-HEAVY: ART-DECO ──────────────────────────────────────
+
+  'text-heavy:art-deco:marketing': {
+    score: 7,
+    verdict: 'Gold accents and serif hierarchy create a premium feel that elevates perceived content value. The luxurious design framing makes readers believe they\'re reading something important.',
+    sections: {
+      opening: [
+        { text: 'Gold accent lines and elegant serif title create immediate premium positioning', light: 'green', comment: 'The art-deco opening says "this is high-end content." Readers approach with the respect usually reserved for quality publications.' },
+      ],
+      hierarchy: [
+        { text: 'Serif headline hierarchy with geometric border patterns creates authoritative structure', light: 'green', comment: 'The combination of elegant type and geometric ornament builds layered authority — credibility through visual sophistication.' },
+      ],
+      measure: [
+        { text: 'Symmetrical layout creates a centered, formal reading experience', light: 'green', comment: 'The bilateral symmetry communicates stability and tradition — readers trust symmetrical layouts more than asymmetric ones.' },
+      ],
+      ornament: [
+        { text: 'Gold gradient accents create luxury positioning that elevates perceived value', light: 'green', comment: 'Gold means premium. The accent color alone shifts reader expectations upward — they expect quality content.' },
+        { text: 'Premium framing raises expectations — when the content is mediocre, it feels like a broken promise', light: 'yellow', comment: 'The higher the design quality, the harder the fall when readers discover the content is hollow.' },
+      ],
+      ending: [
+        { text: 'The luxurious design vocabulary could support an elegant colophon or decorative endmark', light: 'yellow', comment: 'Art-deco design has a rich tradition of endmarks — geometric flowers, gold rules, symmetrical finials. None appear here.' },
+      ],
+    },
+  },
+
+  'text-heavy:art-deco:ux': {
+    score: 7,
+    verdict: 'Elegant serif typeface is highly readable for long-form content. Symmetrical layout is predictable and comfortable, and geometric border patterns provide reliable section landmarks.',
+    sections: {
+      opening: [
+        { text: 'Serif typeface at reading size is the most comfortable body text of the decorative variations', light: 'green', comment: 'Serif fonts at body size aid readability for long-form content — the serifs help the eye track along the line.' },
+      ],
+      hierarchy: [
+        { text: 'Symmetrical, predictable layout lets readers focus on content rather than navigation', light: 'green', comment: 'Every section starts in the same position with the same visual treatment. Readers never waste energy orienting themselves.' },
+        { text: 'Geometric border patterns between sections serve as reliable progress markers', light: 'green', comment: 'The decorative rules between sections are both beautiful and functional — readers can gauge their progress through the article.' },
+      ],
+      measure: [
+        { text: 'Centered layout with consistent margins creates reliable reading measure throughout', light: 'green', comment: 'Unlike asymmetric variations, the measure never changes. Readers develop a comfortable rhythm that carries through the full article.' },
+      ],
+      ornament: [
+        { text: 'Decorative borders and gold accents add visual interest without competing with the text', light: 'green', comment: 'The ornamental elements live in the margins and between sections — they frame the text without invading it.' },
+      ],
+      ending: [
+        { text: 'The geometric border language could signal article completion with a final decorative rule', light: 'yellow', comment: 'A concluding geometric ornament would use the design\'s own vocabulary to say "the end." Its absence is a missed UX signal.' },
+      ],
+    },
+  },
+
+  'text-heavy:art-deco:design': {
+    score: 8,
+    verdict: 'Geometric borders, gold accent lines, and serif headline hierarchy create genuine typographic gravitas. The art-deco design vocabulary is rich enough to sustain a 12-minute reading experience without repeating itself.',
+    sections: {
+      opening: [
+        { text: 'The serif headline with gold underline rule is the most elegant opening of any variation', light: 'green', comment: 'The combination of serif type and gold geometric accents creates gravitas that the content hasn\'t earned — but the design provides freely.' },
+      ],
+      hierarchy: [
+        { text: 'Three-level heading hierarchy with distinct geometric treatments per level', light: 'green', comment: 'Each heading level has its own border pattern, creating visual distinction through ornament rather than size alone.' },
+      ],
+      measure: [
+        { text: 'Symmetrical layout with generous margins creates a formal, book-like reading experience', light: 'green', comment: 'The bilateral symmetry and consistent margins reference traditional book design — the highest form of text presentation.' },
+      ],
+      ornament: [
+        { text: 'Geometric patterns reference the art-deco tradition without pastiche — modern interpretation, not reproduction', light: 'green', comment: 'The geometric borders are inspired by deco but simplified for screens. The design respects the tradition without copying it.' },
+        { text: 'Gold gradient accents are used sparingly enough to retain their impact', light: 'green', comment: 'Gold appears only at headings and section dividers. If it were everywhere, it would lose its premium signal.' },
+      ],
+      ending: [
+        { text: 'The richest ornamental vocabulary of any variation goes unused at the conclusion', light: 'yellow', comment: 'Art-deco has an entire tradition of decorative endmarks. A geometric finial or gold rule would be the perfect period on this design.' },
+      ],
+    },
+  },
+
+  'text-heavy:art-deco:product': {
+    score: 6,
+    verdict: 'The luxurious design framing raises reader expectations. When the content is mediocre, it feels like a broken promise — the gold-framed packaging makes the emptiness more conspicuous, not less.',
+    sections: {
+      opening: [
+        { text: 'Premium design positioning creates high expectations for content quality', light: 'yellow', comment: 'The gold accents and serif elegance promise substance. When the content underdelivers, the disappointment is proportional to the design quality.' },
+      ],
+      hierarchy: [
+        { text: 'Clear section structure helps readers navigate — and notice that each section repeats the same ideas', light: 'yellow', comment: 'The elegant hierarchy makes the article\'s structure visible, which also makes its repetitive content structure visible.' },
+      ],
+      measure: [
+        { text: 'The formal reading experience invites careful reading — which reveals the content\'s shallowness', light: 'yellow', comment: 'Art-deco formality slows the reader down to a careful pace. Careful readers notice empty content faster.' },
+      ],
+      ornament: [
+        { text: 'Gold framing around mediocre content is the design equivalent of a gilded cage', light: 'red', comment: 'The premium ornament doesn\'t elevate the content — it illuminates the gap between presentation and substance.' },
+      ],
+      ending: [
+        { text: 'The formal design promises a crescendo that the content can\'t provide', light: 'yellow', comment: 'Art-deco designs traditionally build to a climax. The flat ending is a structural and aesthetic failure.' },
+      ],
+    },
+  },
+
+  'text-heavy:art-deco:technical': {
+    score: 6,
+    verdict: 'Custom serif fonts, geometric border patterns, and gold gradient accents add rendering weight. The decorative borders are CSS-only, but the gradient text effects require careful browser support handling.',
+    sections: {
+      opening: [
+        { text: 'Custom serif font requires webfont loading — adds latency to first contentful paint', light: 'yellow', comment: 'The elegant serif typeface isn\'t available in system font stacks. Loading it adds 40-80KB and a potential flash of unstyled text.' },
+      ],
+      hierarchy: [
+        { text: 'Geometric border patterns are pure CSS — repeating gradients and border-image', light: 'green', comment: 'The decorative borders use CSS repeating-linear-gradient, avoiding SVG or image dependencies entirely.' },
+      ],
+      measure: [
+        { text: 'Symmetrical layout with consistent margins is computationally simple', light: 'green', comment: 'Centered layout with fixed margins requires minimal layout calculation — simpler than grid-based asymmetric variations.' },
+      ],
+      ornament: [
+        { text: 'Gold gradient accents use CSS linear-gradient — no image assets required', light: 'green', comment: 'The gold effect is achieved with gradient stops in CSS. No PNG overlays or SVG assets needed.' },
+        { text: 'Repeating geometric border patterns increase CSS paint area calculations', light: 'yellow', comment: 'While the borders are pure CSS, repeating-gradient patterns on every section increase the total paint work.' },
+      ],
+      ending: [
+        { text: 'All decorative elements render in the initial paint — no lazy-loaded ornaments', light: 'green', comment: 'The page is fully decorated on first render. No scroll-triggered loading of geometric patterns or gold accents.' },
+      ],
+    },
+  },
 };
 
 // ─── REVIEW BUNDLES (consensus + prioritized actions) ──────────
@@ -2287,63 +3324,71 @@ const reviewBundles: Record<string, ReviewBundle> = {
   // SLAP review bundles
   'landing-page:slap:review': {
     consensus: [
+      { text: 'The proud-slop copy is a perfect SLAPstick target — seven buzzwords in the subheadline alone', type: 'agree' },
       { text: 'Page loads fast — system fonts and minimal CSS', type: 'agree' },
-      { text: 'Standard layout is scannable and familiar', type: 'agree' },
-      { text: 'Every design choice is a default — zero brand signature', type: 'disagree' },
-      { text: 'No proof, no metrics, no reason to choose this over competitors', type: 'disagree' },
+      { text: 'Every design choice is a default and now every copy choice is too — double slop', type: 'agree' },
+      { text: '"Chief Innovation Officer at Synergy Labs" is the most AI-generated testimonial ever written', type: 'agree' },
+      { text: 'FAQ answers congratulate the product instead of addressing customer concerns', type: 'disagree' },
+      { text: '"Unlock Your Potential" as a CTA communicates nothing — could be a gym or a cult', type: 'disagree' },
     ],
     actions: [
-      { priority: 'high', text: 'Replace default purple with intentional brand color' },
-      { priority: 'high', text: 'Add case study or ROI metrics' },
-      { priority: 'med', text: 'Choose a distinctive typeface' },
-      { priority: 'med', text: 'Design custom hover/focus states' },
-      { priority: 'low', text: 'Add one memorable visual element' },
+      { priority: 'high', text: 'Replace buzzword headline with a concrete value proposition — what does this product DO?' },
+      { priority: 'high', text: 'Rewrite testimonials with specific, measurable outcomes from real-sounding companies' },
+      { priority: 'high', text: 'Replace "Everything in Starter, plus more" with actual feature differentiation' },
+      { priority: 'med', text: 'Replace default purple with intentional brand color' },
+      { priority: 'med', text: 'Add real FAQ answers that address objections instead of restating the pitch' },
+      { priority: 'low', text: 'Change "Unlock Your Potential" to a CTA that describes what happens next' },
     ],
   },
 
   'landing-page:slap:kaizen': {
     consensus: [
-      { text: 'Text is readable and layout is clear', type: 'agree' },
-      { text: 'No animation jank or performance issues', type: 'agree' },
-      { text: 'Looks like every other AI-generated website — nothing to remember', type: 'disagree' },
-      { text: 'Purple accent with no supporting palette feels random', type: 'disagree' },
+      { text: 'Every persona finished reading without learning what the product does — impressive consistency', type: 'agree' },
+      { text: 'The testimonials sound AI-generated because they all use the same tone and vocabulary', type: 'agree' },
+      { text: 'Dorothy cannot figure out what the product is — that is a fundamental failure', type: 'agree' },
+      { text: 'Carlos spotted the fake company names instantly — "Synergy Labs" is a red flag', type: 'disagree' },
+      { text: '"Unlock Your Potential" as a CTA is either inspiring or meaningless depending on patience level', type: 'disagree' },
     ],
     actions: [
-      { priority: 'high', text: 'Establish a real color system beyond one accent' },
-      { priority: 'high', text: 'Add personality to interactions' },
-      { priority: 'med', text: 'Choose typography that conveys brand voice' },
-      { priority: 'low', text: 'Add subtle motion that tells a story' },
+      { priority: 'high', text: 'Explain what the product does in the first sentence — even Dorothy should understand' },
+      { priority: 'high', text: 'Use real company names or obviously fictional ones — "Synergy Labs" lands in the uncanny valley' },
+      { priority: 'med', text: 'Reduce buzzword density — seven per sentence triggers skepticism in every persona' },
+      { priority: 'med', text: 'Add personality to interactions — even the generic design could be saved by delightful hover states' },
+      { priority: 'low', text: 'Replace "Welcome to the journey!" success message with something that confirms what the user signed up for' },
     ],
   },
 
   'e-commerce:slap:review': {
     consensus: [
+      { text: 'Product descriptions are AI copywriting hall of fame — "Curated Aromatherapy Collection" for a $20 candle set', type: 'agree' },
       { text: 'Shared components keep cart/checkout consistent', type: 'agree' },
-      { text: 'Basic e-commerce flow works end-to-end', type: 'agree' },
-      { text: 'Product presentation is placeholder-quality — colored blocks', type: 'disagree' },
-      { text: 'No filtering, sorting, or discovery — 8 products max', type: 'disagree' },
+      { text: 'The copy writes checks the design cannot cash — "artisan" products in a template store', type: 'agree' },
+      { text: 'Product descriptions give zero useful information — no sizes, materials, or specs', type: 'disagree' },
+      { text: 'Colored placeholder blocks next to "Heritage Denim Jacket" is comedy gold', type: 'disagree' },
     ],
     actions: [
-      { priority: 'high', text: 'Design actual product card presentation' },
-      { priority: 'high', text: 'Add category filtering or search' },
-      { priority: 'med', text: 'Add trust signals near checkout' },
-      { priority: 'med', text: 'Replace default red with brand accent' },
-      { priority: 'low', text: 'Add product quick-view or comparison' },
+      { priority: 'high', text: 'Add actual product specs — sizing, materials, weight — next to the marketing poetry' },
+      { priority: 'high', text: 'Design product cards that match the premium copy or tone down the copy to match the design' },
+      { priority: 'med', text: 'Add category filtering or search for the "curated" collection' },
+      { priority: 'med', text: 'Add trust signals near checkout — the "artisan" brand needs to feel trustworthy' },
+      { priority: 'low', text: 'Add a "frequently bought together" section to capitalize on the aspirational copy' },
     ],
   },
 
   'e-commerce:slap:kaizen': {
     consensus: [
-      { text: 'Cart drawer and checkout steps are functional', type: 'agree' },
-      { text: 'Responsive grid works on mobile', type: 'agree' },
-      { text: 'Indistinguishable from any template store', type: 'disagree' },
-      { text: 'Colored placeholder blocks look broken, not designed', type: 'disagree' },
+      { text: 'Dorothy cannot find a size chart and Carlos spotted the AI copywriting from orbit', type: 'agree' },
+      { text: 'Cart drawer works but "Heritage Denim Jacket" in a plain white panel is a brand identity crisis', type: 'agree' },
+      { text: 'Colored placeholder blocks look broken — especially next to "artisanal excellence" descriptions', type: 'agree' },
+      { text: 'Every product description follows the same AI formula — adjective, noun, buzzword, lifestyle promise', type: 'disagree' },
+      { text: '"Spacious enough for your entire life" for a wallet is either poetry or parody', type: 'disagree' },
     ],
     actions: [
-      { priority: 'high', text: 'Add product imagery or illustrations' },
-      { priority: 'high', text: 'Add non-color affordances to CTA buttons' },
-      { priority: 'med', text: 'Design a distinctive cart experience' },
-      { priority: 'low', text: 'Add loading states and micro-interactions' },
+      { priority: 'high', text: 'Add product imagery — "Artisan Ceramic Vessel" next to a blue square is absurd' },
+      { priority: 'high', text: 'Add practical product info — size, material, care instructions — alongside the marketing copy' },
+      { priority: 'med', text: 'Decide on a brand voice: either commit to the premium copy and upgrade the design, or tone down the copy' },
+      { priority: 'med', text: 'Add non-color affordances to CTA buttons for accessibility' },
+      { priority: 'low', text: 'Add customer reviews — let real voices counter the marketing voice' },
     ],
   },
 
@@ -2613,6 +3658,333 @@ const reviewBundles: Record<string, ReviewBundle> = {
       { priority: 'med', text: 'Throttle glow animations to max 3 simultaneous for mobile performance' },
       { priority: 'med', text: 'Add product filtering for the visually dense dark grid' },
       { priority: 'low', text: 'Add order itemization with gradient line items at checkout' },
+    ],
+  },
+
+  // ─── TEXT-HEAVY SLAP ─────────────────────────────────────────
+
+  'text-heavy:slap:review': {
+    consensus: [
+      { text: 'The proud-slop content is a perfect comedy target — every AI writing cliche in one place', type: 'agree' },
+      { text: 'Article structure provides good stress-test material for typography variations', type: 'agree' },
+      { text: 'Section length variety (3 to 7 paragraphs) will reveal line-spacing and rhythm differences', type: 'agree' },
+      { text: 'No actual typographic design was applied — the SLAP baseline is intentionally unstyled', type: 'agree' },
+      { text: '"Readability triad" is made up but sounds plausible — shows how AI slop works', type: 'agree' },
+      { text: 'Marketing and Product gave near-identical low scores — content has no differentiator', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Add max-width constraint to prove the article wrong about its own "ideal measure"' },
+      { priority: 'high', text: 'Establish real heading hierarchy with distinct weights per level' },
+      { priority: 'high', text: 'Add pull quotes or callout blocks to break the wall-of-text monotony' },
+      { priority: 'med', text: 'Add a visible reading progress indicator to contrast the article\'s claims about "guiding the reader"' },
+      { priority: 'med', text: 'Design an intentional endmark to contradict the article\'s accidental ending' },
+      { priority: 'low', text: 'Style the tags section to either commit to the buzzwords or expose them' },
+    ],
+  },
+
+  'text-heavy:slap:kaizen': {
+    consensus: [
+      { text: 'Every persona finished reading without learning a single thing — impressive in its emptiness', type: 'agree' },
+      { text: 'The uniform paragraph formatting makes it impossible to skim for key points', type: 'agree' },
+      { text: 'Mobile experience is a scroll tunnel with no visual anchors', type: 'agree' },
+      { text: 'Colorblind users and sighted users have the same experience — there is nothing to see for anyone', type: 'disagree' },
+      { text: 'The article\'s confidence is either infuriating or hilarious depending on your patience', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Add structural navigation — table of contents with progress indicator for 12-minute content' },
+      { priority: 'high', text: 'Break up paragraph walls with visual elements — pull quotes, dividers, or margin notes' },
+      { priority: 'high', text: 'Add section-level visual differentiation so readers know where they are' },
+      { priority: 'med', text: 'Add responsive type scale for mobile — fewer words per line, more breathing room' },
+      { priority: 'med', text: 'Replace or restyle buzzword tags to not trigger corporate-speak allergies' },
+      { priority: 'low', text: 'Add a TL;DR that honestly admits the article says nothing' },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: BRUTALIST REVIEWS ─────────────────────────────
+
+  'text-heavy:brutalist:review': {
+    consensus: [
+      { text: 'The heavy weight contrast creates the strongest visual hierarchy of any styled variation', type: 'agree' },
+      { text: 'ALL CAPS headings reduce reading speed and cause scanning fatigue over 12 minutes', type: 'agree' },
+      { text: 'Brutalist honesty as a design language clashes with the content\'s corporate platitudes', type: 'agree' },
+      { text: 'Whether the stark aesthetic gives the content authority or exposes its emptiness', type: 'disagree' },
+      { text: 'Whether monospace accents add useful texture or just widen the measure awkwardly', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Replace ALL CAPS headings with sentence case at heavy weight — preserve contrast without readability cost' },
+      { priority: 'high', text: 'Add a visual endmark using the thick-border vocabulary the design already establishes' },
+      { priority: 'med', text: 'Constrain monospace sections to pull quotes only — remove monospace from body text' },
+      { priority: 'med', text: 'Test uppercase heading wrapping on mobile and add word-break rules for long titles' },
+      { priority: 'low', text: 'Consider a brutalist-appropriate content warning: "This article says less than it looks like it does"' },
+    ],
+  },
+
+  'text-heavy:brutalist:kaizen': {
+    consensus: [
+      { text: 'The aggressive aesthetic commands initial attention but readers fatigue before the halfway point', type: 'agree' },
+      { text: 'Thick section borders are the most useful navigational landmarks of any variation', type: 'agree' },
+      { text: 'The brutalist frame makes the content\'s repetition more visible, not less', type: 'agree' },
+      { text: 'Whether the stark design is refreshingly honest or unnecessarily hostile to casual readers', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Reduce heading text-transform to uppercase for H1 only — use bold weight for H2-H4' },
+      { priority: 'high', text: 'Add scroll progress indicator that leverages the brutalist border language' },
+      { priority: 'med', text: 'Increase body text line-height to compensate for the visual density of thick borders' },
+      { priority: 'med', text: 'Add keyboard navigation between section borders for accessibility' },
+      { priority: 'low', text: 'Test a reduced-motion version that softens border transitions for sensitive users' },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: NEO-MINIMAL REVIEWS ───────────────────────────
+
+  'text-heavy:neo-minimal:review': {
+    consensus: [
+      { text: 'The narrow container creates the best reading measure of any variation', type: 'agree' },
+      { text: 'Thin font weights risk readability on non-retina displays and in bright environments', type: 'agree' },
+      { text: 'The restraint is masterful design but produces zero visual recall', type: 'agree' },
+      { text: 'Whether the design flatters the content or simply fails to compensate for it', type: 'disagree' },
+      { text: 'Whether the minimal aesthetic is intentional restraint or lack of design effort', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Increase minimum font weight to 300 for body text — 200 is too light for extended reading' },
+      { priority: 'med', text: 'Add a single accent color for links and key phrases to create at least one memorable visual element' },
+      { priority: 'med', text: 'Test thin font rendering on Windows ClearType and low-DPI displays' },
+      { priority: 'low', text: 'Add a subtle progression indicator — even a thin line at the top would help without breaking the aesthetic' },
+      { priority: 'low', text: 'Consider a micro-interaction on scroll that maintains the minimal feel while adding life' },
+    ],
+  },
+
+  'text-heavy:neo-minimal:kaizen': {
+    consensus: [
+      { text: 'The quiet aesthetic is the most comfortable for long reading sessions', type: 'agree' },
+      { text: 'Thin fonts and subtle borders make the article feel like it disappears while reading', type: 'agree' },
+      { text: 'The design\'s invisibility means the content must carry itself — and it can\'t', type: 'agree' },
+      { text: 'Whether minimal design is the best or worst choice for mediocre content', type: 'disagree' },
+      { text: 'Whether the narrow container helps focus or feels claustrophobic on desktop', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Add visible section markers — even a small dot or number — to help readers track their position' },
+      { priority: 'high', text: 'Ensure font-weight 200-300 renders legibly on all target devices with a system-font fallback' },
+      { priority: 'med', text: 'Add a table of contents that appears on scroll — minimal but functional' },
+      { priority: 'med', text: 'Increase contrast between heading and body weight to improve scannability' },
+      { priority: 'low', text: 'Add a reading-time estimate in the minimal style to set expectations' },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: MAXIMALIST REVIEWS ────────────────────────────
+
+  'text-heavy:maximalist:review': {
+    consensus: [
+      { text: 'The serif/sans-serif type system creates the most effective editorial hierarchy', type: 'agree' },
+      { text: 'Decorative density is at the threshold — one more element and it becomes clutter', type: 'agree' },
+      { text: 'The editorial presentation makes the content feel more substantial than it is', type: 'agree' },
+      { text: 'Whether the heavy asset load is justified by the design quality', type: 'disagree' },
+      { text: 'Whether decorative elements aid or impede the reading experience at this density', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Reduce decorative element frequency for sections 4+ to prevent visual fatigue in long reads' },
+      { priority: 'high', text: 'Add a designed conclusion that uses the editorial vocabulary — colophon, author note, or decorative endmark' },
+      { priority: 'med', text: 'Optimize webfont loading with font-display: swap and subset to reduce initial payload' },
+      { priority: 'med', text: 'Add reading progress indicator styled as an editorial page number' },
+      { priority: 'low', text: 'Test a reduced-ornament mode for users who prefer cleaner reading' },
+    ],
+  },
+
+  'text-heavy:maximalist:kaizen': {
+    consensus: [
+      { text: 'The magazine-like presentation creates the highest perceived content quality', type: 'agree' },
+      { text: 'Visual fatigue sets in around the 6-minute mark — the decoration becomes repetitive', type: 'agree' },
+      { text: 'Mixed typefaces help readers distinguish heading hierarchy at a glance', type: 'agree' },
+      { text: 'Whether the editorial density helps engagement or creates cognitive overload', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Vary decorative elements across sections — repeat patterns feel mechanical by section five' },
+      { priority: 'high', text: 'Add whitespace breaks between major sections to let readers rest their eyes' },
+      { priority: 'med', text: 'Reduce pull-quote frequency to one per three sections — currently too many compete for attention' },
+      { priority: 'med', text: 'Add a sticky table of contents for the editorial-density reading experience' },
+      { priority: 'low', text: 'Offer a "reader mode" toggle that strips decoration for distraction-sensitive users' },
+      { priority: 'low', text: 'Test decorative element performance impact on lower-powered mobile devices' },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: DARK-INDUSTRIAL REVIEWS ───────────────────────
+
+  'text-heavy:dark-industrial:review': {
+    consensus: [
+      { text: 'The terminal aesthetic creates the strongest design identity of the dark variations', type: 'agree' },
+      { text: 'Monospace body text significantly reduces reading speed for long-form prose', type: 'agree' },
+      { text: 'The engineering-credibility framing attracts exactly the audience most critical of empty content', type: 'agree' },
+      { text: 'Whether dark mode is a valid default or should be user-selectable', type: 'disagree' },
+      { text: 'Whether amber accents provide sufficient wayfinding or need a second accent color', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Switch body text to a proportional sans-serif — keep monospace for headings and labels only' },
+      { priority: 'high', text: 'Add a clear article-end signal — terminal prompt, cursor block, or explicit EOF marker' },
+      { priority: 'med', text: 'Offer a light-mode toggle — forced dark mode alienates readers with visual preferences' },
+      { priority: 'med', text: 'Test amber-on-dark contrast ratios across all heading sizes for WCAG AA compliance' },
+      { priority: 'low', text: 'Add syntax-highlight-style emphasis for key terms to leverage the code-editor aesthetic' },
+    ],
+  },
+
+  'text-heavy:dark-industrial:kaizen': {
+    consensus: [
+      { text: 'The dark background is comfortable for evening reading but strains eyes in bright environments', type: 'agree' },
+      { text: 'Terminal-style labels help readers navigate but feel exclusionary to non-technical users', type: 'agree' },
+      { text: 'Monospace body text creates a reading experience better suited to documentation than articles', type: 'agree' },
+      { text: 'Whether the developer-only targeting is a feature or a limitation', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Add an automatic light/dark toggle that respects the user\'s system preference' },
+      { priority: 'high', text: 'Replace monospace body text with a proportional font while keeping the terminal aesthetic for structure' },
+      { priority: 'med', text: 'Add keyboard shortcuts for section navigation — the developer audience will expect them' },
+      { priority: 'med', text: 'Increase line-height for monospace sections to improve readability' },
+      { priority: 'low', text: 'Add a "reading mode" that dims the terminal labels and reduces visual noise' },
+      { priority: 'low', text: 'Test the amber accent color for deuteranopia accessibility — gold tones can be problematic' },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: WARM-ORGANIC REVIEWS ──────────────────────────
+
+  'text-heavy:warm-organic:review': {
+    consensus: [
+      { text: 'The warm palette creates the most comfortable long-form reading experience', type: 'agree' },
+      { text: 'Optimal measure and line-height make this the highest-readability variation', type: 'agree' },
+      { text: 'The organic aesthetic flatters the content but can\'t add substance', type: 'agree' },
+      { text: 'Whether soft shadows add meaningful depth perception or just render cost', type: 'disagree' },
+      { text: 'Whether the comfortable reading pace helps or hurts awareness of content quality', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Add a natural-themed endmark — leaf, seed, or horizon line — to complete the organic vocabulary' },
+      { priority: 'med', text: 'Reduce box-shadow complexity on nested containers to improve paint performance' },
+      { priority: 'med', text: 'Add a warm-toned reading progress indicator that fits the organic aesthetic' },
+      { priority: 'low', text: 'Test earth-tone palette for sufficient contrast on high-brightness screens in outdoor conditions' },
+      { priority: 'low', text: 'Consider a seasonal color variation — the earth tones could shift subtly with time of year' },
+    ],
+  },
+
+  'text-heavy:warm-organic:kaizen': {
+    consensus: [
+      { text: 'The warm aesthetic extends time-on-page — readers stay for the environment even when content is thin', type: 'agree' },
+      { text: 'Rounded containers and soft shadows create the least visually fatiguing reading experience', type: 'agree' },
+      { text: 'The gentle design makes the content\'s weak ending feel softer but still noticeable', type: 'agree' },
+      { text: 'Whether the comfortable reading environment obscures or reveals the content\'s weakness', type: 'disagree' },
+      { text: 'Whether the organic aesthetic feels genuine or manufactured', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Add section-level visual variation within the organic palette to prevent monotony in long reads' },
+      { priority: 'med', text: 'Optimize shadow rendering — reduce from 3-layer shadows to 1-layer with adjusted blur radius' },
+      { priority: 'med', text: 'Add subtle scroll-responsive elements — parallax on natural textures, if performance allows' },
+      { priority: 'low', text: 'Test the warm contrast ratio (brown-on-cream) against WCAG AAA for enhanced accessibility' },
+      { priority: 'low', text: 'Add a warm-toned table of contents that appears on demand without disrupting the organic feel' },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: RETRO-FUTURISM REVIEWS ────────────────────────
+
+  'text-heavy:retro-futurism:review': {
+    consensus: [
+      { text: 'The teal/purple palette is the most distinctive and memorable color system', type: 'agree' },
+      { text: 'Gradient backgrounds reduce text contrast below comfortable reading levels', type: 'agree' },
+      { text: 'Bouncy scroll animations are charming on first encounter but tiring over 12 minutes', type: 'agree' },
+      { text: 'Whether the playful design enhances or undermines the content\'s credibility', type: 'disagree' },
+      { text: 'Whether the strong visual personality compensates for the content\'s weakness', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Add solid background behind body text — keep gradients for containers and headers only' },
+      { priority: 'high', text: 'Make scroll animations one-time triggers that don\'t replay on back-scroll' },
+      { priority: 'med', text: 'Add a gradient-themed endmark animation to give the article a satisfying visual conclusion' },
+      { priority: 'med', text: 'Provide a prefers-reduced-motion alternative that removes bouncy transitions entirely' },
+      { priority: 'low', text: 'Clean up IntersectionObserver listeners after all sections have animated in' },
+    ],
+  },
+
+  'text-heavy:retro-futurism:kaizen': {
+    consensus: [
+      { text: 'The playful aesthetic creates a tonal mismatch with the article\'s instructional content', type: 'agree' },
+      { text: 'Gradient backgrounds make text harder to read across all tested devices', type: 'agree' },
+      { text: 'The retro-future identity is the most sharable and screenshot-worthy of any variation', type: 'agree' },
+      { text: 'Whether the design\'s energy sustains reader attention or exhausts it', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Improve text-on-gradient contrast — add text-shadow or background overlay behind paragraphs' },
+      { priority: 'high', text: 'Reduce animation frequency — limit bouncy transitions to section entrances, not individual elements' },
+      { priority: 'med', text: 'Add a retro-themed progress indicator — a rocket ship or loading bar in the teal palette' },
+      { priority: 'med', text: 'Test gradient rendering on older mobile GPUs for performance issues' },
+      { priority: 'low', text: 'Add a "calm mode" toggle that mutes gradients and disables animations' },
+      { priority: 'low', text: 'Consider a dark variant of the retro-future palette for evening reading' },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: MEMPHIS REVIEWS ───────────────────────────────
+
+  'text-heavy:memphis:review': {
+    consensus: [
+      { text: 'The boldest visual personality creates the strongest first impression but the fastest fatigue', type: 'agree' },
+      { text: 'Asymmetric layouts and margin decorations disrupt reading flow in long-form content', type: 'agree' },
+      { text: 'The playful post-modern aesthetic contradicts the article\'s serious instructional tone', type: 'agree' },
+      { text: 'Whether the geometric energy aids engagement or exhausts readers over 12 minutes', type: 'disagree' },
+      { text: 'Whether the visual variety per section creates richness or chaos', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Move geometric decorations outside the text area — keep shapes in margins only' },
+      { priority: 'high', text: 'Standardize section starting positions — vary the decorations, not the layout grid' },
+      { priority: 'med', text: 'Reduce geometric shape count progressively through the article to ease visual density' },
+      { priority: 'med', text: 'Add a geometric endmark — a burst of shapes that signals article completion' },
+      { priority: 'low', text: 'Test SVG shape rendering performance on lower-powered devices' },
+    ],
+  },
+
+  'text-heavy:memphis:kaizen': {
+    consensus: [
+      { text: 'The geometric shapes create visual noise that competes with reading for attention', type: 'agree' },
+      { text: 'Asymmetric text wrapping creates inconsistent reading measure that breaks rhythm', type: 'agree' },
+      { text: 'Color-block section backgrounds are the one Memphis element that genuinely aids navigation', type: 'agree' },
+      { text: 'Whether the Memphis aesthetic is appropriate for any long-form content, regardless of quality', type: 'disagree' },
+      { text: 'Whether the design\'s chaos is intentional post-modern commentary or just visual noise', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Clear the text-wrapping path — no geometric shapes should invade the paragraph reading area' },
+      { priority: 'high', text: 'Add consistent left-alignment for all section starts — asymmetry in decoration, not in layout' },
+      { priority: 'med', text: 'Reduce the number of geometric shapes by 40% after section three to combat visual fatigue' },
+      { priority: 'med', text: 'Add a prefers-reduced-motion mode that simplifies geometric shapes to static backgrounds' },
+      { priority: 'low', text: 'Optimize SVG shapes to use CSS shapes where possible to reduce DOM node count' },
+      { priority: 'low', text: 'Test with screen readers to ensure geometric elements have proper aria-hidden attributes' },
+    ],
+  },
+
+  // ─── TEXT-HEAVY: ART-DECO REVIEWS ──────────────────────────────
+
+  'text-heavy:art-deco:review': {
+    consensus: [
+      { text: 'The serif hierarchy with geometric borders creates the most typographically sophisticated variation', type: 'agree' },
+      { text: 'Gold accents create premium positioning that raises content expectations dangerously', type: 'agree' },
+      { text: 'Symmetrical layout is the most comfortable for sustained long-form reading', type: 'agree' },
+      { text: 'Whether the luxurious framing elevates or undermines mediocre content', type: 'disagree' },
+      { text: 'Whether the webfont dependency is justified by the typographic quality', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Add a geometric finial or gold-rule endmark to close the article with the design vocabulary it established' },
+      { priority: 'high', text: 'Optimize serif webfont loading — subset to Latin characters and use font-display: swap' },
+      { priority: 'med', text: 'Add a reading progress indicator styled as a geometric bar with gold accents' },
+      { priority: 'med', text: 'Test geometric border patterns on high-DPI vs low-DPI displays for rendering clarity' },
+      { priority: 'low', text: 'Add a print stylesheet that converts gold gradients to solid gold for print fidelity' },
+    ],
+  },
+
+  'text-heavy:art-deco:kaizen': {
+    consensus: [
+      { text: 'The elegant serif typeface creates the most readable body text of the decorative variations', type: 'agree' },
+      { text: 'Geometric borders between sections serve as both decoration and navigation landmarks', type: 'agree' },
+      { text: 'The premium design framing makes the content\'s mediocrity more conspicuous, not less', type: 'agree' },
+      { text: 'Whether the formal symmetrical layout feels authoritative or stiff', type: 'disagree' },
+    ],
+    actions: [
+      { priority: 'high', text: 'Add a table of contents with art-deco geometric styling to aid navigation in long reads' },
+      { priority: 'high', text: 'Ensure gold accent colors meet WCAG AA contrast ratios against all background colors' },
+      { priority: 'med', text: 'Add a geometric scroll progress indicator at the top of the viewport' },
+      { priority: 'med', text: 'Provide a system-serif fallback that preserves the reading experience when webfonts fail to load' },
+      { priority: 'low', text: 'Test geometric border-image rendering across Safari, Firefox, and Chrome for consistency' },
+      { priority: 'low', text: 'Add hover states on section divider patterns for an interactive element within the formal aesthetic' },
     ],
   },
 };
