@@ -73,10 +73,10 @@ const initialState: CartState = { items: new Map(), isCartOpen: false, checkoutS
 // ── Category Colors for Image Placeholders ──────────────────────────
 
 const catColors: Record<string, string> = {
-  Electronics: BLUE,
-  Clothing: PINK,
-  Accessories: YELLOW,
-  Home: CORAL,
+  Props: BLUE,
+  Costumes: PINK,
+  Gags: YELLOW,
+  Sets: CORAL,
 };
 
 // ── Styles ───────────────────────────────────────────────────────────

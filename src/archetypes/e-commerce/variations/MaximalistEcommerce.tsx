@@ -14,17 +14,17 @@ const SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
 const SHADOW = '8px 8px 0 rgba(0,0,0,0.3)';
 
 const imagePlaceholderColors: Record<string, string> = {
-  Electronics: '#4A6CF7',
-  Clothing: '#A855F7',
-  Accessories: '#F59E0B',
-  Home: '#10B981',
+  Props: '#4A6CF7',
+  Costumes: '#A855F7',
+  Gags: '#F59E0B',
+  Sets: '#10B981',
 };
 
 const categoryBadgeColors: Record<string, string> = {
-  Electronics: '#4A6CF7',
-  Clothing: '#A855F7',
-  Accessories: '#F59E0B',
-  Home: '#10B981',
+  Props: '#4A6CF7',
+  Costumes: '#A855F7',
+  Gags: '#F59E0B',
+  Sets: '#10B981',
 };
 
 // ── Cart State ──────────────────────────────────────────────────────

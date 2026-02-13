@@ -13,10 +13,10 @@ const TEXT_BODY = '#94A3B8';
 const TEXT_HEADING = '#E2E8F0';
 
 const categoryColors: Record<string, string> = {
-  Electronics: '#1E3A5F',
-  Clothing: '#2D1B4E',
-  Accessories: '#3D2E0A',
-  Home: '#0F3D2E',
+  Props: '#1E3A5F',
+  Costumes: '#2D1B4E',
+  Gags: '#3D2E0A',
+  Sets: '#0F3D2E',
 };
 
 // ── Cart State ──────────────────────────────────────────────────────

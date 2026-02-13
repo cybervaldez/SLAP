@@ -29,9 +29,27 @@ export interface LensDef {
   persona: string;
   category: string;
   tagline: string;
+  taste: string;
+  homeVariation: string;
 }
 
-export type DockMode = 'review' | 'kaizen';
+export interface CrewDef {
+  id: string;
+  name: string;
+  role: string;
+  taste: string;
+  icon: string;
+  bg: string;
+  ringBorder: string;
+}
+
+export interface CrewFinding {
+  perspective: string;
+  confession: string;
+  industryContext: string;
+}
+
+export type DockMode = 'review' | 'kaizen' | 'crew';
 export type OverlayView = 'team' | 'kaizen' | 'solo';
 export type TrafficLight = 'green' | 'yellow' | 'red';
 

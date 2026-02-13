@@ -982,17 +982,17 @@ const expertFindings: Record<string, ExpertFinding> = {
 
   'landing-page:slap:marketing': {
     score: 2,
-    verdict: '"Empower Your Team to Achieve More, Together" — this headline could sell project management, accounting software, or dog food. The copy is 100% buzzwords and 0% product. Every testimonial sounds AI-generated because it is.',
+    verdict: '"Master the Art of the Perfectly Timed Fall" — this headline could sell a comedy school, a physical therapy clinic, or a banana import company. The copy is 100% buzzwords and 0% product. Every testimonial sounds AI-generated because it is.',
     sections: {
       hero: [
-        { text: '"Empower Your Team to Achieve More, Together" says nothing about what the product does', light: 'red', comment: 'This headline is interchangeable with any SaaS page in existence. What does this product actually DO?' },
+        { text: '"Master the Art of the Perfectly Timed Fall" says nothing about what the product does', light: 'red', comment: 'This headline is interchangeable with any comedy school page in existence. What does this academy actually TEACH?' },
       ],
       features: [
         { text: '"Seamless," "innovative," "best-in-class" — the subhead uses every AI marketing cliche in one sentence', light: 'red', comment: 'Count the buzzwords: innovative, best-in-class, leverages, cutting-edge, seamlessly, transformative, touchpoint. That is seven in one paragraph.' },
         { text: 'No competitive positioning — the copy describes a category, not a product', light: 'red', comment: 'A visitor comparing three tabs cannot distinguish this from the others because this copy describes all of them equally.' },
       ],
       pricing: [
-        { text: '"Everything in Starter, plus more" is not a feature — it is a tautology', light: 'red', comment: 'The Growth tier literally says "plus more." More what? This is the pricing equivalent of "trust me."' },
+        { text: '"Everything in Opener, plus more" is not a feature — it is a tautology', light: 'red', comment: 'The Headliner tier literally says "plus more." More what? This is the pricing equivalent of "trust me."' },
       ],
       testimonials: [
         { text: 'Testimonials praise "the results" and "the impact" without naming either', light: 'yellow', comment: '"Our team alignment went from good to incredible" — what metric moved? Incredible is not a KPI.' },
@@ -1001,7 +1001,7 @@ const expertFindings: Record<string, ExpertFinding> = {
         { text: 'FAQ answers congratulate the product instead of answering the question', light: 'yellow', comment: '"What makes you different?" Answer: "We believe the best products just work." That is not a differentiator, that is a fortune cookie.' },
       ],
       signup: [
-        { text: '"Unlock Your Potential" — the most meaningless CTA in the history of buttons', light: 'red', comment: 'This CTA could be on a gym website, a crypto exchange, or a cult recruitment page. It tells the user nothing about what happens next.' },
+        { text: '"Unlock Your Punchline" — the most meaningless CTA in the history of buttons', light: 'red', comment: 'This CTA could be on a gym website, a self-help guru, or a fortune cookie company. It tells the user nothing about what happens next.' },
       ],
     },
   },
@@ -1033,26 +1033,26 @@ const expertFindings: Record<string, ExpertFinding> = {
 
   'landing-page:slap:product': {
     score: 2,
-    verdict: 'I read the entire page and still cannot tell you what this product does. The features are buzzwords. The pricing tiers are "more of the same." The testimonials are from people whose job titles sound generated. Zero substance.',
+    verdict: 'I read the entire page and still cannot tell you what this academy teaches. The features are buzzwords. The pricing tiers are "more of the same." The testimonials are from people whose job titles sound generated. Zero substance.',
     sections: {
       hero: [
-        { text: 'Hero says "achieve more" — more of what? The value proposition describes an outcome without naming the product', light: 'red', comment: 'The hero could belong to Slack, Notion, Jira, or a blender company. What does this thing DO?' },
+        { text: 'Hero says "achieve more" — more of what? The value proposition describes an outcome without explaining the curriculum', light: 'red', comment: 'The hero could belong to a comedy school, a physical therapy clinic, or a CrossFit gym. What does this thing DO?' },
       ],
       features: [
         { text: 'Pricing features include "Bespoke solutions tailored to you" — that is not a feature, that is a promise of a feature', light: 'red', comment: 'Real features have boundaries. "Bespoke solutions" means "we will figure it out later."' },
         { text: 'No ROI data, no case studies, no metrics — just "AI-powered insights" and "white-glove support"', light: 'red', comment: 'Decision-makers need numbers. "AI-powered insights" is not a number.' },
       ],
       pricing: [
-        { text: 'Growth tier says "Everything in Starter, plus more" — this is circular marketing', light: 'red', comment: 'The upgrade incentive is literally "more." Customers comparing tiers learn nothing from this.' },
+        { text: 'Headliner tier says "Everything in Opener, plus more" — this is circular marketing', light: 'red', comment: 'The upgrade incentive is literally "more." Customers comparing tiers learn nothing from this.' },
       ],
       testimonials: [
-        { text: '"Chief Innovation Officer at Synergy Labs" — these job titles sound AI-generated', light: 'yellow', comment: 'A "VP of Digital Transformation at NexusPoint" praising "transformative results." The testimonials and the copy are in a feedback loop of buzzwords.' },
+        { text: '"Chief Comedy Officer at Synergy Laughs" — these job titles sound AI-generated', light: 'yellow', comment: 'A "VP of Comedic Transformation at NexusPunchline" praising "transformative results." The testimonials and the copy are in a feedback loop of buzzwords.' },
       ],
       faq: [
         { text: 'FAQ answers do not address objections — they restate the product pitch', light: 'yellow', comment: '"What makes you different?" is answered with "customer-first philosophy" — that is not a differentiator, that is a platitude.' },
       ],
       signup: [
-        { text: '"Unlock Your Potential" with an email field — potential for what?', light: 'red', comment: 'The final CTA makes no concrete promise. No trial length, no guarantee, no preview of value.' },
+        { text: '"Unlock Your Punchline" with an email field — potential for what?', light: 'red', comment: 'The final CTA makes no concrete promise. No trial class, no guarantee, no preview of value.' },
       ],
     },
   },
@@ -1115,7 +1115,7 @@ const expertFindings: Record<string, ExpertFinding> = {
     verdict: 'Every product description sounds like it was written by the same AI prompt. "Artisan," "curated," "elevated," "reimagined" — the store has a brand voice and it is everyone else\'s brand voice.',
     sections: {
       products: [
-        { text: 'Product copy uses every AI marketing cliche — "reimagined," "curated," "artisanal excellence"', light: 'red', comment: 'A $25 t-shirt described as "the perfect intersection of comfort and sustainability" is not premium copywriting — it is a parody of it.' },
+        { text: 'Product copy uses every AI marketing cliche — "reimagined," "curated," "artisanal excellence"', light: 'red', comment: 'A $24.99 pair of trousers described as "the perfect intersection of physical comedy and sustainability" is not premium copywriting — it is a parody of it.' },
         { text: 'No bestseller badges, no "popular" labels, no social proof — just buzzwords', light: 'red', comment: 'The descriptions sell adjectives, not products. Where are the reviews, the purchase counts, the trust signals?' },
       ],
       cart: [
@@ -1149,12 +1149,12 @@ const expertFindings: Record<string, ExpertFinding> = {
 
   'e-commerce:slap:product': {
     score: 3,
-    verdict: 'Product descriptions over-promise and under-inform. "Heritage Denim Jacket" and "Artisan Ceramic Vessel" for a $90 jacket and a $35 vase. No sizing, no materials breakdown, no real information — just marketing poetry.',
+    verdict: 'Product descriptions over-promise and under-inform. "Heritage Squirting Flower Lapel" and "Artisan Whoopee Cushion" for a $89.99 squirting flower and a $49.99 whoopee cushion. No sizing, no materials breakdown, no real information — just marketing poetry.',
     sections: {
       products: [
         { text: 'Colored blocks as product images look like placeholders, not intentional design', light: 'red', comment: 'Customers see broken images, not products. This communicates "unfinished."' },
         { text: 'No filtering, sorting, or category navigation — only grid scanning', light: 'red', comment: 'Eight products max with no discovery tools. This will not scale.' },
-        { text: 'Product descriptions are walls of buzzwords — no sizing info, no materials, no specs', light: 'yellow', comment: '"An investment piece that tells your story" tells the shopper nothing about the jacket. Where is the chest measurement? The fabric weight?' },
+        { text: 'Product descriptions are walls of buzzwords — no sizing info, no materials, no specs', light: 'yellow', comment: '"An investment piece that tells your audience everything they need to know" tells the shopper nothing about the squirting flower. Where is the spray range? The nozzle diameter?' },
       ],
       cart: [
         { text: 'Cart shows per-item subtotals — adequate for price transparency', light: 'green', comment: 'Line items with quantity × price is the expected minimum.' },
@@ -1637,7 +1637,7 @@ const expertFindings: Record<string, ExpertFinding> = {
     sections: {
       products: [
         { text: 'Gold serif price tags on navy background signal premium positioning', light: 'green', comment: 'The $XX.XX in Georgia gold on dark navy reads as luxury — customers expect and accept higher prices.' },
-        { text: 'Category color badges add discovery cues to the dense grid', light: 'green', comment: 'Purple for Clothing, amber for Accessories — visual filtering without needing a dropdown.' },
+        { text: 'Category color badges add discovery cues to the dense grid', light: 'green', comment: 'Purple for Costumes, amber for Gags — visual filtering without needing a dropdown.' },
         { text: 'No bestseller badges, stock counts, or "trending" labels to guide decisions', light: 'yellow', comment: 'In a visually rich grid, shoppers need shortcuts — add one trust signal per row.' },
       ],
       cart: [
@@ -1677,7 +1677,7 @@ const expertFindings: Record<string, ExpertFinding> = {
     verdict: 'Rich visual presentation creates aspirational product positioning, but the dense grid with no filtering and single-sentence descriptions forces customers to browse blind. The premium aesthetic sets expectations the product detail cannot fulfill.',
     sections: {
       products: [
-        { text: 'Category color badges provide passive filtering through visual grouping', light: 'green', comment: 'Users can scan for "purple = Clothing" without explicit filters — works at small catalog scale.' },
+        { text: 'Category color badges provide passive filtering through visual grouping', light: 'green', comment: 'Users can scan for "purple = Costumes" without explicit filters — works at small catalog scale.' },
         { text: 'No filtering, sorting, or search — discovery relies on visual scanning of dense grid', light: 'red', comment: 'The maximalist aesthetic adds visual noise that makes grid scanning harder, not easier — filters are essential.' },
         { text: 'One-sentence product descriptions cannot justify the premium price positioning', light: 'yellow', comment: 'Gold prices imply premium goods — add material, origin, or feature details to support the price point.' },
       ],
@@ -1775,7 +1775,7 @@ const expertFindings: Record<string, ExpertFinding> = {
     verdict: 'The spec-sheet layout is efficient for comparison shopping but hostile to discovery. No categories, no filters, no sorting — the catalog is a flat list. Product descriptions are adequate but lack specifications that the industrial audience expects.',
     sections: {
       products: [
-        { text: 'Bracketed category labels [Electronics] echo terminal output and aid scanning', light: 'green', comment: 'The bracket syntax groups products visually without needing a formal filter UI.' },
+        { text: 'Bracketed category labels [Props] echo terminal output and aid scanning', light: 'green', comment: 'The bracket syntax groups products visually without needing a formal filter UI.' },
         { text: 'No filtering, sorting, or search in a catalog that looks like it should have all three', light: 'red', comment: 'The industrial spec-sheet aesthetic sets expectations for advanced tooling — deliver it.' },
         { text: 'Product descriptions lack technical specifications that the audience expects', light: 'yellow', comment: 'Industrial shoppers want dimensions, materials, and compatibility — one sentence is insufficient.' },
       ],
@@ -2029,7 +2029,7 @@ const expertFindings: Record<string, ExpertFinding> = {
     verdict: 'This article sells nothing. It congratulates itself for 12 minutes straight and the reader leaves with zero takeaways. The opening sentence is the exact cliche every content strategist warns against.',
     sections: {
       opening: [
-        { text: '"In today\'s rapidly evolving digital landscape" — the single most parodied opener in content marketing', light: 'red', comment: 'This is the sentence we use in workshops as an example of what NOT to write. It\'s here, unironically, as the first thing the reader sees.' },
+        { text: '"In today\'s rapidly evolving comedic landscape" — the single most parodied opener in content marketing', light: 'red', comment: 'This is the sentence we use in workshops as an example of what NOT to write. It\'s here, unironically, as the first thing the reader sees.' },
         { text: '"You\'re still reading, which proves it\'s working" — no, it proves I haven\'t scrolled away yet', light: 'red', comment: 'Claiming engagement as proof of quality is circular reasoning. The reader is here because they clicked, not because the intro earned them.' },
       ],
       hierarchy: [
@@ -2037,7 +2037,7 @@ const expertFindings: Record<string, ExpertFinding> = {
         { text: 'Claims to be "a masterclass" while teaching nothing specific', light: 'yellow', comment: 'Self-declared masterclasses never are. Show, don\'t tell — and this section does neither.' },
       ],
       measure: [
-        { text: 'Coins "readability triad" — a term that returns zero search results because it was just invented', light: 'yellow', comment: 'Making up terminology to sound authoritative backfires when anyone Googles it. Use established terms or explain why a new one is needed.' },
+        { text: 'Coins "timing triad" — a term that returns zero search results because it was just invented', light: 'yellow', comment: 'Making up terminology to sound authoritative backfires when anyone Googles it. Use established terms or explain why a new one is needed.' },
         { text: '"For the benefit of readers who may not be familiar" — the most condescending phrase in content writing', light: 'red', comment: 'Either your audience needs the definition or they don\'t. Hedging it like this insults both groups.' },
       ],
       ornament: [
@@ -2045,7 +2045,7 @@ const expertFindings: Record<string, ExpertFinding> = {
       ],
       ending: [
         { text: '"In conclusion" followed by a numbered summary of the article the reader just finished', light: 'red', comment: 'Summarizing your own content assumes the reader has already forgotten it. If they have, that\'s a content quality problem, not a structure problem.' },
-        { text: '"The importance of good design cannot be overstated" — the most overstated sentence possible', light: 'red', comment: 'This is the platitude that ends every AI-generated article about anything. It says nothing and the reader knows it.' },
+        { text: '"The importance of good comedy cannot be overstated" — the most overstated sentence possible', light: 'red', comment: 'This is the platitude that ends every AI-generated article about anything. It says nothing and the reader knows it.' },
       ],
     },
   },
@@ -2056,7 +2056,7 @@ const expertFindings: Record<string, ExpertFinding> = {
     sections: {
       opening: [
         { text: 'First three paragraphs say the same thing in different words — "this article is great"', light: 'red', comment: 'A reader scanning this intro finds zero information density. Every paragraph restates the premise instead of advancing it.' },
-        { text: '"This paragraph demonstrates paragraph variety" — a one-liner that accidentally reveals the trick', light: 'yellow', comment: 'This reads like a placeholder the author forgot to replace. It breaks immersion by stating the structural intent rather than embodying it.' },
+        { text: '"This paragraph demonstrates punchline variety" — a one-liner that accidentally reveals the trick', light: 'yellow', comment: 'This reads like a placeholder the author forgot to replace. It breaks immersion by stating the structural intent rather than embodying it.' },
       ],
       hierarchy: [
         { text: 'Claims heading optimization but provides no visual evidence of calibration', light: 'yellow', comment: 'An article about hierarchy that relies entirely on the default component styling has no hierarchy opinion of its own.' },
@@ -3327,17 +3327,17 @@ const reviewBundles: Record<string, ReviewBundle> = {
       { text: 'The proud-slop copy is a perfect SLAPstick target — seven buzzwords in the subheadline alone', type: 'agree' },
       { text: 'Page loads fast — system fonts and minimal CSS', type: 'agree' },
       { text: 'Every design choice is a default and now every copy choice is too — double slop', type: 'agree' },
-      { text: '"Chief Innovation Officer at Synergy Labs" is the most AI-generated testimonial ever written', type: 'agree' },
+      { text: '"Chief Comedy Officer at Synergy Laughs" is the most AI-generated testimonial ever written', type: 'agree' },
       { text: 'FAQ answers congratulate the product instead of addressing customer concerns', type: 'disagree' },
-      { text: '"Unlock Your Potential" as a CTA communicates nothing — could be a gym or a cult', type: 'disagree' },
+      { text: '"Unlock Your Punchline" as a CTA communicates nothing — could be a gym or a cult', type: 'disagree' },
     ],
     actions: [
       { priority: 'high', text: 'Replace buzzword headline with a concrete value proposition — what does this product DO?' },
       { priority: 'high', text: 'Rewrite testimonials with specific, measurable outcomes from real-sounding companies' },
-      { priority: 'high', text: 'Replace "Everything in Starter, plus more" with actual feature differentiation' },
+      { priority: 'high', text: 'Replace "Everything in Opener, plus more" with actual feature differentiation' },
       { priority: 'med', text: 'Replace default purple with intentional brand color' },
       { priority: 'med', text: 'Add real FAQ answers that address objections instead of restating the pitch' },
-      { priority: 'low', text: 'Change "Unlock Your Potential" to a CTA that describes what happens next' },
+      { priority: 'low', text: 'Change "Unlock Your Punchline" to a CTA that describes what happens next' },
     ],
   },
 
@@ -3346,12 +3346,12 @@ const reviewBundles: Record<string, ReviewBundle> = {
       { text: 'Every persona finished reading without learning what the product does — impressive consistency', type: 'agree' },
       { text: 'The testimonials sound AI-generated because they all use the same tone and vocabulary', type: 'agree' },
       { text: 'Dorothy cannot figure out what the product is — that is a fundamental failure', type: 'agree' },
-      { text: 'Carlos spotted the fake company names instantly — "Synergy Labs" is a red flag', type: 'disagree' },
-      { text: '"Unlock Your Potential" as a CTA is either inspiring or meaningless depending on patience level', type: 'disagree' },
+      { text: 'Carlos spotted the fake company names instantly — "Synergy Laughs" is a red flag', type: 'disagree' },
+      { text: '"Unlock Your Punchline" as a CTA is either inspiring or meaningless depending on patience level', type: 'disagree' },
     ],
     actions: [
       { priority: 'high', text: 'Explain what the product does in the first sentence — even Dorothy should understand' },
-      { priority: 'high', text: 'Use real company names or obviously fictional ones — "Synergy Labs" lands in the uncanny valley' },
+      { priority: 'high', text: 'Use real company names or obviously fictional ones — "Synergy Laughs" lands in the uncanny valley' },
       { priority: 'med', text: 'Reduce buzzword density — seven per sentence triggers skepticism in every persona' },
       { priority: 'med', text: 'Add personality to interactions — even the generic design could be saved by delightful hover states' },
       { priority: 'low', text: 'Replace "Welcome to the journey!" success message with something that confirms what the user signed up for' },
@@ -3360,11 +3360,11 @@ const reviewBundles: Record<string, ReviewBundle> = {
 
   'e-commerce:slap:review': {
     consensus: [
-      { text: 'Product descriptions are AI copywriting hall of fame — "Curated Aromatherapy Collection" for a $20 candle set', type: 'agree' },
+      { text: 'Product descriptions are AI copywriting hall of fame — "Curated Foam Brick Collection" for a $19.99 foam brick set', type: 'agree' },
       { text: 'Shared components keep cart/checkout consistent', type: 'agree' },
       { text: 'The copy writes checks the design cannot cash — "artisan" products in a template store', type: 'agree' },
       { text: 'Product descriptions give zero useful information — no sizes, materials, or specs', type: 'disagree' },
-      { text: 'Colored placeholder blocks next to "Heritage Denim Jacket" is comedy gold', type: 'disagree' },
+      { text: 'Colored placeholder blocks next to "Heritage Squirting Flower Lapel" is comedy gold', type: 'disagree' },
     ],
     actions: [
       { priority: 'high', text: 'Add actual product specs — sizing, materials, weight — next to the marketing poetry' },
@@ -3378,13 +3378,13 @@ const reviewBundles: Record<string, ReviewBundle> = {
   'e-commerce:slap:kaizen': {
     consensus: [
       { text: 'Dorothy cannot find a size chart and Carlos spotted the AI copywriting from orbit', type: 'agree' },
-      { text: 'Cart drawer works but "Heritage Denim Jacket" in a plain white panel is a brand identity crisis', type: 'agree' },
+      { text: 'Cart drawer works but "Heritage Squirting Flower Lapel" in a plain white panel is a brand identity crisis', type: 'agree' },
       { text: 'Colored placeholder blocks look broken — especially next to "artisanal excellence" descriptions', type: 'agree' },
       { text: 'Every product description follows the same AI formula — adjective, noun, buzzword, lifestyle promise', type: 'disagree' },
       { text: '"Spacious enough for your entire life" for a wallet is either poetry or parody', type: 'disagree' },
     ],
     actions: [
-      { priority: 'high', text: 'Add product imagery — "Artisan Ceramic Vessel" next to a blue square is absurd' },
+      { priority: 'high', text: 'Add product imagery — "Artisan Whoopee Cushion" next to a blue square is absurd' },
       { priority: 'high', text: 'Add practical product info — size, material, care instructions — alongside the marketing copy' },
       { priority: 'med', text: 'Decide on a brand voice: either commit to the premium copy and upgrade the design, or tone down the copy' },
       { priority: 'med', text: 'Add non-color affordances to CTA buttons for accessibility' },

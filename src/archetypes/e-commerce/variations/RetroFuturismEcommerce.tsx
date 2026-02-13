@@ -16,10 +16,10 @@ const GLOW = '0 0 20px rgba(139, 92, 246, 0.2)';
 const GLOW_INTENSE = '0 0 30px rgba(139, 92, 246, 0.4)';
 
 const categoryPlaceholderColors: Record<string, string> = {
-  Electronics: '#1A3A4A',
-  Clothing: '#2A1A3A',
-  Accessories: '#3A2A1A',
-  Home: '#1A3A2A',
+  Props: '#1A3A4A',
+  Costumes: '#2A1A3A',
+  Gags: '#3A2A1A',
+  Sets: '#1A3A2A',
 };
 
 // ── Cart State ───────────────────────────────────────────────────────

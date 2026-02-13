@@ -15,10 +15,10 @@ const SERIF = "Georgia, 'Times New Roman', serif";
 const SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
 
 const categoryColors: Record<string, string> = {
-  Electronics: '#7BA38C',
-  Clothing: '#B8A088',
-  Accessories: '#C4A265',
-  Home: '#8FB87A',
+  Props: '#7BA38C',
+  Costumes: '#B8A088',
+  Gags: '#C4A265',
+  Sets: '#8FB87A',
 };
 
 // ── Cart State ──────────────────────────────────────────────────────

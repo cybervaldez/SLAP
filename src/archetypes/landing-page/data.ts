@@ -27,78 +27,78 @@ export interface Testimonial {
 }
 
 export const heroData: HeroData = {
-  headline: 'Empower Your Team to Achieve More, Together',
+  headline: 'Master the Art of the Perfectly Timed Fall',
   subheadline:
-    'Our innovative, best-in-class platform leverages cutting-edge technology to seamlessly streamline your workflow, drive meaningful engagement, and deliver transformative results across every touchpoint in your organization\u2019s digital journey.',
-  ctaPrimary: 'Start Your Journey',
-  ctaSecondary: 'See the Difference',
+    'Our innovative, best-in-class academy leverages cutting-edge comedic methodology to seamlessly streamline your pratfall technique, drive meaningful audience engagement, and deliver transformative laughs across every touchpoint in your performer\u2019s journey.',
+  ctaPrimary: 'Start Your Training',
+  ctaSecondary: 'Watch the Reel',
 };
 
 export const faqItems: FAQItem[] = [
   {
-    question: 'What makes your platform different from the competition?',
+    question: 'What makes your academy different from other comedy schools?',
     answer:
-      'Great question. Our platform is built from the ground up with a customer-first philosophy that prioritizes user experience, innovation, and scalability. We believe that the best products are the ones that just work \u2014 and we are confident that ours does.',
+      'Great question. Our academy is built from the ground up with a performer-first philosophy that prioritizes comedic timing, physical commitment, and audience scalability. We believe that the best pratfalls are the ones that just land \u2014 and we are confident that ours do.',
   },
   {
-    question: 'How quickly can my team get started?',
+    question: 'How quickly can my troupe get stage-ready?',
     answer:
-      'Getting started could not be easier. Our streamlined onboarding process has been optimized to minimize time-to-value and maximize your team\u2019s productivity from day one. Most teams are fully operational within minutes.',
+      'Getting started could not be easier. Our streamlined onboarding process has been optimized to minimize time-to-laughter and maximize your troupe\u2019s comedic output from day one. Most performers are fully pratfall-certified within minutes.',
   },
   {
-    question: 'Is my data secure?',
+    question: 'Is my comedic integrity secure?',
     answer:
-      'Security is not just a feature \u2014 it is a core pillar of everything we build. Our platform employs industry-leading encryption, SOC 2 compliance, and a zero-trust architecture that ensures your data is always protected. We take security seriously.',
+      'Artistic integrity is not just a feature \u2014 it is a core pillar of everything we teach. Our curriculum employs industry-leading timing frameworks, SOC 2 compliant joke structures, and a zero-hack architecture that ensures your material is always protected. We take comedy seriously.',
   },
   {
-    question: 'What if I need to scale?',
+    question: 'What if I need to scale my act?',
     answer:
-      'We designed our platform with scalability as a foundational principle. Whether you are a team of five or an organization of five thousand, our infrastructure scales seamlessly to meet your evolving needs. Growing with you is what we do.',
+      'We designed our methodology with scalability as a foundational principle. Whether you are a solo act of one or an ensemble of five thousand, our techniques scale seamlessly to meet your evolving comedic needs. Growing your audience is what we do.',
   },
   {
-    question: 'Do you really offer a free trial with no strings attached?',
+    question: 'Do you really offer a free class with no strings attached?',
     answer:
-      'Absolutely. We are so confident in the value our platform delivers that we offer a full-featured 14-day trial with zero commitment. No credit card required, no hidden fees, no surprises. We believe the product speaks for itself.',
+      'Absolutely. We are so confident in the laughs our academy delivers that we offer a full-featured introductory masterclass with zero commitment. No credit card required, no hidden fees, no rubber chickens. We believe the pratfall speaks for itself.',
   },
 ];
 
 export const pricingPlans: PricingPlan[] = [
   {
-    name: 'Starter',
+    name: 'Opener',
     price: '$9',
     period: '/month',
     features: [
-      'Seamless onboarding experience',
-      'Intuitive analytics dashboard',
-      'World-class email support',
-      'Robust API framework',
-      'Industry-standard security',
+      'Seamless pratfall onboarding',
+      'Intuitive timing analytics dashboard',
+      'World-class heckling support',
+      'Robust slapstick framework',
+      'Industry-standard pie delivery',
     ],
     highlighted: false,
   },
   {
-    name: 'Growth',
+    name: 'Headliner',
     price: '$29',
     period: '/month',
     features: [
-      'Everything in Starter, plus more',
-      'Advanced AI-powered insights',
-      'Priority white-glove support',
-      'Seamless third-party integrations',
-      'Collaborative team workspace',
+      'Everything in Opener, plus more',
+      'Advanced AI-powered timing insights',
+      'Priority green room support',
+      'Seamless ensemble integrations',
+      'Collaborative writers\u2019 room workspace',
     ],
     highlighted: true,
   },
   {
-    name: 'Enterprise',
+    name: 'Legendary',
     price: '$99',
     period: '/month',
     features: [
-      'Everything in Growth, elevated',
-      'Bespoke solutions tailored to you',
-      'Dedicated success partner',
-      'Enterprise-grade compliance',
-      'Custom SLA guarantees',
+      'Everything in Headliner, elevated',
+      'Bespoke routines tailored to you',
+      'Dedicated comedy success partner',
+      'Legendary-grade audience compliance',
+      'Custom SLA(P) guarantees',
     ],
     highlighted: false,
   },
@@ -107,40 +107,40 @@ export const pricingPlans: PricingPlan[] = [
 export const testimonials: Testimonial[] = [
   {
     name: 'Sarah M.',
-    role: 'Chief Innovation Officer',
-    company: 'Synergy Labs',
+    role: 'Chief Comedy Officer',
+    company: 'Synergy Laughs',
     quote:
-      'This platform completely revolutionized how we think about thinking about our workflow. Our team alignment went from good to incredible. We could not be more thrilled with the results.',
+      'This academy completely revolutionized how we think about thinking about our comedic workflow. Our troupe alignment went from good to incredible. We could not be more thrilled with the pratfalls.',
     avatarInitial: 'S',
   },
   {
     name: 'David K.',
-    role: 'VP of Digital Transformation',
-    company: 'NexusPoint',
+    role: 'VP of Comedic Transformation',
+    company: 'NexusPunchline',
     quote:
-      'After evaluating numerous solutions in the space, we chose this platform and have never looked back. The impact on our bottom line has been significant and measurable.',
+      'After evaluating numerous comedy schools in the space, we chose this academy and have never looked back. The impact on our laugh line has been significant and measurable.',
     avatarInitial: 'D',
   },
   {
     name: 'Priya R.',
-    role: 'Head of Strategic Initiatives',
-    company: 'Luminos Group',
+    role: 'Head of Strategic Hilarity',
+    company: 'Luminos Gag Group',
     quote:
-      'The seamless integration capabilities alone made this a game-changer for our organization. Our stakeholders were impressed from day one.',
+      'The seamless ensemble integration capabilities alone made this a game-changer for our organization. Our audience members were impressed from joke one.',
     avatarInitial: 'P',
   },
   {
     name: 'Michael T.',
-    role: 'Director of Operational Excellence',
-    company: 'Pinnacle Systems',
+    role: 'Director of Operational Comedy',
+    company: 'Pinnacle Punchlines',
     quote:
-      'We saw a meaningful improvement in team productivity almost immediately. This platform truly understands the modern enterprise.',
+      'We saw a meaningful improvement in audience laughter almost immediately. This academy truly understands the modern comedy enterprise.',
     avatarInitial: 'M',
   },
 ];
 
 export const emailSignup = {
   placeholder: 'Enter your email to get started',
-  buttonText: 'Unlock Your Potential',
-  successMessage: 'Welcome to the journey!',
+  buttonText: 'Unlock Your Punchline',
+  successMessage: 'Welcome to the stage!',
 };
