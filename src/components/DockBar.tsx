@@ -85,6 +85,7 @@ function chinStyle(dark?: boolean): React.CSSProperties {
     borderBottom: `8px solid ${bezelColor}`,
     borderRadius: '0 0 10px 10px',
     boxShadow: 'inset 0 3px 8px rgba(0, 0, 0, 0.06), 0 -1px 0 rgba(0, 0, 0, 0.04)',
+    transition: 'background 800ms ease-in-out, border-color 800ms ease-in-out, box-shadow 800ms ease-in-out',
     pointerEvents: 'auto',
     flexShrink: 0,
   };

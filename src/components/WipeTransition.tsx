@@ -23,11 +23,18 @@ export default function WipeTransition({
   DemoComponent,
   wipeDirection = 'right',
 }: WipeTransitionProps) {
-  const targetVariation = lensParam
+  const lensDefault = lensParam
     ? LENS_VARIATION_MAP[lensParam] || DEFAULT_LENS_VARIATION
     : null;
 
-  const shouldAutoWipe = !!lensParam && !!targetVariation;
+  // Always auto-wipe from slap to the intended variation when a lens is active.
+  // Wipe destination: the URL's variation if non-slap, otherwise the lens default.
+  // e.g. #editorial/e-commerce/memphis → slap ➜ memphis
+  //      #editorial/e-commerce/slap    → slap ➜ maximalist (lens default)
+  const shouldAutoWipe = !!lensParam;
+  const wipeDestination = activeVariation !== 'slap'
+    ? activeVariation
+    : lensDefault;
 
   const [isWiping, setIsWiping] = useState(false);
   const [wipeKey, setWipeKey] = useState(0);
@@ -37,7 +44,7 @@ export default function WipeTransition({
     shouldAutoWipe ? 'slap' : activeVariation
   );
 
-  const prevVariationRef = useRef(activeVariation);
+  const prevVariationRef = useRef(shouldAutoWipe ? 'slap' : activeVariation);
   const wipeTimeoutRef = useRef<number | null>(null);
   const autoWipeTriggeredRef = useRef(!shouldAutoWipe);
   const autoWipeTimerRef = useRef<number | null>(null);
@@ -50,24 +57,24 @@ export default function WipeTransition({
     };
   }, []);
 
-  // Auto-wipe: show SLAP variation briefly, then wipe to styled
+  // Auto-wipe: show SLAP variation briefly, then wipe to destination
   useEffect(() => {
-    if (autoWipeTriggeredRef.current || !shouldAutoWipe || !targetVariation) return;
+    if (autoWipeTriggeredRef.current || !shouldAutoWipe || !wipeDestination) return;
 
     autoWipeTimerRef.current = window.setTimeout(() => {
       autoWipeTriggeredRef.current = true;
 
       setFromVariation('slap');
-      setWipeTarget(targetVariation);
+      setWipeTarget(wipeDestination);
       setIsWiping(true);
 
       wipeTimeoutRef.current = window.setTimeout(() => {
         setIsWiping(false);
         setFromVariation(null);
         setWipeTarget(null);
-        setDisplayedVariation(targetVariation);
-        prevVariationRef.current = targetVariation;
-        onVariationChange(targetVariation);
+        setDisplayedVariation(wipeDestination);
+        prevVariationRef.current = wipeDestination;
+        onVariationChange(wipeDestination);
         onFirstWipeComplete();
       }, WIPE_DURATION);
     }, AUTO_WIPE_DELAY);
@@ -75,7 +82,7 @@ export default function WipeTransition({
     return () => {
       if (autoWipeTimerRef.current) clearTimeout(autoWipeTimerRef.current);
     };
-  }, [shouldAutoWipe, targetVariation, onVariationChange, onFirstWipeComplete]);
+  }, [shouldAutoWipe, wipeDestination, onVariationChange, onFirstWipeComplete]);
 
   // Detect variation changes after auto-wipe (pill clicks)
   useEffect(() => {
