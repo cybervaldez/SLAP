@@ -339,11 +339,69 @@
     color: var(--red);
   }
 
+  /* ═══ CAST ═══ */
+  .cast-group { margin-bottom: 40px; }
+  .cast-group-name {
+    font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid currentColor;
+  }
+  .cast-group-name.red-text { border-color: var(--red); }
+  .cast-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 3px;
+  }
+  .cast-row-avatar {
+    width: 32px; height: 32px;
+    border-radius: 0;
+    object-fit: cover;
+    display: block;
+    margin-bottom: 4px;
+    filter: grayscale(1) contrast(1.5);
+  }
+  .cast-row-name {
+    font-size: clamp(0.7rem, 1.5vw, 1rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    min-width: 160px;
+    flex-shrink: 0;
+    padding: 10px 12px;
+    border: 3px solid var(--fg);
+    border-right: none;
+  }
+  .cast-row-quote {
+    font-size: clamp(0.65rem, 1.2vw, 0.85rem);
+    padding: 10px 12px;
+    border: 3px solid var(--fg);
+    flex: 1;
+    line-height: 1.5;
+  }
+  .cast-row-role {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+  .cast-row--crew .cast-row-quote::before {
+    content: '[CONFESSION] ';
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: var(--red);
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 640px) {
     .full-bleed { padding: 40px 16px; }
     .specimen-box { padding: 24px 16px; }
     .layer { padding: 12px 14px; }
+    .cast-row { flex-direction: column; }
+    .cast-row-name { border-right: 3px solid var(--fg); border-bottom: none; min-width: auto; }
   }
 </style>
 </head>
@@ -396,6 +454,66 @@
     <div class="layer">
       <strong>LAYER 3 &mdash; REDEMPTION</strong><br>
       Can design rescue doomed content?
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 3.5. THE CRITICS ═══════════ -->
+<section class="section full-bleed" data-testid="section-cast">
+  <span class="label">CRITICS</span>
+  <div class="headline" style="font-size:clamp(1.5rem,5vw,4rem);margin-bottom:32px;">MEET THE VOICES.</div>
+
+  <div class="narrow">
+    <div class="cast-group">
+      <div class="cast-group-name">THE PANEL &mdash; EXPERT CRITICS</div>
+      <div class="cast-row">
+        <div class="cast-row-name"><img class="cast-row-avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=marketing-expert" alt="Marketing" loading="lazy" />MARKETING<span class="cast-row-role">Positioning</span></div>
+        <div class="cast-row-quote">&ldquo;If your landing page could belong to any competitor, it belongs to none of them.&rdquo;</div>
+      </div>
+      <div class="cast-row">
+        <div class="cast-row-name"><img class="cast-row-avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=ux-expert" alt="UX" loading="lazy" />UX<span class="cast-row-role">Usability</span></div>
+        <div class="cast-row-quote">&ldquo;The screaming red focus ring is impossible to miss&nbsp;&mdash; great for keyboard users.&rdquo;</div>
+      </div>
+      <div class="cast-row">
+        <div class="cast-row-name"><img class="cast-row-avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=design-expert" alt="Design" loading="lazy" />DESIGN<span class="cast-row-role">Visual</span></div>
+        <div class="cast-row-quote">&ldquo;You&rsquo;re selling a visual review tool with zero visuals.&rdquo;</div>
+      </div>
+    </div>
+
+    <div class="cast-group">
+      <div class="cast-group-name red-text">THE CROWD &mdash; REAL PEOPLE</div>
+      <div class="cast-row">
+        <div class="cast-row-name"><img class="cast-row-avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=dorothy-first-timer" alt="Dorothy" loading="lazy" />DOROTHY, 68<span class="cast-row-role">Non-technical</span></div>
+        <div class="cast-row-quote">&ldquo;This looks like the internet forgot to get dressed this morning.&rdquo;</div>
+      </div>
+      <div class="cast-row">
+        <div class="cast-row-name"><img class="cast-row-avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=frank-retired-exec" alt="Frank" loading="lazy" />FRANK, 41<span class="cast-row-role">Zero patience</span></div>
+        <div class="cast-row-quote">&ldquo;I found the price in 8 seconds and that is 7 seconds too many.&rdquo;</div>
+      </div>
+      <div class="cast-row">
+        <div class="cast-row-name"><img class="cast-row-avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=marcus-accessibility" alt="Marcus" loading="lazy" />MARCUS, 34<span class="cast-row-role">Colorblind dev</span></div>
+        <div class="cast-row-quote">&ldquo;System-font gray on white&nbsp;&mdash; my WCAG checker yawned and crashed.&rdquo;</div>
+      </div>
+      <div class="cast-row">
+        <div class="cast-row-name"><img class="cast-row-avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=carlos-investor" alt="Carlos" loading="lazy" />CARLOS, 52<span class="cast-row-role">CEO evaluator</span></div>
+        <div class="cast-row-quote">&ldquo;If this is your pitch deck, your Series A is dead on arrival.&rdquo;</div>
+      </div>
+      <div class="cast-row">
+        <div class="cast-row-name"><img class="cast-row-avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=tommy-hypebeast" alt="Tommy" loading="lazy" />TOMMY, 22<span class="cast-row-role">Intern</span></div>
+        <div class="cast-row-quote">&ldquo;Unapologetic and in your face. The color confidence of a limited-edition sneaker colorway.&rdquo;</div>
+      </div>
+    </div>
+
+    <div class="cast-group">
+      <div class="cast-group-name">THE CREW &mdash; INDUSTRY INSIDERS</div>
+      <div class="cast-row cast-row--crew">
+        <div class="cast-row-name"><img class="cast-row-avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=alex-ai-operator" alt="Alex" loading="lazy" />ALEX<span class="cast-row-role">Prompt Engineer</span></div>
+        <div class="cast-row-quote">&ldquo;I optimized for &lsquo;professional tone&rsquo; and got&hellip; this.&rdquo;</div>
+      </div>
+      <div class="cast-row cast-row--crew">
+        <div class="cast-row-name"><img class="cast-row-avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=kai-deadline-dev" alt="Kai" loading="lazy" />KAI<span class="cast-row-role">Junior Designer</span></div>
+        <div class="cast-row-quote">&ldquo;The deadline was yesterday. I accepted every default. I know.&rdquo;</div>
+      </div>
     </div>
   </div>
 </section>
@@ -525,5 +643,31 @@
     });
   })();
 </script>
+
+<!-- Floating Nav -->
+<style>
+  .floating-nav {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    display: flex; gap: 8px;
+  }
+  .floating-nav .fnav-btn {
+    appearance: none; border: var(--border-w) solid var(--fg);
+    background: var(--bg); color: var(--fg);
+    font-family: var(--sans); font-size: 12px; font-weight: 900;
+    padding: 10px 18px; border-radius: 0; cursor: pointer;
+    text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em;
+    box-shadow: 3px 3px 0 var(--fg);
+    transition: box-shadow 200ms ease, color 200ms ease;
+  }
+  .floating-nav .fnav-btn:hover { box-shadow: 5px 5px 0 var(--red); color: var(--red); }
+  @media (max-width: 768px) {
+    .floating-nav { bottom: 16px; right: 16px; }
+    .floating-nav .fnav-btn { font-size: 11px; padding: 8px 14px; }
+  }
+</style>
+<div class="floating-nav">
+  <a class="fnav-btn" href="preview-O5-mixed.html">&larr; Gallery</a>
+</div>
+
 </body>
 </html>

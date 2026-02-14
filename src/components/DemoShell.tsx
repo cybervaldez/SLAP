@@ -23,6 +23,7 @@ interface DemoShellProps {
   activeVariation?: string;
   onVariationChange?: (id: string) => void;
   accent?: string;
+  backLens?: string | null;
 }
 
 export default function DemoShell({
@@ -32,6 +33,7 @@ export default function DemoShell({
   activeVariation,
   onVariationChange,
   accent,
+  backLens,
 }: DemoShellProps) {
   const isDark = variations?.find(v => v.id === activeVariation)?.dark ?? false;
 
@@ -50,6 +52,7 @@ export default function DemoShell({
         activeVariation={activeVariation}
         onVariationChange={onVariationChange}
         accent={accent}
+        backLens={backLens}
       />
       <div style={styles.content}>
         {children}

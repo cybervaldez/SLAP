@@ -2,6 +2,7 @@ export interface Route {
   path: string;
   slug: string | null;
   variation: string | null;
+  lens: string | null;
 }
 
 export interface VariationDef {

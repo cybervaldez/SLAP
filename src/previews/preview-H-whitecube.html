@@ -383,6 +383,59 @@
     font-size: 0.8rem;
   }
 
+  /* ─── CAST ─── */
+  .cast-group-title {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 60px 0 24px;
+  }
+  .cast-group-title:first-of-type { margin-top: 0; }
+  .cast-list { list-style: none; padding: 0; margin: 0 0 20px; }
+  .cast-item {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .cast-item:last-child { border-bottom: none; }
+  .cast-avatar-inline {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    vertical-align: middle;
+    margin-right: 8px;
+    opacity: 0.6;
+  }
+  .cast-name-line {
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin-bottom: 2px;
+  }
+  .cast-medium {
+    font-size: 11px;
+    color: var(--accent);
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+  .cast-quote {
+    font-size: 0.8rem;
+    font-weight: 300;
+    line-height: 1.7;
+    font-style: italic;
+    color: var(--text);
+    opacity: 0.85;
+  }
+  .cast-confession::before {
+    content: '[Confession]';
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-style: normal;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+  }
+
   /* ─── RESPONSIVE ─── */
   @media (max-width: 640px) {
     .container { padding: 0 20px; }
@@ -458,6 +511,74 @@
         <p class="layer-desc">Can design rescue doomed content? We dressed the same words in nine different aesthetics to find out.</p>
       </div>
     </div>
+  </section>
+
+  <!-- ═══ 3.5. THE VOICES ═══ -->
+  <section class="section" data-testid="section-cast">
+    <p class="label">The Voices</p>
+    <h2 class="headline">Meet the critics who score every pixel.</h2>
+
+    <p class="cast-group-title">The Panel — Expert Critics</p>
+    <ul class="cast-list">
+      <li class="cast-item">
+        <p class="cast-name-line"><img class="cast-avatar-inline" src="https://api.dicebear.com/9.x/rings/svg?seed=marketing-expert" alt="Marketing" loading="lazy" />Marketing</p>
+        <p class="cast-medium">Positioning, messaging, audience</p>
+        <p class="cast-quote">&ldquo;If your landing page could belong to any competitor, it belongs to none of them.&rdquo;</p>
+      </li>
+      <li class="cast-item">
+        <p class="cast-name-line"><img class="cast-avatar-inline" src="https://api.dicebear.com/9.x/rings/svg?seed=ux-expert" alt="UX" loading="lazy" />UX</p>
+        <p class="cast-medium">Usability, accessibility, flow</p>
+        <p class="cast-quote">&ldquo;The screaming red focus ring is impossible to miss&nbsp;&mdash; great for keyboard users.&rdquo;</p>
+      </li>
+      <li class="cast-item">
+        <p class="cast-name-line"><img class="cast-avatar-inline" src="https://api.dicebear.com/9.x/rings/svg?seed=design-expert" alt="Design" loading="lazy" />Design</p>
+        <p class="cast-medium">Visual, branding, aesthetics</p>
+        <p class="cast-quote">&ldquo;You&rsquo;re selling a visual review tool with zero visuals.&rdquo;</p>
+      </li>
+    </ul>
+
+    <p class="cast-group-title">The Crowd — Real People</p>
+    <ul class="cast-list">
+      <li class="cast-item">
+        <p class="cast-name-line"><img class="cast-avatar-inline" src="https://api.dicebear.com/9.x/rings/svg?seed=dorothy-first-timer" alt="Dorothy" loading="lazy" />Dorothy, 68</p>
+        <p class="cast-medium">Non-technical novice. Romance novels, Hallmark movies, quilting circle</p>
+        <p class="cast-quote">&ldquo;This looks like the internet forgot to get dressed this morning.&rdquo;</p>
+      </li>
+      <li class="cast-item">
+        <p class="cast-name-line"><img class="cast-avatar-inline" src="https://api.dicebear.com/9.x/rings/svg?seed=frank-retired-exec" alt="Frank" loading="lazy" />Frank, 41</p>
+        <p class="cast-medium">Frustrated, zero patience. Fantasy football, ESPN, 5-ingredient meals</p>
+        <p class="cast-quote">&ldquo;I found the price in 8 seconds and that is 7 seconds too many.&rdquo;</p>
+      </li>
+      <li class="cast-item">
+        <p class="cast-name-line"><img class="cast-avatar-inline" src="https://api.dicebear.com/9.x/rings/svg?seed=marcus-accessibility" alt="Marcus" loading="lazy" />Marcus, 34</p>
+        <p class="cast-medium">Colorblind developer. Manga reader, indie gamer, mechanical keyboards</p>
+        <p class="cast-quote">&ldquo;System-font gray on white&nbsp;&mdash; my WCAG checker yawned and crashed.&rdquo;</p>
+      </li>
+      <li class="cast-item">
+        <p class="cast-name-line"><img class="cast-avatar-inline" src="https://api.dicebear.com/9.x/rings/svg?seed=carlos-investor" alt="Carlos" loading="lazy" />Carlos, 52</p>
+        <p class="cast-medium">CEO evaluator. Business biographies, jazz vinyl, single malt whiskey</p>
+        <p class="cast-quote">&ldquo;If this is your pitch deck, your Series A is dead on arrival.&rdquo;</p>
+      </li>
+      <li class="cast-item">
+        <p class="cast-name-line"><img class="cast-avatar-inline" src="https://api.dicebear.com/9.x/rings/svg?seed=tommy-hypebeast" alt="Tommy" loading="lazy" />Tommy, 22</p>
+        <p class="cast-medium">Intern, first week. Sneaker collector, hip-hop producer, streetwear</p>
+        <p class="cast-quote">&ldquo;Unapologetic and in your face. The color confidence of a limited-edition sneaker colorway.&rdquo;</p>
+      </li>
+    </ul>
+
+    <p class="cast-group-title">The Crew — Industry Insiders</p>
+    <ul class="cast-list">
+      <li class="cast-item">
+        <p class="cast-name-line"><img class="cast-avatar-inline" src="https://api.dicebear.com/9.x/rings/svg?seed=alex-ai-operator" alt="Alex" loading="lazy" />Alex</p>
+        <p class="cast-medium">Prompt Engineer</p>
+        <p class="cast-quote cast-confession">&ldquo;I optimized for &lsquo;professional tone&rsquo; and got&hellip; this.&rdquo;</p>
+      </li>
+      <li class="cast-item">
+        <p class="cast-name-line"><img class="cast-avatar-inline" src="https://api.dicebear.com/9.x/rings/svg?seed=kai-deadline-dev" alt="Kai" loading="lazy" />Kai</p>
+        <p class="cast-medium">Junior Designer</p>
+        <p class="cast-quote cast-confession">&ldquo;The deadline was yesterday. I accepted every default. I know.&rdquo;</p>
+      </li>
+    </ul>
   </section>
 
   <!-- ═══ 4. THE PROOF ═══ -->
@@ -584,5 +705,31 @@
     sections.forEach(section => observer.observe(section));
   });
 </script>
+
+<!-- Floating Nav -->
+<style>
+  .floating-nav {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    display: flex; gap: 8px;
+  }
+  .floating-nav .fnav-btn {
+    appearance: none; border: 1px solid var(--border);
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 500;
+    padding: 10px 18px; border-radius: 0; cursor: pointer;
+    backdrop-filter: blur(12px); text-decoration: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transition: border-color 200ms ease, color 200ms ease;
+  }
+  .floating-nav .fnav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 768px) {
+    .floating-nav { bottom: 16px; right: 16px; }
+    .floating-nav .fnav-btn { font-size: 11px; padding: 8px 14px; }
+  }
+</style>
+<div class="floating-nav">
+  <a class="fnav-btn" href="preview-O5-mixed.html">&larr; Gallery</a>
+</div>
+
 </body>
 </html>

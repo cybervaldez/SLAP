@@ -570,6 +570,97 @@
     .erased-area { padding: 24px 20px; }
     .cta-button { padding: 12px 24px; }
     .doodle { display: none; }
+    .cast-crew-note { display: none; }
+  }
+
+  /* ─── CAST ─── */
+  .cast-group-heading {
+    font-family: var(--hand);
+    font-size: 1.1rem;
+    color: var(--chalk-blue);
+    margin: 32px 0 16px;
+  }
+  .cast-group-heading:first-of-type { margin-top: 0; }
+  .cast-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+  .cast-chalk-card {
+    position: relative;
+    padding: 16px 18px;
+    border: 2px dashed var(--text);
+    border-radius: 4px;
+  }
+  .cast-chalk-card--expert { border-color: var(--chalk-yellow); }
+  .cast-chalk-card--persona { border-color: var(--chalk-pink); }
+  .cast-chalk-card--crew { border-color: var(--chalk-blue); }
+  .cast-chalk-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 8px;
+    border: 2px dashed var(--text);
+    opacity: 0.85;
+  }
+  .cast-chalk-card--expert .cast-chalk-avatar { border-color: var(--chalk-yellow); }
+  .cast-chalk-card--persona .cast-chalk-avatar { border-color: var(--chalk-pink); }
+  .cast-chalk-card--crew .cast-chalk-avatar { border-color: var(--chalk-blue); }
+  .cast-chalk-name {
+    font-family: var(--hand);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .cast-chalk-card--expert .cast-chalk-name { color: var(--chalk-yellow); }
+  .cast-chalk-card--persona .cast-chalk-name { color: var(--chalk-pink); }
+  .cast-chalk-card--crew .cast-chalk-name { color: var(--chalk-blue); }
+  .cast-chalk-role {
+    font-family: var(--body);
+    font-size: 0.7rem;
+    opacity: 0.6;
+    margin-bottom: 4px;
+  }
+  .cast-chalk-hook {
+    font-family: var(--body);
+    font-size: 0.65rem;
+    font-style: italic;
+    opacity: 0.5;
+    margin-bottom: 8px;
+  }
+  .cast-bubble {
+    position: relative;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-family: var(--hand);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+  [data-theme="light"] .cast-bubble { background: rgba(0, 0, 0, 0.04); }
+  .cast-bubble::before {
+    content: '';
+    position: absolute;
+    top: -8px; left: 20px;
+    width: 0; height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid rgba(255, 255, 255, 0.06);
+  }
+  [data-theme="light"] .cast-bubble::before { border-bottom-color: rgba(0, 0, 0, 0.04); }
+  .cast-crew-note {
+    position: absolute;
+    right: -70px; top: 50%;
+    transform: translateY(-50%) rotate(-3deg);
+    font-family: var(--hand);
+    font-size: 0.65rem;
+    color: var(--chalk-orange);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+  @media (max-width: 600px) {
+    .cast-cards { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -674,6 +765,106 @@
       </div>
     </div>
     <div class="doodle" style="right:0; top:-10px; font-size:20px; transform:rotate(20deg);" aria-hidden="true">&#128161;</div>
+  </section>
+
+  <!-- ──────────────── SECTION 3.5: THE CRITICS ──────────────── -->
+  <section class="section" data-testid="section-cast">
+    <div class="annotated">
+      <div>
+        <div class="chalk-heading yellow">Meet the Voices</div>
+        <p class="chalk-body" style="margin-bottom:8px;">
+          Three panels. Three perspectives. <span class="circled">They score every pixel.</span>
+        </p>
+
+        <div class="cast-group-heading">The Panel <span style="opacity:.5;">&mdash; expert critics</span></div>
+        <div class="cast-cards">
+          <div class="cast-chalk-card cast-chalk-card--expert">
+            <img class="cast-chalk-avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=marketing-expert" alt="Marketing" loading="lazy" />
+            <div class="cast-chalk-name">Marketing</div>
+            <div class="cast-chalk-role">Positioning &amp; Messaging</div>
+            <div class="cast-bubble">&ldquo;If your landing page could belong to any competitor, it belongs to none of them.&rdquo;</div>
+          </div>
+          <div class="cast-chalk-card cast-chalk-card--expert">
+            <img class="cast-chalk-avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=ux-expert" alt="UX" loading="lazy" />
+            <div class="cast-chalk-name">UX</div>
+            <div class="cast-chalk-role">Usability &amp; Accessibility</div>
+            <div class="cast-bubble">&ldquo;The screaming red focus ring is impossible to miss&nbsp;&mdash; great for keyboard users.&rdquo;</div>
+          </div>
+          <div class="cast-chalk-card cast-chalk-card--expert">
+            <img class="cast-chalk-avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=design-expert" alt="Design" loading="lazy" />
+            <div class="cast-chalk-name">Design</div>
+            <div class="cast-chalk-role">Visual &amp; Branding</div>
+            <div class="cast-bubble">&ldquo;You&rsquo;re selling a visual review tool with zero visuals.&rdquo;</div>
+          </div>
+        </div>
+
+        <div class="cast-group-heading">The Crowd <span style="opacity:.5;">&mdash; real people</span></div>
+        <div class="cast-cards">
+          <div class="cast-chalk-card cast-chalk-card--persona">
+            <img class="cast-chalk-avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=dorothy-first-timer" alt="Dorothy" loading="lazy" />
+            <div class="cast-chalk-name">Dorothy, 68</div>
+            <div class="cast-chalk-role">Non-technical novice</div>
+            <div class="cast-chalk-hook">Romance novels, Hallmark movies, quilting circle</div>
+            <div class="cast-bubble">&ldquo;This looks like the internet forgot to get dressed this morning.&rdquo;</div>
+          </div>
+          <div class="cast-chalk-card cast-chalk-card--persona">
+            <img class="cast-chalk-avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=frank-retired-exec" alt="Frank" loading="lazy" />
+            <div class="cast-chalk-name">Frank, 41</div>
+            <div class="cast-chalk-role">Frustrated, zero patience</div>
+            <div class="cast-chalk-hook">Fantasy football, ESPN, 5-ingredient meals</div>
+            <div class="cast-bubble">&ldquo;I found the price in 8 seconds and that is 7 seconds too many.&rdquo;</div>
+          </div>
+          <div class="cast-chalk-card cast-chalk-card--persona">
+            <img class="cast-chalk-avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=marcus-accessibility" alt="Marcus" loading="lazy" />
+            <div class="cast-chalk-name">Marcus, 34</div>
+            <div class="cast-chalk-role">Colorblind developer</div>
+            <div class="cast-chalk-hook">Manga reader, indie gamer, mechanical keyboards</div>
+            <div class="cast-bubble">&ldquo;System-font gray on white&nbsp;&mdash; my WCAG checker yawned and crashed.&rdquo;</div>
+          </div>
+          <div class="cast-chalk-card cast-chalk-card--persona">
+            <img class="cast-chalk-avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=carlos-investor" alt="Carlos" loading="lazy" />
+            <div class="cast-chalk-name">Carlos, 52</div>
+            <div class="cast-chalk-role">CEO evaluator</div>
+            <div class="cast-chalk-hook">Business biographies, jazz vinyl, single malt whiskey</div>
+            <div class="cast-bubble">&ldquo;If this is your pitch deck, your Series A is dead on arrival.&rdquo;</div>
+          </div>
+          <div class="cast-chalk-card cast-chalk-card--persona">
+            <img class="cast-chalk-avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=tommy-hypebeast" alt="Tommy" loading="lazy" />
+            <div class="cast-chalk-name">Tommy, 22</div>
+            <div class="cast-chalk-role">Intern, first week</div>
+            <div class="cast-chalk-hook">Sneaker collector, hip-hop, streetwear</div>
+            <div class="cast-bubble">&ldquo;Unapologetic and in your face. The color confidence of a limited-edition sneaker colorway.&rdquo;</div>
+          </div>
+        </div>
+
+        <div class="cast-group-heading">The Crew <span style="opacity:.5;">&mdash; industry insiders</span></div>
+        <div class="cast-cards">
+          <div class="cast-chalk-card cast-chalk-card--crew" style="overflow:visible;">
+            <img class="cast-chalk-avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=alex-ai-operator" alt="Alex" loading="lazy" />
+            <div class="cast-chalk-name">Alex</div>
+            <div class="cast-chalk-role">Prompt Engineer</div>
+            <div class="cast-bubble">&ldquo;I optimized for &lsquo;professional tone&rsquo; and got&hellip; this.&rdquo;
+              <span class="cast-crew-note">&larr; confession</span>
+            </div>
+          </div>
+          <div class="cast-chalk-card cast-chalk-card--crew" style="overflow:visible;">
+            <img class="cast-chalk-avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=kai-deadline-dev" alt="Kai" loading="lazy" />
+            <div class="cast-chalk-name">Kai</div>
+            <div class="cast-chalk-role">Junior Designer</div>
+            <div class="cast-bubble">&ldquo;The deadline was yesterday. I accepted every default. I know.&rdquo;
+              <span class="cast-crew-note">&larr; confession</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="annotation">
+        <span class="arrow-left" style="color:var(--chalk-pink);">these are the people<br>who score your design</span>
+        <br><br>
+        <span style="font-size:20px;" aria-hidden="true">&#128483;</span>
+      </div>
+    </div>
+    <div class="doodle" style="right:10px; top:20px; font-size:18px; transform:rotate(-10deg);" aria-hidden="true">&#9733;</div>
   </section>
 
   <!-- ──────────────── SECTION 4: THE PROOF ──────────────── -->
@@ -874,5 +1065,31 @@
     observer.observe(section);
   });
 </script>
+
+<!-- Floating Nav -->
+<style>
+  .floating-nav {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    display: flex; gap: 8px;
+  }
+  .floating-nav .fnav-btn {
+    appearance: none; border: 2px dashed rgba(245,240,232,0.3);
+    background: var(--bg); color: var(--text);
+    font-family: var(--hand); font-size: 14px; font-weight: 400;
+    padding: 10px 18px; border-radius: 4px; cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transition: border-color 200ms ease, color 200ms ease;
+  }
+  .floating-nav .fnav-btn:hover { border-color: var(--chalk-yellow); color: var(--chalk-yellow); }
+  @media (max-width: 768px) {
+    .floating-nav { bottom: 16px; right: 16px; }
+    .floating-nav .fnav-btn { font-size: 12px; padding: 8px 14px; }
+  }
+</style>
+<div class="floating-nav">
+  <a class="fnav-btn" href="preview-O5-mixed.html">&larr; Gallery</a>
+</div>
+
 </body>
 </html>

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { navigate } from '../router';
 import VariationPills from './VariationPills';
 import type { VariationDef } from '../types';
@@ -24,6 +24,8 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     letterSpacing: '0.05em',
     flexShrink: 0,
+    textDecoration: 'none',
+    display: 'inline-block',
   },
   title: {
     fontSize: '0.75rem',
@@ -40,6 +42,7 @@ interface RetroNavBarProps {
   activeVariation?: string;
   onVariationChange?: (id: string) => void;
   accent?: string;
+  backLens?: string | null;
 }
 
 export default function RetroNavBar({
@@ -48,12 +51,22 @@ export default function RetroNavBar({
   activeVariation,
   onVariationChange,
   accent,
+  backLens,
 }: RetroNavBarProps) {
+  const handleBack = () => {
+    if (backLens) {
+      sessionStorage.setItem('scrollToArchetypes', 'true');
+      navigate(backLens);
+    } else {
+      navigate();
+    }
+  };
+
   return (
     <nav style={styles.bar} data-testid="retro-nav-bar">
       <button
         style={styles.backBtn}
-        onClick={() => navigate('/')}
+        onClick={handleBack}
         data-testid="back-to-gallery"
         onMouseEnter={e => {
           (e.target as HTMLButtonElement).style.background = '#FFD000';

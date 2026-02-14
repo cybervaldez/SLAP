@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Card Enter/Exit Transition Variations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,900&family=Patrick+Hand&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0a0a0a; color: #fafafa;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══ CONTROLS ═══ */
+.controls {
+  position: sticky; top: 0; z-index: 1000;
+  background: #1A1A2E; padding: 12px 24px;
+  display: flex; gap: 16px; align-items: center;
+  flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.controls label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #B0B0CC; }
+.pill-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill-btn {
+  font-family: 'Courier New', monospace; font-size: 11px; font-weight: 600;
+  padding: 4px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #F5F0E1;
+  transition: all 0.15s;
+}
+.pill-btn.active { background: #FFD000; color: #1A1A2E; border-color: #FFD000; }
+.pill-btn:hover:not(.active) { border-color: #FFD000; }
+.replay-btn {
+  font-family: 'Courier New', monospace; font-size: 11px; font-weight: 700;
+  padding: 4px 16px; border-radius: 999px; cursor: pointer;
+  border: 2px solid #4ECDC4; background: transparent; color: #4ECDC4;
+  transition: all 0.15s; margin-left: auto;
+}
+.replay-btn:hover { background: #4ECDC4; color: #1A1A2E; }
+
+/* ═══ LENS THEMES ═══ */
+[data-lens="editorial"] {
+  --bg: #faf8f4; --text: #1a1a1a; --text-dim: rgba(26,26,26,0.45);
+  --accent: #e85d75; --accent2: #c8a960; --card-bg: #ffffff;
+  --border: rgba(26,26,26,0.12); --font-h: 'Playfair Display', Georgia, serif;
+  --font-b: 'Inter', sans-serif; --hw: 900; --hs: italic; --bw: 400;
+  --radius: 0; --shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+[data-lens="brutalist"] {
+  --bg: #ffffff; --text: #000000; --text-dim: rgba(0,0,0,0.5);
+  --accent: #ff0000; --accent2: #ff0000; --card-bg: #ffffff;
+  --border: #000000; --font-h: system-ui, -apple-system, sans-serif;
+  --font-b: system-ui, sans-serif; --hw: 900; --hs: normal; --bw: 400;
+  --radius: 0; --shadow: none;
+}
+[data-lens="minimal"] {
+  --bg: #fafafa; --text: #1a1a1a; --text-dim: #888888;
+  --accent: #888888; --accent2: #aaaaaa; --card-bg: #ffffff;
+  --border: #dddddd; --font-h: 'Inter', sans-serif;
+  --font-b: 'Inter', sans-serif; --hw: 300; --hs: normal; --bw: 300;
+  --radius: 0; --shadow: none;
+}
+[data-lens="chalkboard"] {
+  --bg: #2d4a3e; --text: #e8dcc8; --text-dim: rgba(232,220,200,0.5);
+  --accent: #ffd93d; --accent2: #ff6b9d; --card-bg: rgba(255,255,255,0.05);
+  --border: rgba(232,220,200,0.25); --font-h: 'Patrick Hand', cursive;
+  --font-b: 'Nunito', sans-serif; --hw: 400; --hs: normal; --bw: 400;
+  --radius: 6px; --shadow: none;
+}
+[data-lens="neutral"] {
+  --bg: #0a0a0a; --text: #fafafa; --text-dim: rgba(250,250,250,0.55);
+  --accent: #ffd700; --accent2: #e6c200; --card-bg: #141414;
+  --border: rgba(255,255,255,0.1); --font-h: 'Inter', sans-serif;
+  --font-b: 'Inter', sans-serif; --hw: 700; --hs: normal; --bw: 400;
+  --radius: 6px; --shadow: 0 2px 16px rgba(0,0,0,0.4);
+}
+
+/* ═══ GALLERY WRAPPER ═══ */
+.gallery-page {
+  background: var(--bg); color: var(--text);
+  min-height: 70vh; padding: 48px 32px;
+  transition: background 0.4s, color 0.4s;
+}
+.gallery-page h2 {
+  font-family: var(--font-h); font-weight: var(--hw); font-style: var(--hs);
+  font-size: clamp(1.4rem, 3vw, 2rem); margin-bottom: 8px;
+}
+.gallery-page .subtitle {
+  font-family: var(--font-b); font-weight: var(--bw);
+  font-size: 0.85rem; color: var(--text-dim); margin-bottom: 32px;
+}
+.section-divider {
+  border: none; border-top: 2px dashed rgba(255,255,255,0.15);
+  margin: 60px 0;
+}
+.layout-label {
+  font-family: 'Courier New', monospace; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: 24px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ═══ GRID ═══ */
+.card-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+/* ═══ CARD BASE ═══ */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px 24px;
+  display: flex; flex-direction: column; gap: 10px;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: transform 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              box-shadow 300ms ease, border-color 300ms ease;
+}
+.card__icon { font-size: 1.6rem; }
+.card__name {
+  font-family: var(--font-h); font-weight: var(--hw);
+  font-size: 1.1rem;
+}
+.card__desc {
+  font-family: var(--font-b); font-weight: var(--bw);
+  font-size: 0.8rem; color: var(--text-dim); line-height: 1.5;
+}
+.card__cta {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--accent);
+  margin-top: auto; padding-top: 8px;
+  opacity: 0; transform: translateY(8px);
+  transition: opacity 0.2s, transform 0.2s;
+}
+.card:hover .card__cta { opacity: 1; transform: translateY(0); }
+.card__accent {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent); transform: scaleX(0);
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: left;
+}
+.card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(0,0,0,0.15); border-color: var(--accent); }
+.card:hover .card__accent { transform: scaleX(1); }
+
+/* ═══ EDITORIAL-SPECIFIC ═══ */
+[data-lens="editorial"] .card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+  background: var(--accent); opacity: 0; transition: opacity 0.3s;
+}
+[data-lens="editorial"] .card:hover::before { opacity: 1; }
+
+/* ═══ BRUTALIST-SPECIFIC ═══ */
+[data-lens="brutalist"] .card { border-width: 3px; border-color: #000; }
+[data-lens="brutalist"] .card__name { text-transform: uppercase; letter-spacing: -0.02em; }
+
+/* ═══ CHALKBOARD-SPECIFIC ═══ */
+[data-lens="chalkboard"] .card::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px; opacity: 0.08; pointer-events: none;
+  mix-blend-mode: overlay; border-radius: var(--radius);
+}
+[data-lens="chalkboard"] .card { border-style: dashed; }
+
+/* ═══ NEUTRAL-SPECIFIC ═══ */
+[data-lens="neutral"] .card__icon {
+  padding: 4px; border: 1px solid rgba(255,215,0,0.2); border-radius: 4px;
+  display: inline-block;
+}
+
+/* ═══ MINIMAL-SPECIFIC ═══ */
+[data-lens="minimal"] .card { border-color: transparent; }
+[data-lens="minimal"] .card:hover { border-color: #ddd; }
+[data-lens="minimal"] .card__name { letter-spacing: 0.02em; }
+
+/* ═══════════════════════════════════════════════════════════
+   TRANSITION A: FADE-UP STAGGER
+   Cards fade in from below with progressive delay
+   ═══════════════════════════════════════════════════════════ */
+@keyframes fadeUpIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUpOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-30px); }
+}
+[data-transition="fade-up"] .card {
+  opacity: 0; transform: translateY(40px);
+}
+[data-transition="fade-up"].entering .card {
+  animation: fadeUpIn 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+[data-transition="fade-up"].exiting .card {
+  animation: fadeUpOut 400ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TRANSITION B: SCALE-IN (pop)
+   Cards scale from 0 to 1 with elastic bounce
+   ═══════════════════════════════════════════════════════════ */
+@keyframes scaleIn {
+  0%   { opacity: 0; transform: scale(0.3); }
+  60%  { opacity: 1; transform: scale(1.06); }
+  80%  { transform: scale(0.97); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes scaleOut {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.5); }
+}
+[data-transition="scale-in"] .card {
+  opacity: 0; transform: scale(0.3);
+}
+[data-transition="scale-in"].entering .card {
+  animation: scaleIn 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+[data-transition="scale-in"].exiting .card {
+  animation: scaleOut 350ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TRANSITION C: SLIDE-FROM-EDGES
+   Odd cards from left, even cards from right
+   ═══════════════════════════════════════════════════════════ */
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-80px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(80px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideOutLeft {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-60px); }
+}
+@keyframes slideOutRight {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(60px); }
+}
+[data-transition="slide-edges"] .card {
+  opacity: 0;
+}
+[data-transition="slide-edges"] .card:nth-child(odd) { transform: translateX(-80px); }
+[data-transition="slide-edges"] .card:nth-child(even) { transform: translateX(80px); }
+[data-transition="slide-edges"].entering .card:nth-child(odd) {
+  animation: slideFromLeft 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+[data-transition="slide-edges"].entering .card:nth-child(even) {
+  animation: slideFromRight 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+[data-transition="slide-edges"].exiting .card:nth-child(odd) {
+  animation: slideOutLeft 400ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+[data-transition="slide-edges"].exiting .card:nth-child(even) {
+  animation: slideOutRight 400ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TRANSITION D: FLIP-IN
+   Cards rotate in on Y-axis (3D flip)
+   ═══════════════════════════════════════════════════════════ */
+@keyframes flipIn {
+  from { opacity: 0; transform: perspective(800px) rotateY(-90deg); }
+  to   { opacity: 1; transform: perspective(800px) rotateY(0deg); }
+}
+@keyframes flipOut {
+  from { opacity: 1; transform: perspective(800px) rotateY(0deg); }
+  to   { opacity: 0; transform: perspective(800px) rotateY(90deg); }
+}
+[data-transition="flip-in"] .card {
+  opacity: 0; transform: perspective(800px) rotateY(-90deg);
+  transform-origin: left center;
+}
+[data-transition="flip-in"].entering .card {
+  animation: flipIn 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  transform-origin: left center;
+}
+[data-transition="flip-in"].exiting .card {
+  animation: flipOut 450ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  transform-origin: right center;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TRANSITION E: CASCADE WATERFALL
+   Cards cascade diagonally — top-left to bottom-right
+   ═══════════════════════════════════════════════════════════ */
+@keyframes cascadeIn {
+  from { opacity: 0; transform: translate(-30px, -30px) scale(0.85); }
+  to   { opacity: 1; transform: translate(0, 0) scale(1); }
+}
+@keyframes cascadeOut {
+  from { opacity: 1; transform: translate(0, 0) scale(1); }
+  to   { opacity: 0; transform: translate(30px, 30px) scale(0.85); }
+}
+[data-transition="cascade"] .card {
+  opacity: 0; transform: translate(-30px, -30px) scale(0.85);
+}
+[data-transition="cascade"].entering .card {
+  animation: cascadeIn 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+[data-transition="cascade"].exiting .card {
+  animation: cascadeOut 400ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TRANSITION F: CURTAIN-DROP
+   Cards drop from above like a curtain, with slight rotation
+   ═══════════════════════════════════════════════════════════ */
+@keyframes curtainDrop {
+  0%   { opacity: 0; transform: translateY(-60px) rotateX(15deg); }
+  70%  { opacity: 1; transform: translateY(4px) rotateX(-2deg); }
+  100% { opacity: 1; transform: translateY(0) rotateX(0deg); }
+}
+@keyframes curtainRise {
+  from { opacity: 1; transform: translateY(0) rotateX(0deg); }
+  to   { opacity: 0; transform: translateY(-50px) rotateX(10deg); }
+}
+[data-transition="curtain-drop"] .card {
+  opacity: 0; transform: translateY(-60px) rotateX(15deg);
+  transform-origin: top center;
+}
+[data-transition="curtain-drop"].entering .card {
+  animation: curtainDrop 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: top center;
+}
+[data-transition="curtain-drop"].exiting .card {
+  animation: curtainRise 400ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  transform-origin: top center;
+}
+
+/* ═══ STAGGER DELAYS ═══ */
+.card:nth-child(1) { --delay: 0ms; }
+.card:nth-child(2) { --delay: 80ms; }
+.card:nth-child(3) { --delay: 160ms; }
+.card:nth-child(4) { --delay: 240ms; }
+.card:nth-child(5) { --delay: 320ms; }
+.card:nth-child(6) { --delay: 400ms; }
+.card:nth-child(7) { --delay: 480ms; }
+.card:nth-child(8) { --delay: 560ms; }
+.entering .card { animation-delay: var(--delay) !important; }
+.exiting .card:nth-child(1) { animation-delay: 0ms !important; }
+.exiting .card:nth-child(2) { animation-delay: 50ms !important; }
+.exiting .card:nth-child(3) { animation-delay: 100ms !important; }
+.exiting .card:nth-child(4) { animation-delay: 150ms !important; }
+.exiting .card:nth-child(5) { animation-delay: 200ms !important; }
+.exiting .card:nth-child(6) { animation-delay: 250ms !important; }
+.exiting .card:nth-child(7) { animation-delay: 300ms !important; }
+.exiting .card:nth-child(8) { animation-delay: 350ms !important; }
+
+/* ═══ AT-A-GLANCE GRID ═══ */
+.glance-section {
+  padding: 48px 32px;
+}
+.glance-section h2 {
+  font-family: 'Courier New', monospace; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase; color: #FFD000;
+  margin-bottom: 24px; text-align: center;
+}
+.glance-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px; max-width: 1200px; margin: 0 auto;
+}
+.glance-cell {
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+  padding: 20px; background: rgba(255,255,255,0.02);
+  cursor: pointer; transition: border-color 0.2s;
+}
+.glance-cell:hover { border-color: rgba(255,215,0,0.3); }
+.glance-cell-label {
+  font-family: 'Courier New', monospace; font-size: 10px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: #B0B0CC;
+  margin-bottom: 12px; display: flex; justify-content: space-between;
+}
+.glance-cell-label span { color: #4ECDC4; cursor: pointer; }
+.glance-mini-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+.glance-mini-card {
+  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 4px; padding: 16px 10px; text-align: center;
+  font-size: 10px; color: #B0B0CC;
+  /* initial hidden state — animated by JS */
+  opacity: 0;
+}
+
+/* ═══ STATUS INDICATOR ═══ */
+.status-bar {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #1A1A2E; color: #F5F0E1; padding: 8px 20px;
+  border-radius: 999px; font-family: 'Courier New', monospace;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 100;
+  opacity: 0; transition: opacity 0.3s;
+  pointer-events: none;
+}
+.status-bar.visible { opacity: 1; }
+
+@media (max-width: 768px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .gallery-page { padding: 32px 16px; }
+  .glance-grid { grid-template-columns: 1fr; }
+  .glance-mini-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <div>
+    <label>Lens</label>
+    <div class="pill-group" id="lens-pills">
+      <button class="pill-btn active" data-val="editorial">Editorial</button>
+      <button class="pill-btn" data-val="brutalist">Brutalist</button>
+      <button class="pill-btn" data-val="minimal">Minimal</button>
+      <button class="pill-btn" data-val="chalkboard">Chalkboard</button>
+      <button class="pill-btn" data-val="neutral">Neutral</button>
+    </div>
+  </div>
+  <div>
+    <label>Transition</label>
+    <div class="pill-group" id="transition-pills">
+      <button class="pill-btn active" data-val="fade-up">Fade Up</button>
+      <button class="pill-btn" data-val="scale-in">Scale In</button>
+      <button class="pill-btn" data-val="slide-edges">Slide Edges</button>
+      <button class="pill-btn" data-val="flip-in">Flip In</button>
+      <button class="pill-btn" data-val="cascade">Cascade</button>
+      <button class="pill-btn" data-val="curtain-drop">Curtain Drop</button>
+    </div>
+  </div>
+  <button class="replay-btn" id="replay-btn">&#x21bb; Replay</button>
+</div>
+
+<!-- ═══ MAIN GALLERY (single section, transition-driven) ═══ -->
+<div id="gallery" data-lens="editorial" data-transition="fade-up">
+  <div class="gallery-page">
+    <div class="layout-label" id="active-label">Transition A &mdash; Fade-Up Stagger</div>
+    <h2>Same slop. Eight canvases.</h2>
+    <div class="subtitle">Click Replay or switch transition to see enter/exit animations with stagger delays.</div>
+
+    <div class="card-grid" id="card-grid">
+      <div class="card">
+        <span class="card__icon">&#x1F4F0;</span>
+        <span class="card__name">Landing Page</span>
+        <span class="card__desc">Hero + benefits + social proof + CTA. The conversion funnel classic.</span>
+        <span class="card__cta">Explore &rarr;</span>
+        <span class="card__accent"></span>
+      </div>
+      <div class="card">
+        <span class="card__icon">&#x1F4DD;</span>
+        <span class="card__name">Text-Heavy</span>
+        <span class="card__desc">Long-form content, articles, documentation. Typography-first layout.</span>
+        <span class="card__cta">Explore &rarr;</span>
+        <span class="card__accent"></span>
+      </div>
+      <div class="card">
+        <span class="card__icon">&#x1F6D2;</span>
+        <span class="card__desc">Product listings, cart flow, category grids. Commerce patterns.</span>
+        <span class="card__name">E-Commerce</span>
+        <span class="card__cta">Explore &rarr;</span>
+        <span class="card__accent"></span>
+      </div>
+      <div class="card">
+        <span class="card__icon">&#x1F3A8;</span>
+        <span class="card__name">Portfolio</span>
+        <span class="card__desc">Visual showcase, image grids, project case studies. Gallery-first.</span>
+        <span class="card__cta">Explore &rarr;</span>
+        <span class="card__accent"></span>
+      </div>
+      <div class="card">
+        <span class="card__icon">&#x1F4CA;</span>
+        <span class="card__name">Dashboard</span>
+        <span class="card__desc">Metrics, charts, data tables. Information density with hierarchy.</span>
+        <span class="card__cta">Explore &rarr;</span>
+        <span class="card__accent"></span>
+      </div>
+      <div class="card">
+        <span class="card__icon">&#x1F4AC;</span>
+        <span class="card__name">SaaS</span>
+        <span class="card__desc">Feature sections, pricing tiers, testimonials. B2B persuasion.</span>
+        <span class="card__cta">Explore &rarr;</span>
+        <span class="card__accent"></span>
+      </div>
+      <div class="card">
+        <span class="card__icon">&#x1F3AD;</span>
+        <span class="card__name">Blog</span>
+        <span class="card__desc">Post lists, tags, author bios, reading estimates. Content hub.</span>
+        <span class="card__cta">Explore &rarr;</span>
+        <span class="card__accent"></span>
+      </div>
+      <div class="card">
+        <span class="card__icon">&#x1F4F1;</span>
+        <span class="card__name">App Shell</span>
+        <span class="card__desc">Sidebar nav, tabs, panels, action bars. Functional layout.</span>
+        <span class="card__cta">Explore &rarr;</span>
+        <span class="card__accent"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- ═══ AT-A-GLANCE: ALL SIX SIDE BY SIDE ═══ -->
+<div class="glance-section">
+  <h2>All six at a glance</h2>
+  <div class="glance-grid" id="glance-grid">
+    <!-- Filled by JS -->
+  </div>
+</div>
+
+<div class="status-bar" id="status-bar"></div>
+
+<script>
+(function() {
+  const TRANSITIONS = [
+    { id: 'fade-up', label: 'Transition A — Fade-Up Stagger', desc: 'Cards rise from below with progressive delay' },
+    { id: 'scale-in', label: 'Transition B — Scale-In (Pop)', desc: 'Cards pop in from small with elastic bounce' },
+    { id: 'slide-edges', label: 'Transition C — Slide-From-Edges', desc: 'Odd cards from left, even from right' },
+    { id: 'flip-in', label: 'Transition D — Flip-In (3D)', desc: 'Cards flip in on Y-axis with perspective' },
+    { id: 'cascade', label: 'Transition E — Cascade Waterfall', desc: 'Cards cascade diagonally, top-left to bottom-right' },
+    { id: 'curtain-drop', label: 'Transition F — Curtain Drop', desc: 'Cards drop from above with slight rotation bounce' },
+  ];
+
+  const gallery = document.getElementById('gallery');
+  const cardGrid = document.getElementById('card-grid');
+  const activeLabel = document.getElementById('active-label');
+  const statusBar = document.getElementById('status-bar');
+  let currentTransition = 'fade-up';
+  let currentLens = 'editorial';
+  let animating = false;
+
+  // ─── Pill Controls ───
+  function setupPills(containerId, attr, callback) {
+    const container = document.getElementById(containerId);
+    container.addEventListener('click', e => {
+      const btn = e.target.closest('.pill-btn');
+      if (!btn) return;
+      container.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      callback(btn.dataset.val);
+    });
+  }
+
+  setupPills('lens-pills', 'data-lens', val => {
+    currentLens = val;
+    gallery.setAttribute('data-lens', val);
+  });
+
+  setupPills('transition-pills', 'data-transition', val => {
+    if (animating) return;
+    switchTransition(val);
+  });
+
+  document.getElementById('replay-btn').addEventListener('click', () => {
+    if (animating) return;
+    replayEnter();
+  });
+
+  // ─── Transition Switching ───
+  function switchTransition(newTransition) {
+    if (animating) return;
+    animating = true;
+
+    const info = TRANSITIONS.find(t => t.id === newTransition);
+    activeLabel.textContent = info ? info.label : newTransition;
+
+    // Exit current
+    gallery.classList.remove('entering');
+    gallery.classList.add('exiting');
+    showStatus('Exiting...');
+
+    const exitDuration = 400 + (8 * 50) + 100; // base + stagger + buffer
+    setTimeout(() => {
+      // Switch transition type
+      gallery.setAttribute('data-transition', newTransition);
+      currentTransition = newTransition;
+      gallery.classList.remove('exiting');
+
+      // Brief pause
+      setTimeout(() => {
+        // Enter new
+        gallery.classList.add('entering');
+        showStatus('Entering...');
+
+        const enterDuration = 700 + (8 * 80) + 100;
+        setTimeout(() => {
+          animating = false;
+          showStatus(info ? info.desc : '');
+          setTimeout(() => hideStatus(), 2000);
+        }, enterDuration);
+      }, 150);
+    }, exitDuration);
+  }
+
+  function replayEnter() {
+    if (animating) return;
+    animating = true;
+
+    const info = TRANSITIONS.find(t => t.id === currentTransition);
+
+    // Exit first
+    gallery.classList.remove('entering');
+    gallery.classList.add('exiting');
+    showStatus('Exiting...');
+
+    const exitDuration = 400 + (8 * 50) + 100;
+    setTimeout(() => {
+      gallery.classList.remove('exiting');
+
+      setTimeout(() => {
+        gallery.classList.add('entering');
+        showStatus('Entering...');
+
+        const enterDuration = 700 + (8 * 80) + 100;
+        setTimeout(() => {
+          animating = false;
+          showStatus(info ? info.desc : '');
+          setTimeout(() => hideStatus(), 2000);
+        }, enterDuration);
+      }, 200);
+    }, exitDuration);
+  }
+
+  // ─── Status Bar ───
+  function showStatus(msg) {
+    statusBar.textContent = msg;
+    statusBar.classList.add('visible');
+  }
+  function hideStatus() {
+    statusBar.classList.remove('visible');
+  }
+
+  // ─── Initial Enter ───
+  setTimeout(() => {
+    gallery.classList.add('entering');
+    showStatus('Cards rising from below with progressive delay');
+    setTimeout(() => hideStatus(), 3000);
+  }, 300);
+
+  // ─── At-A-Glance Grid ───
+  const glanceGrid = document.getElementById('glance-grid');
+
+  TRANSITIONS.forEach(t => {
+    const cell = document.createElement('div');
+    cell.className = 'glance-cell';
+
+    const label = document.createElement('div');
+    label.className = 'glance-cell-label';
+    label.innerHTML = `${t.label.split('—')[0].trim()} — ${t.id} <span class="glance-replay" data-id="${t.id}">&#x21bb; Replay</span>`;
+    cell.appendChild(label);
+
+    const miniGrid = document.createElement('div');
+    miniGrid.className = 'glance-mini-grid';
+    miniGrid.dataset.transition = t.id;
+
+    for (let i = 0; i < 8; i++) {
+      const miniCard = document.createElement('div');
+      miniCard.className = 'glance-mini-card';
+      miniCard.textContent = ['LP', 'TXT', 'EC', 'PF', 'DB', 'SS', 'BG', 'AP'][i];
+      miniGrid.appendChild(miniCard);
+    }
+    cell.appendChild(miniGrid);
+    glanceGrid.appendChild(cell);
+  });
+
+  // ─── Glance Animations ───
+  function animateGlanceMini(grid, transitionId) {
+    const cards = grid.querySelectorAll('.glance-mini-card');
+    // Reset
+    cards.forEach(c => {
+      c.style.opacity = '0';
+      c.style.transform = getInitialTransform(transitionId, Array.from(cards).indexOf(c));
+      c.style.transition = 'none';
+    });
+
+    // Animate in with stagger
+    requestAnimationFrame(() => {
+      cards.forEach((c, i) => {
+        setTimeout(() => {
+          c.style.transition = `opacity 500ms cubic-bezier(0.22, 1, 0.36, 1), transform 500ms cubic-bezier(0.22, 1, 0.36, 1)`;
+          c.style.opacity = '1';
+          c.style.transform = 'translate(0, 0) scale(1) rotate(0deg)';
+        }, i * 80);
+      });
+    });
+  }
+
+  function getInitialTransform(transitionId, index) {
+    switch (transitionId) {
+      case 'fade-up': return 'translateY(20px)';
+      case 'scale-in': return 'scale(0.3)';
+      case 'slide-edges': return index % 2 === 0 ? 'translateX(-30px)' : 'translateX(30px)';
+      case 'flip-in': return 'perspective(400px) rotateY(-60deg)';
+      case 'cascade': return 'translate(-15px, -15px) scale(0.85)';
+      case 'curtain-drop': return 'translateY(-30px) rotateX(10deg)';
+      default: return 'translateY(20px)';
+    }
+  }
+
+  // Initial glance animations with observer
+  const glanceObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const grid = entry.target.querySelector('.glance-mini-grid');
+        if (grid) {
+          animateGlanceMini(grid, grid.dataset.transition);
+        }
+        glanceObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.glance-cell').forEach(cell => {
+    glanceObserver.observe(cell);
+  });
+
+  // Glance replay buttons
+  glanceGrid.addEventListener('click', e => {
+    const replayBtn = e.target.closest('.glance-replay');
+    if (!replayBtn) return;
+    const id = replayBtn.dataset.id;
+    const cell = replayBtn.closest('.glance-cell');
+    const grid = cell.querySelector('.glance-mini-grid');
+    animateGlanceMini(grid, id);
+  });
+})();
+</script>
+
+</body>
+</html>

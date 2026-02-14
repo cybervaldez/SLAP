@@ -1,13 +1,16 @@
+import type React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { useRoute } from './hooks/useRoute';
 import { navigate } from './router';
-import { archetypes, getArchetype } from './archetypes';
-import GalleryHub from './components/GalleryHub';
+import { getArchetype } from './archetypes';
+import Homepage from './components/Homepage';
 import DemoShell from './components/DemoShell';
+import WipeTransition from './components/WipeTransition';
 import DockBar from './components/DockBar';
 import type { BubbleData } from './components/DockBar';
 import UIReviewOverlay from './components/UIReviewOverlay';
 import SectionHighlightOverlay from './components/SectionHighlightOverlay';
+
 import { getAllPersonaFindings } from './data/personaFindings';
 import { getAllExpertFindings, getReviewBundle } from './data/expertFindings';
 import type { DockMode, OverlayView } from './types';
@@ -32,11 +35,15 @@ const PERSONA_COLORS: Record<string, { bg: string; text: string }> = {
 
 export default function App() {
   const route = useRoute();
-  const archetype = route.slug ? getArchetype(route.slug) : null;
-  const view = archetype ? route.slug! : 'gallery';
+
+  // 2-screen routing:
+  // Screen 1: Homepage (columns or scrollytelling) — lens only, no slug
+  // Screen 2: Archetype page — lens + slug
+  const archetype = route.lens && route.slug ? getArchetype(route.slug) : null;
+  const activeLens = route.lens;
+  const view = archetype ? route.slug! : activeLens ? 'scrollytelling' : 'home';
   const defaultVariation = archetype?.variations?.[0]?.id ?? 'slap';
 
-  // Derive variation from URL, falling back to the first defined variation
   const resolvedVariation = (() => {
     if (!route.variation) return defaultVariation;
     const valid = archetype?.variations?.some(v => v.id === route.variation);
@@ -44,39 +51,54 @@ export default function App() {
   })();
 
   const [activeVariation, setActiveVariation] = useState(resolvedVariation);
+  const [showTopBar, setShowTopBar] = useState(false);
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [dockMode, setDockMode] = useState<DockMode | null>(null);
   const [overlayView, setOverlayView] = useState<OverlayView>('team');
   const [soloId, setSoloId] = useState<string | null>(null);
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
 
-  // Sync variation from URL (handles back/forward navigation)
+  // Reset UI state when navigating to a different archetype
   useEffect(() => {
-    setActiveVariation(resolvedVariation);
+    setShowTopBar(false);
     setIsOverlayOpen(false);
     setDockMode(null);
     setOverlayView('team');
     setSoloId(null);
     setHoveredSection(null);
-  }, [route.slug, route.variation, resolvedVariation]);
+  }, [route.slug]);
+
+  // Sync variation from URL (handles back/forward navigation + pill clicks)
+  useEffect(() => {
+    setActiveVariation(resolvedVariation);
+  }, [resolvedVariation]);
 
   useEffect(() => {
-    (window as any).appState = {
-      view,
-      route: route.path,
-      initialized: true,
-      variation: archetype?.variations ? activeVariation : undefined,
-      overlayOpen: isOverlayOpen,
-      hoveredSection,
-      dockMode,
-    };
-  }, [view, route.path, activeVariation, archetype, isOverlayOpen, hoveredSection, dockMode]);
+    // Only set appState when on archetype page; Homepage sets its own
+    if (archetype) {
+      (window as any).appState = {
+        view,
+        route: route.path,
+        initialized: true,
+        variation: archetype.variations ? activeVariation : undefined,
+        overlayOpen: isOverlayOpen,
+        hoveredSection,
+        dockMode,
+        lens: activeLens,
+      };
+    }
+  }, [view, route.path, activeVariation, archetype, isOverlayOpen, hoveredSection, dockMode, activeLens]);
 
   const handleVariationChange = useCallback((id: string) => {
-    if (route.slug) {
-      navigate(route.slug, id);
+    if (route.slug && route.lens) {
+      if (window.scrollY > 200) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => navigate(route.lens!, route.slug!, id), 800);
+      } else {
+        navigate(route.lens, route.slug, id);
+      }
     }
-  }, [route.slug]);
+  }, [route.slug, route.lens]);
 
   const handleOverlayClose = useCallback(() => {
     setIsOverlayOpen(false);
@@ -115,6 +137,18 @@ export default function App() {
     setSoloId(null);
   }, [dockMode]);
 
+  const handleFirstWipeComplete = useCallback(() => {
+    setShowTopBar(true);
+  }, []);
+
+  const handleArchetypeSelect = useCallback((slug: string, _rect: DOMRect) => {
+    if (!activeLens) return;
+    navigate(activeLens, slug, 'slap');
+  }, [activeLens]);
+
+  // ── Render ─────────────────────────────────────────────────
+  let content: JSX.Element;
+
   if (archetype) {
     const DemoComponent = archetype.component;
     const variationDef = archetype.variations?.find(v => v.id === activeVariation);
@@ -133,7 +167,6 @@ export default function App() {
       ? getReviewBundle(slug, activeVariation, 'kaizen')
       : undefined;
 
-    // Build bubble data for DockBar
     const expertBubbles: BubbleData[] = allExpertFindings.map(({ expert, finding }) => ({
       id: expert.id,
       icon: expert.icon,
@@ -156,16 +189,24 @@ export default function App() {
       setHoveredSection(sectionKey);
     };
 
-    return (
+    content = (
       <>
         <DemoShell
           archetypeName={archetype.name}
-          variations={archetype.variations}
-          activeVariation={activeVariation}
-          onVariationChange={handleVariationChange}
-          accent={archetype.accent}
+          variations={showTopBar ? archetype.variations : undefined}
+          activeVariation={showTopBar ? activeVariation : undefined}
+          onVariationChange={showTopBar ? handleVariationChange : undefined}
+          accent={showTopBar ? archetype.accent : undefined}
+          backLens={activeLens}
         >
-          <DemoComponent variation={activeVariation} />
+          <WipeTransition
+            activeVariation={activeVariation}
+            lensParam={activeLens}
+            onVariationChange={handleVariationChange}
+            onFirstWipeComplete={handleFirstWipeComplete}
+            DemoComponent={DemoComponent}
+            wipeDirection="right"
+          />
         </DemoShell>
         {isOverlayOpen && (
           <div
@@ -211,7 +252,33 @@ export default function App() {
         />
       </>
     );
+  } else {
+    content = (
+      <>
+        <Homepage lens={activeLens} onArchetypeSelect={handleArchetypeSelect} />
+        <div style={HOMEPAGE_CHIN} data-testid="homepage-chin" />
+      </>
+    );
   }
 
-  return <GalleryHub archetypes={archetypes} />;
+  return <>{content}</>;
 }
+
+const HOMEPAGE_CHIN: React.CSSProperties = {
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  zIndex: 900,
+  height: 56,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: '#FFFFFF',
+  borderLeft: '8px solid #FFFFFF',
+  borderRight: '8px solid #FFFFFF',
+  borderBottom: '8px solid #FFFFFF',
+  borderRadius: '0 0 10px 10px',
+  boxShadow: 'inset 0 3px 8px rgba(0, 0, 0, 0.06), 0 -1px 0 rgba(0, 0, 0, 0.04)',
+  pointerEvents: 'none',
+};

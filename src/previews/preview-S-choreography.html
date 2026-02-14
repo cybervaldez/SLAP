@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview S — Shell-First Transition Choreography</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Courier New', monospace;
+    background: #0d0d1a;
+    color: #F5F0E1;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Controls ─────────────────────────────── */
+  .controls {
+    position: fixed; top: 12px; right: 16px; z-index: 9999;
+    display: flex; gap: 8px;
+  }
+  .controls button {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem; font-weight: bold;
+    padding: 6px 14px; border: 2px solid #FFD000;
+    background: transparent; color: #FFD000;
+    cursor: pointer; letter-spacing: 0.05em;
+  }
+  .controls button:hover { background: #FFD000; color: #0d0d1a; }
+  .controls button.active { background: #FFD000; color: #0d0d1a; }
+
+  /* ── Page 2: Archetype Picker (simplified) ── */
+  .page2 {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 24px;
+  }
+  .page2.hidden { display: none; }
+  .page2 h2 { font-size: 1.2rem; color: #FF1493; letter-spacing: 0.1em; }
+  .card-grid {
+    display: grid; grid-template-columns: repeat(4, 120px); gap: 12px;
+  }
+  .card {
+    background: #1a1a2e; border: 1px solid rgba(245,240,225,0.15);
+    padding: 20px 12px; text-align: center; cursor: pointer;
+    font-size: 0.7rem; color: #B0B0CC;
+    transition: transform 80ms ease, border-color 200ms ease;
+  }
+  .card:hover { border-color: #FFD000; }
+  .card:active { transform: scale(0.95); }
+  .card .icon { font-size: 1.5rem; margin-bottom: 8px; display: block; color: #F5F0E1; }
+
+  /* ── Card Expand Overlay ──────────────────── */
+  .card-overlay {
+    position: fixed; z-index: 9998;
+    background: #1a1a2e; pointer-events: none;
+    opacity: 0;
+  }
+  .card-overlay.expanding {
+    top: 0 !important; left: 0 !important;
+    width: 100vw !important; height: 100vh !important;
+    border-radius: 0 !important; opacity: 1;
+    transition: all 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .card-overlay.fading {
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    border-radius: 0; opacity: 0;
+    transition: opacity 300ms ease;
+  }
+
+  /* ── Page 3: CRT Shell ────────────────────── */
+  .page3 { display: none; min-height: 100vh; }
+  .page3.visible { display: flex; flex-direction: column; }
+
+  /* Shell nav — always visible immediately (no animation) */
+  .shell-nav {
+    background: #1A1A2E; padding: 0.6rem 1.2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(245,240,225,0.1);
+  }
+  .shell-nav .back {
+    border: 2px solid #FFD000; background: none;
+    color: #FFD000; font-family: 'Courier New', monospace;
+    font-size: 0.8rem; font-weight: bold;
+    padding: 0.35rem 0.75rem; cursor: pointer;
+  }
+  .shell-nav .title {
+    font-size: 0.75rem; color: #FF1493;
+    letter-spacing: 0.1em; font-weight: bold;
+  }
+
+  /* Pills — hidden until wipe done */
+  .pills-slot {
+    display: flex; gap: 0.35rem; align-items: center;
+    overflow: hidden;
+  }
+  .pill {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7rem; font-weight: 600;
+    padding: 0.2rem 0.65rem; border-radius: 999px;
+    border: 1px solid rgba(245,240,225,0.4);
+    background: transparent; color: #F5F0E1;
+    cursor: pointer; white-space: nowrap;
+    opacity: 0; transform: translateY(-10px);
+  }
+  .pill.active {
+    border-color: #e85d75; background: #e85d75; color: #fff;
+  }
+  .pill.reveal {
+    animation: pillDrop 300ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  }
+  @keyframes pillDrop {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Content area ─────────────────────────── */
+  .shell-content {
+    flex: 1; position: relative;
+    background: #FAFAFA; min-height: 80vh;
+  }
+
+  /* Content — no entrance animation, just there */
+  .content-inner {
+    min-height: 80vh;
+  }
+
+  /* Wipe */
+  .wipe-container { position: relative; min-height: 80vh; }
+  .wipe-old {
+    position: absolute; inset: 0; z-index: 0;
+  }
+  .wipe-new {
+    position: relative; z-index: 1;
+    clip-path: inset(0 100% 0 0);
+  }
+  .wipe-new.wiping {
+    animation: wipeReveal 800ms ease-in-out forwards;
+  }
+  @keyframes wipeReveal {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+  }
+
+  /* ── Fake demo content ────────────────────── */
+  .demo-slop {
+    padding: 60px 40px; min-height: 80vh;
+    background: #f5f5f5; color: #333;
+    font-family: system-ui, sans-serif;
+  }
+  .demo-slop h1 {
+    font-size: 2rem; margin-bottom: 16px;
+    color: #333; font-weight: 400;
+  }
+  .demo-slop .badge {
+    display: inline-block; background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff; padding: 6px 16px; border-radius: 20px;
+    font-size: 0.8rem; margin-bottom: 24px;
+  }
+  .demo-slop p {
+    font-size: 1rem; line-height: 1.7; max-width: 600px;
+    color: #666; margin-bottom: 16px;
+  }
+  .demo-slop .cta {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff; border: none; padding: 12px 32px;
+    border-radius: 8px; font-size: 1rem; cursor: pointer;
+  }
+
+  .demo-styled {
+    padding: 60px 40px; min-height: 80vh;
+    background: #faf8f4; color: #1a1a1a;
+    font-family: 'Georgia', serif;
+  }
+  .demo-styled h1 {
+    font-size: 2.4rem; font-style: italic;
+    margin-bottom: 8px; line-height: 1.2;
+  }
+  .demo-styled h1::after {
+    content: ''; display: block;
+    width: 60px; height: 3px; background: #e85d75;
+    margin-top: 16px;
+  }
+  .demo-styled .byline {
+    font-size: 0.85rem; color: #888; font-style: italic;
+    margin-bottom: 24px; letter-spacing: 0.02em;
+  }
+  .demo-styled p {
+    font-size: 1.05rem; line-height: 1.8; max-width: 580px;
+    color: #2a2a2a; margin-bottom: 16px;
+  }
+  .demo-styled .pullquote {
+    border-left: 3px solid #e85d75; padding-left: 20px;
+    font-size: 1.2rem; font-style: italic; color: #555;
+    margin: 32px 0;
+  }
+
+  /* ── Timeline indicator ───────────────────── */
+  .timeline {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #0a0a14; border-top: 1px solid rgba(245,240,225,0.1);
+    padding: 12px 20px; z-index: 9999;
+    font-size: 0.65rem; color: #888;
+  }
+  .timeline-bar {
+    height: 4px; background: rgba(255,255,255,0.1);
+    border-radius: 2px; margin-bottom: 8px; position: relative;
+  }
+  .timeline-fill {
+    height: 100%; background: #FFD000; border-radius: 2px;
+    width: 0%; transition: width 100ms linear;
+  }
+  .timeline-beats {
+    display: flex; justify-content: space-between;
+  }
+  .timeline-beat { text-align: center; flex: 1; }
+  .timeline-beat.active { color: #FFD000; font-weight: bold; }
+  .timeline-beat .ms { display: block; font-size: 0.55rem; color: #555; }
+
+  /* ── Reduced motion ───────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .wipe-new.wiping, .pill.reveal {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      clip-path: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Controls -->
+<div class="controls">
+  <button id="btn-play" class="active">Play Sequence</button>
+  <button id="btn-reset">Reset</button>
+  <button id="btn-slow">0.5x Speed</button>
+</div>
+
+<!-- Page 2: Archetype Picker -->
+<div class="page2" id="page2">
+  <h2>PICK AN ARCHETYPE</h2>
+  <div class="card-grid">
+    <div class="card" data-slug="blog"><span class="icon">&#9634;</span>Blog</div>
+    <div class="card" data-slug="gallery"><span class="icon">&#9635;</span>Gallery</div>
+    <div class="card" data-slug="ecommerce"><span class="icon">&#9636;</span>E-comm</div>
+    <div class="card" data-slug="landing"><span class="icon">&#9637;</span>Landing</div>
+  </div>
+</div>
+
+<!-- Card Expand Overlay -->
+<div class="card-overlay" id="cardOverlay"></div>
+
+<!-- Page 3: CRT Shell + Content -->
+<div class="page3" id="page3">
+  <nav class="shell-nav" id="shellNav">
+    <button class="back" id="backBtn">&laquo; Gallery</button>
+    <div class="pills-slot" id="pillsSlot">
+      <button class="pill" data-i="0">AI Slop</button>
+      <button class="pill active" data-i="1">Magazine</button>
+      <button class="pill" data-i="2">Brutalist</button>
+      <button class="pill" data-i="3">Minimal</button>
+      <button class="pill" data-i="4">Warm</button>
+      <button class="pill" data-i="5">Dark</button>
+    </div>
+    <span class="title">&#9733; BLOG</span>
+  </nav>
+
+  <div class="shell-content">
+    <div class="content-inner" id="contentInner">
+      <div class="wipe-container" id="wipeContainer">
+        <div class="wipe-old" id="wipeOld">
+          <div class="demo-slop">
+            <div class="badge">AI-Powered</div>
+            <h1>Unlock Your Potential Today</h1>
+            <p>Leverage cutting-edge AI technology to streamline your workflow and boost productivity. Our platform delivers actionable insights in real time.</p>
+            <p>Join thousands of satisfied users who have transformed their business with our innovative solutions.</p>
+            <button class="cta">Get Started Free</button>
+          </div>
+        </div>
+        <div class="wipe-new" id="wipeNew">
+          <div class="demo-styled">
+            <h1>The Quiet Art of<br>Saying Nothing</h1>
+            <div class="byline">By Eleanor Voss &mdash; 12 min read</div>
+            <p>There is a particular kind of silence that follows the last line of a well-made argument. Not the silence of defeat, nor of agreement, but of a room recalibrating itself around an idea it hadn't considered.</p>
+            <div class="pullquote">"Design is not about making things pretty. It's about making things clear."</div>
+            <p>The best interfaces disappear. They don't announce themselves with gradient badges or promise to unlock your potential. They simply work, and in working, they respect the person using them.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Timeline -->
+<div class="timeline" id="timeline">
+  <div class="timeline-bar"><div class="timeline-fill" id="timelineFill"></div></div>
+  <div class="timeline-beats">
+    <div class="timeline-beat" id="beat1-label">
+      Card Expand<span class="ms">0–400ms</span>
+    </div>
+    <div class="timeline-beat" id="beat2-label">
+      Shell + Slop (static)<span class="ms">400–1200ms</span>
+    </div>
+    <div class="timeline-beat" id="beat3-label">
+      Wipe Reveal<span class="ms">1200–2000ms</span>
+    </div>
+    <div class="timeline-beat" id="beat4-label">
+      Pills Drop<span class="ms">2000–2400ms</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const SPEED = { current: 1 };
+const T = (ms) => ms / SPEED.current;
+
+const page2 = document.getElementById('page2');
+const page3 = document.getElementById('page3');
+const overlay = document.getElementById('cardOverlay');
+const shellNav = document.getElementById('shellNav');
+const contentInner = document.getElementById('contentInner');
+const wipeNew = document.getElementById('wipeNew');
+const wipeOld = document.getElementById('wipeOld');
+const pillsSlot = document.getElementById('pillsSlot');
+const timelineFill = document.getElementById('timelineFill');
+const pills = pillsSlot.querySelectorAll('.pill');
+
+const beatLabels = [
+  document.getElementById('beat1-label'),
+  document.getElementById('beat2-label'),
+  document.getElementById('beat3-label'),
+  document.getElementById('beat4-label'),
+];
+
+let timeouts = [];
+function schedule(fn, ms) {
+  const id = setTimeout(fn, T(ms));
+  timeouts.push(id);
+  return id;
+}
+
+function clearAll() {
+  timeouts.forEach(clearTimeout);
+  timeouts = [];
+}
+
+function resetState() {
+  clearAll();
+  page2.classList.remove('hidden');
+  page3.classList.remove('visible');
+  overlay.className = 'card-overlay';
+  overlay.style = '';
+  wipeNew.classList.remove('wiping');
+  wipeNew.style.clipPath = 'inset(0 100% 0 0)';
+  wipeOld.style.display = 'block';
+  pills.forEach(p => {
+    p.classList.remove('reveal');
+    p.style.opacity = '0';
+    p.style.transform = 'translateY(-10px)';
+  });
+  beatLabels.forEach(b => b.classList.remove('active'));
+  timelineFill.style.width = '0%';
+}
+
+function updateTimeline(ms, totalMs) {
+  const pct = Math.min(100, (ms / totalMs) * 100);
+  timelineFill.style.width = pct + '%';
+}
+
+function playSequence(cardEl) {
+  const totalMs = 2400;
+  const rect = cardEl
+    ? cardEl.getBoundingClientRect()
+    : { top: 200, left: 200, width: 120, height: 80 };
+
+  // Timeline progress ticker
+  const startTime = Date.now();
+  const ticker = setInterval(() => {
+    const elapsed = (Date.now() - startTime) * SPEED.current;
+    updateTimeline(elapsed, totalMs);
+    if (elapsed >= totalMs) clearInterval(ticker);
+  }, 50);
+  timeouts.push(ticker);
+
+  // ── T+0: Card expand overlay ───────────────
+  beatLabels[0].classList.add('active');
+  overlay.style.top = rect.top + 'px';
+  overlay.style.left = rect.left + 'px';
+  overlay.style.width = rect.width + 'px';
+  overlay.style.height = rect.height + 'px';
+  overlay.style.borderRadius = '4px';
+  overlay.style.opacity = '1';
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      overlay.classList.add('expanding');
+    });
+  });
+
+  // ── T+350: Page swap — shell + slop just appear, no animation ──
+  schedule(() => {
+    page2.classList.add('hidden');
+    page3.classList.add('visible');
+    beatLabels[1].classList.add('active');
+  }, 350);
+
+  // ── T+500: Overlay fades out, revealing the static slop page ──
+  schedule(() => {
+    overlay.classList.remove('expanding');
+    overlay.classList.add('fading');
+  }, 500);
+
+  // ── T+800: Overlay fully gone ──
+  schedule(() => {
+    overlay.className = 'card-overlay';
+    overlay.style = '';
+  }, 800);
+
+  // ── T+1200: Wipe starts — the only real animation ──
+  schedule(() => {
+    beatLabels[2].classList.add('active');
+    wipeNew.style.clipPath = '';
+    wipeNew.classList.add('wiping');
+  }, 1200);
+
+  // ── T+2000: Wipe complete ──
+  schedule(() => {
+    wipeOld.style.display = 'none';
+    wipeNew.classList.remove('wiping');
+    wipeNew.style.clipPath = 'inset(0 0 0 0)';
+  }, 2000);
+
+  // ── T+2050: Pills stagger-drop (50ms between each) ──
+  schedule(() => {
+    beatLabels[3].classList.add('active');
+  }, 2050);
+
+  pills.forEach((pill, i) => {
+    schedule(() => {
+      pill.style = '';
+      pill.classList.add('reveal');
+    }, 2050 + (i * 50));
+  });
+}
+
+// Card clicks
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('click', () => {
+    resetState();
+    setTimeout(() => playSequence(card), 50);
+  });
+});
+
+// Controls
+document.getElementById('btn-play').addEventListener('click', () => {
+  resetState();
+  setTimeout(() => {
+    const firstCard = document.querySelector('.card');
+    playSequence(firstCard);
+  }, 50);
+});
+
+document.getElementById('btn-reset').addEventListener('click', resetState);
+
+document.getElementById('btn-slow').addEventListener('click', (e) => {
+  if (SPEED.current === 1) {
+    SPEED.current = 0.5;
+    e.target.textContent = '1x Speed';
+    e.target.classList.add('active');
+  } else {
+    SPEED.current = 1;
+    e.target.textContent = '0.5x Speed';
+    e.target.classList.remove('active');
+  }
+});
+
+document.getElementById('backBtn').addEventListener('click', resetState);
+</script>
+
+</body>
+</html>

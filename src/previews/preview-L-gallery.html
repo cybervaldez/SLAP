@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en" data-phase="entrance" data-style="neutral" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Preview L: The Gallery Entrance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Patrick+Hand&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   FOUNDATION — Reset, base, phase management
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PHASE VISIBILITY
+   Only one phase is visible at a time. Transitions are handled
+   via opacity + pointer-events so scroll position resets cleanly.
+   ═══════════════════════════════════════════════════════════════ */
+.phase {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 0;
+}
+.phase.active {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 1;
+}
+/* Entrance uses position relative for scroll */
+.phase--entrance.active {
+  position: relative;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ENTRANCE PHASE — dark, cinematic, minimal
+   ═══════════════════════════════════════════════════════════════ */
+.entrance {
+  background: #0a0a0a;
+  color: #fafafa;
+}
+.entrance__hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  position: relative;
+}
+.entrance__title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: clamp(4rem, 15vw, 12rem);
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  margin-bottom: 16px;
+  opacity: 0;
+  animation: entranceFade 1.2s 0.3s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+.entrance__subtitle {
+  font-size: clamp(0.9rem, 2vw, 1.25rem);
+  font-weight: 300;
+  color: rgba(250, 250, 250, 0.5);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: entranceFade 1.2s 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+.entrance__scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: entranceFade 1s 1.8s ease forwards;
+}
+.entrance__scroll-text {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(250, 250, 250, 0.3);
+}
+.entrance__scroll-arrow {
+  width: 20px;
+  height: 20px;
+  border-right: 1px solid rgba(250, 250, 250, 0.3);
+  border-bottom: 1px solid rgba(250, 250, 250, 0.3);
+  transform: rotate(45deg);
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+@keyframes entranceFade {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scrollBounce {
+  0%, 100% { transform: rotate(45deg) translateY(0); }
+  50% { transform: rotate(45deg) translateY(6px); }
+}
+
+/* Entrance sections */
+.entrance__section {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.entrance__section.scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s cubic-bezier(0.23, 1, 0.32, 1),
+              transform 0.9s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.entrance__section.scroll-reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.entrance__big {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 24px;
+  color: #fafafa;
+}
+.entrance__body {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  font-weight: 300;
+  color: rgba(250, 250, 250, 0.55);
+  line-height: 1.8;
+  max-width: 560px;
+}
+.entrance__accent {
+  color: #ffd700;
+}
+.entrance__divider {
+  width: 40px;
+  height: 1px;
+  background: rgba(250, 250, 250, 0.15);
+  margin: 16px auto 24px;
+}
+.entrance__cta-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px;
+}
+.entrance__cta-big {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 12px;
+  color: #fafafa;
+}
+.entrance__cta-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 300;
+  color: rgba(250, 250, 250, 0.45);
+  margin-bottom: 48px;
+}
+.entrance__enter-btn {
+  display: inline-block;
+  padding: 16px 48px;
+  background: transparent;
+  color: #ffd700;
+  border: 1px solid #ffd700;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.entrance__enter-btn:hover {
+  background: #ffd700;
+  color: #0a0a0a;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GALLERY PHASE — the picker
+   ═══════════════════════════════════════════════════════════════ */
+.gallery {
+  background: #0a0a0a;
+  color: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 60px 24px;
+}
+.gallery__header {
+  text-align: center;
+  margin-bottom: 56px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s 0.2s ease, transform 0.7s 0.2s ease;
+}
+.gallery.active .gallery__header {
+  opacity: 1;
+  transform: translateY(0);
+}
+.gallery__label {
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(250, 250, 250, 0.35);
+  margin-bottom: 16px;
+}
+.gallery__title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+.gallery__subtitle {
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  font-weight: 300;
+  color: rgba(250, 250, 250, 0.45);
+}
+
+/* Grid */
+.gallery__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  width: 100%;
+}
+@media (min-width: 900px) {
+  .gallery__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (min-width: 1100px) {
+  .gallery__grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Cards */
+.gallery__card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 32px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  opacity: 0;
+  transform: translateY(30px);
+}
+.gallery.active .gallery__card {
+  opacity: 1;
+  transform: translateY(0);
+}
+.gallery.active .gallery__card:nth-child(1) { transition-delay: 0.3s; }
+.gallery.active .gallery__card:nth-child(2) { transition-delay: 0.4s; }
+.gallery.active .gallery__card:nth-child(3) { transition-delay: 0.5s; }
+.gallery.active .gallery__card:nth-child(4) { transition-delay: 0.6s; }
+.gallery.active .gallery__card:nth-child(5) { transition-delay: 0.7s; }
+
+.gallery__card:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.06);
+}
+/* Per-card hover accents */
+.gallery__card[data-pick="editorial"]:hover {
+  border-color: #e85d75;
+  box-shadow: 0 8px 40px rgba(232, 93, 117, 0.15);
+}
+.gallery__card[data-pick="brutalist"]:hover {
+  border-color: #ff0000;
+  box-shadow: 0 8px 40px rgba(255, 0, 0, 0.15);
+}
+.gallery__card[data-pick="minimal"]:hover {
+  border-color: #888;
+  box-shadow: 0 8px 40px rgba(136, 136, 136, 0.1);
+}
+.gallery__card[data-pick="chalkboard"]:hover {
+  border-color: #a8e6cf;
+  box-shadow: 0 8px 40px rgba(168, 230, 207, 0.12);
+}
+.gallery__card[data-pick="neutral"]:hover {
+  border-color: #ffd700;
+  box-shadow: 0 8px 40px rgba(255, 215, 0, 0.12);
+}
+
+/* Card swatch (visual preview block) */
+.gallery__swatch {
+  width: 100%;
+  height: 72px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  overflow: hidden;
+}
+.gallery__swatch--editorial {
+  background: linear-gradient(135deg, #faf8f4, #e85d75 60%, #c8a960);
+  color: #1a1a1a;
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+}
+.gallery__swatch--brutalist {
+  background: #fff;
+  color: #000;
+  border: 3px solid #000;
+  font-family: system-ui, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 0;
+}
+.gallery__swatch--minimal {
+  background: #fafafa;
+  color: #888;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  border: 1px solid #e0e0e0;
+}
+.gallery__swatch--chalkboard {
+  background: #2d4a3e;
+  color: #ffd700;
+  font-family: 'Patrick Hand', cursive;
+}
+.gallery__swatch--neutral {
+  background: #0a0a0a;
+  color: #ffd700;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+/* Card avatar */
+.gallery__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.05);
+}
+/* Card text */
+.gallery__card-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
+}
+.gallery__card-hook {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(250, 250, 250, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PAGE PHASE — the full content, themed
+   ═══════════════════════════════════════════════════════════════ */
+.page {
+  min-height: 100vh;
+  transition: background 0.5s, color 0.5s;
+}
+
+/* ─── THEME TOKENS ─── */
+/* Neutral (default) */
+:root {
+  --page-bg: #0a0a0a;
+  --page-bg-alt: #111;
+  --page-text: #fafafa;
+  --page-text-dim: rgba(250,250,250,0.5);
+  --page-accent: #ffd700;
+  --page-accent2: #e6c200;
+  --page-heading: 'Inter', sans-serif;
+  --page-body: 'Inter', sans-serif;
+  --page-heading-weight: 700;
+  --page-heading-transform: none;
+  --page-heading-spacing: -0.02em;
+  --page-card-bg: rgba(255,255,255,0.04);
+  --page-card-border: rgba(255,255,255,0.08);
+  --page-border-radius: 8px;
+  --page-rule: rgba(255,255,255,0.08);
+  --page-bar-fill: #ffd700;
+}
+
+[data-style="editorial"] {
+  --page-bg: #faf8f4;
+  --page-bg-alt: #f0ece4;
+  --page-text: #1a1a1a;
+  --page-text-dim: rgba(26,26,26,0.5);
+  --page-accent: #e85d75;
+  --page-accent2: #c8a960;
+  --page-heading: 'Playfair Display', Georgia, serif;
+  --page-body: 'Inter', sans-serif;
+  --page-heading-weight: 900;
+  --page-heading-transform: none;
+  --page-heading-spacing: -0.02em;
+  --page-card-bg: rgba(0,0,0,0.03);
+  --page-card-border: rgba(0,0,0,0.08);
+  --page-border-radius: 4px;
+  --page-rule: rgba(0,0,0,0.1);
+  --page-bar-fill: #e85d75;
+}
+[data-style="editorial"][data-theme="dark"] {
+  --page-bg: #1a1210;
+  --page-bg-alt: #231a16;
+  --page-text: #f5f0e8;
+  --page-text-dim: rgba(245,240,232,0.5);
+  --page-card-bg: rgba(245,240,232,0.04);
+  --page-card-border: rgba(245,240,232,0.08);
+  --page-rule: rgba(245,240,232,0.1);
+}
+
+[data-style="brutalist"] {
+  --page-bg: #ffffff;
+  --page-bg-alt: #f0f0f0;
+  --page-text: #000000;
+  --page-text-dim: rgba(0,0,0,0.5);
+  --page-accent: #ff0000;
+  --page-accent2: #ff0000;
+  --page-heading: system-ui, -apple-system, sans-serif;
+  --page-body: system-ui, -apple-system, sans-serif;
+  --page-heading-weight: 900;
+  --page-heading-transform: uppercase;
+  --page-heading-spacing: -0.02em;
+  --page-card-bg: transparent;
+  --page-card-border: #000;
+  --page-border-radius: 0;
+  --page-rule: #000;
+  --page-bar-fill: #ff0000;
+}
+[data-style="brutalist"][data-theme="dark"] {
+  --page-bg: #000000;
+  --page-bg-alt: #111;
+  --page-text: #ffffff;
+  --page-text-dim: rgba(255,255,255,0.5);
+  --page-card-bg: transparent;
+  --page-card-border: #fff;
+  --page-rule: #fff;
+}
+
+[data-style="minimal"] {
+  --page-bg: #fafafa;
+  --page-bg-alt: #f0f0f0;
+  --page-text: #333;
+  --page-text-dim: rgba(51,51,51,0.4);
+  --page-accent: #888;
+  --page-accent2: #aaa;
+  --page-heading: 'Inter', sans-serif;
+  --page-body: 'Inter', sans-serif;
+  --page-heading-weight: 300;
+  --page-heading-transform: none;
+  --page-heading-spacing: -0.03em;
+  --page-card-bg: transparent;
+  --page-card-border: rgba(0,0,0,0.06);
+  --page-border-radius: 0;
+  --page-rule: rgba(0,0,0,0.06);
+  --page-bar-fill: #888;
+}
+[data-style="minimal"][data-theme="dark"] {
+  --page-bg: #111;
+  --page-bg-alt: #1a1a1a;
+  --page-text: #ccc;
+  --page-text-dim: rgba(204,204,204,0.4);
+  --page-card-border: rgba(255,255,255,0.06);
+  --page-rule: rgba(255,255,255,0.06);
+}
+
+[data-style="chalkboard"] {
+  --page-bg: #2d4a3e;
+  --page-bg-alt: #243d33;
+  --page-text: #f5f0e8;
+  --page-text-dim: rgba(245,240,232,0.45);
+  --page-accent: #ffd700;
+  --page-accent2: #ff6b9d;
+  --page-heading: 'Patrick Hand', cursive;
+  --page-body: 'Nunito', sans-serif;
+  --page-heading-weight: 400;
+  --page-heading-transform: none;
+  --page-heading-spacing: 0;
+  --page-card-bg: rgba(245,240,232,0.06);
+  --page-card-border: rgba(245,240,232,0.12);
+  --page-border-radius: 2px;
+  --page-rule: rgba(245,240,232,0.12);
+  --page-bar-fill: #ffd700;
+}
+[data-style="chalkboard"][data-theme="light"] {
+  --page-bg: #f5f0e8;
+  --page-bg-alt: #ebe5d6;
+  --page-text: #333;
+  --page-text-dim: rgba(51,51,51,0.45);
+  --page-accent: #ff9800;
+  --page-accent2: #e63946;
+  --page-card-bg: rgba(0,0,0,0.03);
+  --page-card-border: rgba(0,0,0,0.08);
+  --page-rule: rgba(0,0,0,0.08);
+  --page-bar-fill: #ff9800;
+}
+
+[data-style="neutral"] {
+  --page-bg: #0a0a0a;
+  --page-bg-alt: #111;
+  --page-text: #fafafa;
+  --page-text-dim: rgba(250,250,250,0.5);
+  --page-accent: #ffd700;
+  --page-accent2: #e6c200;
+  --page-heading: 'Inter', sans-serif;
+  --page-body: 'Inter', sans-serif;
+  --page-heading-weight: 700;
+  --page-heading-transform: none;
+  --page-heading-spacing: -0.02em;
+  --page-card-bg: rgba(255,255,255,0.04);
+  --page-card-border: rgba(255,255,255,0.08);
+  --page-border-radius: 8px;
+  --page-rule: rgba(255,255,255,0.08);
+  --page-bar-fill: #ffd700;
+}
+[data-style="neutral"][data-theme="light"] {
+  --page-bg: #fafafa;
+  --page-bg-alt: #f0f0f0;
+  --page-text: #1a1a1a;
+  --page-text-dim: rgba(26,26,26,0.5);
+  --page-card-bg: rgba(0,0,0,0.03);
+  --page-card-border: rgba(0,0,0,0.08);
+  --page-rule: rgba(0,0,0,0.08);
+  --page-bar-fill: #c8a960;
+}
+
+/* Page rendering */
+.page {
+  background: var(--page-bg);
+  color: var(--page-text);
+  font-family: var(--page-body);
+}
+
+/* ─── PAGE SECTIONS ─── */
+.pg-section {
+  padding: 100px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s cubic-bezier(0.23,1,0.32,1),
+              transform 0.8s cubic-bezier(0.23,1,0.32,1);
+}
+.pg-section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.pg-section + .pg-section {
+  border-top: 1px solid var(--page-rule);
+}
+
+.pg-label {
+  font-family: var(--page-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--page-accent);
+  margin-bottom: 20px;
+  display: block;
+}
+[data-style="chalkboard"] .pg-label {
+  font-family: var(--page-heading);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+[data-style="brutalist"] .pg-label {
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  font-size: 12px;
+}
+
+.pg-heading {
+  font-family: var(--page-heading);
+  font-weight: var(--page-heading-weight);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.1;
+  letter-spacing: var(--page-heading-spacing);
+  text-transform: var(--page-heading-transform);
+  margin-bottom: 24px;
+}
+[data-style="chalkboard"] .pg-heading {
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+}
+[data-style="brutalist"] .pg-heading {
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  line-height: 0.95;
+}
+
+.pg-body {
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  line-height: 1.8;
+  color: var(--page-text-dim);
+  max-width: 640px;
+}
+[data-style="editorial"] .pg-body {
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+}
+[data-style="brutalist"] .pg-body {
+  line-height: 1.5;
+  max-width: 540px;
+}
+
+/* ─── HERO (page phase) ─── */
+.pg-hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px;
+  max-width: 100%;
+  border-top: none;
+}
+.pg-hero .pg-heading {
+  font-size: clamp(4rem, 14vw, 10rem);
+  line-height: 0.9;
+  margin-bottom: 16px;
+}
+[data-style="brutalist"] .pg-hero .pg-heading {
+  font-size: clamp(5rem, 18vw, 14rem);
+}
+[data-style="minimal"] .pg-hero .pg-heading {
+  font-weight: 200;
+  font-size: clamp(3.5rem, 12vw, 8rem);
+}
+[data-style="chalkboard"] .pg-hero .pg-heading {
+  font-size: clamp(4rem, 14vw, 10rem);
+}
+
+.pg-hero-sub {
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+  font-weight: 300;
+  color: var(--page-text-dim);
+  max-width: 600px;
+  line-height: 1.6;
+}
+[data-style="editorial"] .pg-hero-sub {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ─── LAYER CARDS (Experiment section) ─── */
+.pg-layers {
+  display: grid;
+  gap: 20px;
+  margin-top: 40px;
+}
+@media (min-width: 700px) {
+  .pg-layers {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.pg-layer {
+  background: var(--page-card-bg);
+  border: 1px solid var(--page-card-border);
+  border-radius: var(--page-border-radius);
+  padding: 28px 24px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+[data-style="brutalist"] .pg-layer {
+  border-width: 3px;
+}
+.pg-layer:hover {
+  transform: translateY(-2px);
+}
+.pg-layer-num {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--page-accent);
+  margin-bottom: 8px;
+}
+[data-style="chalkboard"] .pg-layer-num {
+  font-family: var(--page-heading);
+  font-size: 14px;
+  font-weight: 400;
+}
+.pg-layer-title {
+  font-family: var(--page-heading);
+  font-weight: var(--page-heading-weight);
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  text-transform: var(--page-heading-transform);
+}
+.pg-layer-desc {
+  font-size: 0.9rem;
+  color: var(--page-text-dim);
+  line-height: 1.6;
+}
+
+/* ─── CAST CARDS ─── */
+.pg-cast-grid {
+  display: grid;
+  gap: 20px;
+  margin-top: 40px;
+}
+@media (min-width: 600px) {
+  .pg-cast-grid--experts { grid-template-columns: repeat(3, 1fr); }
+  .pg-cast-grid--personas { grid-template-columns: repeat(2, 1fr); }
+}
+.pg-cast-card {
+  background: var(--page-card-bg);
+  border: 1px solid var(--page-card-border);
+  border-radius: var(--page-border-radius);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+[data-style="brutalist"] .pg-cast-card {
+  border-width: 3px;
+  text-align: left;
+  align-items: flex-start;
+}
+.pg-cast-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin-bottom: 16px;
+  background: var(--page-card-bg);
+}
+[data-style="brutalist"] .pg-cast-avatar {
+  border-radius: 0;
+}
+.pg-cast-role {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--page-accent);
+  margin-bottom: 4px;
+}
+[data-style="chalkboard"] .pg-cast-role {
+  font-family: var(--page-heading);
+  font-size: 13px;
+  font-weight: 400;
+}
+.pg-cast-name {
+  font-family: var(--page-heading);
+  font-weight: var(--page-heading-weight);
+  font-size: 1rem;
+  margin-bottom: 12px;
+  text-transform: var(--page-heading-transform);
+}
+.pg-cast-quote {
+  font-size: 0.88rem;
+  color: var(--page-text-dim);
+  line-height: 1.6;
+  font-style: italic;
+}
+[data-style="editorial"] .pg-cast-quote {
+  font-family: 'Playfair Display', serif;
+}
+[data-style="brutalist"] .pg-cast-quote {
+  font-style: normal;
+  border-left: 3px solid var(--page-accent);
+  padding-left: 12px;
+}
+
+/* ─── SCORE GRID ─── */
+.pg-scores {
+  display: grid;
+  gap: 12px;
+  margin-top: 40px;
+}
+.pg-score-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 48px;
+  align-items: center;
+  gap: 16px;
+}
+@media (max-width: 600px) {
+  .pg-score-row {
+    grid-template-columns: 100px 1fr 40px;
+    gap: 10px;
+  }
+}
+.pg-score-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: var(--page-heading-transform);
+}
+[data-style="chalkboard"] .pg-score-label {
+  font-family: var(--page-heading);
+}
+.pg-score-bar-track {
+  height: 8px;
+  background: var(--page-card-border);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+[data-style="brutalist"] .pg-score-bar-track {
+  border-radius: 0;
+  height: 12px;
+  border: 2px solid var(--page-text);
+}
+.pg-score-bar-fill {
+  height: 100%;
+  background: var(--page-bar-fill);
+  border-radius: 4px;
+  transition: width 1s cubic-bezier(0.23,1,0.32,1);
+  width: 0;
+}
+[data-style="brutalist"] .pg-score-bar-fill {
+  border-radius: 0;
+}
+.pg-score-bar-fill.animated {
+  /* width set inline */
+}
+.pg-score-val {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: right;
+  color: var(--page-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── TENSION ─── */
+.pg-tension-list {
+  list-style: none;
+  margin-top: 32px;
+  display: grid;
+  gap: 16px;
+}
+.pg-tension-item {
+  font-size: 1rem;
+  line-height: 1.6;
+  padding-left: 24px;
+  position: relative;
+  color: var(--page-text-dim);
+}
+.pg-tension-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--page-accent);
+}
+[data-style="brutalist"] .pg-tension-item::before {
+  border-radius: 0;
+  width: 10px;
+  height: 10px;
+  top: 8px;
+}
+[data-style="chalkboard"] .pg-tension-item {
+  font-family: var(--page-body);
+}
+
+/* ─── CTA SECTION ─── */
+.pg-cta {
+  text-align: center;
+  padding: 120px 24px;
+}
+.pg-cta .pg-heading {
+  margin-bottom: 32px;
+}
+.pg-cta-btn {
+  display: inline-block;
+  padding: 16px 48px;
+  font-family: var(--page-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 2px solid var(--page-accent);
+  background: var(--page-accent);
+  color: var(--page-bg);
+  border-radius: var(--page-border-radius);
+  transition: all 0.3s;
+  margin-bottom: 20px;
+}
+.pg-cta-btn:hover {
+  background: transparent;
+  color: var(--page-accent);
+}
+[data-style="brutalist"] .pg-cta-btn {
+  border-width: 3px;
+  font-weight: 900;
+}
+[data-style="minimal"] .pg-cta-btn {
+  background: transparent;
+  color: var(--page-text);
+  border-color: var(--page-text);
+  font-weight: 400;
+}
+[data-style="minimal"] .pg-cta-btn:hover {
+  background: var(--page-text);
+  color: var(--page-bg);
+}
+.pg-cta-link {
+  display: block;
+  color: var(--page-text-dim);
+  font-size: 0.85rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+.pg-cta-link:hover {
+  color: var(--page-accent);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FLOATING CONTROLS
+   ═══════════════════════════════════════════════════════════════ */
+.floating-controls {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  gap: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.floating-controls.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.float-btn {
+  padding: 10px 20px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid var(--page-card-border);
+  background: var(--page-bg);
+  color: var(--page-text);
+  border-radius: var(--page-border-radius);
+  transition: all 0.3s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.float-btn:hover {
+  border-color: var(--page-accent);
+  color: var(--page-accent);
+}
+
+/* Theme toggle (always visible) */
+.theme-toggle {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 10000;
+  padding: 8px 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: transparent;
+  color: rgba(250,250,250,0.4);
+  border: 1px solid rgba(250,250,250,0.12);
+  transition: all 0.3s;
+}
+.theme-toggle:hover {
+  color: #ffd700;
+  border-color: #ffd700;
+}
+[data-phase="page"] .theme-toggle {
+  color: var(--page-text-dim);
+  border-color: var(--page-card-border);
+}
+[data-phase="page"] .theme-toggle:hover {
+  color: var(--page-accent);
+  border-color: var(--page-accent);
+}
+
+/* ─── Chalkboard texture overlay ─── */
+[data-style="chalkboard"] .page::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 1;
+}
+[data-style="chalkboard"] .pg-section,
+[data-style="chalkboard"] .floating-controls {
+  position: relative;
+  z-index: 2;
+}
+
+/* ─── Brutalist hard edges ─── */
+[data-style="brutalist"] .pg-section + .pg-section {
+  border-top-width: 3px;
+  border-top-style: solid;
+}
+
+/* ─── Editorial drop cap ─── */
+[data-style="editorial"] .pg-dropcap::first-letter {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.2em;
+  float: left;
+  line-height: 0.8;
+  margin-right: 8px;
+  margin-top: 6px;
+  color: var(--page-accent);
+}
+
+/* ─── Minimal extra spacing ─── */
+[data-style="minimal"] .pg-section {
+  padding: 120px 24px;
+}
+[data-style="minimal"] .pg-body {
+  font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .pg-section { padding: 60px 20px; }
+  .pg-hero { min-height: 70vh; padding: 60px 20px; }
+  .pg-cta { padding: 80px 20px; }
+  .gallery { padding: 40px 16px; }
+  .gallery__grid { gap: 16px; }
+  .entrance__hero { padding: 40px 20px; }
+  .entrance__section { padding: 60px 20px; min-height: 60vh; }
+  .floating-controls { bottom: 16px; right: 16px; }
+  .theme-toggle { top: 16px; right: 16px; padding: 6px 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     THEME TOGGLE — always present
+     ═══════════════════════════════════════════════════════════════ -->
+<button class="theme-toggle" data-testid="theme-toggle" aria-label="Toggle light/dark theme">Light</button>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PHASE 1: ENTRANCE
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="phase phase--entrance entrance active" data-testid="phase-entrance">
+
+  <!-- Hero -->
+  <section class="entrance__hero" data-testid="entrance-hero">
+    <h1 class="entrance__title">SLAP!</h1>
+    <p class="entrance__subtitle">The Anti-Slop Design Study</p>
+    <div class="entrance__scroll">
+      <span class="entrance__scroll-text">Scroll</span>
+      <div class="entrance__scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- Problem teaser -->
+  <section class="entrance__section scroll-reveal" data-testid="entrance-problem">
+    <p class="entrance__big">Every AI page looks the same.</p>
+    <div class="entrance__divider"></div>
+    <p class="entrance__body">
+      We took one page. Gave it to AI. Then roasted it with <span class="entrance__accent">18 critics</span> and dressed it in <span class="entrance__accent">9 design systems</span>.
+    </p>
+  </section>
+
+  <!-- Result teaser -->
+  <section class="entrance__section scroll-reveal" data-testid="entrance-result">
+    <p class="entrance__big">Same words. Scores from <span class="entrance__accent">2</span> to <span class="entrance__accent">8</span>.</p>
+  </section>
+
+  <!-- The reveal -->
+  <section class="entrance__cta-section scroll-reveal" data-testid="entrance-reveal">
+    <p class="entrance__cta-big">Now it's your turn.</p>
+    <p class="entrance__cta-sub">Pick a lens. See the same story through different eyes.</p>
+    <button class="entrance__enter-btn" data-testid="entrance-enter-btn">Enter the Gallery</button>
+  </section>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PHASE 2: GALLERY PICKER
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="phase gallery" data-testid="phase-gallery">
+
+  <div class="gallery__header">
+    <p class="gallery__label">Choose Your Lens</p>
+    <h2 class="gallery__title">Five aesthetics. One story.</h2>
+    <p class="gallery__subtitle">Each card transforms the entire page. Pick a door.</p>
+  </div>
+
+  <div class="gallery__grid" data-testid="gallery-grid">
+
+    <!-- Editorial -->
+    <div class="gallery__card" data-pick="editorial" data-testid="style-card-editorial" role="button" tabindex="0" aria-label="View in Editorial style">
+      <div class="gallery__swatch gallery__swatch--editorial">Aa</div>
+      <img class="gallery__avatar" src="https://api.dicebear.com/9.x/lorelei/svg?seed=gallery-preview" alt="Editorial avatar" loading="lazy">
+      <p class="gallery__card-name">Editorial</p>
+      <p class="gallery__card-hook">The magazine spread</p>
+    </div>
+
+    <!-- Brutalist -->
+    <div class="gallery__card" data-pick="brutalist" data-testid="style-card-brutalist" role="button" tabindex="0" aria-label="View in Brutalist style">
+      <div class="gallery__swatch gallery__swatch--brutalist">Aa</div>
+      <img class="gallery__avatar" src="https://api.dicebear.com/9.x/identicon/svg?seed=gallery-preview" alt="Brutalist avatar" loading="lazy">
+      <p class="gallery__card-name">Brutalist</p>
+      <p class="gallery__card-hook">Raw and honest</p>
+    </div>
+
+    <!-- Minimal -->
+    <div class="gallery__card" data-pick="minimal" data-testid="style-card-minimal" role="button" tabindex="0" aria-label="View in Minimal style">
+      <div class="gallery__swatch gallery__swatch--minimal">Aa</div>
+      <img class="gallery__avatar" src="https://api.dicebear.com/9.x/rings/svg?seed=gallery-preview" alt="Minimal avatar" loading="lazy">
+      <p class="gallery__card-name">Minimal</p>
+      <p class="gallery__card-hook">Less is more</p>
+    </div>
+
+    <!-- Chalkboard -->
+    <div class="gallery__card" data-pick="chalkboard" data-testid="style-card-chalkboard" role="button" tabindex="0" aria-label="View in Chalkboard style">
+      <div class="gallery__swatch gallery__swatch--chalkboard">Aa</div>
+      <img class="gallery__avatar" src="https://api.dicebear.com/9.x/notionists/svg?seed=gallery-preview" alt="Chalkboard avatar" loading="lazy">
+      <p class="gallery__card-name">Chalkboard</p>
+      <p class="gallery__card-hook">The classroom</p>
+    </div>
+
+    <!-- Neutral -->
+    <div class="gallery__card" data-pick="neutral" data-testid="style-card-neutral" role="button" tabindex="0" aria-label="View in Neutral style">
+      <div class="gallery__swatch gallery__swatch--neutral">Aa</div>
+      <img class="gallery__avatar" src="https://api.dicebear.com/9.x/avataaars/svg?seed=gallery-preview" alt="Neutral avatar" loading="lazy">
+      <p class="gallery__card-name">Neutral</p>
+      <p class="gallery__card-hook">The control group</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     PHASE 3: FULL PAGE (themed)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="phase page" data-testid="phase-page">
+
+  <!-- Section 1: Hero -->
+  <section class="pg-section pg-hero pg-scroll" data-testid="page-hero">
+    <span class="pg-label">SLAP!</span>
+    <h1 class="pg-heading">SLAP!</h1>
+    <p class="pg-hero-sub">The Anti-Slop Design Study<br>What happens when you let AI write your website... and then roast it</p>
+  </section>
+
+  <!-- Section 2: Problem -->
+  <section class="pg-section pg-scroll" data-testid="page-problem">
+    <span class="pg-label">The Problem</span>
+    <h2 class="pg-heading">Every AI page looks the same.</h2>
+    <p class="pg-body pg-dropcap">Purple gradients. Inter font. Rounded pill buttons. A hero section that says "Revolutionize Your Workflow." Technically correct, aesthetically generic, and emotionally bankrupt. Not because it's broken. Because it could belong to anyone.</p>
+  </section>
+
+  <!-- Section 3: Experiment -->
+  <section class="pg-section pg-scroll" data-testid="page-experiment">
+    <span class="pg-label">The Experiment</span>
+    <h2 class="pg-heading">One page. Three lenses. Nine costumes.</h2>
+    <div class="pg-layers">
+      <div class="pg-layer">
+        <p class="pg-layer-num">Layer 1</p>
+        <p class="pg-layer-title">The Performer</p>
+        <p class="pg-layer-desc">AI copy, unedited. The raw output that launched a thousand identical landing pages.</p>
+      </div>
+      <div class="pg-layer">
+        <p class="pg-layer-num">Layer 2</p>
+        <p class="pg-layer-title">The Critics</p>
+        <p class="pg-layer-desc">Expert personas and real people scoring every pixel. 18 voices, zero mercy.</p>
+      </div>
+      <div class="pg-layer">
+        <p class="pg-layer-num">Layer 3</p>
+        <p class="pg-layer-title">The Redemption</p>
+        <p class="pg-layer-desc">Same words, nine design systems. Scores shifted 6 points. Proof that design is the variable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3.5: Cast -->
+  <section class="pg-section pg-scroll" data-testid="page-cast">
+    <span class="pg-label">The Critics</span>
+    <h2 class="pg-heading">Meet the Critics</h2>
+
+    <!-- Experts -->
+    <div class="pg-cast-grid pg-cast-grid--experts">
+      <div class="pg-cast-card">
+        <img class="pg-cast-avatar" data-avatar-role="expert-marketing" alt="Marketing Expert" loading="lazy">
+        <p class="pg-cast-role">Marketing</p>
+        <p class="pg-cast-name">Brand Strategist</p>
+        <p class="pg-cast-quote">"This copy converts like a participation trophy. Technically present, emotionally absent."</p>
+      </div>
+      <div class="pg-cast-card">
+        <img class="pg-cast-avatar" data-avatar-role="expert-ux" alt="UX Expert" loading="lazy">
+        <p class="pg-cast-role">UX Design</p>
+        <p class="pg-cast-name">UX Researcher</p>
+        <p class="pg-cast-quote">"The layout says 'I watched one Figma tutorial.' The spacing says 'I gave up halfway through.'"</p>
+      </div>
+      <div class="pg-cast-card">
+        <img class="pg-cast-avatar" data-avatar-role="expert-design" alt="Design Expert" loading="lazy">
+        <p class="pg-cast-role">Visual Design</p>
+        <p class="pg-cast-name">Art Director</p>
+        <p class="pg-cast-quote">"Another gradient that screams 'I have Figma and a dream.' Zero personality, maximum template energy."</p>
+      </div>
+    </div>
+
+    <!-- Personas (with top margin) -->
+    <div class="pg-cast-grid pg-cast-grid--personas" style="margin-top: 20px;">
+      <div class="pg-cast-card">
+        <img class="pg-cast-avatar" data-avatar-role="persona-dorothy" alt="Dorothy" loading="lazy">
+        <p class="pg-cast-role">Persona</p>
+        <p class="pg-cast-name">Dorothy, 68</p>
+        <p class="pg-cast-quote">"I don't know what half these words mean, but the purple is nice. Is this a bank?"</p>
+      </div>
+      <div class="pg-cast-card">
+        <img class="pg-cast-avatar" data-avatar-role="persona-frank" alt="Frank" loading="lazy">
+        <p class="pg-cast-role">Persona</p>
+        <p class="pg-cast-name">Frank, 45</p>
+        <p class="pg-cast-quote">"I've seen this page before. Was it Slack? Notion? Every SaaS product since 2019?"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Proof -->
+  <section class="pg-section pg-scroll" data-testid="page-proof">
+    <span class="pg-label">The Proof</span>
+    <h2 class="pg-heading">Same Words. Nine Designs. Scores from 2 to 8.</h2>
+    <div class="pg-scores">
+      <div class="pg-score-row">
+        <span class="pg-score-label">SLAP!</span>
+        <div class="pg-score-bar-track"><div class="pg-score-bar-fill" data-score="2.4" style="width:0"></div></div>
+        <span class="pg-score-val">2.4</span>
+      </div>
+      <div class="pg-score-row">
+        <span class="pg-score-label">Memphis</span>
+        <div class="pg-score-bar-track"><div class="pg-score-bar-fill" data-score="5.4" style="width:0"></div></div>
+        <span class="pg-score-val">5.4</span>
+      </div>
+      <div class="pg-score-row">
+        <span class="pg-score-label">Retro-Futurism</span>
+        <div class="pg-score-bar-track"><div class="pg-score-bar-fill" data-score="5.8" style="width:0"></div></div>
+        <span class="pg-score-val">5.8</span>
+      </div>
+      <div class="pg-score-row">
+        <span class="pg-score-label">Maximalist</span>
+        <div class="pg-score-bar-track"><div class="pg-score-bar-fill" data-score="6.0" style="width:0"></div></div>
+        <span class="pg-score-val">6.0</span>
+      </div>
+      <div class="pg-score-row">
+        <span class="pg-score-label">Warm Organic</span>
+        <div class="pg-score-bar-track"><div class="pg-score-bar-fill" data-score="6.6" style="width:0"></div></div>
+        <span class="pg-score-val">6.6</span>
+      </div>
+      <div class="pg-score-row">
+        <span class="pg-score-label">Brutalist</span>
+        <div class="pg-score-bar-track"><div class="pg-score-bar-fill" data-score="6.8" style="width:0"></div></div>
+        <span class="pg-score-val">6.8</span>
+      </div>
+      <div class="pg-score-row">
+        <span class="pg-score-label">Dark Industrial</span>
+        <div class="pg-score-bar-track"><div class="pg-score-bar-fill" data-score="7.0" style="width:0"></div></div>
+        <span class="pg-score-val">7.0</span>
+      </div>
+      <div class="pg-score-row">
+        <span class="pg-score-label">Neo-Minimal</span>
+        <div class="pg-score-bar-track"><div class="pg-score-bar-fill" data-score="7.2" style="width:0"></div></div>
+        <span class="pg-score-val">7.2</span>
+      </div>
+      <div class="pg-score-row">
+        <span class="pg-score-label">Art Deco</span>
+        <div class="pg-score-bar-track"><div class="pg-score-bar-fill" data-score="7.6" style="width:0"></div></div>
+        <span class="pg-score-val">7.6</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Tension -->
+  <section class="pg-section pg-scroll" data-testid="page-tension">
+    <span class="pg-label">The Tension</span>
+    <h2 class="pg-heading">Design is a lens, not a bandage.</h2>
+    <ul class="pg-tension-list">
+      <li class="pg-tension-item"><strong>Brutalist</strong> exposes. Every flaw in the copy is visible. Nothing hides behind polish.</li>
+      <li class="pg-tension-item"><strong>Warm Organic</strong> hides. Soft edges and earthy tones make mediocre copy feel intentional.</li>
+      <li class="pg-tension-item"><strong>Art Deco</strong> elevates. The same words feel authoritative when dressed in gold and geometry.</li>
+    </ul>
+  </section>
+
+  <!-- Section 6: CTA -->
+  <section class="pg-section pg-cta pg-scroll" data-testid="page-cta">
+    <h2 class="pg-heading">See for yourself.</h2>
+    <button class="pg-cta-btn" data-testid="page-enter-gallery-btn">Enter the Gallery</button>
+    <a class="pg-cta-link" data-testid="page-try-another-link">Try another style</a>
+  </section>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FLOATING CONTROLS (page phase only)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="floating-controls" data-testid="floating-controls">
+  <button class="float-btn" data-testid="change-style-btn" aria-label="Change style">Change Style</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+
+  /* ─── STATE ─── */
+  const html = document.documentElement;
+  const phases = {
+    entrance: document.querySelector('[data-testid="phase-entrance"]'),
+    gallery:  document.querySelector('[data-testid="phase-gallery"]'),
+    page:     document.querySelector('[data-testid="phase-page"]')
+  };
+  const floatingControls = document.querySelector('[data-testid="floating-controls"]');
+  const themeToggle = document.querySelector('[data-testid="theme-toggle"]');
+
+  /* Avatar style map per aesthetic */
+  const avatarStyles = {
+    editorial:  'lorelei',
+    brutalist:  'identicon',
+    minimal:    'rings',
+    chalkboard: 'notionists',
+    neutral:    'avataaars'
+  };
+
+  /* Avatar seeds per role for variety */
+  const avatarSeeds = {
+    'expert-marketing': 'marketing-slap',
+    'expert-ux':        'ux-slap',
+    'expert-design':    'design-slap',
+    'persona-dorothy':  'dorothy-slap',
+    'persona-frank':    'frank-slap'
+  };
+
+  /* ─── PHASE TRANSITIONS ─── */
+  function setPhase(phase) {
+    html.setAttribute('data-phase', phase);
+
+    // Deactivate all phases
+    Object.values(phases).forEach(el => el.classList.remove('active'));
+
+    // Activate target after a tick (allows exit transition)
+    setTimeout(() => {
+      phases[phase].classList.add('active');
+      phases[phase].scrollTop = 0;
+
+      // Show/hide floating controls
+      if (phase === 'page') {
+        setTimeout(() => floatingControls.classList.add('visible'), 600);
+      } else {
+        floatingControls.classList.remove('visible');
+      }
+
+      // Re-observe scroll elements in the new phase
+      if (phase === 'page') {
+        observePageSections();
+      }
+    }, 100);
+  }
+
+  function setStyle(style) {
+    html.setAttribute('data-style', style);
+    updateAvatars(style);
+  }
+
+  /* ─── AVATAR UPDATES ─── */
+  function updateAvatars(style) {
+    const avatarStyle = avatarStyles[style] || 'avataaars';
+    document.querySelectorAll('[data-avatar-role]').forEach(img => {
+      const role = img.getAttribute('data-avatar-role');
+      const seed = avatarSeeds[role] || role;
+      img.src = `https://api.dicebear.com/9.x/${avatarStyle}/svg?seed=${seed}`;
+    });
+  }
+
+  /* ─── THEME TOGGLE ─── */
+  function toggleTheme() {
+    const current = html.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    themeToggle.textContent = next === 'dark' ? 'Light' : 'Dark';
+  }
+  themeToggle.addEventListener('click', toggleTheme);
+
+  /* ─── ENTRANCE EVENTS ─── */
+  // "Enter the Gallery" button in entrance
+  document.querySelector('[data-testid="entrance-enter-btn"]').addEventListener('click', () => {
+    setPhase('gallery');
+  });
+
+  /* ─── GALLERY CARD CLICKS ─── */
+  document.querySelectorAll('.gallery__card').forEach(card => {
+    function activate() {
+      const style = card.getAttribute('data-pick');
+      setStyle(style);
+      setPhase('page');
+    }
+    card.addEventListener('click', activate);
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activate();
+      }
+    });
+  });
+
+  /* ─── FLOATING CONTROLS ─── */
+  document.querySelector('[data-testid="change-style-btn"]').addEventListener('click', () => {
+    setPhase('gallery');
+  });
+
+  /* ─── PAGE CTA BUTTONS ─── */
+  document.querySelector('[data-testid="page-enter-gallery-btn"]').addEventListener('click', () => {
+    setPhase('gallery');
+  });
+  document.querySelector('[data-testid="page-try-another-link"]').addEventListener('click', (e) => {
+    e.preventDefault();
+    setPhase('gallery');
+  });
+
+  /* ─── INTERSECTION OBSERVERS ─── */
+
+  // Entrance scroll reveals
+  const entranceObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.scroll-reveal').forEach(el => {
+    entranceObserver.observe(el);
+  });
+
+  // Page section reveals + score bar animations
+  function observePageSections() {
+    const pageObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+
+          // Animate score bars if in proof section
+          const bars = entry.target.querySelectorAll('.pg-score-bar-fill');
+          if (bars.length) {
+            bars.forEach((bar, i) => {
+              setTimeout(() => {
+                const score = parseFloat(bar.getAttribute('data-score'));
+                bar.style.width = (score / 10 * 100) + '%';
+                bar.classList.add('animated');
+              }, i * 80);
+            });
+          }
+        }
+      });
+    }, { threshold: 0.15, root: phases.page });
+
+    phases.page.querySelectorAll('.pg-scroll').forEach(el => {
+      el.classList.remove('visible');
+      pageObserver.observe(el);
+    });
+  }
+
+  /* ─── INITIALIZE ─── */
+  // Set initial avatars to neutral
+  updateAvatars('neutral');
+
+  // Entrance is active by default (set in HTML class)
+  // Phase is "entrance" by default (set in HTML attribute)
+
+})();
+</script>
+</body>
+</html>

@@ -837,12 +837,99 @@ footer a {
   .variation-grid { grid-template-columns: repeat(2, 1fr); }
   .logos-grid { gap: 12px; }
   .logo-card { padding: 14px 20px; font-size: 0.9rem; }
+  .cast-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 380px) {
   .bar-logo .logo-subtitle { display: none; }
   .variation-grid { grid-template-columns: 1fr; }
 }
+
+/* ─── CAST SECTION ─── */
+.cast-section { padding: 80px 24px; }
+.cast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+
+/* SLOP mode cast cards */
+[data-mode="slop"] .cast-card {
+  background: rgba(108, 92, 234, 0.08);
+  border: 1px solid rgba(108, 92, 234, 0.15);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+}
+[data-mode="slop"] .cast-avatar img.styled-content,
+[data-mode="styled"] .cast-avatar img.slop-content { display: none; }
+[data-mode="slop"] .cast-avatar img.slop-content,
+[data-mode="styled"] .cast-avatar img.styled-content { display: block; }
+[data-mode="slop"] .cast-avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 12px;
+}
+[data-mode="slop"] .cast-avatar img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+}
+[data-mode="slop"] .cast-name { font-weight: 600; margin-bottom: 4px; }
+[data-mode="slop"] .cast-role { font-size: 0.8rem; opacity: 0.6; margin-bottom: 12px; }
+[data-mode="slop"] .cast-quote {
+  font-style: italic; font-size: 0.85rem; opacity: 0.8; line-height: 1.5;
+}
+[data-mode="slop"] .cast-quote::before { content: '\201C'; }
+[data-mode="slop"] .cast-quote::after { content: '\201D'; }
+
+/* STYLED mode cast cards */
+[data-mode="styled"] .cast-card {
+  background: rgba(255, 215, 0, 0.04);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 0;
+  padding: 20px;
+  text-align: left;
+}
+[data-mode="styled"] .cast-avatar {
+  width: 40px; height: 40px; border-radius: 0;
+  overflow: hidden;
+  margin: 0 0 12px;
+  border: 2px solid transparent;
+}
+[data-mode="styled"] .cast-avatar img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+[data-mode="styled"] .cast-avatar--expert { border-color: var(--accent); }
+[data-mode="styled"] .cast-avatar--persona { border-color: #e63946; }
+[data-mode="styled"] .cast-avatar--crew { border-color: var(--text-muted); }
+
+[data-mode="styled"] .cast-name {
+  font-family: 'Courier New', monospace;
+  font-weight: 700; margin-bottom: 2px;
+}
+[data-mode="styled"] .cast-role {
+  font-size: 0.7rem; opacity: 0.5; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+[data-mode="styled"] .cast-hook {
+  font-size: 0.7rem; font-style: italic; opacity: 0.5; margin-bottom: 10px;
+}
+[data-mode="styled"] .cast-quote {
+  font-size: 0.85rem; line-height: 1.5;
+  border-left: 2px solid var(--accent);
+  padding-left: 12px; font-style: normal;
+}
+[data-mode="styled"] .cast-card--crew .cast-quote { border-left-color: var(--text-muted); }
+[data-mode="styled"] .cast-card--crew .cast-quote::before {
+  content: '[CONFESSION] ';
+  font-size: 0.6rem; letter-spacing: 0.1em; opacity: 0.5; display: block; margin-bottom: 4px;
+}
+
+.cast-group-title {
+  font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+  margin: 32px 0 16px; opacity: 0.6;
+}
+[data-mode="slop"] .cast-group-title { display: none; }
 </style>
 </head>
 <body>
@@ -1038,6 +1125,157 @@ footer a {
           <h3>The Redemption</h3>
           <p>Eight distinct design systems applied to the same content. Brutalist exposes. Neo-Minimal refines. Art Deco elevates. Same words, different worlds.</p>
         </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 3.5: MEET THE TEAM / CRITICS
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="cast-section" data-testid="section-cast">
+  <div class="container fade-in">
+
+    <div class="section-heading">
+      <div class="slop-content">
+        <h2>Meet Our Amazing Team</h2>
+        <p>The brilliant minds behind our revolutionary platform.</p>
+      </div>
+      <div class="styled-content">
+        <h2>Meet the Critics</h2>
+        <p>Three panels. Three perspectives. They score every pixel.</p>
+      </div>
+    </div>
+
+    <div class="cast-group-title">The Panel — Expert Critics</div>
+    <div class="cast-grid">
+      <!-- Card 1 -->
+      <div class="cast-card">
+        <div class="cast-avatar cast-avatar--expert">
+          <img class="slop-content" src="https://api.dicebear.com/9.x/avataaars/svg?seed=jessica-m" alt="Jessica M." loading="lazy" />
+          <img class="styled-content" src="https://api.dicebear.com/9.x/adventurer/svg?seed=marketing-expert" alt="Marketing Expert" loading="lazy" />
+        </div>
+        <div class="cast-name">
+          <span class="slop-content">Jessica M.</span>
+          <span class="styled-content">Marketing</span>
+        </div>
+        <div class="cast-role">
+          <span class="slop-content">Head of Innovation</span>
+          <span class="styled-content">Positioning &amp; Messaging</span>
+        </div>
+        <div class="cast-hook styled-content"></div>
+        <div class="cast-quote">
+          <span class="slop-content">This platform completely transformed how our team collaborates.</span>
+          <span class="styled-content">If your landing page could belong to any competitor, it belongs to none of them.</span>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="cast-card">
+        <div class="cast-avatar cast-avatar--expert">
+          <img class="slop-content" src="https://api.dicebear.com/9.x/avataaars/svg?seed=michael-r" alt="Michael R." loading="lazy" />
+          <img class="styled-content" src="https://api.dicebear.com/9.x/adventurer/svg?seed=ux-expert" alt="UX Expert" loading="lazy" />
+        </div>
+        <div class="cast-name">
+          <span class="slop-content">Michael R.</span>
+          <span class="styled-content">UX</span>
+        </div>
+        <div class="cast-role">
+          <span class="slop-content">Director of Operations</span>
+          <span class="styled-content">Usability &amp; Accessibility</span>
+        </div>
+        <div class="cast-quote">
+          <span class="slop-content">The ROI speaks for itself. 300% improvement in just weeks.</span>
+          <span class="styled-content">The screaming red focus ring is impossible to miss&nbsp;&mdash; great for keyboard users.</span>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="cast-card">
+        <div class="cast-avatar cast-avatar--expert">
+          <img class="slop-content" src="https://api.dicebear.com/9.x/avataaars/svg?seed=sarah-k" alt="Sarah K." loading="lazy" />
+          <img class="styled-content" src="https://api.dicebear.com/9.x/adventurer/svg?seed=design-expert" alt="Design Expert" loading="lazy" />
+        </div>
+        <div class="cast-name">
+          <span class="slop-content">Sarah K.</span>
+          <span class="styled-content">Design</span>
+        </div>
+        <div class="cast-role">
+          <span class="slop-content">VP of Customer Success</span>
+          <span class="styled-content">Visual &amp; Branding</span>
+        </div>
+        <div class="cast-quote">
+          <span class="slop-content">Best-in-class solution. Would recommend to any enterprise team.</span>
+          <span class="styled-content">You&rsquo;re selling a visual review tool with zero visuals.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cast-group-title">The Crowd — Real People</div>
+    <div class="cast-grid">
+      <div class="cast-card">
+        <div class="cast-avatar cast-avatar--persona">
+          <img class="slop-content" src="https://api.dicebear.com/9.x/avataaars/svg?seed=amanda-l" alt="Amanda L." loading="lazy" /><img class="styled-content" src="https://api.dicebear.com/9.x/adventurer/svg?seed=dorothy-first-timer" alt="Dorothy" loading="lazy" />
+        </div>
+        <div class="cast-name"><span class="slop-content">Amanda L.</span><span class="styled-content">Dorothy, 68</span></div>
+        <div class="cast-role"><span class="slop-content">Satisfied Customer</span><span class="styled-content">Non-technical novice</span></div>
+        <div class="cast-hook styled-content">Romance novels, Hallmark movies, quilting circle</div>
+        <div class="cast-quote"><span class="slop-content">So intuitive! I was up and running in minutes.</span><span class="styled-content">This looks like the internet forgot to get dressed this morning.</span></div>
+      </div>
+      <div class="cast-card">
+        <div class="cast-avatar cast-avatar--persona">
+          <img class="slop-content" src="https://api.dicebear.com/9.x/avataaars/svg?seed=david-p" alt="David P." loading="lazy" /><img class="styled-content" src="https://api.dicebear.com/9.x/adventurer/svg?seed=frank-retired-exec" alt="Frank" loading="lazy" />
+        </div>
+        <div class="cast-name"><span class="slop-content">David P.</span><span class="styled-content">Frank, 41</span></div>
+        <div class="cast-role"><span class="slop-content">Power User</span><span class="styled-content">Frustrated, zero patience</span></div>
+        <div class="cast-hook styled-content">Fantasy football, ESPN, 5-ingredient meals</div>
+        <div class="cast-quote"><span class="slop-content">Game-changer for productivity. 10/10.</span><span class="styled-content">I found the price in 8 seconds and that is 7 seconds too many.</span></div>
+      </div>
+      <div class="cast-card">
+        <div class="cast-avatar cast-avatar--persona">
+          <img class="slop-content" src="https://api.dicebear.com/9.x/avataaars/svg?seed=rachel-t" alt="Rachel T." loading="lazy" /><img class="styled-content" src="https://api.dicebear.com/9.x/adventurer/svg?seed=marcus-accessibility" alt="Marcus" loading="lazy" />
+        </div>
+        <div class="cast-name"><span class="slop-content">Rachel T.</span><span class="styled-content">Marcus, 34</span></div>
+        <div class="cast-role"><span class="slop-content">Early Adopter</span><span class="styled-content">Colorblind developer</span></div>
+        <div class="cast-hook styled-content">Manga reader, indie gamer, mechanical keyboards</div>
+        <div class="cast-quote"><span class="slop-content">Finally, a tool that just works. Love it!</span><span class="styled-content">System-font gray on white&nbsp;&mdash; my WCAG checker yawned and crashed.</span></div>
+      </div>
+      <div class="cast-card">
+        <div class="cast-avatar cast-avatar--persona">
+          <img class="slop-content" src="https://api.dicebear.com/9.x/avataaars/svg?seed=thomas-w" alt="Thomas W." loading="lazy" /><img class="styled-content" src="https://api.dicebear.com/9.x/adventurer/svg?seed=carlos-investor" alt="Carlos" loading="lazy" />
+        </div>
+        <div class="cast-name"><span class="slop-content">Thomas W.</span><span class="styled-content">Carlos, 52</span></div>
+        <div class="cast-role"><span class="slop-content">Enterprise Client</span><span class="styled-content">CEO evaluator</span></div>
+        <div class="cast-hook styled-content">Business biographies, jazz vinyl, single malt whiskey</div>
+        <div class="cast-quote"><span class="slop-content">Seamless integration with our existing workflow.</span><span class="styled-content">If this is your pitch deck, your Series A is dead on arrival.</span></div>
+      </div>
+      <div class="cast-card">
+        <div class="cast-avatar cast-avatar--persona">
+          <img class="slop-content" src="https://api.dicebear.com/9.x/avataaars/svg?seed=katie-j" alt="Katie J." loading="lazy" /><img class="styled-content" src="https://api.dicebear.com/9.x/adventurer/svg?seed=tommy-hypebeast" alt="Tommy" loading="lazy" />
+        </div>
+        <div class="cast-name"><span class="slop-content">Katie J.</span><span class="styled-content">Tommy, 22</span></div>
+        <div class="cast-role"><span class="slop-content">New User</span><span class="styled-content">Intern, first week</span></div>
+        <div class="cast-hook styled-content">Sneaker collector, hip-hop, streetwear</div>
+        <div class="cast-quote"><span class="slop-content">The onboarding was a breeze. Already seeing results!</span><span class="styled-content">Unapologetic and in your face. The color confidence of a limited-edition sneaker colorway.</span></div>
+      </div>
+    </div>
+
+    <div class="cast-group-title">The Crew — Industry Insiders</div>
+    <div class="cast-grid">
+      <div class="cast-card cast-card--crew">
+        <div class="cast-avatar cast-avatar--crew">
+          <img class="slop-content" src="https://api.dicebear.com/9.x/avataaars/svg?seed=chris-b" alt="Chris B." loading="lazy" /><img class="styled-content" src="https://api.dicebear.com/9.x/adventurer/svg?seed=alex-ai-operator" alt="Alex" loading="lazy" />
+        </div>
+        <div class="cast-name"><span class="slop-content">Chris B.</span><span class="styled-content">Alex</span></div>
+        <div class="cast-role"><span class="slop-content">CTO, Partner Company</span><span class="styled-content">Prompt Engineer</span></div>
+        <div class="cast-quote"><span class="slop-content">The API is rock-solid. Best developer experience in the market.</span><span class="styled-content">I optimized for &lsquo;professional tone&rsquo; and got&hellip; this.</span></div>
+      </div>
+      <div class="cast-card cast-card--crew">
+        <div class="cast-avatar cast-avatar--crew">
+          <img class="slop-content" src="https://api.dicebear.com/9.x/avataaars/svg?seed=lisa-h" alt="Lisa H." loading="lazy" /><img class="styled-content" src="https://api.dicebear.com/9.x/adventurer/svg?seed=kai-deadline-dev" alt="Kai" loading="lazy" />
+        </div>
+        <div class="cast-name"><span class="slop-content">Lisa H.</span><span class="styled-content">Kai</span></div>
+        <div class="cast-role"><span class="slop-content">Lead Designer, Agency</span><span class="styled-content">Junior Designer</span></div>
+        <div class="cast-quote"><span class="slop-content">Beautiful design system out of the box. Saved us weeks.</span><span class="styled-content">The deadline was yesterday. I accepted every default. I know.</span></div>
       </div>
     </div>
 
@@ -1334,5 +1572,31 @@ footer a {
 
 })();
 </script>
+
+<!-- Floating Nav -->
+<style>
+  .floating-nav {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    display: flex; gap: 8px;
+  }
+  .floating-nav .fnav-btn {
+    appearance: none; border: 1px solid var(--card-border-solid, #ccc);
+    background: var(--bg); color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif; font-size: 12px; font-weight: 500;
+    padding: 10px 18px; border-radius: 4px; cursor: pointer;
+    backdrop-filter: blur(12px); text-decoration: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transition: border-color 200ms ease, color 200ms ease;
+  }
+  .floating-nav .fnav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 768px) {
+    .floating-nav { bottom: 16px; right: 16px; }
+    .floating-nav .fnav-btn { font-size: 11px; padding: 8px 14px; }
+  }
+</style>
+<div class="floating-nav">
+  <a class="fnav-btn" href="preview-O5-mixed.html">&larr; Gallery</a>
+</div>
+
 </body>
 </html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Scroll Indicator: Wide Peek + External Tab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,900&family=Patrick+Hand&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0a0a0a; color: #fafafa;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══ CONTROLS ═══ */
+.controls {
+  position: sticky; top: 0; z-index: 1000;
+  background: #1A1A2E; padding: 10px 24px;
+  display: flex; gap: 16px; align-items: center;
+  flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.controls label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #B0B0CC; }
+.pill-group { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill-btn {
+  font-family: 'Courier New', monospace; font-size: 11px; font-weight: 600;
+  padding: 4px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #F5F0E1;
+  transition: all 0.15s;
+}
+.pill-btn.active { background: #FFD000; color: #1A1A2E; border-color: #FFD000; }
+.pill-btn:hover:not(.active) { border-color: #FFD000; }
+
+/* ═══ LAYOUT ═══ */
+.demo-wrapper {
+  max-width: 900px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+.demo-title {
+  font-family: 'Courier New', monospace;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: #FFD000; margin-bottom: 8px;
+}
+.demo-subtitle {
+  font-size: 13px; color: #B0B0CC; margin-bottom: 32px; line-height: 1.5;
+}
+.demo-subtitle code {
+  background: rgba(255,208,0,0.1); color: #FFD000;
+  padding: 2px 6px; border-radius: 3px; font-size: 12px;
+}
+
+/* ═══ DEMO VIEWPORT ═══ */
+.demo-viewport {
+  position: relative;
+  width: 100%; height: 500px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  background: #f5f5f5;
+  margin-bottom: 32px;
+}
+
+/* SLAP content */
+.slap-content {
+  height: 100%; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px; padding: 40px;
+  position: relative; z-index: 1;
+}
+.slap-content .fake-heading {
+  font-size: 2rem; font-weight: 700;
+  background: linear-gradient(135deg, #7c3aed, #ec4899);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.slap-content .fake-body {
+  max-width: 400px; text-align: center; line-height: 1.6;
+  color: #777; font-size: 0.8rem;
+}
+.slap-content .fake-btn {
+  padding: 10px 28px; background: linear-gradient(135deg, #7c3aed, #ec4899);
+  color: #fff; border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PEEK LAYER — variation color peeking from right edge
+   ═══════════════════════════════════════════════════════════ */
+.peek-layer {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 0;
+  z-index: 2;
+  overflow: hidden;
+  box-shadow: -8px 0 24px rgba(0,0,0,0.35), -2px 0 8px rgba(0,0,0,0.2);
+  transition: width 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.peek-layer.peeking {
+  width: 120px;
+}
+.peek-layer.wiping {
+  width: 100%;
+  transition: width 800ms ease-in-out;
+}
+
+/* Inner content — right-aligned so text peeks naturally */
+.peek-inner {
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 100%;
+  min-width: 500px;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 16px; padding: 40px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TAB — outside the peek layer, to its left
+   Direct child of viewport, moves with the peek edge
+   ═══════════════════════════════════════════════════════════ */
+.ind-tab {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  right: 120px; /* sits at the left edge of the peek */
+  transform: translateY(-50%) translateX(-100%);
+  background: #1A1A2E;
+  color: #FFD000;
+  border-radius: 8px 0 0 8px;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 24px 14px 16px;
+  gap: 6px;
+  user-select: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s, background 0.15s, box-shadow 0.15s, right 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.ind-tab.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.ind-tab:hover {
+  background: #252545;
+  box-shadow: -6px 0 24px rgba(0,0,0,0.4);
+}
+.ind-tab:active { background: #303060; }
+
+/* During wipe, tab follows the expanding peek edge then fades */
+.ind-tab.wiping {
+  right: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: right 800ms ease-in-out, opacity 0.3s ease 0.2s;
+}
+
+.ind-tab__text {
+  font-size: 10px; font-weight: 900;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.ind-tab__arrow {
+  display: block; line-height: 1; text-align: center;
+  font-size: 20px; font-weight: 900;
+  animation: slideLoop 1.8s ease-in-out infinite;
+}
+@keyframes slideLoop {
+  0%   { transform: translateY(-4px); opacity: 0; }
+  15%  { opacity: 1; }
+  65%  { transform: translateY(8px); opacity: 1; }
+  85%  { transform: translateY(12px); opacity: 0; }
+  100% { transform: translateY(-4px); opacity: 0; }
+}
+
+/* ═══ LENS PEEK THEMES ═══ */
+.peek-editorial { background: #faf8f4; }
+.peek-editorial .peek-accent {
+  position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+  background: #e85d75;
+}
+.peek-editorial .fake-heading {
+  font-family: 'Playfair Display', Georgia, serif; font-style: italic;
+  font-size: 2rem; font-weight: 900; color: #1a1a1a;
+}
+.peek-editorial .fake-body {
+  max-width: 400px; text-align: center; line-height: 1.6;
+  color: #555; font-size: 0.8rem; font-family: 'Inter', sans-serif;
+}
+.peek-editorial .fake-btn {
+  padding: 10px 28px; background: #e85d75; color: #fff;
+  border-radius: 0; font-size: 0.75rem; font-weight: 600;
+}
+
+.peek-brutalist { background: #ffffff; border-left: 4px solid #000; }
+.peek-brutalist .fake-heading {
+  font-family: system-ui, sans-serif; font-weight: 900;
+  font-size: 2rem; color: #000; text-transform: uppercase;
+}
+.peek-brutalist .fake-body {
+  max-width: 400px; text-align: center; line-height: 1.6;
+  color: #333; font-size: 0.8rem;
+}
+.peek-brutalist .fake-btn {
+  padding: 10px 28px; background: #ff0000; color: #fff;
+  border-radius: 0; font-size: 0.75rem; font-weight: 900;
+  text-transform: uppercase; border: 3px solid #000;
+}
+
+.peek-chalkboard { background: #2d4a3e; }
+.peek-chalkboard .fake-heading {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 2rem; color: #e8dcc8;
+}
+.peek-chalkboard .fake-body {
+  max-width: 400px; text-align: center; line-height: 1.6;
+  color: rgba(232,220,200,0.7); font-size: 0.8rem;
+  font-family: 'Nunito', sans-serif;
+}
+.peek-chalkboard .fake-btn {
+  padding: 10px 28px; background: #ffd93d; color: #2d4a3e;
+  border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+}
+
+/* ═══ STATUS ═══ */
+.status-banner {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #1A1A2E; color: #F5F0E1; padding: 12px 24px;
+  border-radius: 10px; font-family: 'Courier New', monospace;
+  font-size: 0.8rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  z-index: 100; opacity: 0; transition: opacity 0.3s;
+  pointer-events: none; white-space: nowrap;
+}
+.status-banner.visible { opacity: 1; }
+
+/* ═══ INFO ═══ */
+.info-section {
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+}
+.info-section h3 {
+  font-family: 'Courier New', monospace; font-size: 12px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: #FFD000; margin-bottom: 16px;
+}
+.info-section ul {
+  list-style: none; display: flex; flex-direction: column; gap: 8px;
+}
+.info-section li {
+  font-size: 13px; color: #B0B0CC; line-height: 1.5;
+  padding-left: 16px; position: relative;
+}
+.info-section li::before {
+  content: ''; position: absolute; left: 0; top: 7px;
+  width: 6px; height: 6px; border-radius: 50%; background: #FFD000;
+}
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <div>
+    <label>Peek Variation</label>
+    <div class="pill-group" id="lens-pills">
+      <button class="pill-btn active" data-val="editorial">Editorial</button>
+      <button class="pill-btn" data-val="brutalist">Brutalist</button>
+      <button class="pill-btn" data-val="chalkboard">Chalkboard</button>
+    </div>
+  </div>
+</div>
+
+<div class="demo-wrapper">
+  <div class="demo-title">Wide Peek + External Tab</div>
+  <div class="demo-subtitle">
+    The tab sits <strong>outside and to the left</strong> of the peeking variation strip.
+    The 120px peek reveals color + typography with depth shadow.
+    Click the tab (or the peek) to trigger the full wipe. Click the result to reset.
+  </div>
+
+  <div class="demo-viewport" id="viewport">
+    <!-- SLAP content -->
+    <div class="slap-content">
+      <div class="fake-heading">Revolutionize Your Workflow</div>
+      <p class="fake-body">Unlock the power of next-generation AI to streamline
+        your processes, boost productivity, and transform the way your team
+        collaborates. Our cutting-edge platform delivers actionable insights.</p>
+      <div class="fake-btn">Get Started Free</div>
+    </div>
+
+    <!-- Tab — direct child of viewport, outside the peek layer -->
+    <div class="ind-tab" id="tab">
+      <span class="ind-tab__text">Unslap!</span>
+      <span class="ind-tab__arrow">&darr;</span>
+    </div>
+
+    <!-- Peek layer — variation color strip from right -->
+    <div class="peek-layer peek-editorial" id="peek">
+      <div class="peek-accent"></div>
+      <div class="peek-inner" id="peek-inner">
+        <div class="fake-heading">Revolutionize Your Workflow</div>
+        <p class="fake-body">Unlock the power of next-generation AI to streamline
+          your processes, boost productivity, and transform the way your team
+          collaborates. Our cutting-edge platform delivers actionable insights.</p>
+        <div class="fake-btn">Get Started Free</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h3>Implementation Spec</h3>
+    <ul>
+      <li>Tab is a <strong>sibling</strong> of the peek layer (not a child) &mdash; avoids <code>overflow: hidden</code> clipping</li>
+      <li>Tab positioned at <code>right: 120px; transform: translateX(-100%)</code> &mdash; sits flush against the peek's left edge</li>
+      <li>Peek opens to 120px with <code>box-shadow: -8px 0 24px rgba(0,0,0,0.35)</code> for depth</li>
+      <li>On wipe: tab's <code>right</code> transitions to <code>100%</code> (follows the expanding edge) and fades out</li>
+      <li>Arrow: simple &darr; with slide loop animation (1.8s cycle)</li>
+      <li>Click triggers same behavior as scroll-down past threshold</li>
+      <li>Tab appears after a 2s delay (auto-peek opens first, then tab fades in)</li>
+    </ul>
+  </div>
+</div>
+
+<div id="status" class="status-banner"></div>
+
+<script>
+(function() {
+  const tab = document.getElementById('tab');
+  const peek = document.getElementById('peek');
+  const peekInner = document.getElementById('peek-inner');
+  const status = document.getElementById('status');
+  let statusTimer;
+  let state = 'closed'; // closed → peeking → wiped
+
+  function showStatus(msg) {
+    clearTimeout(statusTimer);
+    status.textContent = msg;
+    status.classList.add('visible');
+    statusTimer = setTimeout(() => status.classList.remove('visible'), 2500);
+  }
+
+  function openPeek() {
+    if (state !== 'closed') return;
+    state = 'peeking';
+    peek.classList.add('peeking');
+    // Tab appears slightly after the peek opens
+    setTimeout(() => {
+      if (state === 'peeking') tab.classList.add('visible');
+    }, 400);
+  }
+
+  function triggerWipe() {
+    if (state !== 'peeking') return;
+    state = 'wiped';
+    tab.classList.add('wiping');
+    peek.classList.remove('peeking');
+    peek.classList.add('wiping');
+    showStatus('Wipe triggered! Variation takes over.');
+  }
+
+  function resetDemo() {
+    state = 'closed';
+    tab.classList.remove('visible', 'wiping');
+    peek.classList.remove('peeking', 'wiping');
+    showStatus('Demo reset.');
+    // Re-open peek after delay
+    setTimeout(openPeek, 1500);
+  }
+
+  // Click handlers
+  tab.addEventListener('click', triggerWipe);
+  peek.addEventListener('click', (e) => {
+    if (state === 'peeking') {
+      triggerWipe();
+    } else if (state === 'wiped') {
+      resetDemo();
+    }
+  });
+
+  // Auto-open peek after 2s
+  setTimeout(openPeek, 2000);
+
+  // ─── Lens switching ───
+  const lensClasses = ['peek-editorial', 'peek-brutalist', 'peek-chalkboard'];
+
+  document.getElementById('lens-pills').addEventListener('click', e => {
+    const btn = e.target.closest('.pill-btn');
+    if (!btn) return;
+    document.querySelectorAll('#lens-pills .pill-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const lens = btn.dataset.val;
+
+    // Reset state
+    state = 'closed';
+    tab.classList.remove('visible', 'wiping');
+    peek.classList.remove('peeking', 'wiping', ...lensClasses);
+    peek.classList.add('peek-' + lens);
+
+    // Update accent visibility
+    const accent = peek.querySelector('.peek-accent');
+    if (accent) accent.style.display = (lens === 'editorial') ? 'block' : 'none';
+
+    // Re-open after delay
+    setTimeout(openPeek, 1500);
+  });
+})();
+</script>
+</body>
+</html>

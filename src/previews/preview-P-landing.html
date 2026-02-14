@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en" data-variation="slap" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Preview P: Landing Page Scrollytelling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=Space+Mono:wght@400;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   PREVIEW P — LANDING PAGE SCROLLYTELLING
+   Three-act structure with CSS morph transitions.
+   Act 1: The Performer — generic AI landing page
+   Act 2: The Roast     — expert critique
+   Act 3: The Redemption — design system morph
+   ═══════════════════════════════════════════════════════════════ */
+
+
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+
+
+/* ─── CSS CUSTOM PROPERTIES (SLAP defaults) ─── */
+html {
+  --font-heading: system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 600;
+  --font-weight-body: 400;
+  --font-style-heading: normal;
+  --letter-spacing-heading: 0;
+  --text-transform-heading: none;
+  --line-height-body: 1.6;
+  --bg: #fafafa;
+  --bg-alt: #f0f0f0;
+  --bg-card: #ffffff;
+  --text: #1a1a1a;
+  --text-dim: rgba(26,26,26,0.5);
+  --text-body: #333;
+  --accent: #a855f7;
+  --accent2: #6366f1;
+  --accent-text: #ffffff;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: #e0e0e0;
+  --border-radius: 9999px;
+  --border-radius-card: 12px;
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --section-gap: 80px;
+}
+
+
+/* ─── VARIATION OVERRIDES ─── */
+
+html[data-variation="neo-minimal"] {
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-weight-heading: 300;
+  --font-weight-body: 300;
+  --font-style-heading: normal;
+  --letter-spacing-heading: -0.01em;
+  --text-transform-heading: none;
+  --line-height-body: 1.9;
+  --bg: #fafafa;
+  --bg-alt: #f5f5f5;
+  --bg-card: #ffffff;
+  --text: #1a1a1a;
+  --text-dim: #888;
+  --text-body: #444;
+  --accent: #888;
+  --accent2: #aaa;
+  --accent-text: #fff;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: #ddd;
+  --border-radius: 0px;
+  --border-radius-card: 0px;
+  --card-shadow: none;
+  --section-gap: 120px;
+}
+
+html[data-variation="brutalist"] {
+  --font-heading: system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 900;
+  --font-weight-body: 400;
+  --letter-spacing-heading: -0.03em;
+  --text-transform-heading: uppercase;
+  --line-height-body: 1.6;
+  --bg: #ffffff;
+  --bg-alt: #f0f0f0;
+  --bg-card: #ffffff;
+  --text: #000;
+  --text-dim: rgba(0,0,0,0.5);
+  --text-body: #1a1a1a;
+  --accent: #ff0000;
+  --accent2: #ff0000;
+  --accent-text: #fff;
+  --border-width: 3px;
+  --border-style: solid;
+  --border-color: #000;
+  --border-radius: 0px;
+  --border-radius-card: 0px;
+  --card-shadow: 4px 4px 0 #000;
+  --section-gap: 80px;
+}
+
+html[data-variation="maximalist"] {
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', sans-serif;
+  --font-weight-heading: 900;
+  --font-weight-body: 400;
+  --font-style-heading: italic;
+  --letter-spacing-heading: -0.02em;
+  --line-height-body: 1.8;
+  --bg: #faf8f4;
+  --bg-alt: #f2ede5;
+  --bg-card: #fff;
+  --text: #1a1a1a;
+  --text-dim: rgba(26,26,26,0.45);
+  --text-body: #3a352e;
+  --accent: #e85d75;
+  --accent2: #c8a960;
+  --accent-text: #fff;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(26,26,26,0.15);
+  --border-radius: 0px;
+  --border-radius-card: 0px;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  --section-gap: 100px;
+}
+
+html[data-variation="warm-organic"] {
+  --font-heading: 'Patrick Hand', cursive;
+  --font-body: 'Nunito', sans-serif;
+  --font-weight-heading: 400;
+  --font-weight-body: 400;
+  --letter-spacing-heading: 0.01em;
+  --line-height-body: 1.75;
+  --bg: #2d4a3e;
+  --bg-alt: #243d33;
+  --bg-card: rgba(255,255,255,0.05);
+  --text: #e8dcc8;
+  --text-dim: rgba(232,220,200,0.5);
+  --text-body: rgba(232,220,200,0.85);
+  --accent: #ffd93d;
+  --accent2: #ff6b9d;
+  --accent-text: #2d4a3e;
+  --border-width: 2px;
+  --border-style: dashed;
+  --border-color: rgba(232,220,200,0.25);
+  --border-radius: 4px;
+  --border-radius-card: 6px;
+  --card-shadow: none;
+  --section-gap: 100px;
+}
+
+html[data-variation="dark-industrial"] {
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-weight-heading: 700;
+  --font-weight-body: 400;
+  --letter-spacing-heading: -0.02em;
+  --line-height-body: 1.7;
+  --bg: #0a0a0a;
+  --bg-alt: #111;
+  --bg-card: #141414;
+  --text: #fafafa;
+  --text-dim: rgba(250,250,250,0.55);
+  --text-body: rgba(250,250,250,0.8);
+  --accent: #ffd700;
+  --accent2: #e6c200;
+  --accent-text: #0a0a0a;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(255,255,255,0.1);
+  --border-radius: 4px;
+  --border-radius-card: 6px;
+  --card-shadow: 0 2px 16px rgba(0,0,0,0.4);
+  --section-gap: 120px;
+}
+
+html[data-variation="art-deco"] {
+  --font-heading: 'DM Serif Display', Georgia, serif;
+  --font-body: 'Inter', sans-serif;
+  --font-weight-heading: 400;
+  --font-weight-body: 400;
+  --letter-spacing-heading: 0.04em;
+  --text-transform-heading: uppercase;
+  --line-height-body: 1.8;
+  --bg: #1a1520;
+  --bg-alt: #231e2e;
+  --bg-card: rgba(255,255,255,0.04);
+  --text: #f0e6d3;
+  --text-dim: rgba(240,230,211,0.5);
+  --text-body: rgba(240,230,211,0.8);
+  --accent: #c9a84c;
+  --accent2: #8b6914;
+  --accent-text: #1a1520;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(201,168,76,0.3);
+  --border-radius: 0px;
+  --border-radius-card: 0px;
+  --card-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  --section-gap: 110px;
+}
+
+html[data-variation="retro-futurism"] {
+  --font-heading: 'Space Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+  --font-weight-heading: 700;
+  --font-weight-body: 400;
+  --letter-spacing-heading: 0.05em;
+  --text-transform-heading: uppercase;
+  --line-height-body: 1.7;
+  --bg: #0d1117;
+  --bg-alt: #161b22;
+  --bg-card: rgba(0,255,136,0.04);
+  --text: #00ff88;
+  --text-dim: rgba(0,255,136,0.4);
+  --text-body: rgba(0,255,136,0.7);
+  --accent: #ff6ec7;
+  --accent2: #00ff88;
+  --accent-text: #0d1117;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(0,255,136,0.2);
+  --border-radius: 0px;
+  --border-radius-card: 2px;
+  --card-shadow: 0 0 20px rgba(0,255,136,0.1);
+  --section-gap: 100px;
+}
+
+html[data-variation="memphis"] {
+  --font-heading: system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 900;
+  --font-weight-body: 400;
+  --letter-spacing-heading: -0.01em;
+  --line-height-body: 1.7;
+  --bg: #ffe8f0;
+  --bg-alt: #ffd6e8;
+  --bg-card: #fff;
+  --text: #1a1a2e;
+  --text-dim: rgba(26,26,46,0.5);
+  --text-body: #2d2d44;
+  --accent: #ff3366;
+  --accent2: #33ccff;
+  --accent-text: #fff;
+  --border-width: 3px;
+  --border-style: solid;
+  --border-color: #1a1a2e;
+  --border-radius: 8px;
+  --border-radius-card: 12px;
+  --card-shadow: 5px 5px 0 #1a1a2e;
+  --section-gap: 90px;
+}
+
+
+/* ─── GLOBAL MORPH TRANSITION ─── */
+*, *::before, *::after {
+  transition:
+    color 1.5s ease,
+    background-color 1.5s ease,
+    border-color 1.5s ease,
+    border-radius 1s ease,
+    box-shadow 1.2s ease,
+    padding 1s ease,
+    letter-spacing 1s ease;
+}
+
+
+/* ─── DARK THEME OVERRIDES ─── */
+
+html[data-variation="neo-minimal"][data-theme="dark"] {
+  --bg: #111; --bg-alt: #1a1a1a; --bg-card: #161616;
+  --text: #e0e0e0; --text-dim: #666; --text-body: #aaa;
+  --border-color: #2a2a2a;
+}
+html[data-variation="brutalist"][data-theme="dark"] {
+  --bg: #000; --bg-alt: #0a0a0a; --bg-card: #0a0a0a;
+  --text: #fff; --text-dim: rgba(255,255,255,0.5); --text-body: #e0e0e0;
+  --border-color: #fff; --card-shadow: 4px 4px 0 #fff;
+}
+html[data-variation="maximalist"][data-theme="dark"] {
+  --bg: #1a1612; --bg-alt: #231e18; --bg-card: #1e1914;
+  --text: #f5f0e8; --text-dim: rgba(245,240,232,0.5); --text-body: rgba(245,240,232,0.8);
+  --border-color: rgba(245,240,232,0.12);
+}
+html[data-variation="warm-organic"][data-theme="light"] {
+  --bg: #f5f0e8; --bg-alt: #ebe5d6; --bg-card: rgba(0,0,0,0.03);
+  --text: #2d4a3e; --text-dim: rgba(45,74,62,0.5); --text-body: rgba(45,74,62,0.8);
+  --accent: #c9a520; --accent2: #d4506a; --border-color: rgba(45,74,62,0.2);
+}
+html[data-variation="dark-industrial"][data-theme="light"] {
+  --bg: #fafafa; --bg-alt: #f0f0f0; --bg-card: #fff;
+  --text: #0a0a0a; --text-dim: rgba(10,10,10,0.5); --text-body: #333;
+  --accent: #b8960a; --accent2: #8a7008; --accent-text: #fff;
+  --border-color: rgba(0,0,0,0.1);
+}
+html[data-variation="memphis"][data-theme="dark"] {
+  --bg: #1a1a2e; --bg-alt: #252540; --bg-card: #2d2d44;
+  --text: #ffe8f0; --text-dim: rgba(255,232,240,0.5); --text-body: rgba(255,232,240,0.8);
+  --border-color: #ffe8f0; --card-shadow: 5px 5px 0 #ffe8f0;
+}
+html[data-variation="slap"][data-theme="dark"] {
+  --bg: #1a1a1a; --bg-alt: #222; --bg-card: #2a2a2a;
+  --text: #f0f0f0; --text-dim: rgba(240,240,240,0.5); --text-body: rgba(240,240,240,0.8);
+  --accent: #a855f7; --border-color: #444;
+}
+
+
+/* ─── BODY & PAGE ─── */
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: var(--line-height-body);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page { max-width: 1000px; margin: 0 auto; padding: 0 24px 120px; }
+
+
+/* ─── ACT LABELS ─── */
+.act-label {
+  font-family: var(--font-body);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 40px;
+  padding-top: 60px;
+}
+.act-label__num { opacity: 0.6; margin-right: 8px; }
+
+
+/* ─── LP HERO ─── */
+.lp-hero {
+  text-align: center; padding: 120px 0 80px;
+  max-width: 700px; margin: 0 auto;
+}
+.lp-badge {
+  display: inline-block; padding: 6px 16px;
+  font-family: var(--font-body); font-size: 12px; font-weight: 600;
+  color: var(--accent); border: var(--border-width) var(--border-style) var(--accent);
+  border-radius: var(--border-radius); margin-bottom: 24px;
+}
+.lp-hero__title {
+  font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.15; margin: 0 0 20px;
+  color: var(--text);
+}
+.lp-hero__sub {
+  font-size: 1.05rem; max-width: 540px; margin: 0 auto 32px;
+  line-height: var(--line-height-body);
+}
+.lp-btn {
+  display: inline-block; padding: 14px 32px;
+  font-family: var(--font-body); font-size: 1rem; font-weight: 600;
+  background: var(--accent); color: var(--accent-text);
+  border: var(--border-width) var(--border-style) var(--accent);
+  border-radius: var(--border-radius);
+  text-decoration: none; cursor: pointer;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.lp-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+.lp-btn--outline {
+  background: transparent; color: var(--accent); border-color: var(--accent);
+}
+
+
+/* ─── SCROLL HINT ─── */
+.act-scroll-hint {
+  margin-top: 48px; font-size: 0.85rem; color: var(--text-dim);
+  animation: bobDown 2s ease-in-out infinite;
+}
+@keyframes bobDown {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+
+/* ─── SECTION TITLES ─── */
+.lp-section-title {
+  text-align: center; font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  margin: 0 0 36px; color: var(--text); line-height: 1.2;
+}
+
+
+/* ─── PRICING ─── */
+.lp-pricing { padding: 80px 0; border-top: var(--border-width) var(--border-style) var(--border-color); }
+.lp-pricing-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 20px; max-width: 900px; margin: 0 auto;
+}
+.lp-price-card {
+  padding: 32px 24px; text-align: center;
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius-card);
+  background: var(--bg-card); box-shadow: var(--card-shadow);
+  display: flex; flex-direction: column; gap: 16px;
+}
+.lp-price-card--featured { border-color: var(--accent); position: relative; }
+.lp-price-card__badge {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--accent); color: var(--accent-text);
+  font-size: 11px; font-weight: 600; padding: 4px 14px;
+  border-radius: var(--border-radius); white-space: nowrap;
+}
+.lp-price-card__tier {
+  font-family: var(--font-heading); font-weight: var(--font-weight-heading);
+  font-size: 1.1rem; color: var(--text);
+}
+.lp-price-card__price {
+  font-family: var(--font-heading); font-weight: var(--font-weight-heading);
+  font-size: clamp(2rem, 4vw, 2.8rem); color: var(--text); line-height: 1;
+}
+.lp-price-card__period { font-size: 0.85rem; color: var(--text-dim); font-weight: 400; }
+.lp-price-card__features {
+  list-style: none; padding: 0; margin: 0;
+  font-family: var(--font-body); font-size: 0.9rem; color: var(--text-body);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.lp-price-card .lp-btn { margin-top: auto; }
+
+
+/* ─── TESTIMONIALS ─── */
+.lp-testimonials { padding: 80px 0; border-top: var(--border-width) var(--border-style) var(--border-color); }
+.lp-testimonial-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+.lp-testimonial {
+  padding: 24px; border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius-card); background: var(--bg-card);
+  box-shadow: var(--card-shadow); display: flex; flex-direction: column; gap: 12px;
+}
+.lp-testimonial__avatar { width: 48px; height: 48px; border-radius: 50%; }
+.lp-testimonial__text {
+  font-family: var(--font-body); font-size: 0.9rem; color: var(--text-body);
+  font-style: italic; line-height: 1.6;
+}
+.lp-testimonial__name {
+  font-size: 0.8rem; font-weight: 600; color: var(--text-dim);
+  margin-top: auto;
+}
+
+
+/* ─── FAQ ─── */
+.lp-faq { padding: 80px 0; border-top: var(--border-width) var(--border-style) var(--border-color); max-width: 700px; margin: 0 auto; }
+.lp-faq-item {
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius-card); margin-bottom: 12px;
+  background: var(--bg-card); overflow: hidden;
+}
+.lp-faq-item summary {
+  padding: 16px 20px; cursor: pointer;
+  font-family: var(--font-heading); font-weight: var(--font-weight-heading);
+  font-size: 1rem; color: var(--text); list-style: none;
+}
+.lp-faq-item summary::-webkit-details-marker { display: none; }
+.lp-faq-item summary::before { content: '+'; margin-right: 12px; color: var(--accent); font-weight: 700; }
+.lp-faq-item[open] summary::before { content: '\2212'; }
+.lp-faq-item p {
+  padding: 0 20px 16px; font-family: var(--font-body);
+  font-size: 0.9rem; color: var(--text-body); line-height: 1.7;
+}
+
+
+/* ─── FINAL CTA ─── */
+.lp-final-cta {
+  text-align: center; padding: 80px 0;
+  border-top: var(--border-width) var(--border-style) var(--border-color);
+}
+
+
+/* ─── ROAST SECTION (ACT 2) ─── */
+.act-2 {
+  padding: 60px 0; background: var(--bg-alt);
+  border-top: var(--border-width) var(--border-style) var(--border-color);
+  border-bottom: var(--border-width) var(--border-style) var(--border-color);
+}
+.roast-container { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+.roast-quote {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 20px; border-left: 3px solid var(--accent);
+  background: var(--bg-card); border-radius: 0 var(--border-radius-card) var(--border-radius-card) 0;
+}
+.roast-quote__avatar { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+.roast-quote__text {
+  font-family: var(--font-body); font-size: 0.95rem; color: var(--text-body);
+  line-height: 1.6; margin: 0;
+}
+.roast-quote__name { font-size: 0.8rem; font-weight: 600; color: var(--accent); margin-top: 8px; display: block; }
+
+
+/* ─── REDEMPTION TRIGGER (ACT 3) ─── */
+.act-3 { padding: 80px 0; text-align: center; }
+.redemption-trigger { max-width: 500px; margin: 0 auto; }
+.redemption-trigger__text {
+  font-family: var(--font-body); font-size: 1.1rem; color: var(--text-body); margin-bottom: 24px;
+}
+.score-morph { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 16px; }
+.score-morph__from {
+  font-family: var(--font-heading); font-weight: var(--font-weight-heading);
+  font-size: 2.5rem; color: #f87171;
+}
+.score-morph__arrow { font-size: 1.5rem; color: var(--text-dim); }
+.score-morph__to {
+  font-family: var(--font-heading); font-weight: var(--font-weight-heading);
+  font-size: 2.5rem; color: #4ade80;
+}
+.score-morph__bar {
+  height: 6px; background: var(--border-color);
+  border-radius: 3px; overflow: hidden; max-width: 300px; margin: 0 auto;
+}
+.score-morph__bar-fill {
+  height: 100%; width: 24%; background: #f87171; border-radius: 3px;
+  transition: width 1.5s ease, background-color 1.5s ease;
+}
+
+
+/* ─── VARIATION SWITCHER ─── */
+.variation-switcher {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg); border-top: var(--border-width) var(--border-style) var(--border-color);
+  z-index: 1000; padding: 12px 16px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 400ms ease;
+}
+.variation-switcher.visible { opacity: 1; pointer-events: auto; }
+.variation-switcher__inner {
+  display: flex; gap: 8px; overflow-x: auto;
+  max-width: 1000px; margin: 0 auto;
+  scrollbar-width: thin; padding-bottom: 4px;
+}
+.var-btn {
+  flex-shrink: 0; padding: 8px 16px;
+  font-family: var(--font-body); font-size: 12px; font-weight: 500;
+  border: 1px solid var(--border-color); border-radius: var(--border-radius);
+  background: var(--bg-card); color: var(--text-dim); cursor: pointer;
+  white-space: nowrap;
+  transition: all 300ms ease;
+}
+.var-btn:hover { border-color: var(--accent); color: var(--text); }
+.var-btn--active {
+  background: var(--accent); color: var(--accent-text);
+  border-color: var(--accent); font-weight: 600;
+}
+
+
+/* ─── FLOATING NAV ─── */
+.floating-nav {
+  position: fixed; bottom: 60px; right: 24px;
+  z-index: 9999; display: flex; gap: 8px;
+}
+.float-btn {
+  appearance: none; border: 1px solid var(--border-color);
+  background: var(--bg); color: var(--text);
+  font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+  padding: 10px 18px; border-radius: 4px; cursor: pointer;
+  backdrop-filter: blur(12px); text-decoration: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transition: all 200ms ease;
+}
+.float-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+
+/* ─── ACCESSIBILITY ─── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .lp-pricing-grid { grid-template-columns: 1fr; }
+  .lp-testimonial-grid { grid-template-columns: 1fr; }
+  .lp-hero { padding: 80px 0 60px; }
+  .floating-nav { bottom: 56px; right: 16px; }
+}
+</style>
+</head>
+<body>
+
+<main class="page">
+  <!-- Act 1: The Performer -->
+  <section class="act act-1" data-testid="act-performer">
+    <div class="act-label"><span class="act-label__num">Act 1</span> The Performer</div>
+
+    <!-- Hero -->
+    <div class="lp-hero">
+      <span class="lp-badge">Score: <strong class="score-value" id="heroScore">2.4</strong> / 10</span>
+      <h1 class="lp-hero__title" style="font-family: var(--font-heading); font-weight: var(--font-weight-heading); font-style: var(--font-style-heading, normal); letter-spacing: var(--letter-spacing-heading); text-transform: var(--text-transform-heading, none);">Revolutionize Your Workflow with AI-Powered Solutions</h1>
+      <p class="lp-hero__sub" style="font-family: var(--font-body); color: var(--text-body);">Unlock the power of next-generation artificial intelligence to streamline your processes, boost productivity, and transform the way your team collaborates.</p>
+      <a href="#" class="lp-btn" onclick="return false">Get Started Free</a>
+      <p class="act-scroll-hint" id="scrollHint">See what design can do &#8595;</p>
+    </div>
+
+    <!-- Pricing -->
+    <div class="lp-pricing" id="pricingSection">
+      <h2 class="lp-section-title" style="font-family: var(--font-heading); font-weight: var(--font-weight-heading);">Simple, Transparent Pricing</h2>
+      <div class="lp-pricing-grid">
+        <div class="lp-price-card">
+          <span class="lp-price-card__tier">Starter</span>
+          <span class="lp-price-card__price">$0<span class="lp-price-card__period">/mo</span></span>
+          <ul class="lp-price-card__features">
+            <li>Up to 5 projects</li>
+            <li>Basic analytics</li>
+            <li>Community support</li>
+          </ul>
+          <a href="#" class="lp-btn lp-btn--outline" onclick="return false">Start Free</a>
+        </div>
+        <div class="lp-price-card lp-price-card--featured">
+          <span class="lp-price-card__badge">Most Popular</span>
+          <span class="lp-price-card__tier">Pro</span>
+          <span class="lp-price-card__price">$29<span class="lp-price-card__period">/mo</span></span>
+          <ul class="lp-price-card__features">
+            <li>Unlimited projects</li>
+            <li>Advanced analytics</li>
+            <li>Priority support</li>
+            <li>Custom integrations</li>
+          </ul>
+          <a href="#" class="lp-btn" onclick="return false">Start Pro Trial</a>
+        </div>
+        <div class="lp-price-card">
+          <span class="lp-price-card__tier">Enterprise</span>
+          <span class="lp-price-card__price">$99<span class="lp-price-card__period">/mo</span></span>
+          <ul class="lp-price-card__features">
+            <li>Everything in Pro</li>
+            <li>Dedicated account manager</li>
+            <li>SLA guarantee</li>
+            <li>SSO &amp; audit logs</li>
+          </ul>
+          <a href="#" class="lp-btn lp-btn--outline" onclick="return false">Contact Sales</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Testimonials -->
+    <div class="lp-testimonials">
+      <h2 class="lp-section-title" style="font-family: var(--font-heading); font-weight: var(--font-weight-heading);">What Our Customers Say</h2>
+      <div class="lp-testimonial-grid">
+        <div class="lp-testimonial">
+          <img class="lp-testimonial__avatar" src="https://api.dicebear.com/9.x/avataaars/svg?seed=sarah-lp" alt="" width="48" height="48">
+          <p class="lp-testimonial__text">"This platform completely transformed how our team works. We saw a 3x improvement in productivity within the first month."</p>
+          <span class="lp-testimonial__name">Sarah K., Product Manager</span>
+        </div>
+        <div class="lp-testimonial">
+          <img class="lp-testimonial__avatar" src="https://api.dicebear.com/9.x/avataaars/svg?seed=mike-lp" alt="" width="48" height="48">
+          <p class="lp-testimonial__text">"The AI insights are game-changing. We've reduced our decision-making time by 60% and our clients love the results."</p>
+          <span class="lp-testimonial__name">Mike T., CTO</span>
+        </div>
+        <div class="lp-testimonial">
+          <img class="lp-testimonial__avatar" src="https://api.dicebear.com/9.x/avataaars/svg?seed=emma-lp" alt="" width="48" height="48">
+          <p class="lp-testimonial__text">"Finally, a tool that actually delivers on its promises. The onboarding was seamless and the ROI was immediate."</p>
+          <span class="lp-testimonial__name">Emma R., Founder</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <div class="lp-faq">
+      <h2 class="lp-section-title" style="font-family: var(--font-heading); font-weight: var(--font-weight-heading);">Frequently Asked Questions</h2>
+      <details class="lp-faq-item">
+        <summary>How does the free trial work?</summary>
+        <p>Start with our 14-day free trial. No credit card required. Full access to all Pro features so you can experience the full power of our platform.</p>
+      </details>
+      <details class="lp-faq-item">
+        <summary>Can I cancel anytime?</summary>
+        <p>Absolutely. No contracts, no commitments. Cancel with one click and your data stays yours. We believe in earning your business every month.</p>
+      </details>
+      <details class="lp-faq-item">
+        <summary>Is my data secure?</summary>
+        <p>Enterprise-grade security with SOC 2 Type II certification, end-to-end encryption, and regular third-party audits. Your data never leaves our secure infrastructure.</p>
+      </details>
+    </div>
+
+    <!-- Final CTA -->
+    <div class="lp-final-cta">
+      <h2 class="lp-section-title" style="font-family: var(--font-heading); font-weight: var(--font-weight-heading);">Ready to Transform Your Workflow?</h2>
+      <p style="font-family: var(--font-body); color: var(--text-body); max-width: 500px; margin: 0 auto 24px;">Join 10,000+ teams already using our platform to do their best work. Start free today.</p>
+      <a href="#" class="lp-btn" onclick="return false">Get Started Free</a>
+    </div>
+  </section>
+
+  <!-- Act 2: The Roast -->
+  <section class="act act-2" data-testid="act-roast" id="actRoast">
+    <div class="act-label"><span class="act-label__num">Act 2</span> The Roast</div>
+    <div class="roast-container">
+      <div class="roast-quote">
+        <img class="roast-quote__avatar" src="https://api.dicebear.com/9.x/avataaars/svg?seed=design-expert" alt="" width="40" height="40">
+        <div>
+          <p class="roast-quote__text">"Purple gradients, pill buttons, and 'Revolutionize Your Workflow'&mdash;I've reviewed 200 AI landing pages and they're all the same page wearing different logos."</p>
+          <span class="roast-quote__name">Design Expert</span>
+        </div>
+      </div>
+      <div class="roast-quote">
+        <img class="roast-quote__avatar" src="https://api.dicebear.com/9.x/avataaars/svg?seed=marketing-expert" alt="" width="40" height="40">
+        <div>
+          <p class="roast-quote__text">"The testimonials feel AI-generated because they are. '3x improvement in productivity'&mdash;nobody talks like that unless they're trying to pass a Turing test."</p>
+          <span class="roast-quote__name">Marketing Expert</span>
+        </div>
+      </div>
+      <div class="roast-quote">
+        <img class="roast-quote__avatar" src="https://api.dicebear.com/9.x/avataaars/svg?seed=ux-expert" alt="" width="40" height="40">
+        <div>
+          <p class="roast-quote__text">"9999px border-radius on every button. The visual hierarchy is: big purple thing, slightly smaller purple thing, then give up and scroll."</p>
+          <span class="roast-quote__name">UX Expert</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Act 3: The Redemption -->
+  <section class="act act-3" data-testid="act-redemption" id="actRedemption">
+    <div class="act-label"><span class="act-label__num">Act 3</span> The Redemption</div>
+    <div class="redemption-trigger" id="redemptionTrigger">
+      <p class="redemption-trigger__text">Same content. Different design system.</p>
+      <div class="score-morph">
+        <span class="score-morph__from">2.4</span>
+        <span class="score-morph__arrow">&rarr;</span>
+        <span class="score-morph__to" id="scoreTo">7.2</span>
+      </div>
+      <div class="score-morph__bar">
+        <div class="score-morph__bar-fill" id="scoreBar"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Variation Switcher -->
+<nav class="variation-switcher" id="variationSwitcher" aria-label="Design variation picker">
+  <div class="variation-switcher__inner">
+    <button class="var-btn var-btn--active" data-var="slap" data-score="2.4">SLAP!</button>
+    <button class="var-btn" data-var="neo-minimal" data-score="7.2">Neo-Minimal</button>
+    <button class="var-btn" data-var="brutalist" data-score="6.8">Brutalist</button>
+    <button class="var-btn" data-var="maximalist" data-score="6.0">Maximalist</button>
+    <button class="var-btn" data-var="dark-industrial" data-score="7.0">Dark Industrial</button>
+    <button class="var-btn" data-var="warm-organic" data-score="6.6">Warm Organic</button>
+    <button class="var-btn" data-var="retro-futurism" data-score="5.8">Retro-Futurism</button>
+    <button class="var-btn" data-var="memphis" data-score="5.4">Memphis</button>
+    <button class="var-btn" data-var="art-deco" data-score="7.6">Art Deco</button>
+  </div>
+</nav>
+
+<!-- Floating Nav -->
+<div class="floating-nav">
+  <a class="float-btn" href="preview-O5-mixed.html">&larr; Gallery</a>
+  <button class="float-btn" id="themeToggle" aria-label="Toggle theme">&#9789;</button>
+</div>
+
+<script>
+(function() {
+  'use strict';
+  var root = document.documentElement;
+  var morphTriggered = false;
+  var currentVariation = 'slap';
+
+  // Lens -> variation mapping
+  var LENS_MAP = {
+    editorial: 'maximalist',
+    brutalist: 'brutalist',
+    minimal: 'neo-minimal',
+    chalkboard: 'warm-organic',
+    neutral: 'dark-industrial'
+  };
+
+  var SCORE_MAP = {
+    'slap': 2.4,
+    'neo-minimal': 7.2,
+    'brutalist': 6.8,
+    'maximalist': 6.0,
+    'dark-industrial': 7.0,
+    'warm-organic': 6.6,
+    'retro-futurism': 5.8,
+    'memphis': 5.4,
+    'art-deco': 7.6
+  };
+
+  // Read lens from URL
+  var params = new URLSearchParams(window.location.search);
+  var lens = params.get('lens');
+  var targetVariation = LENS_MAP[lens] || 'art-deco';
+
+  // Show variation switcher via IntersectionObserver on Act 3
+  var switcher = document.getElementById('variationSwitcher');
+  var act3 = document.getElementById('actRedemption');
+
+  if (act3 && 'IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !morphTriggered) {
+          morphTriggered = true;
+          triggerMorph(targetVariation);
+          switcher.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    observer.observe(act3);
+  }
+
+  function triggerMorph(variation) {
+    currentVariation = variation;
+    root.setAttribute('data-variation', variation);
+
+    // Update score display
+    var score = SCORE_MAP[variation] || 7.0;
+    var scoreTo = document.getElementById('scoreTo');
+    var scoreBar = document.getElementById('scoreBar');
+    var heroScore = document.getElementById('heroScore');
+
+    if (scoreTo) scoreTo.textContent = score.toFixed(1);
+    if (heroScore) heroScore.textContent = score.toFixed(1);
+    if (scoreBar) {
+      scoreBar.style.width = (score * 10) + '%';
+      scoreBar.style.backgroundColor = score >= 6 ? '#4ade80' : (score >= 4 ? '#fbbf24' : '#f87171');
+    }
+
+    // Update active button
+    document.querySelectorAll('.var-btn').forEach(function(btn) {
+      btn.classList.toggle('var-btn--active', btn.getAttribute('data-var') === variation);
+    });
+  }
+
+  // Variation switcher clicks
+  document.querySelectorAll('.var-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      triggerMorph(btn.getAttribute('data-var'));
+    });
+  });
+
+  // Theme toggle
+  var themeBtn = document.getElementById('themeToggle');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function() {
+      var current = root.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      themeBtn.textContent = next === 'dark' ? '\u263D' : '\u2600';
+    });
+  }
+
+  // Highlight lens-matched button in switcher
+  document.querySelectorAll('.var-btn').forEach(function(btn) {
+    if (btn.getAttribute('data-var') === targetVariation) {
+      btn.style.outline = '2px solid var(--accent)';
+      btn.style.outlineOffset = '2px';
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

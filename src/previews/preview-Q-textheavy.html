@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en" data-variation="slap" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! — Preview Q: Text-Heavy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Patrick+Hand&family=Nunito:wght@400;600;700&family=Space+Mono:wght@400;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   PREVIEW Q — TEXT-HEAVY ARCHETYPE
+   Three-act scrollytelling with CSS morph transitions.
+   All styling via CSS custom properties for live variation morphing.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── SLAP DEFAULTS ─── */
+html {
+  --font-heading: system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 600;
+  --font-weight-body: 400;
+  --font-style-heading: normal;
+  --letter-spacing-heading: 0;
+  --text-transform-heading: none;
+  --line-height-body: 1.6;
+  --bg: #fafafa;
+  --bg-alt: #f0f0f0;
+  --bg-card: #ffffff;
+  --text: #1a1a1a;
+  --text-dim: rgba(26,26,26,0.5);
+  --text-body: #333;
+  --accent: #a855f7;
+  --accent2: #6366f1;
+  --accent-text: #ffffff;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: #e0e0e0;
+  --border-radius: 9999px;
+  --border-radius-card: 12px;
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --section-gap: 80px;
+}
+
+/* ─── SLAP DARK THEME ─── */
+html[data-variation="slap"][data-theme="dark"] {
+  --bg: #111111;
+  --bg-alt: #1a1a1a;
+  --bg-card: #222222;
+  --text: #fafafa;
+  --text-dim: rgba(250,250,250,0.5);
+  --text-body: #cccccc;
+  --border-color: rgba(255,255,255,0.1);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* ─── NEO-MINIMAL ─── */
+html[data-variation="neo-minimal"] {
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 300;
+  --font-weight-body: 400;
+  --font-style-heading: normal;
+  --letter-spacing-heading: 0;
+  --text-transform-heading: none;
+  --line-height-body: 1.6;
+  --bg: #fafafa;
+  --bg-alt: #f5f5f5;
+  --bg-card: #ffffff;
+  --text: #1a1a1a;
+  --text-dim: rgba(26,26,26,0.4);
+  --text-body: #444;
+  --accent: #888;
+  --accent2: #aaa;
+  --accent-text: #ffffff;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: #e5e5e5;
+  --border-radius: 0px;
+  --border-radius-card: 0px;
+  --card-shadow: none;
+  --section-gap: 120px;
+}
+
+/* Neo-Minimal Dark */
+html[data-variation="neo-minimal"][data-theme="dark"] {
+  --bg: #111111;
+  --bg-alt: #1a1a1a;
+  --bg-card: #1e1e1e;
+  --text: #e0e0e0;
+  --text-dim: rgba(224,224,224,0.4);
+  --text-body: #aaa;
+  --accent: #888;
+  --accent2: #666;
+  --border-color: rgba(255,255,255,0.08);
+}
+
+/* ─── BRUTALIST ─── */
+html[data-variation="brutalist"] {
+  --font-heading: system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 900;
+  --font-weight-body: 400;
+  --font-style-heading: normal;
+  --letter-spacing-heading: 0;
+  --text-transform-heading: uppercase;
+  --line-height-body: 1.6;
+  --bg: #fff;
+  --bg-alt: #f0f0f0;
+  --bg-card: #ffffff;
+  --text: #000;
+  --text-dim: rgba(0,0,0,0.5);
+  --text-body: #111;
+  --accent: #ff0000;
+  --accent2: #cc0000;
+  --accent-text: #ffffff;
+  --border-width: 3px;
+  --border-style: solid;
+  --border-color: #000;
+  --border-radius: 0px;
+  --border-radius-card: 0px;
+  --card-shadow: 4px 4px 0 #000;
+  --section-gap: 80px;
+}
+
+/* Brutalist Dark */
+html[data-variation="brutalist"][data-theme="dark"] {
+  --bg: #111;
+  --bg-alt: #1a1a1a;
+  --bg-card: #1e1e1e;
+  --text: #fff;
+  --text-dim: rgba(255,255,255,0.5);
+  --text-body: #ddd;
+  --accent: #ff0000;
+  --border-color: #fff;
+  --card-shadow: 4px 4px 0 #fff;
+}
+
+/* ─── MAXIMALIST ─── */
+html[data-variation="maximalist"] {
+  --font-heading: 'Playfair Display', serif;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 900;
+  --font-weight-body: 400;
+  --font-style-heading: italic;
+  --letter-spacing-heading: 0;
+  --text-transform-heading: none;
+  --line-height-body: 1.6;
+  --bg: #faf8f4;
+  --bg-alt: #f2ede5;
+  --bg-card: #ffffff;
+  --text: #1a1a1a;
+  --text-dim: rgba(26,26,26,0.45);
+  --text-body: #3a352e;
+  --accent: #e85d75;
+  --accent2: #c8a960;
+  --accent-text: #ffffff;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(26,26,26,0.15);
+  --border-radius: 0px;
+  --border-radius-card: 0px;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  --section-gap: 80px;
+}
+
+/* Maximalist Dark */
+html[data-variation="maximalist"][data-theme="dark"] {
+  --bg: #1a0a2e;
+  --bg-alt: #2d1854;
+  --bg-card: #241040;
+  --text: #f0e6ff;
+  --text-dim: rgba(240,230,255,0.45);
+  --text-body: #c8b8e8;
+  --accent: #e85d75;
+  --accent2: #c8a960;
+  --border-color: rgba(240,230,255,0.15);
+  --card-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+/* ─── WARM ORGANIC ─── */
+html[data-variation="warm-organic"] {
+  --font-heading: 'Patrick Hand', cursive;
+  --font-body: 'Nunito', sans-serif;
+  --font-weight-heading: 400;
+  --font-weight-body: 400;
+  --font-style-heading: normal;
+  --letter-spacing-heading: 0;
+  --text-transform-heading: none;
+  --line-height-body: 1.7;
+  --bg: #2d4a3e;
+  --bg-alt: #345a4c;
+  --bg-card: #3a6052;
+  --text: #e8dcc8;
+  --text-dim: rgba(232,220,200,0.5);
+  --text-body: #d4c8b0;
+  --accent: #ffd93d;
+  --accent2: #ff6b9d;
+  --accent-text: #2d4a3e;
+  --border-width: 1px;
+  --border-style: dashed;
+  --border-color: rgba(232,220,200,0.2);
+  --border-radius: 12px;
+  --border-radius-card: 16px;
+  --card-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  --section-gap: 80px;
+}
+
+/* Warm Organic Light */
+html[data-variation="warm-organic"][data-theme="light"] {
+  --bg: #f5efe6;
+  --bg-alt: #ebe3d6;
+  --bg-card: #faf7f2;
+  --text: #3a352e;
+  --text-dim: rgba(58,53,46,0.5);
+  --text-body: #5a5347;
+  --accent: #d4a017;
+  --accent2: #e85d75;
+  --accent-text: #ffffff;
+  --border-color: rgba(58,53,46,0.15);
+}
+
+/* ─── DARK INDUSTRIAL ─── */
+html[data-variation="dark-industrial"] {
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 700;
+  --font-weight-body: 400;
+  --font-style-heading: normal;
+  --letter-spacing-heading: 0;
+  --text-transform-heading: none;
+  --line-height-body: 1.6;
+  --bg: #0a0a0a;
+  --bg-alt: #111111;
+  --bg-card: #141414;
+  --text: #fafafa;
+  --text-dim: rgba(250,250,250,0.45);
+  --text-body: #bbb;
+  --accent: #ffd700;
+  --accent2: #e6c200;
+  --accent-text: #0a0a0a;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(255,255,255,0.1);
+  --border-radius: 2px;
+  --border-radius-card: 4px;
+  --card-shadow: 0 2px 16px rgba(0,0,0,0.4);
+  --section-gap: 80px;
+}
+
+/* Dark Industrial Light */
+html[data-variation="dark-industrial"][data-theme="light"] {
+  --bg: #f0f0f0;
+  --bg-alt: #e5e5e5;
+  --bg-card: #ffffff;
+  --text: #1a1a1a;
+  --text-dim: rgba(26,26,26,0.45);
+  --text-body: #444;
+  --accent: #b8960f;
+  --accent2: #8a7008;
+  --accent-text: #ffffff;
+  --border-color: rgba(0,0,0,0.12);
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* ─── ART DECO ─── */
+html[data-variation="art-deco"] {
+  --font-heading: 'DM Serif Display', serif;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 400;
+  --font-weight-body: 400;
+  --font-style-heading: normal;
+  --letter-spacing-heading: 0.04em;
+  --text-transform-heading: uppercase;
+  --line-height-body: 1.6;
+  --bg: #1a1520;
+  --bg-alt: #231e2c;
+  --bg-card: #2a2434;
+  --text: #f0e6d3;
+  --text-dim: rgba(240,230,211,0.45);
+  --text-body: #c8bea8;
+  --accent: #c9a84c;
+  --accent2: #a88a3a;
+  --accent-text: #1a1520;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(201,168,76,0.3);
+  --border-radius: 0px;
+  --border-radius-card: 0px;
+  --card-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  --section-gap: 80px;
+}
+
+/* ─── RETRO-FUTURISM ─── */
+html[data-variation="retro-futurism"] {
+  --font-heading: 'Space Mono', monospace;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 700;
+  --font-weight-body: 400;
+  --font-style-heading: normal;
+  --letter-spacing-heading: 0;
+  --text-transform-heading: uppercase;
+  --line-height-body: 1.6;
+  --bg: #0d1117;
+  --bg-alt: #161b22;
+  --bg-card: #1c2333;
+  --text: #00ff88;
+  --text-dim: rgba(0,255,136,0.4);
+  --text-body: #8bc9a8;
+  --accent: #ff6ec7;
+  --accent2: #00ff88;
+  --accent-text: #0d1117;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(0,255,136,0.2);
+  --border-radius: 0px;
+  --border-radius-card: 0px;
+  --card-shadow: 0 0 20px rgba(0,255,136,0.1);
+  --section-gap: 80px;
+}
+
+/* ─── MEMPHIS ─── */
+html[data-variation="memphis"] {
+  --font-heading: system-ui, sans-serif;
+  --font-body: system-ui, sans-serif;
+  --font-weight-heading: 900;
+  --font-weight-body: 400;
+  --font-style-heading: normal;
+  --letter-spacing-heading: 0;
+  --text-transform-heading: none;
+  --line-height-body: 1.6;
+  --bg: #ffe8f0;
+  --bg-alt: #ffd6e4;
+  --bg-card: #ffffff;
+  --text: #1a1a2e;
+  --text-dim: rgba(26,26,46,0.5);
+  --text-body: #333350;
+  --accent: #ff3366;
+  --accent2: #33ccff;
+  --accent-text: #ffffff;
+  --border-width: 3px;
+  --border-style: solid;
+  --border-color: #1a1a2e;
+  --border-radius: 0px;
+  --border-radius-card: 0px;
+  --card-shadow: 5px 5px 0 #1a1a2e;
+  --section-gap: 80px;
+}
+
+/* Memphis Dark */
+html[data-variation="memphis"][data-theme="dark"] {
+  --bg: #1a1a2e;
+  --bg-alt: #252540;
+  --bg-card: #2e2e4a;
+  --text: #ffe8f0;
+  --text-dim: rgba(255,232,240,0.5);
+  --text-body: #ddc8d4;
+  --accent: #ff3366;
+  --accent2: #33ccff;
+  --border-color: #ffe8f0;
+  --card-shadow: 5px 5px 0 rgba(255,232,240,0.3);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL MORPH TRANSITION
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after {
+  transition: color 1.5s ease, background-color 1.5s ease, border-color 1.5s ease, border-radius 1s ease, box-shadow 1.2s ease, padding 1s ease, letter-spacing 1s ease;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: var(--line-height-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding-bottom: 80px;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCESSIBILITY
+   ═══════════════════════════════════════════════════════════════ */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTAINER
+   ═══════════════════════════════════════════════════════════════ */
+.contain { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ACT SECTIONS
+   ═══════════════════════════════════════════════════════════════ */
+.act { padding: var(--section-gap) 0; }
+.act + .act { border-top: var(--border-width) var(--border-style) var(--border-color); }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ACT 1 — THE PERFORMER: TEXT-HEAVY ARTICLE
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Score badge */
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: var(--border-radius);
+  background: var(--bg-alt);
+  border: var(--border-width) var(--border-style) var(--border-color);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 24px;
+}
+.score-badge .score-value {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+/* Search bar (decorative) */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius-card);
+  background: var(--bg-card);
+  box-shadow: var(--card-shadow);
+  margin-bottom: 32px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.search-bar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-dim);
+  outline: none;
+  pointer-events: none;
+}
+.search-bar .search-icon {
+  color: var(--text-dim);
+  font-size: 14px;
+}
+
+/* Article headline */
+.article-headline {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: var(--font-style-heading);
+  letter-spacing: var(--letter-spacing-heading);
+  text-transform: var(--text-transform-heading);
+  font-size: clamp(24px, 4vw, 40px);
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+/* Byline */
+.byline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: var(--border-width) var(--border-style) var(--border-color);
+}
+.byline-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  flex-shrink: 0;
+}
+.byline-info {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.byline-name {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Article layout: 2-column grid */
+.article-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Table of Contents sidebar */
+.toc {
+  position: sticky;
+  top: 100px;
+  padding: 20px;
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius-card);
+  background: var(--bg-card);
+  box-shadow: var(--card-shadow);
+}
+.toc-title {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: var(--font-style-heading);
+  letter-spacing: var(--letter-spacing-heading);
+  text-transform: var(--text-transform-heading);
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: var(--border-width) var(--border-style) var(--border-color);
+}
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.toc-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+}
+.toc-list li:last-child { border-bottom: none; }
+.toc-list a {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--text-dim);
+  text-decoration: none;
+  line-height: 1.4;
+  display: block;
+}
+.toc-list a:hover { color: var(--accent); }
+
+/* Article body */
+.article-body h2 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: var(--font-style-heading);
+  letter-spacing: var(--letter-spacing-heading);
+  text-transform: var(--text-transform-heading);
+  font-size: clamp(18px, 2.5vw, 24px);
+  line-height: 1.3;
+  color: var(--text);
+  margin-top: 40px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: var(--border-width) var(--border-style) var(--border-color);
+}
+.article-body h2:first-child { margin-top: 0; }
+.article-body h3 {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: var(--font-style-heading);
+  letter-spacing: var(--letter-spacing-heading);
+  text-transform: var(--text-transform-heading);
+  font-size: clamp(15px, 2vw, 18px);
+  line-height: 1.3;
+  color: var(--text);
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+.article-body p {
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-body);
+  font-size: clamp(14px, 1.5vw, 16px);
+  line-height: var(--line-height-body);
+  color: var(--text-body);
+  margin-bottom: 16px;
+}
+
+/* Collapsible sections */
+.article-body details {
+  margin-top: 24px;
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius-card);
+  overflow: hidden;
+}
+.article-body details summary {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: var(--font-style-heading);
+  letter-spacing: var(--letter-spacing-heading);
+  text-transform: var(--text-transform-heading);
+  font-size: 15px;
+  color: var(--text);
+  padding: 14px 18px;
+  cursor: pointer;
+  background: var(--bg-alt);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.article-body details summary::before {
+  content: '\25B6';
+  font-size: 10px;
+  color: var(--accent);
+  transition: transform 0.3s ease;
+}
+.article-body details[open] summary::before {
+  transform: rotate(90deg);
+}
+.article-body details summary::-webkit-details-marker { display: none; }
+.article-body details .details-content {
+  padding: 16px 18px;
+  background: var(--bg-card);
+}
+
+/* Scroll hint */
+.scroll-hint {
+  text-align: center;
+  margin-top: 48px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  animation: floatHint 2.5s ease-in-out infinite;
+}
+@keyframes floatHint {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ACT 2 — THE ROAST
+   ═══════════════════════════════════════════════════════════════ */
+.act-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.act-title {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: var(--font-style-heading);
+  letter-spacing: var(--letter-spacing-heading);
+  text-transform: var(--text-transform-heading);
+  font-size: clamp(22px, 3.5vw, 36px);
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 32px;
+}
+
+.roast-quotes {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.roast-quote {
+  padding: 24px;
+  padding-left: 28px;
+  border-left: 4px solid var(--accent);
+  background: var(--bg-card);
+  border-radius: var(--border-radius-card);
+  box-shadow: var(--card-shadow);
+  border-top: var(--border-width) var(--border-style) var(--border-color);
+  border-right: var(--border-width) var(--border-style) var(--border-color);
+  border-bottom: var(--border-width) var(--border-style) var(--border-color);
+}
+.roast-quote blockquote {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.5vw, 16px);
+  line-height: var(--line-height-body);
+  color: var(--text-body);
+  margin-bottom: 12px;
+  font-style: italic;
+}
+.roast-quote cite {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-style: normal;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ACT 3 — THE REDEMPTION
+   ═══════════════════════════════════════════════════════════════ */
+.redemption-content {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.score-morph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.score-from {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
+  font-size: clamp(36px, 5vw, 56px);
+  color: #f87171;
+}
+.score-arrow {
+  font-family: var(--font-body);
+  font-size: 24px;
+  color: var(--text-dim);
+}
+.score-to {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
+  font-size: clamp(36px, 5vw, 56px);
+  color: #4ade80;
+}
+
+.score-bar-track {
+  width: 100%;
+  max-width: 400px;
+  height: 8px;
+  background: var(--bg-alt);
+  border-radius: var(--border-radius);
+  margin: 0 auto 24px;
+  overflow: hidden;
+  border: var(--border-width) var(--border-style) var(--border-color);
+}
+.score-bar-fill {
+  height: 100%;
+  width: 24%;
+  background: #f87171;
+  border-radius: var(--border-radius);
+  transition: width 1.5s ease, background-color 1.5s ease;
+}
+
+.redemption-text {
+  font-family: var(--font-heading);
+  font-weight: var(--font-weight-heading);
+  font-style: var(--font-style-heading);
+  letter-spacing: var(--letter-spacing-heading);
+  text-transform: var(--text-transform-heading);
+  font-size: clamp(18px, 2.5vw, 24px);
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.redemption-sub {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   VARIATION SWITCHER (fixed bottom bar)
+   ═══════════════════════════════════════════════════════════════ */
+.variation-switcher {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9000;
+  background: var(--bg);
+  border-top: var(--border-width) var(--border-style) var(--border-color);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+}
+.variation-switcher.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.var-btn {
+  padding: 6px 14px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+  background: transparent;
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.var-btn:hover {
+  color: var(--text);
+  background: var(--bg-alt);
+}
+.var-btn--active {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   FLOATING NAV (bottom-right, above switcher)
+   ═══════════════════════════════════════════════════════════════ */
+.floating-nav {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  z-index: 9500;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+.floating-nav a,
+.floating-nav button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg-card);
+  border: var(--border-width) var(--border-style) var(--border-color);
+  border-radius: var(--border-radius-card);
+  box-shadow: var(--card-shadow);
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.floating-nav a:hover,
+.floating-nav button:hover {
+  background: var(--bg-alt);
+  border-color: var(--accent);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .article-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .toc {
+    position: relative;
+    top: 0;
+    margin-bottom: 24px;
+  }
+  .variation-switcher {
+    gap: 4px;
+    padding: 8px 10px;
+  }
+  .var-btn {
+    padding: 5px 10px;
+    font-size: 10px;
+  }
+  .floating-nav {
+    bottom: 60px;
+    right: 12px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ACT 1 — THE PERFORMER
+     Text-heavy article in SLAP defaults.
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="act" id="actPerformer">
+  <div class="contain">
+
+    <!-- Score badge -->
+    <div class="score-badge">
+      SLAP Score: <span class="score-value" id="heroScore">2.4</span> / 10
+    </div>
+
+    <!-- Decorative search bar -->
+    <div class="search-bar">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" placeholder="Search this article..." disabled>
+    </div>
+
+    <!-- Article headline -->
+    <h1 class="article-headline">The Comprehensive Guide to Building Scalable AI Systems in 2024</h1>
+
+    <!-- Byline -->
+    <div class="byline">
+      <img class="byline-avatar" src="https://api.dicebear.com/9.x/lorelei/svg?seed=ai-author" alt="Author avatar" loading="lazy">
+      <div class="byline-info">
+        <span class="byline-name">AI Content Team</span><br>
+        Published Dec 12, 2024 &middot; 18 min read
+      </div>
+    </div>
+
+    <!-- 2-column layout: TOC sidebar + article body -->
+    <div class="article-layout">
+
+      <!-- Table of Contents -->
+      <aside class="toc">
+        <div class="toc-title">Table of Contents</div>
+        <ol class="toc-list">
+          <li><a href="#sec-landscape">Understanding the AI Landscape</a></li>
+          <li><a href="#sec-architecture">Key Architecture Patterns</a></li>
+          <li><a href="#sec-practices">Implementation Best Practices</a></li>
+          <li><a href="#sec-success">Measuring Success and ROI</a></li>
+          <li><a href="#sec-advanced">Advanced Topics</a></li>
+          <li><a href="#sec-glossary">Glossary of Terms</a></li>
+        </ol>
+      </aside>
+
+      <!-- Main article body -->
+      <div class="article-body">
+
+        <h2 id="sec-landscape">1. Understanding the AI Landscape</h2>
+        <p>
+          The artificial intelligence landscape is evolving at an unprecedented pace, driven by groundbreaking
+          advancements in large language models, computer vision, and multimodal reasoning capabilities. Organizations
+          across every vertical are leveraging these transformative technologies to unlock new value streams,
+          optimize operational workflows, and deliver hyper-personalized experiences at scale. Understanding
+          the current state of the ecosystem is essential for any forward-thinking technology leader seeking
+          to maintain competitive advantage in today's rapidly shifting digital environment.
+        </p>
+        <p>
+          From edge computing deployments to cloud-native inference pipelines, the infrastructure requirements
+          for modern AI systems demand a holistic approach to system design. Key considerations include model
+          serving latency, data pipeline orchestration, feature store management, and continuous model monitoring.
+          By adopting a platform-centric mindset, engineering teams can accelerate time-to-value while maintaining
+          the governance and observability frameworks necessary for enterprise-grade AI deployments.
+        </p>
+
+        <h2 id="sec-architecture">2. Key Architecture Patterns</h2>
+        <p>
+          Modern AI architectures are increasingly converging on microservices-based patterns that enable
+          independent scaling of inference endpoints, data preprocessing layers, and model training pipelines.
+          The adoption of containerized workloads orchestrated via Kubernetes has become the de facto standard
+          for production ML systems, enabling seamless blue-green deployments and canary rollouts across
+          heterogeneous compute environments. Event-driven architectures further enhance responsiveness by
+          decoupling model inference from upstream data ingestion processes.
+        </p>
+        <p>
+          Cloud-native design principles are fundamental to building resilient AI infrastructure. Leveraging
+          managed services for vector databases, embedding stores, and real-time feature computation allows
+          teams to focus on differentiated model development rather than undifferentiated heavy lifting.
+          Service mesh implementations provide the observability and traffic management capabilities essential
+          for operating complex ML systems at scale, while infrastructure-as-code practices ensure
+          reproducibility across development, staging, and production environments.
+        </p>
+
+        <h2 id="sec-practices">3. Implementation Best Practices</h2>
+        <p>
+          Adopting agile methodologies tailored for machine learning workflows is critical for delivering
+          iterative value. MLOps practices — encompassing automated model training, validation, and deployment
+          pipelines — serve as the backbone of any mature AI organization. Continuous integration and continuous
+          deployment (CI/CD) pipelines specifically designed for ML artifacts enable rapid experimentation
+          while maintaining production stability through automated regression testing and model performance
+          benchmarking against established baseline metrics.
+        </p>
+        <p>
+          Cross-functional collaboration between data scientists, ML engineers, and platform teams is essential
+          for bridging the gap between experimental notebooks and production-grade systems. Establishing clear
+          model governance frameworks, including model cards, bias audits, and explainability reports, ensures
+          that AI systems are deployed responsibly. Regular sprint retrospectives and design reviews create
+          feedback loops that continuously improve both model quality and engineering velocity, fostering
+          a culture of data-driven decision making across the organization.
+        </p>
+
+        <h2 id="sec-success">4. Measuring Success and ROI</h2>
+        <p>
+          Quantifying the business impact of AI initiatives requires a comprehensive measurement framework
+          that spans technical KPIs, business outcomes, and user satisfaction metrics. Key performance indicators
+          should include model accuracy and latency benchmarks, A/B test lift measurements, customer lifetime
+          value improvements, and operational cost reductions attributable to AI-driven automation. Dashboards
+          that surface these metrics in real-time enable stakeholders to make data-informed decisions about
+          resource allocation and strategic investment priorities.
+        </p>
+        <p>
+          Return on investment calculations for AI projects must account for both direct and indirect value
+          creation. Beyond immediate revenue uplift and cost savings, organizations should measure improvements
+          in employee productivity, customer experience scores, and time-to-market acceleration. Building
+          a robust attribution model that connects model performance metrics to downstream business outcomes
+          provides the evidence base necessary for securing continued investment and executive sponsorship
+          for AI transformation initiatives across the enterprise.
+        </p>
+
+        <!-- Collapsible sections -->
+        <details id="sec-advanced">
+          <summary>Advanced Topics</summary>
+          <div class="details-content">
+            <p>
+              Advanced practitioners should explore federated learning architectures for privacy-preserving
+              model training, reinforcement learning from human feedback (RLHF) for alignment optimization,
+              and retrieval-augmented generation (RAG) patterns for grounding language model outputs in
+              domain-specific knowledge bases. These cutting-edge approaches represent the frontier of
+              production AI systems and offer significant competitive advantages for organizations
+              willing to invest in the requisite infrastructure and expertise.
+            </p>
+          </div>
+        </details>
+
+        <details id="sec-glossary">
+          <summary>Glossary of Terms</summary>
+          <div class="details-content">
+            <p>
+              <strong>MLOps:</strong> Machine Learning Operations, the practice of applying DevOps principles
+              to ML workflows. <strong>Feature Store:</strong> A centralized repository for storing and serving
+              ML features. <strong>Model Serving:</strong> The infrastructure and processes for deploying trained
+              models to handle inference requests. <strong>A/B Testing:</strong> Controlled experiments comparing
+              model variants against baseline performance. <strong>RAG:</strong> Retrieval-Augmented Generation,
+              a pattern that grounds LLM outputs in retrieved documents.
+            </p>
+          </div>
+        </details>
+
+      </div><!-- /.article-body -->
+    </div><!-- /.article-layout -->
+
+    <!-- Scroll hint -->
+    <div class="scroll-hint">See what design can do &darr;</div>
+
+  </div><!-- /.contain -->
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ACT 2 — THE ROAST
+     Expert quotes critiquing the text-heavy archetype.
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="act" id="actRoast">
+  <div class="contain">
+    <div class="act-label">Act 2 &mdash; The Roast</div>
+    <h2 class="act-title">What the experts see</h2>
+
+    <div class="roast-quotes">
+      <div class="roast-quote">
+        <blockquote>
+          &ldquo;A wall of system-ui text with zero typographic hierarchy. The TOC is there but it&rsquo;s
+          styled exactly like the body &mdash; you&rsquo;d miss it if you blinked.&rdquo;
+        </blockquote>
+        <cite>Design Expert</cite>
+      </div>
+      <div class="roast-quote">
+        <blockquote>
+          &ldquo;No pull quotes, no breakout boxes, no visual rhythm. It&rsquo;s a Terms of Service page
+          pretending to be editorial content.&rdquo;
+        </blockquote>
+        <cite>UX Expert</cite>
+      </div>
+      <div class="roast-quote">
+        <blockquote>
+          &ldquo;Every heading could be replaced with &lsquo;More Generic AI Buzzwords&rsquo; and nobody
+          would notice the difference.&rdquo;
+        </blockquote>
+        <cite>Marketing Expert</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ACT 3 — THE REDEMPTION
+     Score morph + CSS variation trigger.
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="act" id="actRedemption">
+  <div class="contain">
+    <div class="act-label">Act 3 &mdash; The Redemption</div>
+
+    <div class="redemption-content">
+      <div class="score-morph">
+        <span class="score-from">2.4</span>
+        <span class="score-arrow">&rarr;</span>
+        <span class="score-to" id="scoreTo">7.2</span>
+      </div>
+
+      <div class="score-bar-track">
+        <div class="score-bar-fill" id="scoreBar"></div>
+      </div>
+
+      <p class="redemption-text">Same content. Different design system.</p>
+      <p class="redemption-sub">Scroll triggered the morph. Now try the switcher below.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     VARIATION SWITCHER
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="variation-switcher" id="variationSwitcher">
+  <button class="var-btn var-btn--active" data-var="slap">SLAP!</button>
+  <button class="var-btn" data-var="neo-minimal">Neo-Minimal</button>
+  <button class="var-btn" data-var="brutalist">Brutalist</button>
+  <button class="var-btn" data-var="maximalist">Maximalist</button>
+  <button class="var-btn" data-var="dark-industrial">Dark Industrial</button>
+  <button class="var-btn" data-var="warm-organic">Warm Organic</button>
+  <button class="var-btn" data-var="retro-futurism">Retro-Futurism</button>
+  <button class="var-btn" data-var="memphis">Memphis</button>
+  <button class="var-btn" data-var="art-deco">Art Deco</button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FLOATING NAV
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="floating-nav">
+  <a href="preview-O5-mixed.html">&larr; Gallery</a>
+  <button id="themeToggle">&#9789;</button>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+(function() {
+  'use strict';
+  var root = document.documentElement;
+  var morphTriggered = false;
+  var currentVariation = 'slap';
+
+  var LENS_MAP = {
+    editorial: 'maximalist',
+    brutalist: 'brutalist',
+    minimal: 'neo-minimal',
+    chalkboard: 'warm-organic',
+    neutral: 'dark-industrial'
+  };
+  var SCORE_MAP = {
+    'slap': 2.4, 'neo-minimal': 7.2, 'brutalist': 6.8,
+    'maximalist': 6.0, 'dark-industrial': 7.0, 'warm-organic': 6.6,
+    'retro-futurism': 5.8, 'memphis': 5.4, 'art-deco': 7.6
+  };
+
+  var params = new URLSearchParams(window.location.search);
+  var lens = params.get('lens');
+  var targetVariation = LENS_MAP[lens] || 'art-deco';
+
+  var switcher = document.getElementById('variationSwitcher');
+  var act3 = document.getElementById('actRedemption');
+
+  if (act3 && 'IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting && !morphTriggered) {
+          morphTriggered = true;
+          triggerMorph(targetVariation);
+          switcher.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    observer.observe(act3);
+  }
+
+  function triggerMorph(variation) {
+    currentVariation = variation;
+    root.setAttribute('data-variation', variation);
+    var score = SCORE_MAP[variation] || 7.0;
+    var scoreTo = document.getElementById('scoreTo');
+    var scoreBar = document.getElementById('scoreBar');
+    var heroScore = document.getElementById('heroScore');
+    if (scoreTo) scoreTo.textContent = score.toFixed(1);
+    if (heroScore) heroScore.textContent = score.toFixed(1);
+    if (scoreBar) {
+      scoreBar.style.width = (score * 10) + '%';
+      scoreBar.style.backgroundColor = score >= 6 ? '#4ade80' : (score >= 4 ? '#fbbf24' : '#f87171');
+    }
+    document.querySelectorAll('.var-btn').forEach(function(btn) {
+      btn.classList.toggle('var-btn--active', btn.getAttribute('data-var') === variation);
+    });
+  }
+
+  document.querySelectorAll('.var-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { triggerMorph(btn.getAttribute('data-var')); });
+  });
+
+  // Theme toggle
+  var themeBtn = document.getElementById('themeToggle');
+  if (themeBtn) {
+    themeBtn.addEventListener('click', function() {
+      var current = root.getAttribute('data-theme');
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      themeBtn.textContent = next === 'dark' ? '\u263D' : '\u2600';
+    });
+  }
+
+  // Highlight lens-matched button
+  document.querySelectorAll('.var-btn').forEach(function(btn) {
+    if (btn.getAttribute('data-var') === targetVariation) {
+      btn.style.outline = '2px solid var(--accent)';
+      btn.style.outlineOffset = '2px';
+    }
+  });
+})();
+</script>
+</body>
+</html>

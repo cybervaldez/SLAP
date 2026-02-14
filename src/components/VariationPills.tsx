@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { VariationDef } from '../types';
 
 interface VariationPillsProps {
@@ -42,7 +42,7 @@ function pillStyle(isActive: boolean, accent: string, inline?: boolean): React.C
     background: isActive ? accent : 'transparent',
     color: isActive ? '#FFFFFF' : '#F5F0E1',
     cursor: 'pointer',
-    transition: 'all 0.15s ease',
+    transition: 'border-color 0.15s ease, color 0.15s ease, background 0.15s ease',
     whiteSpace: 'nowrap',
   };
 }
@@ -54,12 +54,29 @@ export default function VariationPills({
   accent,
   inline,
 }: VariationPillsProps) {
+  const [isEntering, setIsEntering] = useState(true);
+  const pillCount = variations.length;
+
+  useEffect(() => {
+    const totalDuration = 300 + pillCount * 50;
+    const timer = setTimeout(() => setIsEntering(false), totalDuration);
+    return () => clearTimeout(timer);
+  }, [pillCount]);
+
   return (
     <div style={inline ? styles.barInline : styles.bar} data-testid="variation-pills">
-      {variations.map((v) => (
+      {isEntering && <style>{pillAnimCSS}</style>}
+      {variations.map((v, i) => (
         <button
           key={v.id}
-          style={pillStyle(v.id === activeVariation, accent, inline)}
+          style={{
+            ...pillStyle(v.id === activeVariation, accent, inline),
+            ...(isEntering ? {
+              opacity: 0,
+              transform: 'translateY(-10px)',
+              animation: `pillDrop 300ms cubic-bezier(0.22, 0.61, 0.36, 1) ${i * 50}ms forwards`,
+            } : {}),
+          }}
           onClick={() => onVariationChange(v.id)}
           data-testid={`variation-pill-${v.id}`}
           onMouseEnter={(e) => {
@@ -81,3 +98,17 @@ export default function VariationPills({
     </div>
   );
 }
+
+const pillAnimCSS = `
+@keyframes pillDrop {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-testid^="variation-pill-"] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+`;
