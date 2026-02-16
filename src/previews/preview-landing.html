@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SLAP! — Landing Page Preview</title>
+<style>
+/* ─── Reset & Base ──────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: #0D0D1A;
+  color: #F5F0E1;
+  font-family: 'Courier New', monospace;
+  overflow-x: hidden;
+}
+
+/* ─── Design Tokens ──────────────────────────────────── */
+:root {
+  --bg-deep: #0D0D1A;
+  --bg-dark: #1A1A2E;
+  --bg-mid: #222240;
+  --text-light: #F5F0E1;
+  --text-muted: rgba(245, 240, 225, 0.5);
+  --accent-gold: #FFD000;
+  --score-green: #6BCB77;
+  --score-yellow: #FFD93D;
+  --score-red: #FF6B6B;
+  --ease-enter: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-micro: 100ms;
+  --duration-small: 150ms;
+  --duration-medium: 250ms;
+  --duration-large: 400ms;
+  --stagger: 60ms;
+}
+
+/* ─── Sections ───────────────────────────────────────── */
+section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  position: relative;
+}
+
+.section-label {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* ─── HERO ───────────────────────────────────────────── */
+#hero { min-height: 100vh; }
+
+.hero-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeIn 600ms var(--ease-enter) 300ms forwards;
+}
+
+.hands-container {
+  display: flex;
+  gap: 4rem;
+  margin-bottom: 3rem;
+  opacity: 0;
+  animation: fadeIn 600ms var(--ease-enter) 600ms forwards;
+}
+
+.hand {
+  font-size: 4rem;
+  cursor: pointer;
+  transition: transform var(--duration-small) var(--ease-bounce),
+              filter var(--duration-small);
+  filter: drop-shadow(0 0 0px transparent);
+  user-select: none;
+}
+.hand:hover {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 20px var(--accent-gold));
+}
+
+/* SLAP! flash */
+.slap-flash {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-gold);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 80ms linear;
+}
+.slap-flash.active {
+  opacity: 1;
+}
+.slap-flash h1 {
+  font-size: 6rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: var(--bg-deep);
+}
+
+/* Post-slap state */
+.hero-subtitle {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--accent-gold);
+  opacity: 0;
+  transition: opacity 600ms var(--ease-enter);
+}
+.hero-subtitle.visible { opacity: 1; }
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-enter);
+  animation: float 2s ease-in-out infinite;
+}
+.scroll-indicator.visible { opacity: 1; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* ─── PROBLEM ────────────────────────────────────────── */
+#problem { background: var(--bg-dark); min-height: 80vh; }
+
+.problem-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  margin-bottom: 3rem;
+}
+
+.slop-grid {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.slop-card {
+  width: 200px;
+  height: 260px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 500ms var(--ease-enter);
+}
+.slop-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slop-card-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Generic AI output mockup */
+.slop-design {
+  flex: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  gap: 0.5rem;
+}
+.slop-design .fake-headline {
+  width: 70%;
+  height: 10px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 4px;
+}
+.slop-design .fake-text {
+  width: 50%;
+  height: 6px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+}
+.slop-design .fake-btn {
+  width: 40%;
+  height: 16px;
+  background: rgba(255,255,255,0.25);
+  border-radius: 999px;
+  margin-top: 0.5rem;
+}
+
+/* Distinct design (for transformed card) */
+.slap-design {
+  flex: 1;
+  background: var(--bg-deep);
+  border: 2px solid var(--accent-gold);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  gap: 0.5rem;
+}
+.slap-design .fake-headline {
+  width: 70%;
+  height: 10px;
+  background: var(--accent-gold);
+  border-radius: 0;
+}
+.slap-design .fake-text {
+  width: 50%;
+  height: 6px;
+  background: var(--text-muted);
+  border-radius: 0;
+}
+.slap-design .fake-btn {
+  width: 40%;
+  height: 16px;
+  background: var(--accent-gold);
+  border-radius: 0;
+  margin-top: 0.5rem;
+}
+
+.card-stamp {
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-mid);
+}
+.card-stamp-label {
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+.card-stamp-score {
+  font-size: 0.55rem;
+  font-weight: 800;
+}
+.card-stamp-dots {
+  display: flex;
+  gap: 3px;
+}
+.dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ─── COUNCIL ────────────────────────────────────────── */
+#council { background: var(--bg-deep); min-height: 100vh; padding: 3rem 2rem; }
+
+.council-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.dice-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: var(--bg-mid);
+  color: var(--accent-gold);
+  border: 2px solid var(--accent-gold);
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  margin-bottom: 2rem;
+  transition: all var(--duration-small) var(--ease-bounce);
+}
+.dice-btn:hover {
+  background: var(--accent-gold);
+  color: var(--bg-deep);
+  transform: scale(1.05);
+}
+.dice-icon {
+  display: inline-block;
+  transition: transform 600ms var(--ease-bounce);
+}
+.dice-icon.rolling {
+  animation: diceTumble 600ms var(--ease-bounce);
+}
+@keyframes diceTumble {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.3); }
+  50% { transform: rotate(180deg) scale(0.8); }
+  75% { transform: rotate(270deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Expert row */
+.expert-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+}
+
+/* Category rows */
+.category-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.category-label {
+  font-size: 0.4rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  width: 80px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Reviewer bubble */
+.reviewer-bubble {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all var(--duration-small) var(--ease-bounce);
+  position: relative;
+  flex-shrink: 0;
+}
+.reviewer-bubble:hover {
+  transform: scale(1.12);
+  border-color: var(--accent-gold);
+}
+.reviewer-bubble.selected {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 12px rgba(255, 208, 0, 0.3);
+}
+.reviewer-bubble.selected::after {
+  content: '\2713';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 14px;
+  height: 14px;
+  background: var(--accent-gold);
+  color: var(--bg-deep);
+  border-radius: 50%;
+  font-size: 0.45rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reviewer-bubble img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Tooltip on hover */
+.reviewer-bubble .tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-mid);
+  border: 1px solid rgba(245, 240, 225, 0.12);
+  border-radius: 4px;
+  padding: 6px 10px;
+  white-space: nowrap;
+  font-size: 0.45rem;
+  color: var(--text-light);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-micro);
+  z-index: 10;
+  max-width: 200px;
+  white-space: normal;
+  text-align: center;
+}
+.reviewer-bubble:hover .tooltip { opacity: 1; }
+.tooltip-name { font-weight: 700; letter-spacing: 0.06em; }
+.tooltip-role { color: var(--text-muted); margin-top: 2px; }
+.tooltip-bias { font-style: italic; color: var(--accent-gold); margin-top: 4px; font-size: 0.4rem; }
+
+/* YOUR COUNCIL bar */
+.council-bar {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-dark);
+  border-top: 2px solid var(--accent-gold);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 20;
+  min-height: 56px;
+}
+.council-bar-label {
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent-gold);
+}
+.council-bar-avatars {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+.council-bar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--accent-gold);
+  opacity: 0;
+  transform: scale(0.5);
+  animation: bounceIn 400ms var(--ease-bounce) forwards;
+}
+.council-bar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+@keyframes bounceIn {
+  to { opacity: 1; transform: scale(1); }
+}
+
+.council-bar-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.council-bar-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.4rem 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-small);
+}
+.btn-reroll {
+  background: var(--bg-mid);
+  color: var(--accent-gold);
+  border: 1px solid var(--accent-gold);
+}
+.btn-reroll:hover { background: rgba(255, 208, 0, 0.1); }
+.btn-keep {
+  background: var(--accent-gold);
+  color: var(--bg-deep);
+}
+.btn-keep:hover { filter: brightness(1.1); }
+
+/* Live preview */
+.live-preview {
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  background: var(--bg-mid);
+  border: 1px solid rgba(245, 240, 225, 0.12);
+  border-radius: 4px;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 400ms var(--ease-enter);
+}
+.live-preview.active { opacity: 1; }
+
+.preview-finding {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 0.55rem;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.preview-finding:last-child { border-bottom: none; }
+.preview-light {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.preview-name {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.preview-score-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(245, 240, 225, 0.12);
+}
+.preview-score {
+  font-size: 1rem;
+  font-weight: 800;
+}
+.preview-score-label {
+  font-size: 0.45rem;
+  color: var(--text-muted);
+}
+
+/* ─── GAMELOOP ───────────────────────────────────────── */
+#gameloop { background: var(--bg-dark); min-height: 50vh; }
+
+.loop-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.loop-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.4;
+  transition: opacity var(--duration-medium);
+}
+.loop-step.active { opacity: 1; }
+.loop-icon {
+  font-size: 2rem;
+  transition: transform var(--duration-small) var(--ease-bounce);
+}
+.loop-step.active .loop-icon { transform: scale(1.2); }
+.loop-label {
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.loop-arrow {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.loop-caption {
+  margin-top: 2rem;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+}
+
+/* ─── PIPELINE ───────────────────────────────────────── */
+#pipeline { background: var(--bg-deep); }
+
+.pipeline-title {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+}
+
+.terminal {
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-dark);
+  border: 1px solid rgba(245, 240, 225, 0.12);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--bg-mid);
+  border-bottom: 1px solid rgba(245, 240, 225, 0.08);
+}
+.terminal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.terminal-title {
+  font-size: 0.45rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-left: 8px;
+}
+.terminal-body {
+  padding: 1rem;
+  font-size: 0.55rem;
+  line-height: 1.8;
+  min-height: 200px;
+}
+.terminal-line {
+  opacity: 0;
+  transform: translateY(4px);
+  transition: all 300ms var(--ease-enter);
+}
+.terminal-line.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.terminal-prompt { color: var(--score-green); }
+.terminal-red { color: var(--score-red); }
+.terminal-yellow { color: var(--score-yellow); }
+.terminal-green { color: var(--score-green); }
+.terminal-gold { color: var(--accent-gold); }
+
+.terminal-context {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--accent-gold);
+  border-radius: 2px;
+}
+.terminal-copied {
+  display: inline-block;
+  background: var(--score-green);
+  color: var(--bg-deep);
+  padding: 2px 8px;
+  font-weight: 800;
+  font-size: 0.5rem;
+  letter-spacing: 0.08em;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 300ms var(--ease-bounce);
+}
+.terminal-copied.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ─── CTA ────────────────────────────────────────────── */
+#cta {
+  min-height: 100vh;
+  border-top: 1px solid rgba(245, 240, 225, 0.06);
+}
+
+/* ─── Utility ────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0ms !important;
+    transition-duration: 0ms !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .hands-container { gap: 2rem; }
+  .hand { font-size: 3rem; }
+  .slop-grid { flex-direction: column; align-items: center; }
+  .category-row { flex-wrap: wrap; }
+  .category-label { width: auto; text-align: left; }
+  .loop-container { flex-wrap: wrap; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero" data-section="hero" data-testid="hero-section">
+  <span class="section-label">data-section="hero"</span>
+  <p class="hero-title">Pick a hand.</p>
+  <div class="hands-container">
+    <span class="hand" data-testid="hand-left" onclick="doSlap()">&#x1F91A;</span>
+    <span class="hand" data-testid="hand-right" onclick="doSlap()">&#x270B;</span>
+  </div>
+  <p class="hero-subtitle" id="heroSubtitle">Wake up your design.</p>
+  <div class="scroll-indicator" id="scrollIndicator">&#8595; SCROLL</div>
+</section>
+
+<!-- SLAP! Flash Overlay -->
+<div class="slap-flash" id="slapFlash"><h1>SLAP!</h1></div>
+
+<!-- ═══ PROBLEM ═══ -->
+<section id="problem" data-section="problem" data-testid="problem-section">
+  <span class="section-label">data-section="problem"</span>
+  <p class="problem-title">Nobody slapped this.</p>
+  <div class="slop-grid">
+    <div class="slop-card" data-testid="slop-card-1">
+      <div class="slop-card-inner">
+        <div class="slop-design">
+          <div class="fake-headline"></div>
+          <div class="fake-text"></div>
+          <div class="fake-text" style="width:40%"></div>
+          <div class="fake-btn"></div>
+        </div>
+        <div class="card-stamp">
+          <span class="card-stamp-label" style="color:var(--score-red)">SLOP</span>
+          <span class="card-stamp-score" style="color:var(--score-red)">3/10</span>
+          <div class="card-stamp-dots">
+            <div class="dot" style="background:var(--score-red)"></div>
+            <div class="dot" style="background:var(--score-red)"></div>
+            <div class="dot" style="background:var(--score-red)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slop-card" data-testid="slop-card-2">
+      <div class="slop-card-inner">
+        <div class="slop-design">
+          <div class="fake-headline"></div>
+          <div class="fake-text"></div>
+          <div class="fake-text" style="width:40%"></div>
+          <div class="fake-btn"></div>
+        </div>
+        <div class="card-stamp">
+          <span class="card-stamp-label" style="color:var(--score-red)">SLOP</span>
+          <span class="card-stamp-score" style="color:var(--score-red)">3/10</span>
+          <div class="card-stamp-dots">
+            <div class="dot" style="background:var(--score-red)"></div>
+            <div class="dot" style="background:var(--score-red)"></div>
+            <div class="dot" style="background:var(--score-red)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slop-card" data-testid="slop-card-transform" id="transformCard">
+      <div class="slop-card-inner" id="transformCardInner">
+        <div class="slop-design" id="transformDesign">
+          <div class="fake-headline"></div>
+          <div class="fake-text"></div>
+          <div class="fake-text" style="width:40%"></div>
+          <div class="fake-btn"></div>
+        </div>
+        <div class="card-stamp" id="transformStamp">
+          <span class="card-stamp-label" style="color:var(--score-red)" id="transformLabel">SLOP</span>
+          <span class="card-stamp-score" style="color:var(--score-red)" id="transformScore">3/10</span>
+          <div class="card-stamp-dots" id="transformDots">
+            <div class="dot" style="background:var(--score-red)"></div>
+            <div class="dot" style="background:var(--score-red)"></div>
+            <div class="dot" style="background:var(--score-red)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COUNCIL ═══ -->
+<section id="council" data-section="council" data-testid="council-section" style="justify-content:flex-start;padding-top:3rem;">
+  <span class="section-label">data-section="council"</span>
+  <p class="council-title">Pick your hands.</p>
+  <button class="dice-btn" data-testid="dice-roll" onclick="rollDice()">
+    <span class="dice-icon" id="diceIcon">&#x1F3B2;</span> ROLL THE DICE
+  </button>
+
+  <!-- Experts -->
+  <div class="expert-row" id="expertRow"></div>
+
+  <!-- Persona categories -->
+  <div id="personaRows"></div>
+
+  <!-- Live Preview -->
+  <div class="live-preview" id="livePreview">
+    <div id="previewFindings"></div>
+    <div class="preview-score-bar">
+      <span class="preview-score" id="previewScore" style="color:var(--score-yellow)">—</span>
+      <span class="preview-score-label">COUNCIL SCORE</span>
+    </div>
+  </div>
+
+  <!-- Council Bar (sticky bottom) -->
+  <div class="council-bar" data-testid="council-bar">
+    <span class="council-bar-label">YOUR COUNCIL</span>
+    <div class="council-bar-avatars" id="councilBarAvatars"></div>
+    <div class="council-bar-actions">
+      <button class="council-bar-btn btn-reroll" onclick="rollDice()">&#x1F3B2; REROLL</button>
+      <button class="council-bar-btn btn-keep" data-testid="keep-council" onclick="keepCouncil()">KEEP &amp; CONTINUE &#x2192;</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GAMELOOP ═══ -->
+<section id="gameloop" data-section="gameloop" data-testid="gameloop-section">
+  <span class="section-label">data-section="gameloop"</span>
+  <div class="loop-container">
+    <div class="loop-step active" data-step="0"><span class="loop-icon">&#x1F3A8;</span><span class="loop-label">Design</span></div>
+    <span class="loop-arrow">&#x2192;</span>
+    <div class="loop-step" data-step="1"><span class="loop-icon">&#x1F91A;</span><span class="loop-label">Pick</span></div>
+    <span class="loop-arrow">&#x2192;</span>
+    <div class="loop-step" data-step="2"><span class="loop-icon">&#x1F4AC;</span><span class="loop-label">Slap</span></div>
+    <span class="loop-arrow">&#x2192;</span>
+    <div class="loop-step" data-step="3"><span class="loop-icon">&#x1F504;</span><span class="loop-label">Swap</span></div>
+    <span class="loop-arrow">&#x2192;</span>
+    <div class="loop-step" data-step="4"><span class="loop-icon">&#x1F4CB;</span><span class="loop-label">Receipt</span></div>
+  </div>
+  <p class="loop-caption">Pick. Slap. Read. Swap. Repeat.</p>
+</section>
+
+<!-- ═══ PIPELINE ═══ -->
+<section id="pipeline" data-section="pipeline" data-testid="pipeline-section">
+  <span class="section-label">data-section="pipeline"</span>
+  <p class="pipeline-title">Every slap comes with a receipt.</p>
+  <div class="terminal">
+    <div class="terminal-header">
+      <div class="terminal-dot" style="background:#FF6B6B"></div>
+      <div class="terminal-dot" style="background:#FFD93D"></div>
+      <div class="terminal-dot" style="background:#6BCB77"></div>
+      <span class="terminal-title">ITERATION RECEIPT</span>
+    </div>
+    <div class="terminal-body" id="terminalBody">
+      <div class="terminal-line" data-line="0"><span class="terminal-prompt">&gt;</span> Review complete. Council score: <span class="terminal-yellow">7.2</span>/10</div>
+      <div class="terminal-line" data-line="1">&nbsp;</div>
+      <div class="terminal-line" data-line="2"><span class="terminal-red">&#x1F534;</span> Frank: <span class="terminal-red">"Pricing takes 3 clicks to compare"</span></div>
+      <div class="terminal-line" data-line="3"><span class="terminal-green">&#x1F7E2;</span> Marcus: <span class="terminal-green">"Color contrast passes. Readable."</span></div>
+      <div class="terminal-line" data-line="4"><span class="terminal-yellow">&#x1F7E1;</span> Dorothy: <span class="terminal-yellow">"What does 'iterate' mean?"</span></div>
+      <div class="terminal-line" data-line="5">&nbsp;</div>
+      <div class="terminal-line" data-line="6">
+        <div class="terminal-context">
+          <div class="terminal-gold">&#x250C;&#x2500; COPY CONTEXT FOR NEXT ROUND &#x2500;&#x2500;&#x2500;&#x2510;</div>
+          <div>Fix: 1-click pricing comparison</div>
+          <div>Fix: Replace jargon ("iterate" &#x2192; "next")</div>
+          <div>Keep: Headline, color contrast</div>
+          <div>Swap: Frank &#x2192; Diana</div>
+          <div class="terminal-gold">&#x2514;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2518;</div>
+        </div>
+      </div>
+      <div class="terminal-line" data-line="7">&nbsp;</div>
+      <div class="terminal-line" data-line="8"><span class="terminal-copied" id="copiedBadge">COPIED &#x2713;</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section id="cta" data-section="cta" data-testid="cta-section">
+  <span class="section-label">data-section="cta"</span>
+  <p class="hero-title" style="opacity:1;animation:none">Pick a hand.</p>
+  <div class="hands-container" style="opacity:1;animation:none">
+    <span class="hand" data-testid="cta-hand-left" onclick="enterApp()">&#x1F91A;</span>
+    <span class="hand" data-testid="cta-hand-right" onclick="enterApp()">&#x270B;</span>
+  </div>
+</section>
+
+<script>
+// ─── Reviewer Data ──────────────────────────────────
+const EXPERTS = [
+  { id:'marketing', name:'MARKETING', role:'Positioning', color:'#FF6B6B', icon:'🎯', bias:'Does this sell?', style:'shapes' },
+  { id:'ux', name:'UX', role:'Usability', color:'#4ECDC4', icon:'🎨', bias:'Can every user succeed?', style:'shapes' },
+  { id:'product', name:'PRODUCT', role:'Value Prop', color:'#FFD93D', icon:'📦', bias:'Worth the complexity?', style:'shapes' },
+  { id:'technical', name:'TECHNICAL', role:'Performance', color:'#95E1D3', icon:'🔧', bias:'Will this work on slow connections?', style:'shapes' },
+  { id:'design', name:'DESIGN', role:'Aesthetics', color:'#F38181', icon:'✨', bias:'Intentional or template?', style:'shapes' },
+];
+
+const PERSONAS = [
+  { id:'marcus', name:'Marcus', role:'Colorblind Dev', cat:'Accessibility', color:'#4ECDC4', bias:'Color-only = invisible to me.' },
+  { id:'elena', name:'Elena', role:'Screen Reader', cat:'Accessibility', color:'#7B68EE', bias:'No label? Doesn\'t exist.' },
+  { id:'priya', name:'Priya', role:'Motor Control', cat:'Accessibility', color:'#DDA0DD', bias:'Tiny targets = missed clicks.' },
+  { id:'dorothy', name:'Dorothy', role:'Just Works', cat:'Tech Spectrum', color:'#6BCB77', bias:'What does OAuth mean?' },
+  { id:'kevin', name:'Kevin', role:'Zero Patience', cat:'Tech Spectrum', color:'#FF8C00', bias:'2+ taps? Already gone.' },
+  { id:'raj', name:'Raj', role:'Power User', cat:'Tech Spectrum', color:'#20B2AA', bias:'Where are the shortcuts?' },
+  { id:'carlos', name:'Carlos', role:'CEO', cat:'Role-Based', color:'#DAA520', bias:'ROI in the first scroll.' },
+  { id:'jasmine', name:'Jasmine', role:'Support Rep', cat:'Role-Based', color:'#87CEEB', bias:'3 tickets/day about this.' },
+  { id:'tommy', name:'Tommy', role:'Intern Day 3', cat:'Role-Based', color:'#FF69B4', bias:'10 min clicking, still lost.' },
+  { id:'frank', name:'Frank', role:'Zero Patience', cat:'Emotional', color:'#FF6B6B', bias:'Already annoyed. Every click worse.' },
+  { id:'diana', name:'Diana', role:'Craft Lover', cat:'Emotional', color:'#BA55D3', bias:'I notice when someone cared.' },
+  { id:'sarah', name:'Sarah', role:'Trusts Nothing', cat:'Emotional', color:'#CD853F', bias:'Where\'s the privacy policy?' },
+  { id:'sam', name:'Sam', role:'One Thumb', cat:'Context', color:'#9B59B6', bias:'Bumpy train. One thumb. Go.' },
+  { id:'maya', name:'Maya', role:'30 Seconds', cat:'Context', color:'#F0E68C', bias:'Kid meltdown in 30 sec.' },
+  { id:'mike', name:'Mike', role:'Screen Sharing', cat:'Context', color:'#708090', bias:'Team watching. Don\'t embarrass me.' },
+  { id:'yuki', name:'Yuki', role:'Aesthetic First', cat:'Cultural Taste', color:'#FFB7C5', bias:'Not beautiful? Don\'t trust it.' },
+  { id:'dex', name:'Dex', role:'Subculture', cat:'Cultural Taste', color:'#32CD32', bias:'Corporate = enemy.' },
+  { id:'nora', name:'Nora', role:'Expects Luxury', cat:'Cultural Taste', color:'#C4A35A', bias:'Not premium? Not paying premium.' },
+];
+
+const SAMPLE_FINDINGS = {
+  marketing: { text: 'CTA needs urgency language.', light: 'yellow' },
+  ux: { text: 'CTA below fold — 40% miss it.', light: 'red' },
+  product: { text: 'Value prop clear in 3 seconds.', light: 'green' },
+  technical: { text: 'Images unoptimized — 4s load.', light: 'red' },
+  design: { text: 'Typography hierarchy is strong.', light: 'green' },
+  marcus: { text: 'Color contrast passes. Readable.', light: 'green' },
+  elena: { text: 'Missing aria-labels on icons.', light: 'red' },
+  priya: { text: 'Touch targets are generous.', light: 'green' },
+  dorothy: { text: 'What does "iterate" mean?', light: 'yellow' },
+  kevin: { text: 'Loads fast. Good.', light: 'green' },
+  raj: { text: 'No keyboard shortcuts at all.', light: 'yellow' },
+  carlos: { text: 'ROI unclear in first scroll.', light: 'red' },
+  jasmine: { text: 'FAQ section would cut tickets.', light: 'yellow' },
+  tommy: { text: 'Fun design! Easy to explore.', light: 'green' },
+  frank: { text: 'Pricing takes 3 clicks. Furious.', light: 'red' },
+  diana: { text: 'Someone cared about the details.', light: 'green' },
+  sarah: { text: 'No testimonials? Don\'t trust it.', light: 'red' },
+  sam: { text: 'One-thumb friendly. Approved.', light: 'green' },
+  maya: { text: 'Clear enough for 30 seconds.', light: 'green' },
+  mike: { text: 'Professional. Safe to screen-share.', light: 'green' },
+  yuki: { text: 'Beautiful but needs more polish.', light: 'yellow' },
+  dex: { text: 'Too corporate. Show some edge.', light: 'red' },
+  nora: { text: 'Doesn\'t feel premium enough.', light: 'yellow' },
+};
+
+function avatarUrl(r) {
+  const style = r.style || 'adventurer';
+  const seed = style === 'shapes' ? r.id + '-expert' : r.id;
+  const hex = r.color.replace('#','');
+  return `https://api.dicebear.com/9.x/${style}/svg?seed=${seed}&backgroundColor=${hex}`;
+}
+
+// ─── State ──────────────────────────────────────────
+let selected = new Set();
+
+// ─── Build Reviewer Grid ────────────────────────────
+function buildGrid() {
+  // Experts
+  const eRow = document.getElementById('expertRow');
+  EXPERTS.forEach(e => {
+    eRow.appendChild(makeBubble(e));
+  });
+
+  // Personas by category
+  const cats = ['Accessibility','Tech Spectrum','Role-Based','Emotional','Context','Cultural Taste'];
+  const container = document.getElementById('personaRows');
+  cats.forEach(cat => {
+    const row = document.createElement('div');
+    row.className = 'category-row';
+    const label = document.createElement('span');
+    label.className = 'category-label';
+    label.textContent = cat;
+    row.appendChild(label);
+    PERSONAS.filter(p => p.cat === cat).forEach(p => {
+      row.appendChild(makeBubble(p));
+    });
+    container.appendChild(row);
+  });
+}
+
+function makeBubble(r) {
+  const div = document.createElement('div');
+  div.className = 'reviewer-bubble';
+  div.dataset.id = r.id;
+  div.innerHTML = `
+    <img src="${avatarUrl(r)}" alt="${r.name}" loading="lazy">
+    <div class="tooltip">
+      <div class="tooltip-name" style="color:${r.color}">${r.name}</div>
+      <div class="tooltip-role">${r.role}</div>
+      <div class="tooltip-bias">"${r.bias}"</div>
+    </div>
+  `;
+  div.addEventListener('click', () => toggleReviewer(r.id));
+  return div;
+}
+
+function toggleReviewer(id) {
+  if (selected.has(id)) selected.delete(id);
+  else selected.add(id);
+  updateUI();
+}
+
+function updateUI() {
+  // Update bubble states
+  document.querySelectorAll('.reviewer-bubble').forEach(b => {
+    b.classList.toggle('selected', selected.has(b.dataset.id));
+  });
+
+  // Update council bar avatars
+  const bar = document.getElementById('councilBarAvatars');
+  bar.innerHTML = '';
+  let i = 0;
+  selected.forEach(id => {
+    const r = [...EXPERTS, ...PERSONAS].find(x => x.id === id);
+    if (!r) return;
+    const av = document.createElement('div');
+    av.className = 'council-bar-avatar';
+    av.style.animationDelay = (i * 60) + 'ms';
+    av.style.borderColor = r.color;
+    av.innerHTML = `<img src="${avatarUrl(r)}" alt="${r.name}">`;
+    bar.appendChild(av);
+    i++;
+  });
+
+  // Update live preview
+  const preview = document.getElementById('livePreview');
+  const findings = document.getElementById('previewFindings');
+  findings.innerHTML = '';
+  if (selected.size >= 3) {
+    preview.classList.add('active');
+    let totalScore = 0, count = 0;
+    selected.forEach(id => {
+      const r = [...EXPERTS, ...PERSONAS].find(x => x.id === id);
+      const f = SAMPLE_FINDINGS[id];
+      if (!r || !f) return;
+      const lightColor = f.light === 'green' ? '#6BCB77' : f.light === 'yellow' ? '#FFD93D' : '#FF6B6B';
+      const score = f.light === 'green' ? 8 : f.light === 'yellow' ? 6 : 3;
+      totalScore += score; count++;
+      const div = document.createElement('div');
+      div.className = 'preview-finding';
+      div.innerHTML = `
+        <div class="preview-light" style="background:${lightColor}"></div>
+        <div><span class="preview-name" style="color:${r.color}">${r.name}:</span> ${f.text}</div>
+      `;
+      findings.appendChild(div);
+    });
+    const avg = count > 0 ? (totalScore / count).toFixed(1) : '—';
+    const scoreEl = document.getElementById('previewScore');
+    scoreEl.textContent = avg + '/10';
+    const n = parseFloat(avg);
+    scoreEl.style.color = n >= 7 ? '#6BCB77' : n >= 5 ? '#FFD93D' : '#FF6B6B';
+  } else {
+    preview.classList.remove('active');
+  }
+}
+
+// ─── Dice Roll ──────────────────────────────────────
+function rollDice() {
+  const icon = document.getElementById('diceIcon');
+  icon.classList.remove('rolling');
+  void icon.offsetWidth;
+  icon.classList.add('rolling');
+
+  // Pick 2-3 experts
+  const shuffledE = [...EXPERTS].sort(() => Math.random() - 0.5);
+  const expertCount = Math.random() > 0.5 ? 3 : 2;
+  const pickedExperts = shuffledE.slice(0, expertCount);
+
+  // Pick 3-4 personas from different categories
+  const cats = ['Accessibility','Tech Spectrum','Role-Based','Emotional','Context','Cultural Taste'];
+  const shuffledCats = cats.sort(() => Math.random() - 0.5);
+  const personaCount = expertCount === 2 ? 4 : 3;
+  const pickedPersonas = [];
+  for (let i = 0; i < personaCount && i < shuffledCats.length; i++) {
+    const catPersonas = PERSONAS.filter(p => p.cat === shuffledCats[i]);
+    pickedPersonas.push(catPersonas[Math.floor(Math.random() * catPersonas.length)]);
+  }
+
+  selected.clear();
+  pickedExperts.forEach(e => selected.add(e.id));
+  pickedPersonas.forEach(p => selected.add(p.id));
+  updateUI();
+}
+
+// ─── SLAP! Hero ─────────────────────────────────────
+let hasSlapped = false;
+function doSlap() {
+  if (hasSlapped) return;
+  hasSlapped = true;
+  const flash = document.getElementById('slapFlash');
+  flash.classList.add('active');
+  setTimeout(() => {
+    flash.classList.remove('active');
+    document.getElementById('heroSubtitle').classList.add('visible');
+    document.getElementById('scrollIndicator').classList.add('visible');
+  }, 200);
+}
+
+// ─── Problem Section Scroll Trigger ─────────────────
+let transformed = false;
+function checkProblemScroll() {
+  if (transformed) return;
+  const card = document.getElementById('transformCard');
+  const rect = card.getBoundingClientRect();
+  if (rect.top < window.innerHeight * 0.7) {
+    transformed = true;
+    const design = document.getElementById('transformDesign');
+    design.className = 'slap-design';
+    document.getElementById('transformLabel').textContent = 'SLAP!';
+    document.getElementById('transformLabel').style.color = '#FFD000';
+    document.getElementById('transformScore').textContent = '8/10';
+    document.getElementById('transformScore').style.color = '#6BCB77';
+    document.getElementById('transformDots').innerHTML = `
+      <div class="dot" style="background:#6BCB77"></div>
+      <div class="dot" style="background:#6BCB77"></div>
+      <div class="dot" style="background:#6BCB77"></div>
+    `;
+  }
+}
+
+// Slop cards scroll reveal
+function checkSlopCards() {
+  document.querySelectorAll('.slop-card').forEach((card, i) => {
+    const rect = card.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.85) {
+      setTimeout(() => card.classList.add('visible'), i * 150);
+    }
+  });
+}
+
+// ─── Gameloop Animation ─────────────────────────────
+let loopStep = 0;
+function animateLoop() {
+  document.querySelectorAll('.loop-step').forEach(s => s.classList.remove('active'));
+  document.querySelector(`.loop-step[data-step="${loopStep}"]`).classList.add('active');
+  loopStep = (loopStep + 1) % 5;
+}
+setInterval(animateLoop, 1500);
+
+// ─── Terminal Animation ─────────────────────────────
+let terminalPlayed = false;
+function checkTerminal() {
+  if (terminalPlayed) return;
+  const section = document.getElementById('pipeline');
+  const rect = section.getBoundingClientRect();
+  if (rect.top < window.innerHeight * 0.7) {
+    terminalPlayed = true;
+    const lines = document.querySelectorAll('.terminal-line');
+    lines.forEach((line, i) => {
+      setTimeout(() => line.classList.add('visible'), i * 400);
+    });
+    setTimeout(() => {
+      document.getElementById('copiedBadge').classList.add('visible');
+    }, lines.length * 400 + 500);
+  }
+}
+
+// ─── Keep & Continue ────────────────────────────────
+function keepCouncil() {
+  const council = Array.from(selected);
+  localStorage.setItem('slap-default-council', JSON.stringify(council));
+  document.getElementById('cta').scrollIntoView({ behavior: 'smooth' });
+}
+
+function enterApp() {
+  // Save council if not already saved
+  if (selected.size > 0) {
+    localStorage.setItem('slap-default-council', JSON.stringify(Array.from(selected)));
+  }
+  alert('Navigate to #/gallery (in real app)');
+}
+
+// ─── Init ───────────────────────────────────────────
+buildGrid();
+window.addEventListener('scroll', () => {
+  checkSlopCards();
+  checkProblemScroll();
+  checkTerminal();
+});
+// Trigger initial check
+setTimeout(() => checkSlopCards(), 100);
+</script>
+</body>
+</html>

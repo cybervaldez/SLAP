@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SLAP! — Landing V3: 3-Section Core</title>
+<style>
+/* ─── Reset & Base ──────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: #0D0D1A;
+  color: #F5F0E1;
+  font-family: 'Courier New', monospace;
+  overflow-x: hidden;
+}
+
+/* ─── Design Tokens ──────────────────────────────────── */
+:root {
+  --bg-deep: #0D0D1A;
+  --bg-dark: #1A1A2E;
+  --bg-mid: #222240;
+  --text-light: #F5F0E1;
+  --text-muted: rgba(245, 240, 225, 0.5);
+  --accent-gold: #FFD000;
+  --score-green: #6BCB77;
+  --score-yellow: #FFD93D;
+  --score-red: #FF6B6B;
+  --ease-enter: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-micro: 100ms;
+  --duration-small: 150ms;
+  --duration-medium: 250ms;
+  --duration-large: 400ms;
+  --stagger: 60ms;
+}
+
+/* ─── Sections ───────────────────────────────────────── */
+section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  position: relative;
+}
+
+/* ─── HERO (compact) ─────────────────────────────────── */
+#hero {
+  min-height: 70vh;
+}
+
+.hero-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeIn 600ms var(--ease-enter) 300ms forwards;
+}
+
+.hands-container {
+  display: flex;
+  gap: 4rem;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeIn 600ms var(--ease-enter) 600ms forwards;
+}
+
+.hand {
+  font-size: 4rem;
+  cursor: pointer;
+  transition: transform var(--duration-small) var(--ease-bounce),
+              filter var(--duration-small);
+  filter: drop-shadow(0 0 0px transparent);
+  user-select: none;
+}
+.hand:hover {
+  transform: scale(1.15) rotate(-8deg);
+  filter: drop-shadow(0 0 20px var(--accent-gold));
+}
+
+/* Screen shake */
+@keyframes screenShake {
+  0%   { transform: translateX(0); }
+  15%  { transform: translateX(-3px); }
+  30%  { transform: translateX(3px); }
+  45%  { transform: translateX(-3px); }
+  60%  { transform: translateX(3px); }
+  75%  { transform: translateX(-2px); }
+  90%  { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+body.shaking { animation: screenShake 150ms linear; }
+
+/* SLAP! flash */
+.slap-flash {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-gold);
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 80ms linear;
+}
+.slap-flash.active { opacity: 1; }
+.slap-flash h1 {
+  font-size: 6rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  color: var(--bg-deep);
+}
+
+.hero-whisper {
+  font-size: 0.5rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  opacity: 0;
+  transition: opacity 600ms var(--ease-enter);
+  margin-bottom: 1.5rem;
+}
+.hero-whisper.visible { opacity: 1; }
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 1.5rem;
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-enter);
+  animation: float 2s ease-in-out infinite;
+}
+.scroll-indicator.visible { opacity: 1; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+/* ─── PROBLEM ────────────────────────────────────────── */
+#problem {
+  background: var(--bg-dark);
+  min-height: 60vh;
+  padding: 3rem 2rem;
+}
+
+.problem-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+}
+
+.slop-grid {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.slop-card {
+  width: 200px;
+  height: 260px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 500ms var(--ease-enter);
+}
+.slop-card.visible { opacity: 1; transform: translateY(0); }
+
+/* 3D flip */
+.slop-card.flip-card { perspective: 800px; overflow: visible; background: none; }
+.flip-card-inner {
+  width: 100%; height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 400ms var(--ease-enter);
+}
+.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+.flip-card-front, .flip-card-back {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  border-radius: 6px; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.flip-card-back { transform: rotateY(180deg); }
+
+.slop-card-inner { width: 100%; height: 100%; display: flex; flex-direction: column; }
+
+/* SLOP slate gradient */
+.slop-design {
+  flex: 1;
+  background: linear-gradient(135deg, #94A3B8, #64748B);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 1rem; gap: 0.5rem;
+}
+
+/* Landing archetype */
+.slop-design.archetype-landing { gap: 0.4rem; }
+.slop-design.archetype-landing .fake-hero-banner { width: 85%; height: 40px; background: rgba(255,255,255,0.2); border-radius: 4px; margin-bottom: 0.3rem; }
+.slop-design.archetype-landing .fake-headline { width: 60%; height: 10px; background: rgba(255,255,255,0.3); border-radius: 4px; }
+.slop-design.archetype-landing .fake-text { width: 45%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; }
+.slop-design.archetype-landing .fake-btn-pill { width: 35%; height: 16px; background: rgba(255,255,255,0.25); border-radius: 999px; margin-top: 0.4rem; }
+
+/* Dashboard archetype */
+.slop-design.archetype-dashboard { gap: 0.35rem; padding: 0.75rem; }
+.slop-design.archetype-dashboard .fake-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem; width: 100%; }
+.slop-design.archetype-dashboard .fake-metric { height: 32px; background: rgba(255,255,255,0.18); border-radius: 3px; }
+.slop-design.archetype-dashboard .fake-chart {
+  width: 100%; height: 50px; background: rgba(255,255,255,0.12);
+  border-radius: 3px; margin-top: 0.3rem; position: relative; overflow: hidden;
+}
+.slop-design.archetype-dashboard .fake-chart::after {
+  content: ''; position: absolute; bottom: 0; left: 5%; right: 5%; height: 60%;
+  background: linear-gradient(to right, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.2) 30%, rgba(255,255,255,0.12) 60%, rgba(255,255,255,0.25) 100%);
+  clip-path: polygon(0% 80%, 25% 40%, 50% 60%, 75% 20%, 100% 50%, 100% 100%, 0% 100%);
+}
+
+/* Gallery archetype */
+.slop-design.archetype-gallery { gap: 0.35rem; padding: 0.75rem; }
+.slop-design.archetype-gallery .fake-card-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.3rem; width: 100%; flex: 1; }
+.slop-design.archetype-gallery .fake-gallery-card { display: flex; flex-direction: column; gap: 3px; background: rgba(255,255,255,0.1); border-radius: 3px; padding: 4px; }
+.slop-design.archetype-gallery .fake-img { width: 100%; height: 28px; background: rgba(255,255,255,0.18); border-radius: 2px; }
+.slop-design.archetype-gallery .fake-card-text { width: 80%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+/* SLAP design */
+.slap-design {
+  flex: 1; background: var(--bg-deep);
+  border: 2px solid var(--accent-gold);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 1rem; gap: 0.5rem;
+}
+.slap-design .fake-headline { width: 70%; height: 10px; background: var(--accent-gold); border-radius: 0; }
+.slap-design .fake-text { width: 50%; height: 6px; background: var(--text-muted); border-radius: 0; }
+.slap-design .fake-bar { width: 60%; height: 3px; background: var(--accent-gold); opacity: 0.4; }
+.slap-design .fake-btn { width: 40%; height: 16px; background: var(--accent-gold); border-radius: 0; margin-top: 0.5rem; }
+
+.card-stamp { padding: 0.5rem 0.75rem; display: flex; align-items: center; justify-content: space-between; background: var(--bg-mid); }
+.card-stamp-label { font-size: 0.55rem; font-weight: 800; letter-spacing: 0.15em; }
+.card-stamp-sublabel { font-size: 0.35rem; font-weight: 600; letter-spacing: 0.08em; color: var(--text-muted); display: block; margin-top: 1px; }
+.card-stamp-score { font-size: 0.55rem; font-weight: 800; }
+.card-stamp-dots { display: flex; gap: 3px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ─── COUNCIL (EXPANDED) ────────────────────────────── */
+#council {
+  background: var(--bg-deep);
+  min-height: 100vh;
+  padding: 3rem 2rem 6rem;
+  justify-content: flex-start;
+}
+
+.council-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+.council-subtitle {
+  font-size: 0.45rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.dice-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.1em;
+  background: var(--bg-mid); color: var(--accent-gold);
+  border: 2px solid var(--accent-gold);
+  padding: 0.5rem 1.5rem; cursor: pointer;
+  margin-bottom: 2rem;
+  transition: all var(--duration-small) var(--ease-bounce);
+}
+.dice-btn:hover { background: var(--accent-gold); color: var(--bg-deep); transform: scale(1.05); }
+.dice-icon { display: inline-block; transition: transform 600ms var(--ease-bounce); }
+.dice-icon.rolling { animation: diceTumble 600ms var(--ease-bounce); }
+@keyframes diceTumble {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.3); }
+  50% { transform: rotate(180deg) scale(0.8); }
+  75% { transform: rotate(270deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* ─── Expert Banner Row ──────────────────────────────── */
+.expert-banner {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 700px;
+}
+.expert-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-mid);
+  border: 2px solid transparent;
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: all var(--duration-small) var(--ease-bounce);
+  min-width: 120px;
+}
+.expert-card:hover {
+  border-color: var(--accent-gold);
+  transform: translateY(-2px);
+}
+.expert-card.selected {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 12px rgba(255, 208, 0, 0.2);
+  background: rgba(255, 208, 0, 0.05);
+}
+.expert-card-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%; overflow: hidden;
+  flex-shrink: 0;
+}
+.expert-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.expert-card-info { display: flex; flex-direction: column; gap: 1px; }
+.expert-card-name {
+  font-size: 0.5rem; font-weight: 800;
+  letter-spacing: 0.1em;
+}
+.expert-card-role {
+  font-size: 0.35rem; font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* ─── Persona Category Sections ──────────────────────── */
+.persona-section {
+  width: 100%;
+  max-width: 700px;
+  margin-bottom: 1.5rem;
+}
+.persona-section-header {
+  font-size: 0.4rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px solid rgba(245, 240, 225, 0.08);
+}
+
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+/* ─── Persona Card (expanded) ────────────────────────── */
+.persona-card {
+  background: var(--bg-mid);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 0.75rem;
+  cursor: pointer;
+  transition: all var(--duration-small) var(--ease-bounce);
+  position: relative;
+  overflow: hidden;
+}
+.persona-card:hover {
+  border-color: var(--accent-gold);
+  transform: translateY(-2px);
+}
+.persona-card.selected {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 16px rgba(255, 208, 0, 0.2);
+  background: rgba(255, 208, 0, 0.04);
+}
+.persona-card.selected::after {
+  content: '\2713';
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 16px; height: 16px;
+  background: var(--accent-gold);
+  color: var(--bg-deep);
+  border-radius: 50%;
+  font-size: 0.4rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.persona-card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.persona-card-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%; overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid transparent;
+  transition: border-color var(--duration-small);
+}
+.persona-card.selected .persona-card-avatar {
+  border-color: var(--accent-gold);
+}
+.persona-card-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.persona-card-name {
+  font-size: 0.55rem; font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.persona-card-role {
+  font-size: 0.4rem; font-weight: 400;
+  color: var(--text-muted);
+}
+
+.persona-card-bias {
+  font-size: 0.4rem;
+  font-style: italic;
+  color: var(--accent-gold);
+  line-height: 1.4;
+  opacity: 0.7;
+}
+.persona-card.selected .persona-card-bias { opacity: 1; }
+
+/* Finding preview on hover */
+.persona-card-finding {
+  font-size: 0.38rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  padding-top: 0.3rem;
+  border-top: 1px solid rgba(245, 240, 225, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all var(--duration-medium) var(--ease-enter);
+}
+.persona-card:hover .persona-card-finding,
+.persona-card.selected .persona-card-finding {
+  opacity: 1;
+  max-height: 30px;
+}
+.finding-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%; flex-shrink: 0;
+}
+
+/* ─── Live Preview ───────────────────────────────────── */
+.live-preview {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 500px;
+  background: var(--bg-mid);
+  border: 1px solid rgba(245, 240, 225, 0.12);
+  border-radius: 4px;
+  padding: 1rem;
+  opacity: 0;
+  transition: opacity 400ms var(--ease-enter);
+}
+.live-preview.active { opacity: 1; }
+
+.preview-finding {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 6px 0; font-size: 0.55rem; line-height: 1.5;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  max-height: 60px; overflow: hidden;
+  opacity: 1; transform: translateY(0);
+  transition: all 250ms var(--ease-enter);
+}
+.preview-finding:last-child { border-bottom: none; }
+.preview-finding.entering { animation: findingSlideIn 250ms var(--ease-enter) forwards; }
+.preview-finding.exiting { opacity: 0; max-height: 0; padding: 0; transform: translateY(-8px); }
+@keyframes findingSlideIn {
+  from { opacity: 0; max-height: 0; transform: translateY(8px); }
+  to   { opacity: 1; max-height: 60px; transform: translateY(0); }
+}
+.preview-light { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.preview-name { font-weight: 700; letter-spacing: 0.04em; }
+
+/* Odometer score */
+.preview-score-bar {
+  display: flex; align-items: center; gap: 0.5rem;
+  margin-top: 0.75rem; padding-top: 0.75rem;
+  border-top: 1px solid rgba(245, 240, 225, 0.12);
+}
+.odometer-container { display: flex; align-items: baseline; overflow: hidden; height: 1.3rem; }
+.odometer-digit {
+  display: inline-block; font-size: 1rem; font-weight: 800; line-height: 1.3rem;
+  transition: transform 300ms var(--ease-enter), color 300ms; position: relative;
+}
+.odometer-digit.rolling { animation: digitRoll 300ms var(--ease-enter); }
+@keyframes digitRoll {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.odometer-static { font-size: 1rem; font-weight: 800; line-height: 1.3rem; }
+.score-delta {
+  font-size: 0.5rem; font-weight: 800; letter-spacing: 0.05em;
+  padding: 2px 6px; border-radius: 3px; opacity: 0;
+  transition: opacity 300ms var(--ease-enter); margin-left: 4px;
+}
+.score-delta.visible { opacity: 1; }
+.score-delta.positive { background: rgba(107,203,119,0.15); color: var(--score-green); }
+.score-delta.negative { background: rgba(255,107,107,0.15); color: var(--score-red); }
+.score-delta.fading { opacity: 0; }
+.preview-score-label { font-size: 0.45rem; color: var(--text-muted); }
+
+/* ─── Inline CTA (bottom of council) ────────────────── */
+.inline-cta {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.inline-cta-avatars {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  min-height: 36px;
+}
+.inline-cta-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%; overflow: hidden;
+  border: 2px solid var(--accent-gold);
+  opacity: 0; transform: scale(0.5) translateY(6px);
+}
+.inline-cta-avatar.bounce-in { animation: ctaBounceIn 400ms var(--ease-bounce) forwards; }
+@keyframes ctaBounceIn { to { opacity: 1; transform: scale(1) translateY(0); } }
+.inline-cta-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.inline-cta-label {
+  font-size: 0.55rem; font-weight: 700;
+  letter-spacing: 0.12em; color: var(--accent-gold);
+  min-height: 1.2em;
+}
+.inline-cta-score {
+  font-size: 0.7rem; font-weight: 800;
+  min-height: 1.2em;
+}
+.inline-cta-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem; font-weight: 700;
+  letter-spacing: 0.15em;
+  background: var(--accent-gold);
+  color: var(--bg-deep);
+  border: none;
+  padding: 0.75rem 2rem;
+  cursor: pointer;
+  transition: all var(--duration-small) var(--ease-bounce);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all var(--duration-medium) var(--ease-enter);
+}
+.inline-cta-btn.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.inline-cta-btn:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+.inline-cta-empty {
+  font-size: 0.45rem; font-weight: 400;
+  color: var(--text-muted); letter-spacing: 0.06em;
+}
+
+/* ─── Utility ────────────────────────────────────────── */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0ms !important;
+    transition-duration: 0ms !important;
+  }
+  body.shaking { animation: none !important; }
+  .flip-card.flipped .flip-card-inner { transition: none !important; }
+}
+
+@media (max-width: 640px) {
+  .hands-container { gap: 2rem; }
+  .hand { font-size: 3rem; }
+  .slop-grid { flex-direction: column; align-items: center; }
+  .persona-grid { grid-template-columns: 1fr 1fr; }
+  .expert-banner { gap: 0.5rem; }
+  .expert-card { min-width: 100px; padding: 0.4rem 0.5rem; }
+}
+@media (max-width: 400px) {
+  .persona-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero" data-testid="hero-section">
+  <p class="hero-title">Pick a hand.</p>
+  <div class="hands-container">
+    <span class="hand" data-testid="hand-left" onclick="doSlap()">&#x1F91A;</span>
+    <span class="hand" data-testid="hand-right" onclick="doSlap()">&#x270B;</span>
+  </div>
+  <p class="hero-whisper" id="heroWhisper">AI designs look the same. This fixes that.</p>
+  <div class="scroll-indicator" id="scrollIndicator">&#8595; SCROLL</div>
+</section>
+
+<!-- SLAP! Flash Overlay -->
+<div class="slap-flash" id="slapFlash"><h1>SLAP!</h1></div>
+
+<!-- ═══ PROBLEM ═══ -->
+<section id="problem" data-testid="problem-section">
+  <p class="problem-title">Nobody slapped this.</p>
+  <div class="slop-grid">
+    <!-- Card 1: Landing Page -->
+    <div class="slop-card" data-testid="slop-card-1">
+      <div class="slop-card-inner">
+        <div class="slop-design archetype-landing">
+          <div class="fake-hero-banner"></div>
+          <div class="fake-headline"></div>
+          <div class="fake-text"></div>
+          <div class="fake-btn-pill"></div>
+        </div>
+        <div class="card-stamp">
+          <div>
+            <span class="card-stamp-label" style="color:var(--score-red)">SLOP</span>
+            <span class="card-stamp-sublabel">Landing Page</span>
+          </div>
+          <span class="card-stamp-score" style="color:var(--score-red)">3/10</span>
+          <div class="card-stamp-dots">
+            <div class="dot" style="background:var(--score-red)"></div>
+            <div class="dot" style="background:var(--score-red)"></div>
+            <div class="dot" style="background:var(--score-red)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Card 2: Dashboard -->
+    <div class="slop-card" data-testid="slop-card-2">
+      <div class="slop-card-inner">
+        <div class="slop-design archetype-dashboard">
+          <div class="fake-metrics">
+            <div class="fake-metric"></div>
+            <div class="fake-metric"></div>
+            <div class="fake-metric"></div>
+            <div class="fake-metric"></div>
+          </div>
+          <div class="fake-chart"></div>
+        </div>
+        <div class="card-stamp">
+          <div>
+            <span class="card-stamp-label" style="color:var(--score-red)">SLOP</span>
+            <span class="card-stamp-sublabel">Dashboard</span>
+          </div>
+          <span class="card-stamp-score" style="color:var(--score-red)">3/10</span>
+          <div class="card-stamp-dots">
+            <div class="dot" style="background:var(--score-red)"></div>
+            <div class="dot" style="background:var(--score-red)"></div>
+            <div class="dot" style="background:var(--score-red)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Card 3: Gallery — 3D flip -->
+    <div class="slop-card flip-card" data-testid="slop-card-transform" id="transformCard">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="slop-design archetype-gallery">
+            <div class="fake-card-grid">
+              <div class="fake-gallery-card"><div class="fake-img"></div><div class="fake-card-text"></div><div class="fake-card-text" style="width:60%"></div></div>
+              <div class="fake-gallery-card"><div class="fake-img"></div><div class="fake-card-text"></div><div class="fake-card-text" style="width:60%"></div></div>
+              <div class="fake-gallery-card"><div class="fake-img"></div><div class="fake-card-text"></div><div class="fake-card-text" style="width:60%"></div></div>
+            </div>
+          </div>
+          <div class="card-stamp">
+            <div>
+              <span class="card-stamp-label" style="color:var(--score-red)">SLOP</span>
+              <span class="card-stamp-sublabel">Card Gallery</span>
+            </div>
+            <span class="card-stamp-score" style="color:var(--score-red)">3/10</span>
+            <div class="card-stamp-dots">
+              <div class="dot" style="background:var(--score-red)"></div>
+              <div class="dot" style="background:var(--score-red)"></div>
+              <div class="dot" style="background:var(--score-red)"></div>
+            </div>
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div class="slap-design">
+            <div class="fake-headline"></div>
+            <div class="fake-bar"></div>
+            <div class="fake-text"></div>
+            <div class="fake-text" style="width:40%"></div>
+            <div class="fake-bar"></div>
+            <div class="fake-btn"></div>
+          </div>
+          <div class="card-stamp">
+            <div>
+              <span class="card-stamp-label" style="color:var(--accent-gold)">SLAP!</span>
+              <span class="card-stamp-sublabel" style="color:var(--accent-gold)">Reviewed</span>
+            </div>
+            <span class="card-stamp-score" style="color:var(--score-green)">8/10</span>
+            <div class="card-stamp-dots">
+              <div class="dot" style="background:var(--score-green)"></div>
+              <div class="dot" style="background:var(--score-green)"></div>
+              <div class="dot" style="background:var(--score-green)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COUNCIL (EXPANDED — also the CTA) ═══ -->
+<section id="council" data-testid="council-section">
+  <p class="council-title">Build your corner.</p>
+  <p class="council-subtitle">5 experts. 18 personas. Pick the ones that match your audience.</p>
+
+  <button class="dice-btn" data-testid="dice-roll" onclick="rollDice()">
+    <span class="dice-icon" id="diceIcon">&#x1F3B2;</span> ROLL THE DICE
+  </button>
+
+  <!-- Experts as banner cards -->
+  <div class="expert-banner" id="expertBanner"></div>
+
+  <!-- Persona categories as card grids -->
+  <div id="personaCategories"></div>
+
+  <!-- Live Preview -->
+  <div class="live-preview" id="livePreview">
+    <div id="previewFindings"></div>
+    <div class="preview-score-bar">
+      <div class="odometer-container" id="odometerContainer">
+        <span class="odometer-static" style="color:var(--score-yellow)">&mdash;</span>
+      </div>
+      <span class="score-delta" id="scoreDelta"></span>
+      <span class="preview-score-label">COUNCIL SCORE</span>
+    </div>
+  </div>
+
+  <!-- Inline CTA -->
+  <div class="inline-cta" id="inlineCta">
+    <div class="inline-cta-avatars" id="ctaAvatars"></div>
+    <p class="inline-cta-label" id="ctaLabel"></p>
+    <p class="inline-cta-score" id="ctaScore"></p>
+    <button class="inline-cta-btn" id="ctaBtn" onclick="enterApp()">START REVIEWING &rarr;</button>
+    <p class="inline-cta-empty" id="ctaEmpty">Select at least 3 reviewers to begin.</p>
+  </div>
+</section>
+
+<script>
+// ─── Data ───────────────────────────────────────────
+const EXPERTS = [
+  { id:'marketing', name:'MARKETING', role:'Positioning', color:'#FF6B6B', icon:'\u{1F3AF}', bias:'Does this sell?', style:'shapes' },
+  { id:'ux', name:'UX', role:'Usability', color:'#4ECDC4', icon:'\u{1F3A8}', bias:'Can every user succeed?', style:'shapes' },
+  { id:'product', name:'PRODUCT', role:'Value Prop', color:'#FFD93D', icon:'\u{1F4E6}', bias:'Worth the complexity?', style:'shapes' },
+  { id:'technical', name:'TECHNICAL', role:'Performance', color:'#95E1D3', icon:'\u{1F527}', bias:'Slow connections?', style:'shapes' },
+  { id:'design', name:'DESIGN', role:'Aesthetics', color:'#F38181', icon:'\u{2728}', bias:'Intentional or template?', style:'shapes' },
+];
+
+const PERSONAS = [
+  { id:'marcus', name:'Marcus', role:'Colorblind Dev', cat:'Accessibility', color:'#4ECDC4', bias:'Color-only = invisible to me.' },
+  { id:'elena', name:'Elena', role:'Screen Reader', cat:'Accessibility', color:'#7B68EE', bias:'No label? Doesn\'t exist.' },
+  { id:'priya', name:'Priya', role:'Motor Control', cat:'Accessibility', color:'#DDA0DD', bias:'Tiny targets = missed clicks.' },
+  { id:'dorothy', name:'Dorothy', role:'Just Works', cat:'Tech Spectrum', color:'#6BCB77', bias:'What does OAuth mean?' },
+  { id:'kevin', name:'Kevin', role:'Zero Patience', cat:'Tech Spectrum', color:'#FF8C00', bias:'2+ taps? Already gone.' },
+  { id:'raj', name:'Raj', role:'Power User', cat:'Tech Spectrum', color:'#20B2AA', bias:'Where are the shortcuts?' },
+  { id:'carlos', name:'Carlos', role:'CEO', cat:'Role-Based', color:'#DAA520', bias:'ROI in the first scroll.' },
+  { id:'jasmine', name:'Jasmine', role:'Support Rep', cat:'Role-Based', color:'#87CEEB', bias:'3 tickets/day about this.' },
+  { id:'tommy', name:'Tommy', role:'Intern Day 3', cat:'Role-Based', color:'#FF69B4', bias:'10 min clicking, still lost.' },
+  { id:'frank', name:'Frank', role:'Zero Patience', cat:'Emotional', color:'#FF6B6B', bias:'Already annoyed. Every click worse.' },
+  { id:'diana', name:'Diana', role:'Craft Lover', cat:'Emotional', color:'#BA55D3', bias:'I notice when someone cared.' },
+  { id:'sarah', name:'Sarah', role:'Trusts Nothing', cat:'Emotional', color:'#CD853F', bias:'Where\'s the privacy policy?' },
+  { id:'sam', name:'Sam', role:'One Thumb', cat:'Context', color:'#9B59B6', bias:'Bumpy train. One thumb. Go.' },
+  { id:'maya', name:'Maya', role:'30 Seconds', cat:'Context', color:'#F0E68C', bias:'Kid meltdown in 30 sec.' },
+  { id:'mike', name:'Mike', role:'Screen Sharing', cat:'Context', color:'#708090', bias:'Team watching. Don\'t embarrass me.' },
+  { id:'yuki', name:'Yuki', role:'Aesthetic First', cat:'Cultural Taste', color:'#FFB7C5', bias:'Not beautiful? Don\'t trust it.' },
+  { id:'dex', name:'Dex', role:'Subculture', cat:'Cultural Taste', color:'#32CD32', bias:'Corporate = enemy.' },
+  { id:'nora', name:'Nora', role:'Expects Luxury', cat:'Cultural Taste', color:'#C4A35A', bias:'Not premium? Not paying premium.' },
+];
+
+const SAMPLE_FINDINGS = {
+  marketing: { text: 'CTA needs urgency language.', light: 'yellow' },
+  ux: { text: 'CTA below fold \u2014 40% miss it.', light: 'red' },
+  product: { text: 'Value prop clear in 3 seconds.', light: 'green' },
+  technical: { text: 'Images unoptimized \u2014 4s load.', light: 'red' },
+  design: { text: 'Typography hierarchy is strong.', light: 'green' },
+  marcus: { text: 'Color contrast passes. Readable.', light: 'green' },
+  elena: { text: 'Missing aria-labels on icons.', light: 'red' },
+  priya: { text: 'Touch targets are generous.', light: 'green' },
+  dorothy: { text: 'What does "iterate" mean?', light: 'yellow' },
+  kevin: { text: 'Loads fast. Good.', light: 'green' },
+  raj: { text: 'No keyboard shortcuts at all.', light: 'yellow' },
+  carlos: { text: 'ROI unclear in first scroll.', light: 'red' },
+  jasmine: { text: 'FAQ section would cut tickets.', light: 'yellow' },
+  tommy: { text: 'Fun design! Easy to explore.', light: 'green' },
+  frank: { text: 'Pricing takes 3 clicks. Furious.', light: 'red' },
+  diana: { text: 'Someone cared about the details.', light: 'green' },
+  sarah: { text: 'No testimonials? Don\'t trust it.', light: 'red' },
+  sam: { text: 'One-thumb friendly. Approved.', light: 'green' },
+  maya: { text: 'Clear enough for 30 seconds.', light: 'green' },
+  mike: { text: 'Professional. Safe to screen-share.', light: 'green' },
+  yuki: { text: 'Beautiful but needs more polish.', light: 'yellow' },
+  dex: { text: 'Too corporate. Show some edge.', light: 'red' },
+  nora: { text: 'Doesn\'t feel premium enough.', light: 'yellow' },
+};
+
+function avatarUrl(r) {
+  const style = r.style || 'adventurer';
+  const seed = style === 'shapes' ? r.id + '-expert' : r.id;
+  const hex = r.color.replace('#','');
+  return `https://api.dicebear.com/9.x/${style}/svg?seed=${seed}&backgroundColor=${hex}`;
+}
+
+// ─── State ──────────────────────────────────────────
+let selected = new Set();
+let previousScore = null;
+let activeFindingIds = new Set();
+let deltaTimeout = null;
+
+// ─── Build Grid ─────────────────────────────────────
+function buildGrid() {
+  // Expert banner cards
+  const banner = document.getElementById('expertBanner');
+  EXPERTS.forEach(e => {
+    const card = document.createElement('div');
+    card.className = 'expert-card';
+    card.dataset.id = e.id;
+    card.innerHTML = `
+      <div class="expert-card-avatar"><img src="${avatarUrl(e)}" alt="${e.name}" loading="lazy"></div>
+      <div class="expert-card-info">
+        <span class="expert-card-name" style="color:${e.color}">${e.name}</span>
+        <span class="expert-card-role">${e.role}</span>
+      </div>
+    `;
+    card.addEventListener('click', () => toggleReviewer(e.id));
+    banner.appendChild(card);
+  });
+
+  // Persona category grids
+  const cats = ['Accessibility','Tech Spectrum','Role-Based','Emotional','Context','Cultural Taste'];
+  const container = document.getElementById('personaCategories');
+  cats.forEach(cat => {
+    const section = document.createElement('div');
+    section.className = 'persona-section';
+    const header = document.createElement('div');
+    header.className = 'persona-section-header';
+    header.textContent = cat;
+    section.appendChild(header);
+
+    const grid = document.createElement('div');
+    grid.className = 'persona-grid';
+    PERSONAS.filter(p => p.cat === cat).forEach(p => {
+      const f = SAMPLE_FINDINGS[p.id];
+      const lightColor = f ? (f.light === 'green' ? '#6BCB77' : f.light === 'yellow' ? '#FFD93D' : '#FF6B6B') : '#666';
+      const card = document.createElement('div');
+      card.className = 'persona-card';
+      card.dataset.id = p.id;
+      card.innerHTML = `
+        <div class="persona-card-top">
+          <div class="persona-card-avatar"><img src="${avatarUrl(p)}" alt="${p.name}" loading="lazy"></div>
+          <div>
+            <div class="persona-card-name" style="color:${p.color}">${p.name}</div>
+            <div class="persona-card-role">${p.role}</div>
+          </div>
+        </div>
+        <div class="persona-card-bias">"${p.bias}"</div>
+        ${f ? `<div class="persona-card-finding"><div class="finding-dot" style="background:${lightColor}"></div>${f.text}</div>` : ''}
+      `;
+      card.addEventListener('click', () => toggleReviewer(p.id));
+      grid.appendChild(card);
+    });
+    section.appendChild(grid);
+    container.appendChild(section);
+  });
+}
+
+function toggleReviewer(id) {
+  if (selected.has(id)) selected.delete(id);
+  else selected.add(id);
+  updateUI();
+}
+
+// ─── Score helpers ──────────────────────────────────
+function computeScore() {
+  let total = 0, count = 0;
+  selected.forEach(id => {
+    const f = SAMPLE_FINDINGS[id];
+    if (!f) return;
+    total += (f.light === 'green' ? 8 : f.light === 'yellow' ? 6 : 3);
+    count++;
+  });
+  return count > 0 ? total / count : null;
+}
+function scoreColor(n) { return n >= 7 ? '#6BCB77' : n >= 5 ? '#FFD93D' : '#FF6B6B'; }
+
+function updateOdometer(newVal) {
+  const c = document.getElementById('odometerContainer');
+  if (newVal === null) { c.innerHTML = '<span class="odometer-static" style="color:var(--score-yellow)">\u2014</span>'; return; }
+  const text = newVal.toFixed(1) + '/10';
+  const color = scoreColor(newVal);
+  const prev = c.textContent;
+  c.innerHTML = '';
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const s = document.createElement('span');
+    s.className = (ch >= '0' && ch <= '9') ? 'odometer-digit' : 'odometer-static';
+    if (ch >= '0' && ch <= '9' && prev[i] !== ch) s.classList.add('rolling');
+    s.style.color = color;
+    s.textContent = ch;
+    c.appendChild(s);
+  }
+}
+
+function showDelta(oldScore, newScore) {
+  if (oldScore === null || newScore === null) return;
+  const delta = newScore - oldScore;
+  if (Math.abs(delta) < 0.05) return;
+  const el = document.getElementById('scoreDelta');
+  el.textContent = (delta > 0 ? '+' : '') + delta.toFixed(1);
+  el.className = 'score-delta visible ' + (delta > 0 ? 'positive' : 'negative');
+  clearTimeout(deltaTimeout);
+  deltaTimeout = setTimeout(() => { el.classList.add('fading'); el.classList.remove('visible'); }, 1500);
+}
+
+// ─── Update UI ──────────────────────────────────────
+function updateUI() {
+  // Expert cards
+  document.querySelectorAll('.expert-card').forEach(c => {
+    c.classList.toggle('selected', selected.has(c.dataset.id));
+  });
+  // Persona cards
+  document.querySelectorAll('.persona-card').forEach(c => {
+    c.classList.toggle('selected', selected.has(c.dataset.id));
+  });
+
+  // Live preview
+  const preview = document.getElementById('livePreview');
+  const findings = document.getElementById('previewFindings');
+  const newIds = new Set(selected);
+
+  if (selected.size >= 3) {
+    preview.classList.add('active');
+    // Remove deselected
+    const toRemove = [];
+    activeFindingIds.forEach(id => { if (!newIds.has(id)) toRemove.push(id); });
+    toRemove.forEach(id => {
+      const el = findings.querySelector(`[data-finding-id="${id}"]`);
+      if (el) { el.classList.add('exiting'); setTimeout(() => el.remove(), 250); }
+      activeFindingIds.delete(id);
+    });
+    // Add newly selected
+    selected.forEach(id => {
+      if (activeFindingIds.has(id)) return;
+      const r = [...EXPERTS, ...PERSONAS].find(x => x.id === id);
+      const f = SAMPLE_FINDINGS[id];
+      if (!r || !f) return;
+      const lc = f.light === 'green' ? '#6BCB77' : f.light === 'yellow' ? '#FFD93D' : '#FF6B6B';
+      const div = document.createElement('div');
+      div.className = 'preview-finding entering';
+      div.dataset.findingId = id;
+      div.innerHTML = `<div class="preview-light" style="background:${lc}"></div><div><span class="preview-name" style="color:${r.color}">${r.name}:</span> ${f.text}</div>`;
+      findings.appendChild(div);
+      activeFindingIds.add(id);
+    });
+    const newScore = computeScore();
+    updateOdometer(newScore);
+    showDelta(previousScore, newScore);
+    previousScore = newScore;
+  } else {
+    preview.classList.remove('active');
+    findings.innerHTML = '';
+    activeFindingIds.clear();
+    previousScore = null;
+    updateOdometer(null);
+  }
+
+  updateCTA();
+}
+
+// ─── CTA ────────────────────────────────────────────
+function updateCTA() {
+  const avatars = document.getElementById('ctaAvatars');
+  const label = document.getElementById('ctaLabel');
+  const score = document.getElementById('ctaScore');
+  const btn = document.getElementById('ctaBtn');
+  const empty = document.getElementById('ctaEmpty');
+
+  avatars.innerHTML = '';
+
+  if (selected.size < 3) {
+    label.textContent = '';
+    score.textContent = '';
+    btn.classList.remove('visible');
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  btn.classList.add('visible');
+
+  let expertCount = 0, personaCount = 0;
+  selected.forEach(id => {
+    if (EXPERTS.find(e => e.id === id)) expertCount++;
+    else personaCount++;
+  });
+
+  let i = 0;
+  selected.forEach(id => {
+    const r = [...EXPERTS, ...PERSONAS].find(x => x.id === id);
+    if (!r) return;
+    const av = document.createElement('div');
+    av.className = 'inline-cta-avatar';
+    av.innerHTML = `<img src="${avatarUrl(r)}" alt="${r.name}">`;
+    av.style.borderColor = r.color;
+    avatars.appendChild(av);
+    const delay = i * 60;
+    setTimeout(() => av.classList.add('bounce-in'), delay);
+    i++;
+  });
+
+  label.textContent = `${expertCount} expert${expertCount !== 1 ? 's' : ''}. ${personaCount} persona${personaCount !== 1 ? 's' : ''}. Ready.`;
+  const avg = computeScore();
+  if (avg !== null) { score.textContent = avg.toFixed(1) + '/10'; score.style.color = scoreColor(avg); }
+  else score.textContent = '';
+}
+
+// ─── Dice Roll ──────────────────────────────────────
+function rollDice() {
+  const icon = document.getElementById('diceIcon');
+  icon.classList.remove('rolling'); void icon.offsetWidth; icon.classList.add('rolling');
+
+  const shuffledE = [...EXPERTS].sort(() => Math.random() - 0.5);
+  const ec = Math.random() > 0.5 ? 3 : 2;
+  const pickedE = shuffledE.slice(0, ec);
+
+  const cats = ['Accessibility','Tech Spectrum','Role-Based','Emotional','Context','Cultural Taste'];
+  const shuffledC = [...cats].sort(() => Math.random() - 0.5);
+  const pc = ec === 2 ? 4 : 3;
+  const pickedP = [];
+  for (let j = 0; j < pc && j < shuffledC.length; j++) {
+    const cp = PERSONAS.filter(p => p.cat === shuffledC[j]);
+    pickedP.push(cp[Math.floor(Math.random() * cp.length)]);
+  }
+
+  activeFindingIds.clear();
+  document.getElementById('previewFindings').innerHTML = '';
+  previousScore = null;
+  selected.clear();
+  pickedE.forEach(e => selected.add(e.id));
+  pickedP.forEach(p => selected.add(p.id));
+  updateUI();
+}
+
+// ─── SLAP! Hero ─────────────────────────────────────
+let hasSlapped = false;
+function doSlap() {
+  if (hasSlapped) return;
+  hasSlapped = true;
+  document.body.classList.add('shaking');
+  setTimeout(() => {
+    document.body.classList.remove('shaking');
+    const flash = document.getElementById('slapFlash');
+    flash.classList.add('active');
+    setTimeout(() => {
+      flash.classList.remove('active');
+      document.getElementById('heroWhisper').classList.add('visible');
+      document.getElementById('scrollIndicator').classList.add('visible');
+    }, 200);
+  }, 150);
+}
+
+// ─── Problem scroll triggers ────────────────────────
+let transformed = false;
+function checkProblemScroll() {
+  if (transformed) return;
+  const card = document.getElementById('transformCard');
+  const rect = card.getBoundingClientRect();
+  if (rect.top < window.innerHeight * 0.7) {
+    transformed = true;
+    card.classList.add('flipped');
+  }
+}
+function checkSlopCards() {
+  document.querySelectorAll('.slop-card').forEach((card, i) => {
+    const rect = card.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.85) {
+      setTimeout(() => card.classList.add('visible'), i * 150);
+    }
+  });
+}
+
+function enterApp() {
+  if (selected.size > 0) {
+    localStorage.setItem('slap-default-council', JSON.stringify(Array.from(selected)));
+  }
+  alert('Navigate to #/gallery (in real app)');
+}
+
+// ─── Init ───────────────────────────────────────────
+buildGrid();
+updateCTA();
+window.addEventListener('scroll', () => { checkSlopCards(); checkProblemScroll(); });
+setTimeout(() => checkSlopCards(), 100);
+</script>
+</body>
+</html>

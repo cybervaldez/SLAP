@@ -1,0 +1,27 @@
+import type { TrafficLight } from '../../data/reviews';
+
+export const demoFindings: Record<string, { text: string; light: TrafficLight }> = {
+  marketing: { text: 'CTA needs urgency language.', light: 'yellow' },
+  ux: { text: 'CTA below fold \u2014 40% miss it.', light: 'red' },
+  product: { text: 'Value prop clear in 3 seconds.', light: 'green' },
+  technical: { text: 'Images unoptimized \u2014 4s load.', light: 'red' },
+  design: { text: 'Typography hierarchy is strong.', light: 'green' },
+  marcus: { text: 'Color contrast passes. Readable.', light: 'green' },
+  elena: { text: 'Missing aria-labels on icons.', light: 'red' },
+  priya: { text: 'Touch targets are generous.', light: 'green' },
+  dorothy: { text: 'What does "iterate" mean?', light: 'yellow' },
+  kevin: { text: 'Loads fast. Good.', light: 'green' },
+  raj: { text: 'No keyboard shortcuts at all.', light: 'yellow' },
+  carlos: { text: 'ROI unclear in first scroll.', light: 'red' },
+  jasmine: { text: 'FAQ section would cut tickets.', light: 'yellow' },
+  tommy: { text: 'Fun design! Easy to explore.', light: 'green' },
+  frank: { text: 'Pricing takes 3 clicks. Furious.', light: 'red' },
+  diana: { text: 'Someone cared about the details.', light: 'green' },
+  sarah: { text: "No testimonials? Don't trust it.", light: 'red' },
+  sam: { text: 'One-thumb friendly. Approved.', light: 'green' },
+  maya: { text: 'Clear enough for 30 seconds.', light: 'green' },
+  mike: { text: 'Professional. Safe to screen-share.', light: 'green' },
+  yuki: { text: 'Beautiful but needs more polish.', light: 'yellow' },
+  dex: { text: 'Too corporate. Show some edge.', light: 'red' },
+  nora: { text: "Doesn't feel premium enough.", light: 'yellow' },
+};

@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SLAP! — V6c: Full-Bleed Carousel</title>
+<style>
+/* ─── Reset & Tokens ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: #0D0D1A; color: #F5F0E1; font-family: 'Courier New', monospace; overflow-x: hidden; }
+:root {
+  --bg-deep: #0D0D1A; --bg-dark: #1A1A2E; --bg-mid: #222240;
+  --text-light: #F5F0E1; --text-muted: rgba(245, 240, 225, 0.5);
+  --accent-gold: #FFD000; --score-green: #6BCB77; --score-yellow: #FFD93D; --score-red: #FF6B6B;
+  --ease-enter: cubic-bezier(0.22, 0.61, 0.36, 1); --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-micro: 100ms; --duration-small: 150ms; --duration-medium: 250ms; --duration-large: 400ms;
+  --stagger: 60ms;
+}
+section { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; position: relative; }
+
+/* ─── CONSOLIDATED HERO+PROBLEM ──────────────────────── */
+#hero-problem { min-height: 100vh; background: var(--bg-dark); padding: 2rem 2rem 3rem; }
+.hp-title { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.3em; color: var(--text-muted); margin-bottom: 2rem; opacity: 0; animation: fadeIn 600ms var(--ease-enter) 300ms forwards; }
+.hp-center { display: flex; align-items: center; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; opacity: 0; animation: fadeIn 600ms var(--ease-enter) 600ms forwards; flex-wrap: wrap; }
+.hand { font-size: 3.5rem; cursor: pointer; transition: transform var(--duration-small) var(--ease-bounce), filter var(--duration-small); user-select: none; }
+.hand:hover { transform: scale(1.15) rotate(-8deg); filter: drop-shadow(0 0 20px var(--accent-gold)); }
+.hands-pair { display: flex; gap: 3rem; }
+
+@keyframes screenShake { 0%{transform:translateX(0)} 15%{transform:translateX(-3px)} 30%{transform:translateX(3px)} 45%{transform:translateX(-3px)} 60%{transform:translateX(3px)} 75%{transform:translateX(-2px)} 90%{transform:translateX(2px)} 100%{transform:translateX(0)} }
+body.shaking { animation: screenShake 150ms linear; }
+.slap-flash { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:var(--accent-gold); z-index:9999; opacity:0; pointer-events:none; transition:opacity 80ms linear; }
+.slap-flash.active { opacity:1; }
+.slap-flash h1 { font-size:6rem; font-weight:900; letter-spacing:0.2em; color:var(--bg-deep); }
+
+.slop-card-sm { width: 160px; height: 200px; border-radius: 6px; overflow: hidden; opacity: 0; transform: translateY(16px); transition: all 500ms var(--ease-enter); flex-shrink: 0; }
+.slop-card-sm.visible { opacity: 1; transform: translateY(0); }
+.slop-card-sm .slop-card-inner { width: 100%; height: 100%; display: flex; flex-direction: column; }
+.slop-design { flex:1; background:linear-gradient(135deg,#94A3B8,#64748B); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0.75rem; gap:0.4rem; }
+.slop-design.al .fhb { width:80%; height:28px; background:rgba(255,255,255,0.2); border-radius:3px; }
+.slop-design.al .fhl { width:55%; height:8px; background:rgba(255,255,255,0.3); border-radius:3px; }
+.slop-design.al .ft  { width:40%; height:5px; background:rgba(255,255,255,0.2); border-radius:2px; }
+.slop-design.al .fb  { width:30%; height:12px; background:rgba(255,255,255,0.25); border-radius:999px; margin-top:0.3rem; }
+.slop-design.ad .fm  { display:grid; grid-template-columns:1fr 1fr; gap:0.25rem; width:100%; }
+.slop-design.ad .fmb { height:24px; background:rgba(255,255,255,0.18); border-radius:2px; }
+.slop-design.ad .fc  { width:100%; height:36px; background:rgba(255,255,255,0.12); border-radius:2px; margin-top:0.2rem; }
+.slop-design.ag .fg  { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.2rem; width:100%; flex:1; }
+.slop-design.ag .fgc { background:rgba(255,255,255,0.1); border-radius:2px; padding:3px; display:flex; flex-direction:column; gap:2px; }
+.slop-design.ag .fi  { width:100%; height:20px; background:rgba(255,255,255,0.18); border-radius:1px; }
+.slop-design.ag .fct { width:75%; height:3px; background:rgba(255,255,255,0.2); border-radius:1px; }
+.card-stamp { padding:0.4rem 0.6rem; display:flex; align-items:center; justify-content:space-between; background:var(--bg-mid); }
+.card-stamp-label { font-size:0.5rem; font-weight:800; letter-spacing:0.12em; }
+.card-stamp-sublabel { font-size:0.3rem; font-weight:600; color:var(--text-muted); display:block; margin-top:1px; }
+.card-stamp-score { font-size:0.5rem; font-weight:800; }
+
+.slop-card-sm.flip-card { perspective:800px; overflow:visible; background:none; }
+.flip-card-inner { width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform 400ms var(--ease-enter); }
+.flip-card.flipped .flip-card-inner { transform:rotateY(180deg); }
+.flip-card-front,.flip-card-back { position:absolute; inset:0; backface-visibility:hidden; border-radius:6px; overflow:hidden; display:flex; flex-direction:column; }
+.flip-card-back { transform:rotateY(180deg); }
+.slap-design { flex:1; background:var(--bg-deep); border:2px solid var(--accent-gold); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:0.75rem; gap:0.4rem; }
+.slap-design .fhl { width:65%; height:8px; background:var(--accent-gold); }
+.slap-design .ft { width:45%; height:5px; background:var(--text-muted); }
+.slap-design .fbar { width:55%; height:2px; background:var(--accent-gold); opacity:0.4; }
+.slap-design .fb { width:35%; height:12px; background:var(--accent-gold); }
+
+.hp-cards-bottom { display:flex; gap:1.2rem; justify-content:center; flex-wrap:wrap; opacity:0; animation: fadeIn 600ms var(--ease-enter) 800ms forwards; }
+.hp-whisper { font-size:0.5rem; color:var(--text-muted); opacity:0; transition:opacity 600ms var(--ease-enter); margin-top:1.5rem; }
+.hp-whisper.visible { opacity:1; }
+.scroll-indicator { position:absolute; bottom:1.5rem; font-size:0.5rem; color:var(--text-muted); letter-spacing:0.1em; opacity:0; transition:opacity 600ms var(--ease-enter); animation:float 2s ease-in-out infinite; }
+.scroll-indicator.visible { opacity:1; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+/* ─── COUNCIL: FULL-BLEED CAROUSEL ─────────────────── */
+#council { background: var(--bg-deep); min-height: 100vh; padding: 3rem 2rem 5rem; justify-content: flex-start; }
+.council-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 0.5rem; }
+.council-subtitle { font-size: 0.45rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+.dice-btn { background:none; border:none; cursor:pointer; padding:0.5rem; margin-bottom:1.5rem; transition:all var(--duration-small) var(--ease-bounce); line-height:1; }
+.dice-btn:hover { transform:scale(1.12); }
+.dice-btn:hover .dice-icon { filter:drop-shadow(0 0 12px rgba(255,208,0,0.5)); }
+.dice-icon { display:inline-block; font-size:3rem; transition:filter var(--duration-small); opacity:0.5; }
+.dice-btn:hover .dice-icon { opacity:1; }
+.dice-icon.rolling { animation:diceTumble 600ms var(--ease-bounce); }
+@keyframes diceTumble { 0%{transform:rotate(0) scale(1)} 25%{transform:rotate(90deg) scale(1.3)} 50%{transform:rotate(180deg) scale(0.8)} 75%{transform:rotate(270deg) scale(1.2)} 100%{transform:rotate(360deg) scale(1)} }
+
+/* ─── Full-Bleed Carousel (fb-*) ───────────────────── */
+
+/* Category filter tabs */
+.fb-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+}
+.fb-tab {
+  font-family: 'Courier New', monospace;
+  font-size: 0.42rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  position: relative;
+  transition: color var(--duration-small) var(--ease-enter);
+  /* Staggered entrance */
+  opacity: 0;
+  transform: translateY(8px);
+}
+.fb-tab.entered {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms var(--ease-enter), transform 300ms var(--ease-enter), color var(--duration-small);
+}
+.fb-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 80%;
+  height: 2px;
+  background: var(--accent-gold);
+  transition: transform var(--duration-small) var(--ease-enter);
+}
+.fb-tab.active {
+  color: var(--accent-gold);
+}
+.fb-tab.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+.fb-tab:hover {
+  color: var(--text-light);
+}
+
+/* Stage wrapper (card + arrows) */
+.fb-stage-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 560px;
+  margin-bottom: 0.75rem;
+}
+
+/* Arrow buttons */
+.fb-arrow {
+  font-family: 'Courier New', monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg-mid);
+  border: 1px solid rgba(245, 240, 225, 0.1);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--duration-small) var(--ease-bounce);
+  user-select: none;
+}
+.fb-arrow:hover {
+  color: var(--accent-gold);
+  border-color: var(--accent-gold);
+  transform: scale(1.1);
+}
+.fb-arrow:active {
+  transform: scale(0.95);
+}
+
+/* The card stage */
+.fb-stage {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  min-height: 280px;
+  margin: 0 0.75rem;
+  overflow: hidden;
+}
+
+/* The card itself */
+.fb-card {
+  width: 100%;
+  min-height: 280px;
+  background: var(--bg-dark);
+  border: 2px solid rgba(245, 240, 225, 0.08);
+  border-radius: 10px;
+  padding: 1.5rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  /* Transition for crossfade + slide */
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms var(--ease-enter), transform 300ms var(--ease-enter), border-color var(--duration-small), box-shadow var(--duration-small);
+}
+.fb-card.exit-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.fb-card.exit-right {
+  opacity: 0;
+  transform: translateX(30px);
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.fb-card.enter-left {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+.fb-card.enter-right {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+/* Selected card state */
+.fb-card.selected {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 24px rgba(255, 208, 0, 0.15), inset 0 0 12px rgba(255, 208, 0, 0.05);
+}
+
+/* Gold pulse on add */
+.fb-card.pulse { animation: fbGoldPulse 500ms var(--ease-enter); }
+@keyframes fbGoldPulse {
+  0% { box-shadow: 0 0 0 0 rgba(255, 208, 0, 0.4); }
+  100% { box-shadow: 0 0 0 20px rgba(255, 208, 0, 0); }
+}
+
+/* Expert card variant */
+.fb-card.fb-expert {
+  border-color: rgba(255, 208, 0, 0.2);
+  background: linear-gradient(180deg, var(--bg-dark) 0%, rgba(255, 208, 0, 0.03) 100%);
+}
+
+/* Avatar */
+.fb-card-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid rgba(245, 240, 225, 0.1);
+  transition: border-color var(--duration-small), box-shadow var(--duration-small);
+  flex-shrink: 0;
+}
+.fb-card.selected .fb-card-avatar {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 20px rgba(255, 208, 0, 0.3);
+}
+.fb-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Name */
+.fb-card-name {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-align: center;
+}
+
+/* Role + category */
+.fb-card-meta {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+
+/* Bias quote — key decision text, needs prominence */
+.fb-card-bias {
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--accent-gold);
+  text-align: center;
+  line-height: 1.5;
+  margin: 0.4rem 0;
+  max-width: 400px;
+  font-weight: 700;
+}
+
+/* Sample finding preview — the reviewer's actual feedback */
+.fb-card-finding {
+  font-size: 0.6rem;
+  color: var(--text-light);
+  text-align: center;
+  line-height: 1.5;
+  max-width: 400px;
+  opacity: 0.85;
+  background: var(--bg-mid);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+}
+
+/* Expert badge */
+.fb-card-badge {
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-top: 0.3rem;
+}
+.fb-card-badge.badge-expert {
+  background: rgba(255, 208, 0, 0.12);
+  color: var(--accent-gold);
+}
+.fb-card-badge.badge-persona {
+  background: var(--bg-mid);
+  color: var(--text-muted);
+}
+
+/* Add/Remove button */
+.fb-card-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 0.48rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.45rem 1.4rem;
+  border: 2px solid var(--accent-gold);
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 0.3rem;
+  transition: all var(--duration-small) var(--ease-bounce);
+}
+.fb-card-btn.btn-add {
+  background: var(--accent-gold);
+  color: var(--bg-deep);
+}
+.fb-card-btn.btn-add:hover {
+  filter: brightness(1.15);
+  transform: scale(1.05);
+}
+.fb-card-btn.btn-remove {
+  background: var(--bg-mid);
+  color: var(--text-muted);
+  border-color: rgba(245, 240, 225, 0.15);
+}
+.fb-card-btn.btn-remove:hover {
+  border-color: var(--score-red);
+  color: var(--score-red);
+}
+
+/* Counter below card */
+.fb-counter {
+  font-size: 0.45rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* Selected indicator strip */
+.fb-selected-strip {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 500px;
+  margin-bottom: 1rem;
+}
+.fb-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bg-mid);
+  border: 1px solid rgba(245, 240, 225, 0.1);
+  transition: all var(--duration-small) var(--ease-enter);
+}
+.fb-dot.current {
+  background: var(--text-muted);
+  border-color: var(--text-muted);
+  transform: scale(1.3);
+}
+.fb-dot.in-council {
+  background: var(--accent-gold);
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 6px rgba(255, 208, 0, 0.3);
+}
+
+/* ─── Live Preview ───────────────────────────────────── */
+.live-preview { margin-top:1.5rem; width:100%; max-width:500px; background:var(--bg-mid); border:1px solid rgba(245,240,225,0.12); border-radius:4px; padding:1rem; opacity:0; transition:opacity 400ms var(--ease-enter); }
+.live-preview.active { opacity:1; }
+.preview-finding { display:flex; align-items:flex-start; gap:8px; padding:6px 0; font-size:0.55rem; line-height:1.5; border-bottom:1px solid rgba(255,255,255,0.04); max-height:60px; overflow:hidden; transition:all 250ms var(--ease-enter); }
+.preview-finding:last-child { border-bottom:none; }
+.preview-finding.entering { animation:findingSlideIn 250ms var(--ease-enter) forwards; }
+.preview-finding.exiting { opacity:0; max-height:0; padding:0; transform:translateY(-8px); }
+@keyframes findingSlideIn { from{opacity:0;max-height:0;transform:translateY(8px)} to{opacity:1;max-height:60px;transform:translateY(0)} }
+.preview-light { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:3px; }
+.preview-name { font-weight:700; letter-spacing:0.04em; }
+.preview-score-bar { display:flex; align-items:center; gap:0.5rem; margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid rgba(245,240,225,0.12); }
+.odometer-container { display:flex; align-items:baseline; overflow:hidden; height:1.3rem; }
+.odometer-digit { display:inline-block; font-size:1rem; font-weight:800; line-height:1.3rem; transition:transform 300ms var(--ease-enter),color 300ms; }
+.odometer-digit.rolling { animation:digitRoll 300ms var(--ease-enter); }
+@keyframes digitRoll { 0%{transform:translateY(-100%);opacity:0} 100%{transform:translateY(0);opacity:1} }
+.odometer-static { font-size:1rem; font-weight:800; line-height:1.3rem; }
+.score-delta { font-size:0.5rem; font-weight:800; padding:2px 6px; border-radius:3px; opacity:0; transition:opacity 300ms var(--ease-enter); margin-left:4px; }
+.score-delta.visible { opacity:1; }
+.score-delta.positive { background:rgba(107,203,119,0.15); color:var(--score-green); }
+.score-delta.negative { background:rgba(255,107,107,0.15); color:var(--score-red); }
+.score-delta.fading { opacity:0; }
+.preview-score-label { font-size:0.45rem; color:var(--text-muted); }
+
+/* ─── Council Bar (sticky) ───────────────────────────── */
+.council-bar { position:sticky; bottom:0; left:0; right:0; background:var(--bg-dark); border-top:2px solid var(--accent-gold); padding:0.75rem 1.5rem; display:flex; align-items:center; gap:0.75rem; z-index:20; min-height:56px; }
+.council-bar-label { font-size:0.45rem; font-weight:700; letter-spacing:0.12em; color:var(--accent-gold); }
+.council-bar-avatars { display:flex; gap:4px; flex:1; }
+.council-bar-avatar { width:32px; height:32px; border-radius:50%; overflow:hidden; border:2px solid var(--accent-gold); opacity:0; transform:scale(0.5); animation:bounceIn 400ms var(--ease-bounce) forwards; }
+.council-bar-avatar img { width:100%; height:100%; object-fit:cover; }
+@keyframes bounceIn { to{opacity:1;transform:scale(1)} }
+.council-bar-actions { display:flex; gap:0.5rem; }
+.council-bar-btn { font-family:'Courier New',monospace; font-size:0.5rem; font-weight:700; letter-spacing:0.08em; padding:0.4rem 1rem; border:none; cursor:pointer; transition:all var(--duration-small); }
+.btn-reroll { background:var(--bg-mid); color:var(--accent-gold); border:1px solid var(--accent-gold); }
+.btn-reroll:hover { background:rgba(255,208,0,0.1); }
+.btn-keep { background:var(--accent-gold); color:var(--bg-deep); }
+.btn-keep:hover { filter:brightness(1.1); }
+
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0ms!important;transition-duration:0ms!important}body.shaking{animation:none!important}}
+@media(max-width:640px){
+  .hp-center{gap:1rem}.hands-pair{gap:2rem}.hand{font-size:2.5rem}.slop-card-sm{width:130px;height:170px}
+  .fb-stage{max-width:100%}
+  .fb-card{min-height:260px;padding:1.25rem 1rem 1rem}
+  .fb-card-avatar{width:90px;height:90px}
+  .fb-arrow{width:28px;height:28px;font-size:0.9rem}
+  .fb-tabs{gap:0.25rem}
+  .fb-tab{font-size:0.38rem;padding:0.3rem 0.5rem}
+}
+@media(max-width:400px){
+  .fb-card-avatar{width:80px;height:80px}
+  .fb-card-bias{font-size:0.7rem}
+  .fb-card-name{font-size:0.7rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ CONSOLIDATED HERO + PROBLEM ═══ -->
+<section id="hero-problem" data-testid="hero-problem-section">
+  <p class="hp-title">Pick a hand.</p>
+  <div class="hp-center">
+    <div class="hands-pair">
+      <span class="hand" data-testid="hand-left" onclick="doSlap()">&#x1F91A;</span>
+      <span class="hand" data-testid="hand-right" onclick="doSlap()">&#x270B;</span>
+    </div>
+  </div>
+  <div class="hp-cards-bottom">
+    <div class="slop-card-sm" data-testid="slop-card-1">
+      <div class="slop-card-inner">
+        <div class="slop-design al"><div class="fhb"></div><div class="fhl"></div><div class="ft"></div><div class="fb"></div></div>
+        <div class="card-stamp"><div><span class="card-stamp-label" style="color:var(--score-red)">SLOP</span><span class="card-stamp-sublabel">Landing</span></div><span class="card-stamp-score" style="color:var(--score-red)">3/10</span></div>
+      </div>
+    </div>
+    <div class="slop-card-sm" data-testid="slop-card-2">
+      <div class="slop-card-inner">
+        <div class="slop-design ad"><div class="fm"><div class="fmb"></div><div class="fmb"></div><div class="fmb"></div><div class="fmb"></div></div><div class="fc"></div></div>
+        <div class="card-stamp"><div><span class="card-stamp-label" style="color:var(--score-red)">SLOP</span><span class="card-stamp-sublabel">Dashboard</span></div><span class="card-stamp-score" style="color:var(--score-red)">3/10</span></div>
+      </div>
+    </div>
+    <div class="slop-card-sm flip-card" data-testid="slop-card-transform" id="transformCard">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="slop-design ag"><div class="fg"><div class="fgc"><div class="fi"></div><div class="fct"></div></div><div class="fgc"><div class="fi"></div><div class="fct"></div></div><div class="fgc"><div class="fi"></div><div class="fct"></div></div></div></div>
+          <div class="card-stamp"><div><span class="card-stamp-label" style="color:var(--score-red)">SLOP</span><span class="card-stamp-sublabel">Gallery</span></div><span class="card-stamp-score" style="color:var(--score-red)">3/10</span></div>
+        </div>
+        <div class="flip-card-back">
+          <div class="slap-design"><div class="fhl"></div><div class="fbar"></div><div class="ft"></div><div class="fbar"></div><div class="fb"></div></div>
+          <div class="card-stamp"><div><span class="card-stamp-label" style="color:var(--accent-gold)">SLAP!</span><span class="card-stamp-sublabel" style="color:var(--accent-gold)">Reviewed</span></div><span class="card-stamp-score" style="color:var(--score-green)">8/10</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="hp-whisper" id="hpWhisper">AI designs look the same. This fixes that.</p>
+  <div class="scroll-indicator" id="scrollIndicator">&#8595; SCROLL</div>
+</section>
+
+<div class="slap-flash" id="slapFlash"><h1>SLAP!</h1></div>
+
+<!-- ═══ COUNCIL: FULL-BLEED CAROUSEL ═══ -->
+<section id="council" data-testid="council-section" style="justify-content:flex-start;">
+  <p class="council-title">Pick your hands.</p>
+  <p class="council-subtitle">Browse your reviewers. One at a time.</p>
+  <button class="dice-btn" data-testid="dice-roll" onclick="rollDice()">
+    <span class="dice-icon" id="diceIcon">&#x1F3B2;</span>
+  </button>
+
+  <!-- Category filter tabs -->
+  <div class="fb-tabs" id="fbTabs"></div>
+
+  <!-- Carousel stage with arrows -->
+  <div class="fb-stage-wrapper">
+    <button class="fb-arrow fb-arrow-left" id="fbArrowLeft" onclick="navigateCarousel(-1)">&#9668;</button>
+    <div class="fb-stage" id="fbStage"></div>
+    <button class="fb-arrow fb-arrow-right" id="fbArrowRight" onclick="navigateCarousel(1)">&#9654;</button>
+  </div>
+
+  <!-- Counter -->
+  <div class="fb-counter" id="fbCounter">1 / 23</div>
+
+  <!-- Selected indicator dots -->
+  <div class="fb-selected-strip" id="fbDots"></div>
+
+  <!-- Live Preview -->
+  <div class="live-preview" id="livePreview">
+    <div id="previewFindings"></div>
+    <div class="preview-score-bar">
+      <div class="odometer-container" id="odometerContainer"><span class="odometer-static" style="color:var(--score-yellow)">&mdash;</span></div>
+      <span class="score-delta" id="scoreDelta"></span>
+      <span class="preview-score-label">COUNCIL SCORE</span>
+    </div>
+  </div>
+
+  <!-- Council Bar (sticky bottom) -->
+  <div class="council-bar" data-testid="council-bar">
+    <span class="council-bar-label">YOUR COUNCIL</span>
+    <div class="council-bar-avatars" id="councilBarAvatars"></div>
+    <div class="council-bar-actions">
+      <button class="council-bar-btn btn-reroll" onclick="rollDice()">&#x1F3B2; REROLL</button>
+      <button class="council-bar-btn btn-keep" data-testid="keep-council" onclick="keepCouncil()">KEEP &amp; CONTINUE &#x2192;</button>
+    </div>
+  </div>
+</section>
+
+<script>
+const EXPERTS=[
+  {id:'marketing',name:'MARKETING',role:'Positioning',color:'#FF6B6B',icon:'\u{1F3AF}',bias:'Does this sell?',style:'shapes'},
+  {id:'ux',name:'UX',role:'Usability',color:'#4ECDC4',icon:'\u{1F3A8}',bias:'Can every user succeed?',style:'shapes'},
+  {id:'product',name:'PRODUCT',role:'Value Prop',color:'#FFD93D',icon:'\u{1F4E6}',bias:'Worth the complexity?',style:'shapes'},
+  {id:'technical',name:'TECHNICAL',role:'Performance',color:'#95E1D3',icon:'\u{1F527}',bias:'Slow connections?',style:'shapes'},
+  {id:'design',name:'DESIGN',role:'Aesthetics',color:'#F38181',icon:'\u{2728}',bias:'Intentional or template?',style:'shapes'}
+];
+const PERSONAS=[
+  {id:'marcus',name:'Marcus',role:'Colorblind Dev',cat:'Accessibility',color:'#4ECDC4',bias:'Color-only = invisible to me.'},
+  {id:'elena',name:'Elena',role:'Screen Reader',cat:'Accessibility',color:'#7B68EE',bias:'No label? Doesn\'t exist.'},
+  {id:'priya',name:'Priya',role:'Motor Control',cat:'Accessibility',color:'#DDA0DD',bias:'Tiny targets = missed clicks.'},
+  {id:'dorothy',name:'Dorothy',role:'Just Works',cat:'Tech Spectrum',color:'#6BCB77',bias:'What does OAuth mean?'},
+  {id:'kevin',name:'Kevin',role:'Zero Patience',cat:'Tech Spectrum',color:'#FF8C00',bias:'2+ taps? Already gone.'},
+  {id:'raj',name:'Raj',role:'Power User',cat:'Tech Spectrum',color:'#20B2AA',bias:'Where are the shortcuts?'},
+  {id:'carlos',name:'Carlos',role:'CEO',cat:'Role-Based',color:'#DAA520',bias:'ROI in the first scroll.'},
+  {id:'jasmine',name:'Jasmine',role:'Support Rep',cat:'Role-Based',color:'#87CEEB',bias:'3 tickets/day about this.'},
+  {id:'tommy',name:'Tommy',role:'Intern Day 3',cat:'Role-Based',color:'#FF69B4',bias:'10 min clicking, still lost.'},
+  {id:'frank',name:'Frank',role:'Zero Patience',cat:'Emotional',color:'#FF6B6B',bias:'Already annoyed. Every click worse.'},
+  {id:'diana',name:'Diana',role:'Craft Lover',cat:'Emotional',color:'#BA55D3',bias:'I notice when someone cared.'},
+  {id:'sarah',name:'Sarah',role:'Trusts Nothing',cat:'Emotional',color:'#CD853F',bias:'Where\'s the privacy policy?'},
+  {id:'sam',name:'Sam',role:'One Thumb',cat:'Context',color:'#9B59B6',bias:'Bumpy train. One thumb. Go.'},
+  {id:'maya',name:'Maya',role:'30 Seconds',cat:'Context',color:'#F0E68C',bias:'Kid meltdown in 30 sec.'},
+  {id:'mike',name:'Mike',role:'Screen Sharing',cat:'Context',color:'#708090',bias:'Team watching. Don\'t embarrass me.'},
+  {id:'yuki',name:'Yuki',role:'Aesthetic First',cat:'Cultural Taste',color:'#FFB7C5',bias:'Not beautiful? Don\'t trust it.'},
+  {id:'dex',name:'Dex',role:'Subculture',cat:'Cultural Taste',color:'#32CD32',bias:'Corporate = enemy.'},
+  {id:'nora',name:'Nora',role:'Expects Luxury',cat:'Cultural Taste',color:'#C4A35A',bias:'Not premium? Not paying premium.'}
+];
+const FINDINGS={
+  marketing:{text:'CTA needs urgency language.',light:'yellow'},
+  ux:{text:'CTA below fold \u2014 40% miss it.',light:'red'},
+  product:{text:'Value prop clear in 3 seconds.',light:'green'},
+  technical:{text:'Images unoptimized \u2014 4s load.',light:'red'},
+  design:{text:'Typography hierarchy is strong.',light:'green'},
+  marcus:{text:'Color contrast passes. Readable.',light:'green'},
+  elena:{text:'Missing aria-labels on icons.',light:'red'},
+  priya:{text:'Touch targets are generous.',light:'green'},
+  dorothy:{text:'What does "iterate" mean?',light:'yellow'},
+  kevin:{text:'Loads fast. Good.',light:'green'},
+  raj:{text:'No keyboard shortcuts at all.',light:'yellow'},
+  carlos:{text:'ROI unclear in first scroll.',light:'red'},
+  jasmine:{text:'FAQ section would cut tickets.',light:'yellow'},
+  tommy:{text:'Fun design! Easy to explore.',light:'green'},
+  frank:{text:'Pricing takes 3 clicks. Furious.',light:'red'},
+  diana:{text:'Someone cared about the details.',light:'green'},
+  sarah:{text:'No testimonials? Don\'t trust it.',light:'red'},
+  sam:{text:'One-thumb friendly. Approved.',light:'green'},
+  maya:{text:'Clear enough for 30 seconds.',light:'green'},
+  mike:{text:'Professional. Safe to screen-share.',light:'green'},
+  yuki:{text:'Beautiful but needs more polish.',light:'yellow'},
+  dex:{text:'Too corporate. Show some edge.',light:'red'},
+  nora:{text:'Doesn\'t feel premium enough.',light:'yellow'}
+};
+
+function avatarUrl(r){
+  const style=r.style||'adventurer';
+  const seed=style==='shapes'?r.id+'-expert':r.id;
+  const hex=r.color.replace('#','');
+  return`https://api.dicebear.com/9.x/${style}/svg?seed=${seed}&backgroundColor=${hex}`;
+}
+
+let selected=new Set(),previousScore=null,activeFindingIds=new Set(),deltaTimeout=null;
+
+// ─── Full-Bleed Carousel State ──────────────────────
+const allReviewers = [
+  ...EXPERTS.map(e => ({...e, isExpert: true, cat: 'Experts'})),
+  ...PERSONAS.map(p => ({...p, isExpert: false}))
+];
+
+const CATEGORIES = ['All','Experts','Accessibility','Tech Spectrum','Role-Based','Emotional','Context','Cultural Taste'];
+let currentFilter = 'All';
+let currentIndex = 0;
+let isTransitioning = false;
+
+function getFilteredReviewers() {
+  if (currentFilter === 'All') return allReviewers;
+  return allReviewers.filter(r => r.cat === currentFilter);
+}
+
+// ─── Build Tabs ─────────────────────────────────────
+function buildTabs() {
+  const container = document.getElementById('fbTabs');
+  container.innerHTML = '';
+  CATEGORIES.forEach((cat, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'fb-tab' + (cat === currentFilter ? ' active' : '');
+    btn.textContent = cat.toUpperCase();
+    btn.addEventListener('click', () => {
+      currentFilter = cat;
+      currentIndex = 0;
+      updateTabs();
+      renderCurrentCard('right');
+      updateDots();
+      updateCounter();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function updateTabs() {
+  const tabs = document.querySelectorAll('.fb-tab');
+  tabs.forEach((tab, i) => {
+    tab.classList.toggle('active', CATEGORIES[i] === currentFilter);
+  });
+}
+
+function staggerTabEntrance() {
+  const tabs = document.querySelectorAll('.fb-tab');
+  tabs.forEach((tab, i) => {
+    setTimeout(() => tab.classList.add('entered'), i * 60);
+  });
+}
+
+// ─── Render Current Card ────────────────────────────
+function renderCurrentCard(direction) {
+  const stage = document.getElementById('fbStage');
+  const filtered = getFilteredReviewers();
+  if (filtered.length === 0) {
+    stage.innerHTML = '<div style="color:var(--text-muted);font-size:0.5rem;text-align:center;padding:3rem;">No reviewers in this category.</div>';
+    return;
+  }
+  // Clamp index
+  if (currentIndex < 0) currentIndex = filtered.length - 1;
+  if (currentIndex >= filtered.length) currentIndex = 0;
+
+  const r = filtered[currentIndex];
+  const isSelected = selected.has(r.id);
+  const f = FINDINGS[r.id];
+  const findingText = f ? f.text : '';
+  const badgeClass = r.isExpert ? 'badge-expert' : 'badge-persona';
+  const badgeLabel = r.isExpert ? 'EXPERT' : (r.cat || '');
+  const expertClass = r.isExpert ? ' fb-expert' : '';
+  const selectedClass = isSelected ? ' selected' : '';
+  const btnClass = isSelected ? 'fb-card-btn btn-remove' : 'fb-card-btn btn-add';
+  const btnText = isSelected ? 'REMOVE' : 'ADD TO COUNCIL';
+
+  const newCard = document.createElement('div');
+  newCard.className = 'fb-card' + expertClass + selectedClass;
+  newCard.dataset.id = r.id;
+
+  // Start with enter animation class
+  const enterDir = direction === 'left' ? 'enter-left' : 'enter-right';
+  newCard.classList.add(enterDir);
+
+  newCard.innerHTML = `
+    <div class="fb-card-avatar" style="border-color:${isSelected ? 'var(--accent-gold)' : r.color}">
+      <img src="${avatarUrl(r)}" alt="${r.name}" loading="lazy">
+    </div>
+    <div class="fb-card-name" style="color:${r.color}">${r.name}</div>
+    <div class="fb-card-meta">${r.role} &middot; ${r.cat || 'Expert'}</div>
+    <div class="fb-card-bias">"${r.bias}"</div>
+    <div class="fb-card-finding">${findingText}</div>
+    <div class="fb-card-badge ${badgeClass}">${badgeLabel}</div>
+    <button class="${btnClass}" onclick="toggleReviewerCarousel('${r.id}')">${btnText}</button>
+  `;
+
+  // Animate out old card
+  const oldCard = stage.querySelector('.fb-card');
+  if (oldCard && !isTransitioning) {
+    isTransitioning = true;
+    const exitDir = direction === 'left' ? 'exit-right' : 'exit-left';
+    oldCard.classList.add(exitDir);
+    stage.appendChild(newCard);
+
+    // Force reflow then remove enter class
+    void newCard.offsetWidth;
+    newCard.classList.remove(enterDir);
+
+    setTimeout(() => {
+      if (oldCard.parentNode) oldCard.remove();
+      isTransitioning = false;
+    }, 300);
+  } else if (!oldCard) {
+    stage.appendChild(newCard);
+    void newCard.offsetWidth;
+    newCard.classList.remove(enterDir);
+  }
+}
+
+// ─── Navigate Carousel ──────────────────────────────
+function navigateCarousel(dir) {
+  if (isTransitioning) return;
+  const filtered = getFilteredReviewers();
+  if (filtered.length === 0) return;
+
+  currentIndex += dir;
+  // Wrap around
+  if (currentIndex < 0) currentIndex = filtered.length - 1;
+  if (currentIndex >= filtered.length) currentIndex = 0;
+
+  const slideDir = dir > 0 ? 'right' : 'left';
+  renderCurrentCard(slideDir);
+  updateCounter();
+  updateDots();
+}
+
+// ─── Keyboard navigation ────────────────────────────
+document.addEventListener('keydown', function(e) {
+  // Only when council section is visible
+  const council = document.getElementById('council');
+  const rect = council.getBoundingClientRect();
+  if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    navigateCarousel(-1);
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    navigateCarousel(1);
+  }
+});
+
+// ─── Toggle Reviewer from Carousel ──────────────────
+function toggleReviewerCarousel(id) {
+  toggleReviewer(id);
+  // Re-render current card to update button state
+  const stage = document.getElementById('fbStage');
+  const card = stage.querySelector('.fb-card');
+  if (card && card.dataset.id === id) {
+    const isSelected = selected.has(id);
+    const btn = card.querySelector('.fb-card-btn');
+    if (btn) {
+      btn.className = isSelected ? 'fb-card-btn btn-remove' : 'fb-card-btn btn-add';
+      btn.textContent = isSelected ? 'REMOVE' : 'ADD TO COUNCIL';
+    }
+    card.classList.toggle('selected', isSelected);
+    // Update avatar border
+    const avatar = card.querySelector('.fb-card-avatar');
+    const r = allReviewers.find(x => x.id === id);
+    if (avatar && r) {
+      avatar.style.borderColor = isSelected ? 'var(--accent-gold)' : r.color;
+    }
+    // Gold pulse on add
+    if (isSelected) {
+      card.classList.remove('pulse');
+      void card.offsetWidth;
+      card.classList.add('pulse');
+    }
+  }
+  updateDots();
+}
+
+// ─── Update Counter ─────────────────────────────────
+function updateCounter() {
+  const filtered = getFilteredReviewers();
+  const counter = document.getElementById('fbCounter');
+  if (filtered.length === 0) {
+    counter.textContent = '0 / 0';
+  } else {
+    counter.textContent = (currentIndex + 1) + ' / ' + filtered.length;
+  }
+}
+
+// ─── Update Dot Strip ───────────────────────────────
+function updateDots() {
+  const container = document.getElementById('fbDots');
+  const filtered = getFilteredReviewers();
+  container.innerHTML = '';
+  filtered.forEach((r, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'fb-dot';
+    if (i === currentIndex) dot.classList.add('current');
+    if (selected.has(r.id)) dot.classList.add('in-council');
+    dot.title = r.name;
+    dot.addEventListener('click', () => {
+      if (isTransitioning) return;
+      const dir = i > currentIndex ? 'right' : 'left';
+      currentIndex = i;
+      renderCurrentCard(dir);
+      updateCounter();
+      updateDots();
+    });
+    container.appendChild(dot);
+  });
+}
+
+// ─── Shared Helper Functions (identical to V6a) ─────
+function toggleReviewer(id){if(selected.has(id))selected.delete(id);else selected.add(id);updateUI();}
+function computeScore(){let t=0,c=0;selected.forEach(id=>{const f=FINDINGS[id];if(!f)return;t+=(f.light==='green'?8:f.light==='yellow'?6:3);c++;});return c>0?t/c:null;}
+function scoreColor(n){return n>=7?'#6BCB77':n>=5?'#FFD93D':'#FF6B6B';}
+function updateOdometer(v){const c=document.getElementById('odometerContainer');if(v===null){c.innerHTML='<span class="odometer-static" style="color:var(--score-yellow)">\u2014</span>';return;}const t=v.toFixed(1)+'/10',col=scoreColor(v),p=c.textContent;c.innerHTML='';for(let i=0;i<t.length;i++){const ch=t[i],s=document.createElement('span');s.className=(ch>='0'&&ch<='9')?'odometer-digit':'odometer-static';if(ch>='0'&&ch<='9'&&p[i]!==ch)s.classList.add('rolling');s.style.color=col;s.textContent=ch;c.appendChild(s);}}
+function showDelta(o,n){if(o===null||n===null)return;const d=n-o;if(Math.abs(d)<0.05)return;const el=document.getElementById('scoreDelta');el.textContent=(d>0?'+':'')+d.toFixed(1);el.className='score-delta visible '+(d>0?'positive':'negative');clearTimeout(deltaTimeout);deltaTimeout=setTimeout(()=>{el.classList.add('fading');el.classList.remove('visible');},1500);}
+
+function updateUI(){
+  // Update council bar avatars
+  const bar=document.getElementById('councilBarAvatars');
+  bar.innerHTML='';
+  let i=0;
+  selected.forEach(id=>{
+    const r=allReviewers.find(x=>x.id===id);
+    if(!r)return;
+    const av=document.createElement('div');
+    av.className='council-bar-avatar';
+    av.style.animationDelay=(i*60)+'ms';
+    av.style.borderColor=r.color;
+    av.innerHTML=`<img src="${avatarUrl(r)}" alt="${r.name}">`;
+    bar.appendChild(av);i++;
+  });
+
+  // Update current card selected state
+  const stage=document.getElementById('fbStage');
+  const card=stage.querySelector('.fb-card');
+  if(card){
+    const cardId=card.dataset.id;
+    const isSelected=selected.has(cardId);
+    card.classList.toggle('selected',isSelected);
+    const btn=card.querySelector('.fb-card-btn');
+    if(btn){
+      btn.className=isSelected?'fb-card-btn btn-remove':'fb-card-btn btn-add';
+      btn.textContent=isSelected?'REMOVE':'ADD TO COUNCIL';
+    }
+    const avatar=card.querySelector('.fb-card-avatar');
+    const r=allReviewers.find(x=>x.id===cardId);
+    if(avatar&&r){
+      avatar.style.borderColor=isSelected?'var(--accent-gold)':r.color;
+    }
+  }
+
+  // Update dots
+  updateDots();
+  updateCounter();
+
+  // Reactive live preview
+  const preview=document.getElementById('livePreview'),findings=document.getElementById('previewFindings');
+  if(selected.size>=3){
+    preview.classList.add('active');
+    const toRm=[];
+    activeFindingIds.forEach(id=>{if(!selected.has(id))toRm.push(id);});
+    toRm.forEach(id=>{
+      const el=findings.querySelector(`[data-finding-id="${id}"]`);
+      if(el){el.classList.add('exiting');setTimeout(()=>el.remove(),250);}
+      activeFindingIds.delete(id);
+    });
+    selected.forEach(id=>{
+      if(activeFindingIds.has(id))return;
+      const r=allReviewers.find(x=>x.id===id),f=FINDINGS[id];
+      if(!r||!f)return;
+      const lc=f.light==='green'?'#6BCB77':f.light==='yellow'?'#FFD93D':'#FF6B6B';
+      const d=document.createElement('div');
+      d.className='preview-finding entering';d.dataset.findingId=id;
+      d.innerHTML=`<div class="preview-light" style="background:${lc}"></div><div><span class="preview-name" style="color:${r.color}">${r.name}:</span> ${f.text}</div>`;
+      findings.appendChild(d);activeFindingIds.add(id);
+    });
+    const ns=computeScore();updateOdometer(ns);showDelta(previousScore,ns);previousScore=ns;
+  }else{
+    preview.classList.remove('active');findings.innerHTML='';activeFindingIds.clear();previousScore=null;updateOdometer(null);
+  }
+}
+
+// ─── Dice Roll with scatter/gather ──────────────────
+function rollDice(){
+  const icon=document.getElementById('diceIcon');icon.classList.remove('rolling');void icon.offsetWidth;icon.classList.add('rolling');
+
+  const se=[...EXPERTS].sort(()=>Math.random()-0.5),ec=Math.random()>0.5?3:2,pe=se.slice(0,ec);
+  const cats=['Accessibility','Tech Spectrum','Role-Based','Emotional','Context','Cultural Taste'];
+  const sc=[...cats].sort(()=>Math.random()-0.5),pc=ec===2?4:3,pp=[];
+  for(let j=0;j<pc&&j<sc.length;j++){const cp=PERSONAS.filter(p=>p.cat===sc[j]);pp.push(cp[Math.floor(Math.random()*cp.length)]);}
+
+  activeFindingIds.clear();document.getElementById('previewFindings').innerHTML='';previousScore=null;
+  selected.clear();pe.forEach(e=>selected.add(e.id));pp.forEach(p=>selected.add(p.id));
+
+  // Navigate to a selected reviewer
+  currentFilter='All';
+  updateTabs();
+  const filtered=getFilteredReviewers();
+  const firstSelectedIdx=filtered.findIndex(r=>selected.has(r.id));
+  currentIndex=firstSelectedIdx>=0?firstSelectedIdx:0;
+
+  renderCurrentCard('right');
+  updateUI();
+}
+
+// ─── SLAP! Hero ─────────────────────────────────────
+let hasSlapped=false;
+function doSlap(){
+  if(hasSlapped)return;hasSlapped=true;
+  document.body.classList.add('shaking');
+  setTimeout(()=>{
+    document.body.classList.remove('shaking');
+    const f=document.getElementById('slapFlash');f.classList.add('active');
+    setTimeout(()=>{
+      f.classList.remove('active');
+      document.getElementById('transformCard').classList.add('flipped');
+      document.getElementById('hpWhisper').classList.add('visible');
+      document.getElementById('scrollIndicator').classList.add('visible');
+    },200);
+  },150);
+}
+
+function checkSlopCards(){document.querySelectorAll('.slop-card-sm').forEach((c,i)=>{const r=c.getBoundingClientRect();if(r.top<window.innerHeight*0.9)setTimeout(()=>c.classList.add('visible'),i*100);});}
+
+function keepCouncil(){
+  if(selected.size>0)localStorage.setItem('slap-default-council',JSON.stringify(Array.from(selected)));
+  alert('Navigate to #/gallery (in real app)');
+}
+
+// ─── Auto-roll on first scroll into council ─────────
+let hasAutoRolled=false;
+function checkCouncilEntry(){
+  if(hasAutoRolled)return;
+  const rect=document.getElementById('council').getBoundingClientRect();
+  if(rect.top<window.innerHeight*0.8){
+    hasAutoRolled=true;
+    staggerTabEntrance();
+    setTimeout(()=>{
+      renderCurrentCard('right');
+      updateCounter();
+      updateDots();
+      rollDice();
+    },CATEGORIES.length*60+200);
+  }
+}
+
+// ─── Init ───────────────────────────────────────────
+buildTabs();
+// Initial render (hidden until scroll triggers auto-roll)
+renderCurrentCard('right');
+updateCounter();
+updateDots();
+window.addEventListener('scroll',()=>{checkSlopCards();checkCouncilEntry();});
+setTimeout(checkSlopCards,100);
+</script>
+</body>
+</html>

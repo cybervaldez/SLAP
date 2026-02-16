@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SLAP! — Preview T7: Persona Picker Popover Variations</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ease-enter: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 0.6, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-micro: 150ms;
+  --duration-small: 250ms;
+  --duration-medium: 400ms;
+  --stagger-delay: 60ms;
+
+  --color-bg: #1A1A2E;
+  --color-surface: #222240;
+  --color-accent: #FFD000;
+  --color-text: #F5F0E1;
+  --color-text-dim: rgba(245, 240, 225, 0.5);
+  --color-border: rgba(245, 240, 225, 0.12);
+  --color-green: #6BCB77;
+  --color-yellow: #FFD93D;
+  --color-red: #FF6B6B;
+  --font: 'Courier New', monospace;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── Info Banner ───────────────────────────────────────── */
+.info-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  background: var(--color-accent); color: #1A1A2E;
+  font-size: 0.65rem; font-weight: 700; text-align: center;
+  padding: 6px 16px; letter-spacing: 0.06em;
+}
+.info-banner code { background: rgba(0,0,0,0.1); padding: 1px 6px; border-radius: 3px; }
+
+/* ── Legend ─────────────────────────────────────────────── */
+.legend {
+  position: fixed; bottom: 70px; left: 16px; z-index: 9998;
+  font-size: 0.5rem; color: var(--color-text-dim);
+  font-weight: 700; letter-spacing: 0.06em;
+  background: rgba(34,34,64,0.95);
+  border: 1px solid var(--color-border);
+  border-radius: 4px; padding: 10px 14px;
+  max-width: 280px;
+}
+.legend .title { color: var(--color-accent); margin-bottom: 6px; font-size: 0.55rem; }
+.legend .item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 3px 0; color: var(--color-text-dim);
+}
+.legend .item .dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.legend .item.active-legend { color: var(--color-text); }
+
+/* ── Mock Page ─────────────────────────────────────────── */
+.mock-page {
+  padding: 56px 80px 120px 24px;
+  max-width: 900px;
+  transition: opacity var(--duration-medium) var(--ease-exit);
+}
+.mock-page.dimmed { opacity: 0.3; }
+
+.mock-page h1 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 700; letter-spacing: -0.02em;
+  margin-bottom: 1rem; line-height: 1.1;
+}
+.mock-page .subtitle {
+  font-size: 0.85rem; color: var(--color-text-dim);
+  margin-bottom: 2.5rem; line-height: 1.6; max-width: 560px;
+}
+.mock-section {
+  margin-bottom: 2rem; padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 4px; position: relative;
+}
+.mock-section .section-label {
+  font-size: 0.55rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--color-accent); margin-bottom: 0.8rem;
+}
+.mock-section p {
+  font-size: 0.75rem; line-height: 1.7; color: var(--color-text-dim);
+}
+
+/* ══════════════════════════════════════════════════════════
+   BUBBLE RAIL
+   ══════════════════════════════════════════════════════════ */
+.bubble-rail {
+  position: fixed; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  z-index: 800;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 6px;
+}
+
+.mode-toggle {
+  display: flex; gap: 0;
+  background: var(--color-surface);
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  overflow: hidden; margin-bottom: 6px;
+}
+.mode-toggle button {
+  font-family: var(--font); font-size: 0.45rem; font-weight: 700;
+  padding: 4px 8px; border: none; cursor: pointer;
+  background: transparent; color: var(--color-text-dim);
+  letter-spacing: 0.06em; white-space: nowrap;
+  transition: all var(--duration-micro);
+}
+.mode-toggle button.active {
+  background: var(--color-accent); color: #1A1A2E;
+}
+
+.bubble {
+  width: 40px; height: 40px;
+  border-radius: 50%; overflow: hidden;
+  cursor: pointer; position: relative;
+  border: 2px solid transparent;
+  transition: transform var(--duration-micro) var(--ease-enter),
+              border-color var(--duration-micro),
+              box-shadow var(--duration-micro);
+  flex-shrink: 0;
+  opacity: 0;
+  animation: bubbleEnter var(--duration-medium) var(--ease-enter) forwards;
+}
+@keyframes bubbleEnter {
+  from { opacity: 0; transform: translateX(20px) scale(0.5); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+.bubble:hover { transform: scale(1.08); }
+.bubble.active {
+  transform: scale(1.15);
+  box-shadow: 0 0 12px rgba(255,208,0,0.3);
+}
+.bubble img {
+  width: 100%; height: 100%;
+  object-fit: cover; background: var(--color-surface);
+}
+
+/* Variation label on bubble hover */
+.bubble .var-label {
+  position: absolute; bottom: -16px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.35rem; font-weight: 700;
+  color: var(--color-accent); white-space: nowrap;
+  letter-spacing: 0.06em;
+  opacity: 0; transition: opacity var(--duration-micro);
+  pointer-events: none;
+}
+.bubble:hover .var-label { opacity: 1; }
+
+.rail-divider {
+  width: 20px; height: 1px;
+  background: var(--color-border);
+  margin: 2px 0;
+}
+
+/* Plus button */
+.bubble-add {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 2px dashed rgba(245, 240, 225, 0.25);
+  background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font); font-size: 1rem;
+  color: rgba(245, 240, 225, 0.35);
+  transition: all var(--duration-micro) var(--ease-enter);
+  opacity: 0;
+  animation: bubbleEnter var(--duration-medium) var(--ease-enter) forwards;
+}
+.bubble-add:hover {
+  border-color: var(--color-accent); border-style: solid;
+  color: var(--color-accent); transform: scale(1.05);
+  background: rgba(255,208,0,0.05);
+}
+.bubble-add.active {
+  border-color: var(--color-accent); border-style: solid;
+  color: var(--color-accent); background: rgba(255,208,0,0.08);
+}
+.bubble-add .var-label {
+  position: absolute; bottom: -16px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.35rem; font-weight: 700;
+  color: var(--color-accent); white-space: nowrap;
+  letter-spacing: 0.06em;
+  opacity: 0; transition: opacity var(--duration-micro);
+  pointer-events: none;
+}
+.bubble-add:hover .var-label { opacity: 1; }
+
+/* ══════════════════════════════════════════════════════════
+   POPOVER — Base styles shared by all variations
+   ══════════════════════════════════════════════════════════ */
+.popover {
+  position: fixed; z-index: 960;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-accent);
+  border-radius: 6px;
+  padding: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  opacity: 0; pointer-events: none;
+  transform: translateX(12px) scale(0.95);
+  transition: opacity var(--duration-small) var(--ease-enter),
+              transform var(--duration-small) var(--ease-bounce);
+  width: 260px;
+}
+.popover.visible {
+  opacity: 1; pointer-events: auto;
+  transform: translateX(0) scale(1);
+}
+
+.popover-title {
+  font-size: 0.55rem; font-weight: 700;
+  letter-spacing: 0.08em; color: var(--color-accent);
+  margin-bottom: 2px;
+}
+.popover-subtitle {
+  font-size: 0.45rem; color: var(--color-text-dim);
+  margin-bottom: 10px;
+}
+
+/* "SHOW ALL →" button in popover */
+.show-all-btn {
+  display: block; width: 100%;
+  font-family: var(--font); font-size: 0.5rem; font-weight: 700;
+  color: var(--color-accent); background: rgba(255,208,0,0.05);
+  border: 1px solid rgba(255,208,0,0.2);
+  border-radius: 3px; padding: 6px;
+  cursor: pointer; letter-spacing: 0.06em;
+  text-align: center;
+  transition: all var(--duration-micro);
+  margin-top: 10px;
+}
+.show-all-btn:hover {
+  background: rgba(255,208,0,0.12);
+  border-color: var(--color-accent);
+}
+
+/* Arrow buttons */
+.nav-arrow {
+  font-family: var(--font); font-size: 0.7rem;
+  background: none; border: none; cursor: pointer;
+  color: var(--color-text-dim);
+  padding: 4px; border-radius: 3px;
+  transition: all var(--duration-micro);
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+}
+.nav-arrow:hover { color: var(--color-accent); background: rgba(255,208,0,0.08); }
+.nav-arrow:disabled { opacity: 0.2; cursor: default; }
+
+/* ── Variation A: Category Carousel ───────────────────── */
+.var-a .carousel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.var-a .carousel-counter {
+  font-size: 0.4rem; color: var(--color-text-dim);
+}
+.var-a .cat-name {
+  font-size: 0.5rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.var-a .cat-desc {
+  font-size: 0.4rem; color: var(--color-text-dim);
+  margin-bottom: 8px; font-style: italic;
+}
+.var-a .persona-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 0;
+}
+.var-a .persona-row .mini-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  overflow: hidden; flex-shrink: 0;
+}
+.var-a .persona-row .mini-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.var-a .persona-row .mini-name {
+  font-size: 0.5rem; font-weight: 700; color: var(--color-text);
+}
+.var-a .persona-row .mini-tagline {
+  font-size: 0.4rem; color: var(--color-text-dim);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.var-a .persona-row .mini-check {
+  margin-left: auto; font-size: 0.5rem;
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.var-a .persona-row .mini-check.on {
+  border-color: var(--color-accent);
+  background: var(--color-accent); color: #1A1A2E;
+}
+
+/* ── Variation B: Category Pill Tabs ──────────────────── */
+.var-b .pill-tabs {
+  display: flex; gap: 3px; flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.var-b .pill-tab {
+  font-family: var(--font); font-size: 0.38rem; font-weight: 700;
+  padding: 2px 6px; border-radius: 9999px;
+  cursor: pointer; letter-spacing: 0.04em;
+  background: rgba(255,255,255,0.04);
+  color: var(--color-text-dim);
+  border: 1px solid transparent;
+  transition: all var(--duration-micro);
+  text-transform: uppercase;
+}
+.var-b .pill-tab:hover { color: var(--color-text); }
+.var-b .pill-tab.active {
+  border-color: currentColor;
+}
+.var-b .mini-grid {
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+/* ── Variation C: Compact Stack ───────────────────────── */
+.var-c .stack-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 4px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  cursor: pointer;
+  transition: background var(--duration-micro);
+}
+.var-c .stack-row:hover { background: rgba(255,255,255,0.03); }
+.var-c .stack-row:last-child { border-bottom: none; }
+.var-c .stack-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.var-c .stack-cat-name {
+  font-size: 0.5rem; font-weight: 700;
+  letter-spacing: 0.06em; flex: 1;
+}
+.var-c .stack-count {
+  font-size: 0.4rem; color: var(--color-text-dim);
+  margin-left: auto;
+}
+.var-c .stack-avatars {
+  display: flex; margin-left: 4px;
+}
+.var-c .stack-avatars .tiny-av {
+  width: 16px; height: 16px; border-radius: 50%;
+  overflow: hidden; margin-left: -4px;
+  border: 1.5px solid var(--color-surface);
+}
+.var-c .stack-avatars .tiny-av:first-child { margin-left: 0; }
+.var-c .stack-avatars .tiny-av img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ── Variation D: Horizontal Persona Scroll ───────────── */
+.var-d { width: 300px; }
+.var-d .scroll-track {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent) transparent;
+}
+.var-d .scroll-track::-webkit-scrollbar { height: 3px; }
+.var-d .scroll-track::-webkit-scrollbar-thumb { background: var(--color-accent); border-radius: 2px; }
+.var-d .scroll-persona {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 3px;
+  min-width: 48px; cursor: pointer;
+  padding: 4px; border-radius: 4px;
+  transition: background var(--duration-micro);
+}
+.var-d .scroll-persona:hover { background: rgba(255,255,255,0.04); }
+.var-d .scroll-persona .sp-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  overflow: hidden;
+}
+.var-d .scroll-persona .sp-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.var-d .scroll-persona .sp-name {
+  font-size: 0.35rem; font-weight: 700;
+  text-align: center; color: var(--color-text-dim);
+  white-space: nowrap;
+}
+.var-d .scroll-persona.is-active .sp-avatar {
+  box-shadow: 0 0 0 2px var(--color-accent);
+}
+.var-d .scroll-persona.is-active .sp-name { color: var(--color-accent); }
+.var-d .cat-divider {
+  width: 1px; min-height: 40px;
+  background: var(--color-border);
+  flex-shrink: 0; align-self: center;
+}
+
+/* ── Variation E: Mini Category Cards (2x3 grid) ──────── */
+.var-e .card-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.var-e .cat-card {
+  padding: 8px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all var(--duration-micro);
+}
+.var-e .cat-card:hover {
+  border-color: var(--color-text-dim);
+  background: rgba(255,255,255,0.04);
+}
+.var-e .cat-card .cc-header {
+  display: flex; align-items: center; gap: 4px;
+  margin-bottom: 4px;
+}
+.var-e .cat-card .cc-dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+.var-e .cat-card .cc-name {
+  font-size: 0.4rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.var-e .cat-card .cc-count {
+  font-size: 0.35rem; color: var(--color-text-dim);
+  margin-left: auto;
+}
+.var-e .cat-card .cc-avatars {
+  display: flex; gap: 2px;
+}
+.var-e .cat-card .cc-av {
+  width: 18px; height: 18px; border-radius: 50%;
+  overflow: hidden;
+}
+.var-e .cat-card .cc-av img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ── Variation F (plus button): Recommended final ─────── */
+.var-f .cat-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 4px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background var(--duration-micro);
+}
+.var-f .cat-row:hover { background: rgba(255,255,255,0.04); }
+.var-f .cat-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.var-f .cat-label {
+  font-size: 0.5rem; font-weight: 700;
+  letter-spacing: 0.06em; flex: 1;
+}
+.var-f .cat-active-count {
+  font-size: 0.4rem; color: var(--color-text-dim);
+}
+.var-f .cat-nav {
+  display: flex; align-items: center; gap: 2px;
+}
+.var-f .cat-nav .nav-arrow { width: 18px; height: 18px; font-size: 0.5rem; }
+
+/* ── Backdrop ──────────────────────────────────────────── */
+.backdrop {
+  position: fixed; inset: 0; z-index: 790;
+  background: rgba(0,0,0,0.4);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--duration-small);
+}
+.backdrop.visible { opacity: 1; pointer-events: auto; }
+
+/* ── Full Panel ────────────────────────────────────────── */
+.persona-panel {
+  position: fixed;
+  top: 28px; right: 0; bottom: 0;
+  width: 380px; max-width: 85vw;
+  background: var(--color-bg);
+  border-left: 3px solid var(--color-accent);
+  z-index: 900;
+  overflow-y: auto;
+  padding: 20px;
+  transform: translateX(100%);
+  transition: transform var(--duration-medium) var(--ease-enter);
+}
+.persona-panel.open { transform: translateX(0); }
+.panel-close {
+  position: absolute; top: 12px; right: 12px;
+  font-family: var(--font); font-size: 0.8rem;
+  background: none; border: none; color: var(--color-text-dim);
+  cursor: pointer; width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  transition: all var(--duration-micro);
+}
+.panel-close:hover { color: var(--color-accent); background: rgba(255,208,0,0.1); }
+.panel-title {
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.08em; color: var(--color-accent);
+  margin-bottom: 16px;
+}
+
+/* ── Dock Chin ─────────────────────────────────────────── */
+.dock-chin {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 950;
+  height: 56px;
+  background: var(--color-bg);
+  border-left: 8px solid var(--color-bg);
+  border-right: 8px solid var(--color-bg);
+  border-bottom: 8px solid var(--color-bg);
+  border-radius: 0 0 10px 10px;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.06);
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  border: 8px solid var(--color-bg);
+  border-bottom: none;
+  pointer-events: none;
+  z-index: 99999;
+  border-radius: 10px 10px 0 0;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.25);
+}
+
+*:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.persona-panel::-webkit-scrollbar { width: 5px; }
+.persona-panel::-webkit-scrollbar-thumb { background: var(--color-accent); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="info-banner">
+  PREVIEW T7: PERSONA PICKER POPOVER VARIATIONS &mdash;
+  Click each <code>bubble</code> for a different popover layout. Click <code>+</code> for the recommended design.
+</div>
+
+<!-- Mock Page -->
+<div class="mock-page" id="mockPage">
+  <h1>Stop Shipping<br>AI Slop.</h1>
+  <p class="subtitle">Click each persona bubble to see a different popover variation for the category picker.</p>
+  <div class="mock-section"><div class="section-label">Hero</div><p>Hero section content.</p></div>
+  <div class="mock-section"><div class="section-label">Features</div><p>Feature section content.</p></div>
+  <div class="mock-section"><div class="section-label">Pricing</div><p>Pricing section content.</p></div>
+</div>
+
+<!-- Backdrop -->
+<div class="backdrop" id="backdrop" onclick="closeAll()"></div>
+
+<!-- Legend -->
+<div class="legend" id="legend">
+  <div class="title">POPOVER VARIATIONS</div>
+  <div class="item" id="leg-a"><span class="dot" style="background:#4ECDC4"></span> A: Category Carousel (&#9668; &#9658; arrows)</div>
+  <div class="item" id="leg-b"><span class="dot" style="background:#6BCB77"></span> B: Category Pill Tabs</div>
+  <div class="item" id="leg-c"><span class="dot" style="background:#FFD93D"></span> C: Compact Stack + Avatars</div>
+  <div class="item" id="leg-d"><span class="dot" style="background:#FF6B6B"></span> D: Horizontal Persona Scroll</div>
+  <div class="item" id="leg-e"><span class="dot" style="background:#9B59B6"></span> E: Mini Category Cards (2x3)</div>
+  <div class="item active-legend" id="leg-f"><span class="dot" style="background:#FFD000"></span> <strong>+ : Recommended (rows + arrows)</strong></div>
+</div>
+
+<!-- Bubble Rail -->
+<div class="bubble-rail" id="bubbleRail">
+  <div class="mode-toggle">
+    <button>REVIEW</button>
+    <button class="active">KAIZEN</button>
+  </div>
+
+  <div class="bubble" id="b-marcus" style="animation-delay:0ms" onclick="openVariation('a', this)">
+    <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=marcus&backgroundColor=4ECDC4" alt="Marcus" />
+    <span class="var-label">VAR A</span>
+  </div>
+  <div class="bubble" id="b-dorothy" style="animation-delay:60ms" onclick="openVariation('b', this)">
+    <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=dorothy&backgroundColor=6BCB77" alt="Dorothy" />
+    <span class="var-label">VAR B</span>
+  </div>
+  <div class="bubble" id="b-carlos" style="animation-delay:120ms" onclick="openVariation('c', this)">
+    <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=carlos&backgroundColor=FFD93D" alt="Carlos" />
+    <span class="var-label">VAR C</span>
+  </div>
+  <div class="bubble" id="b-frank" style="animation-delay:180ms" onclick="openVariation('d', this)">
+    <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=frank&backgroundColor=FF6B6B" alt="Frank" />
+    <span class="var-label">VAR D</span>
+  </div>
+  <div class="bubble" id="b-sam" style="animation-delay:240ms" onclick="openVariation('e', this)">
+    <img src="https://api.dicebear.com/9.x/adventurer/svg?seed=sam&backgroundColor=9B59B6" alt="Sam" />
+    <span class="var-label">VAR E</span>
+  </div>
+
+  <div class="rail-divider"></div>
+
+  <div class="bubble-add" id="addBtn" style="animation-delay:300ms; position:relative;" onclick="openVariation('f', this)">
+    +
+    <span class="var-label">RECOMMENDED</span>
+  </div>
+</div>
+
+<!-- Popover container (positioned dynamically) -->
+<div class="popover" id="popover"></div>
+
+<!-- Full Panel (opens from "SHOW ALL") -->
+<div class="persona-panel" id="fullPanel">
+  <button class="panel-close" onclick="closeAll()">&times;</button>
+  <div class="panel-title">FULL PERSONA ROSTER (18)</div>
+  <div id="fullPanelContent" style="font-size:0.55rem;color:var(--color-text-dim);line-height:1.8;">
+    Full panel content loads here when "SHOW ALL" is clicked.
+  </div>
+</div>
+
+<div class="dock-chin"></div>
+
+<script>
+const CATEGORIES = [
+  { name: 'Accessibility', color: '#4ECDC4', desc: 'Vision, hearing, motor',
+    personas: [
+      { id:'marcus', name:'Marcus', tagline:'Colorblind developer' },
+      { id:'elena', name:'Elena', tagline:'Screen reader user' },
+      { id:'priya', name:'Priya', tagline:'Limited motor control' },
+    ]},
+  { name: 'Tech Spectrum', color: '#6BCB77', desc: 'Novice to power user',
+    personas: [
+      { id:'dorothy', name:'Dorothy', tagline:'Just wants it to work' },
+      { id:'kevin', name:'Kevin', tagline:'Digital native, zero patience' },
+      { id:'raj', name:'Raj', tagline:'Terminal power user' },
+    ]},
+  { name: 'Role-Based', color: '#FFD93D', desc: 'CEO to intern',
+    personas: [
+      { id:'carlos', name:'Carlos', tagline:'CEO evaluating' },
+      { id:'jasmine', name:'Jasmine', tagline:'Support agent, 50 tickets deep' },
+      { id:'tommy', name:'Tommy', tagline:'Intern, day three' },
+    ]},
+  { name: 'Emotional State', color: '#FF6B6B', desc: 'Patience to skepticism',
+    personas: [
+      { id:'frank', name:'Frank', tagline:'Zero patience left' },
+      { id:'diana', name:'Diana', tagline:'Craft meets intention' },
+      { id:'sarah', name:'Sarah', tagline:'Trust nothing' },
+    ]},
+  { name: 'Context', color: '#9B59B6', desc: 'Where and how they browse',
+    personas: [
+      { id:'sam', name:'Sam', tagline:'Subway, one thumb' },
+      { id:'maya', name:'Maya', tagline:'Kid meltdowns + dinner' },
+      { id:'mike', name:'Mike', tagline:'Team watching screen' },
+    ]},
+  { name: 'Cultural Taste', color: '#E91E8C', desc: 'Aesthetic preferences',
+    personas: [
+      { id:'yuki', name:'Yuki', tagline:'Aesthetic is everything' },
+      { id:'dex', name:'Dex', tagline:'Subculture lens' },
+      { id:'nora', name:'Nora', tagline:'Expects luxury' },
+    ]},
+];
+
+const ACTIVE = new Set(['marcus','dorothy','carlos','frank','sam']);
+let currentVar = null;
+let carouselIndex = 0;
+let tabIndex = 0;
+
+function avatar(id, color) {
+  return `https://api.dicebear.com/9.x/adventurer/svg?seed=${id}&backgroundColor=${color.replace('#','')}`;
+}
+
+function closeAll() {
+  document.getElementById('popover').classList.remove('visible');
+  document.getElementById('backdrop').classList.remove('visible');
+  document.getElementById('fullPanel').classList.remove('open');
+  document.getElementById('mockPage').classList.remove('dimmed');
+  document.querySelectorAll('.bubble,.bubble-add').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.legend .item').forEach(i => i.classList.remove('active-legend'));
+  currentVar = null;
+}
+
+function openVariation(variation, el) {
+  if (currentVar === variation) { closeAll(); return; }
+  closeAll();
+
+  currentVar = variation;
+  const pop = document.getElementById('popover');
+  const rect = el.getBoundingClientRect();
+
+  pop.style.top = rect.top + 'px';
+  pop.style.right = (window.innerWidth - rect.left + 10) + 'px';
+
+  el.classList.add('active');
+  document.getElementById('backdrop').classList.add('visible');
+  document.getElementById('mockPage').classList.add('dimmed');
+
+  // Highlight legend
+  const legId = 'leg-' + variation;
+  const legEl = document.getElementById(legId);
+  if (legEl) legEl.classList.add('active-legend');
+
+  // Build popover content
+  let html = '';
+  switch(variation) {
+    case 'a': html = buildVarA(); break;
+    case 'b': html = buildVarB(); break;
+    case 'c': html = buildVarC(); break;
+    case 'd': html = buildVarD(); break;
+    case 'e': html = buildVarE(); break;
+    case 'f': html = buildVarF(); break;
+  }
+
+  pop.className = 'popover var-' + variation;
+  pop.innerHTML = html;
+
+  requestAnimationFrame(() => pop.classList.add('visible'));
+}
+
+function openFullPanel() {
+  document.getElementById('popover').classList.remove('visible');
+  const panel = document.getElementById('fullPanel');
+  const content = document.getElementById('fullPanelContent');
+
+  content.innerHTML = CATEGORIES.map(cat => `
+    <div style="margin-bottom:16px;">
+      <div style="font-size:0.5rem;font-weight:700;color:${cat.color};letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px;padding-bottom:4px;border-bottom:1px solid var(--color-border);">
+        ${cat.name} <span style="color:var(--color-text-dim);font-weight:400;">(${cat.personas.length})</span>
+      </div>
+      ${cat.personas.map(p => `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;" onclick="this.querySelector('.chk').classList.toggle('on')">
+          <div style="width:28px;height:28px;border-radius:50%;overflow:hidden;">
+            <img src="${avatar(p.id,cat.color)}" style="width:100%;height:100%;" />
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:0.55rem;font-weight:700;">${p.name}</div>
+            <div style="font-size:0.45rem;color:var(--color-text-dim);">${p.tagline}</div>
+          </div>
+          <div class="chk ${ACTIVE.has(p.id)?'on':''}" style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--color-border);display:flex;align-items:center;justify-content:center;font-size:0.45rem;transition:all 150ms;">&#10003;</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+
+  // Style check marks
+  content.querySelectorAll('.chk').forEach(c => {
+    if (c.classList.contains('on')) {
+      c.style.borderColor = 'var(--color-accent)';
+      c.style.background = 'var(--color-accent)';
+      c.style.color = '#1A1A2E';
+    }
+  });
+
+  panel.classList.add('open');
+}
+
+// ── Variation A: Category Carousel ──────────────────────
+function buildVarA() {
+  carouselIndex = 0;
+  return renderCarousel();
+}
+function renderCarousel() {
+  const cat = CATEGORIES[carouselIndex];
+  return `
+    <div class="popover-title">PERSONA ROSTER</div>
+    <div class="popover-subtitle">${ACTIVE.size} of 18 active</div>
+    <div class="carousel-header">
+      <button class="nav-arrow" onclick="carouselNav(-1)" ${carouselIndex===0?'disabled':''}>&#9668;</button>
+      <span class="cat-name" style="color:${cat.color}">${cat.name}</span>
+      <button class="nav-arrow" onclick="carouselNav(1)" ${carouselIndex===CATEGORIES.length-1?'disabled':''}>&#9658;</button>
+    </div>
+    <div class="carousel-counter">${carouselIndex+1} / ${CATEGORIES.length}</div>
+    <div class="cat-desc">${cat.desc}</div>
+    ${cat.personas.map(p => `
+      <div class="persona-row">
+        <div class="mini-avatar"><img src="${avatar(p.id,cat.color)}" /></div>
+        <div style="flex:1;min-width:0;">
+          <div class="mini-name">${p.name}</div>
+          <div class="mini-tagline">${p.tagline}</div>
+        </div>
+        <div class="mini-check ${ACTIVE.has(p.id)?'on':''}">&#10003;</div>
+      </div>
+    `).join('')}
+    <button class="show-all-btn" onclick="openFullPanel()">SHOW ALL 18 &rarr;</button>
+  `;
+}
+function carouselNav(dir) {
+  carouselIndex = Math.max(0, Math.min(CATEGORIES.length-1, carouselIndex+dir));
+  document.getElementById('popover').innerHTML = renderCarousel();
+}
+
+// ── Variation B: Category Pill Tabs ─────────────────────
+function buildVarB() {
+  tabIndex = 0;
+  return renderTabs();
+}
+function renderTabs() {
+  const cat = CATEGORIES[tabIndex];
+  return `
+    <div class="popover-title">PERSONA ROSTER</div>
+    <div class="popover-subtitle">${ACTIVE.size} of 18 active</div>
+    <div class="pill-tabs">
+      ${CATEGORIES.map((c,i) => `
+        <span class="pill-tab ${i===tabIndex?'active':''}" style="${i===tabIndex?`color:${c.color};border-color:${c.color}`:''}" onclick="tabNav(${i})">${c.name.split(' ')[0]}</span>
+      `).join('')}
+    </div>
+    <div class="mini-grid">
+      ${cat.personas.map(p => `
+        <div class="persona-row">
+          <div class="mini-avatar"><img src="${avatar(p.id,cat.color)}" /></div>
+          <div style="flex:1;min-width:0;">
+            <div class="mini-name">${p.name}</div>
+            <div class="mini-tagline">${p.tagline}</div>
+          </div>
+          <div class="mini-check ${ACTIVE.has(p.id)?'on':''}">&#10003;</div>
+        </div>
+      `).join('')}
+    </div>
+    <button class="show-all-btn" onclick="openFullPanel()">SHOW ALL 18 &rarr;</button>
+  `;
+}
+function tabNav(i) {
+  tabIndex = i;
+  document.getElementById('popover').innerHTML = renderTabs();
+  document.getElementById('popover').className = 'popover var-b visible';
+}
+
+// ── Variation C: Compact Stack ──────────────────────────
+function buildVarC() {
+  return `
+    <div class="popover-title">PERSONA ROSTER</div>
+    <div class="popover-subtitle">${ACTIVE.size} of 18 active &mdash; click category to expand</div>
+    ${CATEGORIES.map(cat => `
+      <div class="stack-row" onclick="openFullPanel()">
+        <div class="stack-dot" style="background:${cat.color}"></div>
+        <div class="stack-cat-name">${cat.name}</div>
+        <div class="stack-avatars">
+          ${cat.personas.map(p => `
+            <div class="tiny-av" style="${ACTIVE.has(p.id)?`box-shadow:0 0 0 1.5px ${cat.color}`:''}" >
+              <img src="${avatar(p.id,cat.color)}" />
+            </div>
+          `).join('')}
+        </div>
+        <div class="stack-count">${cat.personas.filter(p=>ACTIVE.has(p.id)).length}/${cat.personas.length}</div>
+      </div>
+    `).join('')}
+    <button class="show-all-btn" onclick="openFullPanel()">SHOW ALL 18 &rarr;</button>
+  `;
+}
+
+// ── Variation D: Horizontal Persona Scroll ──────────────
+function buildVarD() {
+  let items = [];
+  CATEGORIES.forEach((cat, ci) => {
+    if (ci > 0) items.push(`<div class="cat-divider"></div>`);
+    cat.personas.forEach(p => {
+      items.push(`
+        <div class="scroll-persona ${ACTIVE.has(p.id)?'is-active':''}">
+          <div class="sp-avatar" style="${ACTIVE.has(p.id)?`box-shadow:0 0 0 2px ${cat.color}`:''}" >
+            <img src="${avatar(p.id,cat.color)}" />
+          </div>
+          <div class="sp-name">${p.name}</div>
+        </div>
+      `);
+    });
+  });
+  return `
+    <div class="popover-title">PERSONA ROSTER</div>
+    <div class="popover-subtitle">${ACTIVE.size} of 18 active &mdash; scroll to browse</div>
+    <div class="scroll-track">${items.join('')}</div>
+    <button class="show-all-btn" onclick="openFullPanel()">SHOW ALL 18 &rarr;</button>
+  `;
+}
+
+// ── Variation E: Mini Category Cards ────────────────────
+function buildVarE() {
+  return `
+    <div class="popover-title">PERSONA ROSTER</div>
+    <div class="popover-subtitle">${ACTIVE.size} of 18 active &mdash; click category</div>
+    <div class="card-grid">
+      ${CATEGORIES.map(cat => `
+        <div class="cat-card" onclick="openFullPanel()">
+          <div class="cc-header">
+            <div class="cc-dot" style="background:${cat.color}"></div>
+            <div class="cc-name">${cat.name.split(' ')[0]}</div>
+            <div class="cc-count">${cat.personas.filter(p=>ACTIVE.has(p.id)).length}/${cat.personas.length}</div>
+          </div>
+          <div class="cc-avatars">
+            ${cat.personas.map(p => `
+              <div class="cc-av"><img src="${avatar(p.id,cat.color)}" /></div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    <button class="show-all-btn" onclick="openFullPanel()">SHOW ALL 18 &rarr;</button>
+  `;
+}
+
+// ── Variation F: Recommended (rows + inline arrows) ─────
+function buildVarF() {
+  return `
+    <div class="popover-title">PERSONA ROSTER</div>
+    <div class="popover-subtitle">${ACTIVE.size} of 18 active</div>
+    ${CATEGORIES.map(cat => {
+      const activeCount = cat.personas.filter(p => ACTIVE.has(p.id)).length;
+      return `
+        <div class="cat-row" onclick="openFullPanel()">
+          <div class="cat-dot" style="background:${cat.color}"></div>
+          <div class="cat-label">${cat.name}</div>
+          <div class="cat-active-count">${activeCount}/${cat.personas.length}</div>
+          <div class="cat-nav">
+            <button class="nav-arrow">&#9668;</button>
+            <button class="nav-arrow">&#9658;</button>
+          </div>
+        </div>
+      `;
+    }).join('')}
+    <button class="show-all-btn" onclick="openFullPanel()">SHOW ALL 18 &rarr;</button>
+  `;
+}
+
+// Init check mark styles
+document.querySelectorAll('.mini-check.on').forEach(c => {
+  c.style.borderColor = 'var(--color-accent)';
+  c.style.background = 'var(--color-accent)';
+  c.style.color = '#1A1A2E';
+});
+</script>
+</body>
+</html>
