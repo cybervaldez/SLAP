@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP Toggle Preview — 3. Hand Toggle</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #111;
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  /* ── Outer wrapper ── */
+  .frame-wrapper {
+    position: relative;
+    max-width: 1040px;
+    width: 100%;
+  }
+
+  /* ── Floating label ── */
+  .frame-label {
+    position: absolute;
+    top: -32px;
+    left: 0;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    z-index: 10;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  /* ── Bezel (top + sides) ── */
+  .bezel-top {
+    border: 10px solid #443862;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    box-shadow:
+      inset 0 0 40px rgba(0, 0, 0, 0.20),
+      inset 0 2px 6px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(0, 0, 0, 0.10);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ── Gold flash overlay ── */
+  .gold-flash {
+    position: absolute;
+    inset: 0;
+    background: #FFD000;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 50;
+    transition: none;
+  }
+
+  .gold-flash.active {
+    animation: flashPulse 400ms ease-out forwards;
+  }
+
+  @keyframes flashPulse {
+    0%   { opacity: 0; }
+    15%  { opacity: 0.3; }
+    50%  { opacity: 0.15; }
+    100% { opacity: 0; }
+  }
+
+  /* ── Content area — dark mode (default) ── */
+  .content-area {
+    background: #1A1A2E;
+    min-height: 480px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    transition: background 600ms ease;
+  }
+
+  /* ── Top bar ── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(0, 0, 0, 0.35);
+    border-bottom: 1px solid rgba(255, 208, 0, 0.12);
+    font-size: 12px;
+    color: #b0afc4;
+    transition: background 600ms ease, color 600ms ease, border-color 600ms ease;
+  }
+
+  .top-bar-btn {
+    background: rgba(255, 208, 0, 0.12);
+    color: #FFD000;
+    border: 1px solid rgba(255, 208, 0, 0.30);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    cursor: default;
+    transition: background 600ms ease, color 600ms ease, border-color 600ms ease;
+  }
+
+  .top-bar-title {
+    font-weight: 700;
+    color: #ddd;
+    margin-right: auto;
+    transition: color 600ms ease;
+  }
+
+  .top-bar-version {
+    background: rgba(255, 208, 0, 0.08);
+    color: #FFD000;
+    border: 1px solid rgba(255, 208, 0, 0.18);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+    transition: background 600ms ease, color 600ms ease, border-color 600ms ease;
+  }
+
+  /* ── Workspace body ── */
+  .workspace-body {
+    display: flex;
+    flex: 1;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  /* ── Sections column ── */
+  .sections-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .section-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 6px;
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background 600ms ease, border-color 600ms ease;
+  }
+
+  .section-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #FFD000;
+    text-transform: uppercase;
+    opacity: 0.7;
+    transition: color 600ms ease;
+  }
+
+  .section-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #e0dfe8;
+    transition: color 600ms ease;
+  }
+
+  .section-card-body {
+    font-size: 11px;
+    color: #6b6a80;
+    line-height: 1.5;
+    transition: color 600ms ease;
+  }
+
+  .section-card-bar {
+    margin-top: auto;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255, 208, 0, 0.10);
+    overflow: hidden;
+    transition: background 600ms ease;
+  }
+
+  .section-card-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: #FFD000;
+    transition: background 600ms ease;
+  }
+
+  .section-card:nth-child(1) .section-card-bar-fill { width: 85%; }
+  .section-card:nth-child(2) .section-card-bar-fill { width: 60%; }
+  .section-card:nth-child(3) .section-card-bar-fill { width: 45%; }
+  .section-card:nth-child(4) .section-card-bar-fill { width: 70%; }
+
+  /* ── Reviewers sidebar ── */
+  .reviewers-sidebar {
+    width: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 8px;
+  }
+
+  .reviewer-bubble {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border-width: 2px;
+    border-style: solid;
+    background: rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+    transition: background 600ms ease;
+  }
+
+  .reviewer-bubble:nth-child(1) { border-color: #FFD000; }
+  .reviewer-bubble:nth-child(2) { border-color: #7B68EE; }
+  .reviewer-bubble:nth-child(3) { border-color: #00C9A7; }
+  .reviewer-bubble:nth-child(4) { border-color: #FF6B6B; }
+  .reviewer-bubble:nth-child(5) { border-color: #4DA8DA; }
+
+  .reviewers-label {
+    font-size: 8px;
+    color: #5a5970;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    margin-top: 8px;
+    transition: color 600ms ease;
+  }
+
+  /* ── Chin ── */
+  .chin {
+    height: 88px;
+    background: linear-gradient(180deg, #342850 0%, #443862 30%, #554A74 60%, #443862 100%);
+    border-left: 10px solid #443862;
+    border-right: 10px solid #443862;
+    border-bottom: 10px solid #443862;
+    border-radius: 0 0 14px 14px;
+    box-shadow:
+      inset 0 2px 0 #554A74,
+      inset 0 4px 12px rgba(52, 40, 80, 0.15),
+      0 -1px 0 rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Hand toggle ── */
+  .hand-toggle {
+    font-size: 1.5rem;
+    cursor: pointer;
+    user-select: none;
+    filter: grayscale(1) brightness(0.25);
+    transition: filter 600ms ease, transform 200ms ease;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border: none;
+    background: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hand-toggle:hover {
+    transform: scale(1.15) rotate(-8deg);
+    filter: grayscale(1) brightness(0.25) drop-shadow(0 0 12px #FFD000);
+  }
+
+  .hand-toggle.slap-anim {
+    animation: slapMotion 300ms ease-out forwards;
+  }
+
+  @keyframes slapMotion {
+    0%   { transform: scale(1) rotate(0deg); }
+    50%  { transform: scale(1.2) rotate(-15deg); }
+    100% { transform: scale(1) rotate(0deg); }
+  }
+
+  /* ── LIGHT MODE ── */
+  .frame-wrapper.light .content-area {
+    background: #F5F3F0;
+  }
+
+  .frame-wrapper.light .top-bar {
+    background: rgba(0, 0, 0, 0.06);
+    border-bottom-color: rgba(100, 80, 60, 0.12);
+    color: #5a5565;
+  }
+
+  .frame-wrapper.light .top-bar-btn {
+    background: rgba(180, 140, 0, 0.10);
+    color: #9A7B00;
+    border-color: rgba(180, 140, 0, 0.25);
+  }
+
+  .frame-wrapper.light .top-bar-title {
+    color: #2A2530;
+  }
+
+  .frame-wrapper.light .top-bar-version {
+    background: rgba(180, 140, 0, 0.08);
+    color: #9A7B00;
+    border-color: rgba(180, 140, 0, 0.18);
+  }
+
+  .frame-wrapper.light .section-card {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .frame-wrapper.light .section-card-label {
+    color: #9A7B00;
+  }
+
+  .frame-wrapper.light .section-card-title {
+    color: #2A2530;
+  }
+
+  .frame-wrapper.light .section-card-body {
+    color: #7A7585;
+  }
+
+  .frame-wrapper.light .section-card-bar {
+    background: rgba(180, 140, 0, 0.12);
+  }
+
+  .frame-wrapper.light .section-card-bar-fill {
+    background: #C8A800;
+  }
+
+  .frame-wrapper.light .reviewer-bubble {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  .frame-wrapper.light .reviewers-label {
+    color: #8a8595;
+  }
+
+  .frame-wrapper.light .hand-toggle {
+    filter: grayscale(1) brightness(0.6);
+  }
+
+  .frame-wrapper.light .hand-toggle:hover {
+    filter: grayscale(1) brightness(0.6) drop-shadow(0 0 12px #FFD000);
+  }
+</style>
+</head>
+<body>
+
+<div class="frame-wrapper" data-testid="preview-toggle-hand">
+
+  <!-- Floating label -->
+  <div class="frame-label">3. HAND TOGGLE</div>
+
+  <!-- Bezel (top + sides) -->
+  <div class="bezel-top">
+
+    <!-- Gold flash overlay -->
+    <div class="gold-flash" id="goldFlash"></div>
+
+    <!-- Content area -->
+    <div class="content-area">
+
+      <!-- Top bar -->
+      <div class="top-bar">
+        <span class="top-bar-btn">[Back]</span>
+        <span class="top-bar-title">Example Project</span>
+        <span class="top-bar-version">v1 5.2</span>
+        <span class="top-bar-version">v2 6.8</span>
+        <span class="top-bar-btn">[TOUR]</span>
+      </div>
+
+      <!-- Workspace body -->
+      <div class="workspace-body">
+
+        <!-- Section cards -->
+        <div class="sections-column">
+
+          <div class="section-card">
+            <span class="section-card-label">Section 01</span>
+            <span class="section-card-title">Hero</span>
+            <span class="section-card-body">Main landing section with headline, subtext, and primary CTA button.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+          <div class="section-card">
+            <span class="section-card-label">Section 02</span>
+            <span class="section-card-title">Features</span>
+            <span class="section-card-body">Three-column feature grid with icons and short descriptions.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+          <div class="section-card">
+            <span class="section-card-label">Section 03</span>
+            <span class="section-card-title">Pricing</span>
+            <span class="section-card-body">Tiered pricing cards with feature comparison toggle.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+          <div class="section-card">
+            <span class="section-card-label">Section 04</span>
+            <span class="section-card-title">CTA</span>
+            <span class="section-card-body">Final call-to-action with email capture and social proof.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+        </div>
+
+        <!-- Reviewers sidebar -->
+        <div class="reviewers-sidebar">
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <span class="reviewers-label">Reviewers</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Chin -->
+  <div class="chin">
+    <button class="hand-toggle" data-testid="theme-toggle" aria-label="Toggle theme" title="Slap to toggle theme">&#9995;</button>
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    var wrapper = document.querySelector('.frame-wrapper');
+    var hand = document.querySelector('.hand-toggle');
+    var flash = document.getElementById('goldFlash');
+    var isDark = true;
+    var animating = false;
+
+    hand.addEventListener('click', function () {
+      if (animating) return;
+      animating = true;
+
+      // Step 1: Slap animation (300ms total)
+      hand.classList.add('slap-anim');
+
+      // Step 2: At peak of slap (150ms in), fire the gold flash
+      setTimeout(function () {
+        flash.classList.remove('active');
+        // Force reflow so re-adding the class restarts the animation
+        void flash.offsetWidth;
+        flash.classList.add('active');
+      }, 150);
+
+      // Step 3: After slap animation ends (300ms), toggle theme
+      setTimeout(function () {
+        hand.classList.remove('slap-anim');
+
+        // Toggle theme
+        isDark = !isDark;
+        if (isDark) {
+          wrapper.classList.remove('light');
+        } else {
+          wrapper.classList.add('light');
+        }
+
+        animating = false;
+      }, 300);
+    });
+
+    // Clean up flash class after its animation ends
+    flash.addEventListener('animationend', function () {
+      flash.classList.remove('active');
+    });
+  })();
+</script>
+
+</body>
+</html>

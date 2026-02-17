@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP Toggle Preview — 4. Sun/Moon (Recommended)</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #111;
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  /* ── Outer wrapper ── */
+  .frame-wrapper {
+    position: relative;
+    max-width: 1040px;
+    width: 100%;
+  }
+
+  /* ── Floating label ── */
+  .frame-label {
+    position: absolute;
+    top: -32px;
+    left: 0;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    z-index: 10;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .frame-label .recommended-badge {
+    color: #FFD000;
+    font-weight: 900;
+  }
+
+  /* ── Bezel (top + sides) ── */
+  .bezel-top {
+    border: 10px solid #443862;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    box-shadow:
+      inset 0 0 40px rgba(0, 0, 0, 0.20),
+      inset 0 2px 6px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(0, 0, 0, 0.10);
+    overflow: hidden;
+  }
+
+  /* ── Content area ── */
+  .content-area {
+    min-height: 480px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    transition: background 600ms ease;
+  }
+
+  /* Dark mode (default) */
+  .content-area {
+    background: #1A1A2E;
+  }
+
+  .content-area.light {
+    background: #F4F3F8;
+  }
+
+  /* ── Top bar ── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    transition: background 600ms ease, border-color 600ms ease;
+    background: rgba(0, 0, 0, 0.35);
+    border-bottom: 1px solid rgba(255, 208, 0, 0.12);
+    font-size: 12px;
+    color: #b0afc4;
+  }
+
+  .light .top-bar {
+    background: rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(68, 56, 98, 0.12);
+    color: #5a5470;
+  }
+
+  .top-bar-btn {
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    cursor: default;
+    transition: background 600ms ease, color 600ms ease, border-color 600ms ease;
+    background: rgba(255, 208, 0, 0.12);
+    color: #FFD000;
+    border: 1px solid rgba(255, 208, 0, 0.30);
+  }
+
+  .light .top-bar-btn {
+    background: rgba(68, 56, 98, 0.10);
+    color: #443862;
+    border: 1px solid rgba(68, 56, 98, 0.25);
+  }
+
+  .top-bar-title {
+    font-weight: 700;
+    margin-right: auto;
+    transition: color 600ms ease;
+    color: #ddd;
+  }
+
+  .light .top-bar-title {
+    color: #2a2440;
+  }
+
+  .top-bar-version {
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+    transition: background 600ms ease, color 600ms ease, border-color 600ms ease;
+    background: rgba(255, 208, 0, 0.08);
+    color: #FFD000;
+    border: 1px solid rgba(255, 208, 0, 0.18);
+  }
+
+  .light .top-bar-version {
+    background: rgba(68, 56, 98, 0.08);
+    color: #554A74;
+    border: 1px solid rgba(68, 56, 98, 0.18);
+  }
+
+  /* ── Workspace body ── */
+  .workspace-body {
+    display: flex;
+    flex: 1;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  /* ── Sections column ── */
+  .sections-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .section-card {
+    border-radius: 6px;
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background 600ms ease, border-color 600ms ease;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+  }
+
+  .light .section-card {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(68, 56, 98, 0.10);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  }
+
+  .section-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 600ms ease;
+    color: #FFD000;
+    opacity: 0.7;
+  }
+
+  .light .section-card-label {
+    color: #7B68EE;
+    opacity: 0.8;
+  }
+
+  .section-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    transition: color 600ms ease;
+    color: #e0dfe8;
+  }
+
+  .light .section-card-title {
+    color: #2a2440;
+  }
+
+  .section-card-body {
+    font-size: 11px;
+    line-height: 1.5;
+    transition: color 600ms ease;
+    color: #6b6a80;
+  }
+
+  .light .section-card-body {
+    color: #7a7590;
+  }
+
+  .section-card-bar {
+    margin-top: auto;
+    height: 3px;
+    border-radius: 2px;
+    overflow: hidden;
+    transition: background 600ms ease;
+    background: rgba(255, 208, 0, 0.10);
+  }
+
+  .light .section-card-bar {
+    background: rgba(68, 56, 98, 0.10);
+  }
+
+  .section-card-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: background 600ms ease;
+    background: #FFD000;
+  }
+
+  .light .section-card-bar-fill {
+    background: #7B68EE;
+  }
+
+  .section-card:nth-child(1) .section-card-bar-fill { width: 85%; }
+  .section-card:nth-child(2) .section-card-bar-fill { width: 60%; }
+  .section-card:nth-child(3) .section-card-bar-fill { width: 45%; }
+  .section-card:nth-child(4) .section-card-bar-fill { width: 70%; }
+
+  /* ── Reviewers sidebar ── */
+  .reviewers-sidebar {
+    width: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 8px;
+  }
+
+  .reviewer-bubble {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border-width: 2px;
+    border-style: solid;
+    flex-shrink: 0;
+    transition: background 600ms ease;
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .light .reviewer-bubble {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .reviewer-bubble:nth-child(1) { border-color: #FFD000; }
+  .reviewer-bubble:nth-child(2) { border-color: #7B68EE; }
+  .reviewer-bubble:nth-child(3) { border-color: #00C9A7; }
+  .reviewer-bubble:nth-child(4) { border-color: #FF6B6B; }
+  .reviewer-bubble:nth-child(5) { border-color: #4DA8DA; }
+
+  .reviewers-label {
+    font-size: 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    margin-top: 8px;
+    transition: color 600ms ease;
+    color: #5a5970;
+  }
+
+  .light .reviewers-label {
+    color: #8a8598;
+  }
+
+  /* ── Chin ── */
+  .chin {
+    height: 88px;
+    background: linear-gradient(180deg, #342850 0%, #443862 30%, #554A74 60%, #443862 100%);
+    border-left: 10px solid #443862;
+    border-right: 10px solid #443862;
+    border-bottom: 10px solid #443862;
+    border-radius: 0 0 14px 14px;
+    box-shadow:
+      inset 0 2px 0 #554A74,
+      inset 0 4px 12px rgba(52, 40, 80, 0.15),
+      0 -1px 0 rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* ── Chin: Embossed Hand (branding, not clickable) ── */
+  .chin-hand {
+    font-size: 1.4rem;
+    line-height: 1;
+    filter: grayscale(1) brightness(0.3);
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.06),
+      0 -1px 0 rgba(0, 0, 0, 0.4);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* ── Chin: Sun/Moon Toggle ── */
+  .theme-toggle {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    padding: 0;
+    border-radius: 50%;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  .theme-toggle:hover {
+    transform: translateY(-50%) scale(1.15);
+  }
+
+  .theme-toggle:focus-visible {
+    outline: 2px solid rgba(255, 208, 0, 0.5);
+    outline-offset: 2px;
+  }
+
+  /* Toggle icon container */
+  .toggle-icon {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .toggle-icon .moon,
+  .toggle-icon .sun {
+    position: absolute;
+    font-size: 1rem;
+    line-height: 1;
+    transition: opacity 200ms ease;
+    /* Shared embossed treatment — same visual family as the hand */
+    filter: grayscale(1) brightness(0.3);
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.06),
+      0 -1px 0 rgba(0, 0, 0, 0.4);
+    user-select: none;
+  }
+
+  /* ── Dark mode state (moon visible) ── */
+  .toggle-icon .moon {
+    opacity: 1;
+  }
+
+  .toggle-icon .sun {
+    opacity: 0;
+  }
+
+  .theme-toggle[data-theme="dark"] {
+    box-shadow: 0 0 6px rgba(255, 176, 0, 0.3);
+  }
+
+  .theme-toggle[data-theme="dark"]:hover {
+    box-shadow: 0 0 10px rgba(255, 176, 0, 0.6);
+  }
+
+  /* ── Light mode state (sun visible) ── */
+  .theme-toggle[data-theme="light"] .toggle-icon .moon {
+    opacity: 0;
+  }
+
+  .theme-toggle[data-theme="light"] .toggle-icon .sun {
+    opacity: 1;
+    filter: grayscale(1) brightness(0.6);
+    text-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.08),
+      0 -1px 0 rgba(0, 0, 0, 0.35);
+  }
+
+  .theme-toggle[data-theme="light"] {
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+  }
+
+  .theme-toggle[data-theme="light"]:hover {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  }
+</style>
+</head>
+<body>
+
+<div class="frame-wrapper" data-testid="preview-toggle-sunmoon">
+
+  <!-- Floating label -->
+  <div class="frame-label">4. SUN/MOON <span class="recommended-badge">(Recommended)</span></div>
+
+  <!-- Bezel (top + sides) -->
+  <div class="bezel-top">
+
+    <!-- Content area -->
+    <div class="content-area" id="contentArea">
+
+      <!-- Top bar -->
+      <div class="top-bar">
+        <span class="top-bar-btn">[Back]</span>
+        <span class="top-bar-title">Example Project</span>
+        <span class="top-bar-version">v1 5.2</span>
+        <span class="top-bar-version">v2 6.8</span>
+        <span class="top-bar-btn">[TOUR]</span>
+      </div>
+
+      <!-- Workspace body -->
+      <div class="workspace-body">
+
+        <!-- Section cards -->
+        <div class="sections-column">
+
+          <div class="section-card">
+            <span class="section-card-label">Section 01</span>
+            <span class="section-card-title">Hero</span>
+            <span class="section-card-body">Main landing section with headline, subtext, and primary CTA button.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+          <div class="section-card">
+            <span class="section-card-label">Section 02</span>
+            <span class="section-card-title">Features</span>
+            <span class="section-card-body">Three-column feature grid with icons and short descriptions.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+          <div class="section-card">
+            <span class="section-card-label">Section 03</span>
+            <span class="section-card-title">Pricing</span>
+            <span class="section-card-body">Tiered pricing cards with feature comparison toggle.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+          <div class="section-card">
+            <span class="section-card-label">Section 04</span>
+            <span class="section-card-title">CTA</span>
+            <span class="section-card-body">Final call-to-action with email capture and social proof.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+        </div>
+
+        <!-- Reviewers sidebar -->
+        <div class="reviewers-sidebar">
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <span class="reviewers-label">Reviewers</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Chin -->
+  <div class="chin">
+
+    <!-- Embossed hand (branding only, not clickable) -->
+    <span class="chin-hand" aria-hidden="true">&#x270B;</span>
+
+    <!-- Sun/Moon theme toggle -->
+    <button
+      class="theme-toggle"
+      data-testid="theme-toggle"
+      data-theme="dark"
+      aria-label="Toggle theme"
+      title="Toggle light/dark theme"
+    >
+      <span class="toggle-icon">
+        <span class="moon" aria-hidden="true">&#x263D;</span>
+        <span class="sun" aria-hidden="true">&#x2600;</span>
+      </span>
+    </button>
+
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('[data-testid="theme-toggle"]');
+    var content = document.getElementById('contentArea');
+    var isDark = true;
+
+    toggle.addEventListener('click', function () {
+      isDark = !isDark;
+      toggle.setAttribute('data-theme', isDark ? 'dark' : 'light');
+
+      if (isDark) {
+        content.classList.remove('light');
+      } else {
+        content.classList.add('light');
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

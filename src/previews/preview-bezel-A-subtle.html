@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bezel Variation A: Subtle Purple — SLAP Preview</title>
+<style>
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #111;
+    font-family: 'Courier New', Courier, monospace;
+    color: #ccc;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  /* ── Outer wrapper ── */
+  .frame-wrapper {
+    position: relative;
+    max-width: 1040px;
+    width: 100%;
+  }
+
+  /* ── Floating label ── */
+  .frame-label {
+    position: absolute;
+    top: -32px;
+    left: 0;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    z-index: 10;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  /* ── Bezel (top + sides) ── */
+  .bezel-frame {
+    border-top: 10px solid #3A3450;
+    border-left: 10px solid #3A3450;
+    border-right: 10px solid #3A3450;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    box-shadow:
+      inset 0 0 40px rgba(0, 0, 0, 0.20),
+      inset 0 2px 6px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(0, 0, 0, 0.10);
+    overflow: hidden;
+  }
+
+  /* ── Content area ── */
+  .content-area {
+    background: #1A1A2E;
+    min-height: 480px;
+    padding: 0;
+    position: relative;
+  }
+
+  /* ── Top bar ── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(0, 0, 0, 0.35);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .top-bar-btn {
+    background: rgba(255, 208, 0, 0.12);
+    color: #FFD000;
+    border: 1px solid rgba(255, 208, 0, 0.30);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    cursor: default;
+  }
+
+  .top-bar-title {
+    color: #ddd;
+    font-size: 13px;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .top-bar-version {
+    background: rgba(255, 255, 255, 0.06);
+    color: #aaa;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'Courier New', Courier, monospace;
+    cursor: default;
+  }
+
+  .top-bar-version.active {
+    background: rgba(255, 208, 0, 0.10);
+    color: #FFD000;
+    border-color: rgba(255, 208, 0, 0.25);
+  }
+
+  /* ── Workspace body ── */
+  .workspace-body {
+    display: flex;
+    padding: 16px;
+    gap: 16px;
+    min-height: 420px;
+  }
+
+  /* ── Sections column ── */
+  .sections-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .section-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 6px;
+    padding: 16px;
+    flex: 1;
+    position: relative;
+  }
+
+  .section-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 8px;
+  }
+
+  .section-card-line {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 3px;
+    margin-bottom: 6px;
+  }
+
+  .section-card-line.short { width: 60%; }
+  .section-card-line.med   { width: 80%; }
+  .section-card-line.long  { width: 95%; }
+
+  .section-card-line.gold {
+    background: rgba(255, 208, 0, 0.12);
+    width: 40%;
+    height: 8px;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+
+  /* Hero card special */
+  .section-card.hero {
+    border-color: rgba(255, 208, 0, 0.12);
+  }
+
+  .section-card.hero .section-card-label {
+    color: #FFD000;
+  }
+
+  /* ── Reviewers sidebar ── */
+  .reviewers-col {
+    width: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 8px;
+  }
+
+  .reviewer-bubble {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 2px solid;
+    flex-shrink: 0;
+  }
+
+  .reviewer-bubble:nth-child(1) { border-color: #FF6B6B; }
+  .reviewer-bubble:nth-child(2) { border-color: #4ECDC4; }
+  .reviewer-bubble:nth-child(3) { border-color: #FFD000; }
+  .reviewer-bubble:nth-child(4) { border-color: #A78BFA; }
+  .reviewer-bubble:nth-child(5) { border-color: #60A5FA; }
+
+  .reviewers-label {
+    font-size: 8px;
+    color: #555;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    writing-mode: vertical-lr;
+    margin-top: 8px;
+  }
+
+  /* ── Chin ── */
+  .chin {
+    height: 88px;
+    background: linear-gradient(180deg, #2A2440 0%, #3A3450 30%, #4A4462 60%, #3A3450 100%);
+    border-left: 10px solid #3A3450;
+    border-right: 10px solid #3A3450;
+    border-bottom: 10px solid #3A3450;
+    border-radius: 0 0 14px 14px;
+    box-shadow:
+      inset 0 2px 0 #4A4462,
+      inset 0 4px 12px rgba(42, 36, 64, 0.12),
+      0 -1px 0 rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .chin-title {
+    color: #FFD000;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .chin-subtitle {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 10px;
+    letter-spacing: 0.8px;
+    font-family: 'Courier New', Courier, monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="frame-wrapper" data-testid="preview-bezel-subtle">
+
+  <!-- Floating label -->
+  <div class="frame-label">A. SUBTLE PURPLE</div>
+
+  <!-- Bezel frame (top + sides) -->
+  <div class="bezel-frame">
+
+    <!-- Content area -->
+    <div class="content-area">
+
+      <!-- Top bar -->
+      <div class="top-bar">
+        <div class="top-bar-btn">[Back]</div>
+        <div class="top-bar-title">Example Project</div>
+        <div class="top-bar-version active">[v1 5.2]</div>
+        <div class="top-bar-version active">[v2 6.8]</div>
+        <div class="top-bar-btn">[TOUR]</div>
+      </div>
+
+      <!-- Workspace body -->
+      <div class="workspace-body">
+
+        <!-- Section cards -->
+        <div class="sections-col">
+
+          <div class="section-card hero">
+            <div class="section-card-label">HERO</div>
+            <div class="section-card-line long"></div>
+            <div class="section-card-line med"></div>
+            <div class="section-card-line short"></div>
+            <div class="section-card-line gold"></div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-card-label">FEATURES</div>
+            <div class="section-card-line long"></div>
+            <div class="section-card-line med"></div>
+            <div class="section-card-line long"></div>
+            <div class="section-card-line short"></div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-card-label">PRICING</div>
+            <div class="section-card-line med"></div>
+            <div class="section-card-line long"></div>
+            <div class="section-card-line short"></div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-card-label">CTA</div>
+            <div class="section-card-line short"></div>
+            <div class="section-card-line med"></div>
+            <div class="section-card-line gold"></div>
+          </div>
+
+        </div>
+
+        <!-- Reviewers sidebar -->
+        <div class="reviewers-col">
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewers-label">REVIEWERS</div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Chin -->
+  <div class="chin">
+    <div class="chin-title">SLAP!</div>
+    <div class="chin-subtitle">A. Subtle Purple #3A3450 (~21% sat)</div>
+  </div>
+
+</div>
+
+</body>
+</html>

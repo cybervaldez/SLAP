@@ -6,15 +6,51 @@
     <title>SLAP!</title>
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      /* Registered color stops — allows gradient transitions */
+      @property --bezel-border {
+        syntax: '<color>';
+        inherits: true;
+        initial-value: #B8BFC8;
+      }
+      @property --chin-top {
+        syntax: '<color>';
+        inherits: true;
+        initial-value: #A0A8B2;
+      }
+      @property --chin-mid {
+        syntax: '<color>';
+        inherits: true;
+        initial-value: #B8BFC8;
+      }
+      @property --chin-hi {
+        syntax: '<color>';
+        inherits: true;
+        initial-value: #CDD2D9;
+      }
       body {
         margin: 0;
+        --bezel-border: #B8BFC8;
+        --chin-top: #A0A8B2;
+        --chin-mid: #B8BFC8;
+        --chin-hi: #CDD2D9;
+        transition:
+          --bezel-border 800ms ease-in-out,
+          --chin-top 800ms ease-in-out,
+          --chin-mid 800ms ease-in-out,
+          --chin-hi 800ms ease-in-out;
+      }
+      body[data-content-theme="light"] {
+        --bezel-border: #443862;
+        --chin-top: #342850;
+        --chin-mid: #443862;
+        --chin-hi: #554A74;
       }
       /* iMac bezel — top + sides */
       body::after {
         content: '';
         position: fixed;
         inset: 0;
-        border: 10px solid #B8BFC8;
+        border: 10px solid var(--bezel-border);
         border-bottom: none;
         pointer-events: none;
         z-index: 99999;
@@ -23,7 +59,6 @@
           inset 0 0 40px rgba(0, 0, 0, 0.10),
           inset 0 2px 6px rgba(0, 0, 0, 0.08),
           0 0 0 1px rgba(0, 0, 0, 0.06);
-        transition: border-color 800ms ease-in-out, box-shadow 800ms ease-in-out;
       }
       /* iMac bezel — fat chin */
       body::before {
@@ -33,42 +68,33 @@
         left: 0;
         right: 0;
         height: 88px;
-        background: linear-gradient(180deg, #A0A8B2 0%, #B8BFC8 30%, #CDD2D9 60%, #B8BFC8 100%);
-        border-left: 10px solid #B8BFC8;
-        border-right: 10px solid #B8BFC8;
-        border-bottom: 10px solid #B8BFC8;
+        background: linear-gradient(180deg, var(--chin-top) 0%, var(--chin-mid) 30%, var(--chin-hi) 60%, var(--chin-mid) 100%);
+        border-left: 10px solid var(--bezel-border);
+        border-right: 10px solid var(--bezel-border);
+        border-bottom: 10px solid var(--bezel-border);
         border-radius: 0 0 14px 14px;
         pointer-events: none;
         z-index: 99998;
         box-shadow:
-          inset 0 2px 0 #CDD2D9,
+          inset 0 2px 0 var(--chin-hi),
           inset 0 4px 12px rgba(0, 0, 0, 0.08),
           0 -1px 0 rgba(0, 0, 0, 0.06),
           0 0 0 1px rgba(0, 0, 0, 0.04);
-        transition: background 800ms ease-in-out, border-color 800ms ease-in-out, box-shadow 800ms ease-in-out, height 300ms cubic-bezier(0.4, 0, 0.2, 1);
       }
-      /* Tour chin height overrides */
-      body[data-tour-chin="guided"]::before { height: 96px; }
-      body[data-tour-chin="live"]::before { height: 72px; }
-      /* Light content → dark bezel for contrast */
+      /* Light content → deeper shadows for dark bezel */
       body[data-content-theme="light"]::after {
-        border-color: #3A3A4E;
         box-shadow:
           inset 0 0 40px rgba(0, 0, 0, 0.20),
           inset 0 2px 6px rgba(0, 0, 0, 0.12),
           0 0 0 1px rgba(0, 0, 0, 0.10);
       }
       body[data-content-theme="light"]::before {
-        background: linear-gradient(180deg, #2A2A3E 0%, #3A3A4E 30%, #4A4A5E 60%, #3A3A4E 100%);
-        border-color: #3A3A4E;
         box-shadow:
-          inset 0 2px 0 #4A4A5E,
+          inset 0 2px 0 var(--chin-hi),
           inset 0 4px 12px rgba(0, 0, 0, 0.12),
           0 -1px 0 rgba(0, 0, 0, 0.08),
           0 0 0 1px rgba(0, 0, 0, 0.06);
       }
-      body[data-content-theme="light"][data-tour-chin="guided"]::before { height: 96px; }
-      body[data-content-theme="light"][data-tour-chin="live"]::before { height: 72px; }
       /* Custom scrollbar for UI review panel — yellow on white */
       [data-testid="anti-slop-overlay"] > div:first-child::-webkit-scrollbar {
         width: 6px;
@@ -89,7 +115,7 @@
         scrollbar-color: #FFD000 rgba(255, 255, 255, 0.08);
       }
       @media (prefers-reduced-motion: reduce) {
-        body::after, body::before { transition: none; }
+        body, body::after, body::before { transition: none; }
       }
       *:focus-visible {
         outline: 2px solid currentColor;

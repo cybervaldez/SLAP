@@ -22,18 +22,18 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Generic CTA, no urgency.',
     sections: {
       hero: [
-        { text: 'Headline uses "Unlock the Power of" cliche', light: 'yellow', comment: 'This is the #1 most common AI-generated headline. It says nothing specific.', ref: 'Unlock the Power of Seamless Workflow Automation' },
-        { text: 'CTA "Get Started Free" lacks urgency', light: 'yellow', comment: 'Try time-bounded language: "Start Free Today" or "Ship in 4 Minutes".', ref: 'Get Started Free' },
+        { text: 'Headline uses "Unlock the Power of" cliche', light: 'yellow', comment: 'This is the #1 most common AI-generated headline. It says nothing specific.', ref: 'hero-headline' },
+        { text: 'CTA "Get Started Free" lacks urgency', light: 'yellow', comment: 'Try time-bounded language: "Start Free Today" or "Ship in 4 Minutes".', ref: 'hero-cta' },
       ],
       features: [
-        { text: 'Feature names are generic buzzwords', light: 'yellow', comment: '"Seamless Integration" could be on any SaaS page. What specifically integrates?', ref: 'Seamless Integration' },
+        { text: 'Feature names are generic buzzwords', light: 'yellow', comment: '"Seamless Integration" could be on any SaaS page. What specifically integrates?', ref: 'feature-automation' },
       ],
       pricing: [
         { text: 'No anchor pricing visible', light: 'red', comment: 'Show the premium tier first to anchor value. Users need a reference point.' },
         { text: 'All tiers have equal visual weight', light: 'yellow', comment: 'The recommended plan should stand out immediately.' },
       ],
       cta: [
-        { text: '"Get Started Today" is too vague', light: 'yellow', comment: 'Restate the core value prop. What are they getting started with?', ref: 'Get Started Today' },
+        { text: '"Get Started Today" is too vague', light: 'yellow', comment: 'Restate the core value prop. What are they getting started with?', ref: 'cta-button' },
       ],
     },
   },
@@ -66,7 +66,7 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Value prop exists but buried.',
     sections: {
       hero: [
-        { text: 'Value proposition present in first scroll', light: 'green', comment: 'User understands "workflow automation" within 5 seconds.', ref: 'Workflow Automation' },
+        { text: 'Value proposition present in first scroll', light: 'green', comment: 'User understands "workflow automation" within 5 seconds.', ref: 'hero-headline' },
         { text: 'No specific use case or persona targeting', light: 'yellow', comment: 'Who is this for? Developers? Managers? Everyone means no one.' },
       ],
       features: [
@@ -76,7 +76,7 @@ export const exampleReviews: Record<string, Review> = {
         { text: 'Tier differentiation is unclear', light: 'yellow', comment: 'What makes Pro worth 3x Starter? Lead with the differentiator.' },
       ],
       cta: [
-        { text: '"Join thousands" is unverifiable social proof', light: 'yellow', comment: 'Specific numbers ("2,400 teams") are more believable than "thousands".', ref: 'Join thousands' },
+        { text: '"Join thousands" is unverifiable social proof', light: 'yellow', comment: 'Specific numbers ("2,400 teams") are more believable than "thousands".', ref: 'cta-headline' },
       ],
     },
   },
@@ -108,7 +108,7 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Looks like every other AI design.',
     sections: {
       hero: [
-        { text: 'Purple gradient is the #1 AI default', light: 'red', comment: 'This exact gradient (6366F1 to A855F7) appears in thousands of AI-generated pages.', ref: 'Unlock the Power of Seamless Workflow Automation' },
+        { text: 'Purple gradient is the #1 AI default', light: 'red', comment: 'This exact gradient (6366F1 to A855F7) appears in thousands of AI-generated pages.', ref: 'hero-headline' },
         { text: 'Typography uses system sans-serif', light: 'yellow', comment: 'No font choice was made. This is the absence of design.' },
       ],
       features: [
@@ -131,7 +131,7 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Low contrast on gradient bg.',
     sections: {
       hero: [
-        { text: 'Gradient text fails color-blind contrast', light: 'red', comment: 'Purple gradient on light background becomes muddy gray for deuteranopia.', ref: 'Unlock the Power of Seamless Workflow Automation' },
+        { text: 'Gradient text fails color-blind contrast', light: 'red', comment: 'Purple gradient on light background becomes muddy gray for deuteranopia.', ref: 'hero-headline' },
       ],
       features: [
         { text: 'Gradient icon squares have no shape distinction', light: 'yellow', comment: 'All three icons look identical to me — same purple square.' },
@@ -152,7 +152,7 @@ export const exampleReviews: Record<string, Review> = {
     sections: {
       hero: [
         { text: 'No landmark roles defined', light: 'red', comment: 'No nav, main, or footer landmarks. Screen reader users are lost.' },
-        { text: 'CTA button has no accessible description', light: 'yellow', comment: '"Get Started Free" — started with what? Context is missing.', ref: 'Get Started Free' },
+        { text: 'CTA button has no accessible description', light: 'yellow', comment: '"Get Started Free" — started with what? Context is missing.', ref: 'hero-cta' },
       ],
       features: [
         { text: 'Feature icons are empty divs', light: 'red', comment: 'A screen reader reads nothing. These should have aria-label or alt text.' },
@@ -193,17 +193,17 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Jargon-heavy language throughout.',
     sections: {
       hero: [
-        { text: '"Workflow Automation" is tech jargon', light: 'red', comment: 'My grandson would understand this. I do not.', ref: 'Workflow Automation' },
-        { text: '"Cutting-edge platform" means nothing', light: 'yellow', comment: 'Every website says this. Tell me what it actually does.', ref: 'cutting-edge platform' },
+        { text: '"Workflow Automation" is tech jargon', light: 'red', comment: 'My grandson would understand this. I do not.', ref: 'hero-headline' },
+        { text: '"Cutting-edge platform" means nothing', light: 'yellow', comment: 'Every website says this. Tell me what it actually does.' },
       ],
       features: [
-        { text: '"Seamless Integration" is meaningless', light: 'red', comment: 'Integrates with what? Just say "works with Gmail and Slack".', ref: 'Seamless Integration' },
+        { text: '"Seamless Integration" is meaningless', light: 'red', comment: 'Integrates with what? Just say "works with Gmail and Slack".', ref: 'feature-automation' },
       ],
       pricing: [
         { text: 'Pricing is clear and simple', light: 'green', comment: 'I can see the numbers. This part makes sense.' },
       ],
       cta: [
-        { text: '"Transforming their workflow" — more jargon', light: 'yellow', comment: 'Just say "making their work easier".', ref: 'transforming their workflow' },
+        { text: '"Transforming their workflow" — more jargon', light: 'yellow', comment: 'Just say "making their work easier".', ref: 'cta-headline' },
       ],
     },
   },
@@ -315,17 +315,17 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Pricing buried, generic everything.',
     sections: {
       hero: [
-        { text: '"Unlock the Power of" is insulting', light: 'red', comment: 'You had one chance to tell me what this does and you wasted it on a cliche.', ref: 'Unlock the Power of' },
+        { text: '"Unlock the Power of" is insulting', light: 'red', comment: 'You had one chance to tell me what this does and you wasted it on a cliche.', ref: 'hero-headline' },
         { text: 'No specific number or claim', light: 'red', comment: 'How fast? How much saved? Give me ONE specific thing.' },
       ],
       features: [
-        { text: '"Seamless" and "Lightning Fast" are empty words', light: 'red', comment: 'Every product claims this. It means nothing.', ref: 'Lightning Fast' },
+        { text: '"Seamless" and "Lightning Fast" are empty words', light: 'red', comment: 'Every product claims this. It means nothing.', ref: 'feature-sync' },
       ],
       pricing: [
         { text: 'I had to scroll to find prices', light: 'red', comment: 'I almost left before seeing this section.' },
       ],
       cta: [
-        { text: '"Join thousands" is lazy copywriting', light: 'yellow', comment: 'Name one customer. Give me one specific testimonial.', ref: 'Join thousands' },
+        { text: '"Join thousands" is lazy copywriting', light: 'yellow', comment: 'Name one customer. Give me one specific testimonial.', ref: 'cta-headline' },
       ],
     },
   },
@@ -360,13 +360,13 @@ export const exampleReviews: Record<string, Review> = {
         { text: 'No trust signals visible', light: 'red', comment: 'No logos, no testimonials, no certifications. Why should I trust you?' },
       ],
       features: [
-        { text: '"Military-grade encryption" is a red flag', light: 'red', comment: 'This phrase is used by companies that do not actually understand security.', ref: 'military-grade encryption' },
+        { text: '"Military-grade encryption" is a red flag', light: 'red', comment: 'This phrase is used by companies that do not actually understand security.' },
       ],
       pricing: [
         { text: 'No money-back guarantee mentioned', light: 'yellow', comment: 'What if I do not like it? Am I stuck?' },
       ],
       cta: [
-        { text: '"Join thousands" with no proof', light: 'red', comment: 'Name them. Show me a real person who uses this.', ref: 'Join thousands' },
+        { text: '"Join thousands" with no proof', light: 'red', comment: 'Name them. Show me a real person who uses this.', ref: 'cta-headline' },
       ],
     },
   },
@@ -386,7 +386,7 @@ export const exampleReviews: Record<string, Review> = {
         { text: 'Three pricing cards means lots of mobile scrolling', light: 'yellow', comment: 'On a phone, this is 3 full screens of scrolling just for pricing.' },
       ],
       cta: [
-        { text: 'CTA button padding too wide for thumb reach', light: 'red', comment: '40px horizontal padding pushes the button edges beyond comfortable one-hand reach.', ref: 'Start Your Free Trial' },
+        { text: 'CTA button padding too wide for thumb reach', light: 'red', comment: '40px horizontal padding pushes the button edges beyond comfortable one-hand reach.', ref: 'cta-button' },
       ],
     },
   },
@@ -397,7 +397,7 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Too much text per section.',
     sections: {
       hero: [
-        { text: 'Subtitle is too long for scanning', light: 'yellow', comment: 'Two lines of body text in the hero. I stopped reading after "Streamline".', ref: 'Streamline your team' },
+        { text: 'Subtitle is too long for scanning', light: 'yellow', comment: 'Two lines of body text in the hero. I stopped reading after "Streamline".', ref: 'hero-headline' },
       ],
       features: [
         { text: 'Feature descriptions are paragraph-length', light: 'yellow', comment: 'Each card has 2 sentences. Should be 1 sentence max.' },
@@ -458,7 +458,7 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Template, not a design.',
     sections: {
       hero: [
-        { text: 'Cookie-cutter SaaS hero', light: 'red', comment: 'Gradient text, centered layout, vague subtitle. I have seen this on 500 landing pages.', ref: 'Unlock the Power of Seamless Workflow Automation' },
+        { text: 'Cookie-cutter SaaS hero', light: 'red', comment: 'Gradient text, centered layout, vague subtitle. I have seen this on 500 landing pages.', ref: 'hero-headline' },
       ],
       features: [
         { text: 'Three identical cards with gradient icons', light: 'red', comment: 'This is what happens when you ask AI to "make a features section."' },
@@ -504,18 +504,18 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Urgency language, anchor pricing.',
     sections: {
       hero: [
-        { text: '"Ship in 4 minutes" is specific and urgent', light: 'green', comment: 'This is a claim users can verify. That builds trust.', ref: 'Ship your first feature in 4 minutes.' },
-        { text: 'Social proof with specific numbers (2,400+ teams)', light: 'green', comment: 'Specific > vague. "2,400" beats "thousands" every time.', ref: '2,400+ teams' },
+        { text: '"Ship in 4 minutes" is specific and urgent', light: 'green', comment: 'This is a claim users can verify. That builds trust.', ref: 'hero-headline' },
+        { text: 'Social proof with specific numbers (2,400+ teams)', light: 'green', comment: 'Specific > vague. "2,400" beats "thousands" every time.', ref: 'cta-headline' },
       ],
       features: [
-        { text: 'Benefit-focused copy instead of feature names', light: 'green', comment: '"One-command deploy" tells me what I get. "Seamless integration" did not.', ref: 'One-command deploy' },
+        { text: 'Benefit-focused copy instead of feature names', light: 'green', comment: '"One-command deploy" tells me what I get. "Seamless integration" did not.', ref: 'feature-deploy' },
       ],
       pricing: [
-        { text: 'Anchor pricing with Most Popular badge', light: 'green', comment: 'Pro tier draws the eye. Users anchor on $29 and feel good about it.', ref: 'MOST POPULAR' },
+        { text: 'Anchor pricing with Most Popular badge', light: 'green', comment: 'Pro tier draws the eye. Users anchor on $29 and feel good about it.', ref: 'tier-team' },
       ],
       cta: [
         { text: 'Real testimonial quotes add trust', light: 'green', comment: 'Named people with titles. This feels real.' },
-        { text: 'Could add urgency to CTA button text', light: 'yellow', comment: '"CREATE ACCOUNT" is fine but "START SHIPPING NOW" would be stronger.', ref: 'CREATE ACCOUNT' },
+        { text: 'Could add urgency to CTA button text', light: 'yellow', comment: '"CREATE ACCOUNT" is fine but "START SHIPPING NOW" would be stronger.', ref: 'cta-button' },
       ],
     },
   },
@@ -547,17 +547,17 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Value prop front and center.',
     sections: {
       hero: [
-        { text: 'Value proposition is immediate and specific', light: 'green', comment: '"4 minutes" is a testable claim. Users will try it to verify.', ref: 'Ship your first feature in 4 minutes.' },
+        { text: 'Value proposition is immediate and specific', light: 'green', comment: '"4 minutes" is a testable claim. Users will try it to verify.', ref: 'hero-headline' },
         { text: 'Target audience is clear: developers and teams', light: 'green', comment: 'The language speaks to builders, not everyone.' },
       ],
       features: [
-        { text: 'Features map to user needs not product capabilities', light: 'green', comment: '"One-command deploy" = I save time. "SOC 2 from day one" = I save headaches.', ref: 'One-command deploy' },
+        { text: 'Features map to user needs not product capabilities', light: 'green', comment: '"One-command deploy" = I save time. "SOC 2 from day one" = I save headaches.', ref: 'feature-deploy' },
       ],
       pricing: [
         { text: 'Clear tier differentiation', light: 'green', comment: 'Solo builders, growing teams, scale. Each tier has a persona.' },
       ],
       cta: [
-        { text: 'Testimonials reinforce the "4 minutes" claim', light: 'green', comment: '"We cut our deploy time from 45 minutes to 4" — specific, believable, compelling.', ref: 'We cut our deploy time from 45 minutes to 4' },
+        { text: 'Testimonials reinforce the "4 minutes" claim', light: 'green', comment: '"We cut our deploy time from 45 minutes to 4" — specific, believable, compelling.' },
       ],
     },
   },
@@ -673,13 +673,13 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Clearer language, some jargon remains.',
     sections: {
       hero: [
-        { text: '"Ship your first feature in 4 minutes" is clear', light: 'green', comment: 'I understand what "feature" and "4 minutes" mean.', ref: 'Ship your first feature in 4 minutes.' },
+        { text: '"Ship your first feature in 4 minutes" is clear', light: 'green', comment: 'I understand what "feature" and "4 minutes" mean.', ref: 'hero-headline' },
       ],
       features: [
-        { text: '"One-command deploy" is still technical', light: 'yellow', comment: 'What is a "deploy"? I need plainer English.', ref: 'One-command deploy' },
+        { text: '"One-command deploy" is still technical', light: 'yellow', comment: 'What is a "deploy"? I need plainer English.', ref: 'feature-deploy' },
       ],
       pricing: [
-        { text: '"SOC 2" and "SAML" are jargon', light: 'yellow', comment: 'I have no idea what these acronyms mean.', ref: 'SOC 2 from day one' },
+        { text: '"SOC 2" and "SAML" are jargon', light: 'yellow', comment: 'I have no idea what these acronyms mean.', ref: 'tier-scale' },
       ],
       cta: [
         { text: 'Testimonials use plain language', light: 'green', comment: '"We cut our deploy time" — I understand "cut time." Good.' },
@@ -694,7 +694,7 @@ export const exampleReviews: Record<string, Review> = {
     sections: {
       hero: [
         { text: 'Dark mode immediately grabs attention', light: 'green', comment: 'Finally a page that does not blind me.' },
-        { text: 'Value prop in 4 words: "Ship in 4 minutes"', light: 'green', comment: 'I am hooked before I even think about scrolling.', ref: 'Ship your first feature in 4 minutes.' },
+        { text: 'Value prop in 4 words: "Ship in 4 minutes"', light: 'green', comment: 'I am hooked before I even think about scrolling.', ref: 'hero-headline' },
       ],
       features: [
         { text: 'Feature cards are scannable', light: 'green', comment: 'Short titles, brief descriptions. Perfect for my attention span.' },
@@ -717,7 +717,7 @@ export const exampleReviews: Record<string, Review> = {
         { text: 'Monospace font signals developer tool', light: 'green', comment: 'I immediately know this is for people like me.' },
       ],
       features: [
-        { text: '"One-command deploy" speaks my language', light: 'green', comment: 'Show me the command. I want to type it right now.', ref: 'One-command deploy' },
+        { text: '"One-command deploy" speaks my language', light: 'green', comment: 'Show me the command. I want to type it right now.', ref: 'feature-deploy' },
       ],
       pricing: [
         { text: 'Still no keyboard navigation enhancements', light: 'red', comment: 'Tab order works but no shortcuts to jump between tiers.' },
@@ -734,10 +734,10 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Pricing visible, premium feel.',
     sections: {
       hero: [
-        { text: '"2,400+ teams" provides social proof', light: 'green', comment: 'Specific enough to be credible for a board presentation.', ref: '2,400+ teams' },
+        { text: '"2,400+ teams" provides social proof', light: 'green', comment: 'Specific enough to be credible for a board presentation.', ref: 'cta-headline' },
       ],
       features: [
-        { text: '"40ms cold start" is a concrete metric', light: 'green', comment: 'I can compare this to competitors. Data I can use.', ref: '40ms cold start' },
+        { text: '"40ms cold start" is a concrete metric', light: 'green', comment: 'I can compare this to competitors. Data I can use.', ref: 'feature-deploy' },
       ],
       pricing: [
         { text: 'Most Popular badge guides decision', light: 'green', comment: 'I know what most companies pick. That is my default.' },
@@ -794,7 +794,7 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Better hook, still too long.',
     sections: {
       hero: [
-        { text: '"4 minutes" is a specific, bold claim', light: 'green', comment: 'Finally a number I can challenge. That made me scroll down.', ref: '4 minutes' },
+        { text: '"4 minutes" is a specific, bold claim', light: 'green', comment: 'Finally a number I can challenge. That made me scroll down.', ref: 'hero-headline' },
       ],
       features: [
         { text: 'Three features is right but descriptions are too long', light: 'yellow', comment: 'One sentence per feature. Not two.' },
@@ -835,11 +835,11 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Trust signals, real-feeling quotes.',
     sections: {
       hero: [
-        { text: '"4.9/5 on G2" is verifiable social proof', light: 'green', comment: 'I can check this claim. That makes me trust it.', ref: '4.9/5 on G2' },
-        { text: '"2,400+ teams" with G2 backing', light: 'green', comment: 'Third-party validation is the strongest trust signal.', ref: '2,400+ teams' },
+        { text: '"4.9/5 on G2" is verifiable social proof', light: 'green', comment: 'I can check this claim. That makes me trust it.' },
+        { text: '"2,400+ teams" with G2 backing', light: 'green', comment: 'Third-party validation is the strongest trust signal.', ref: 'cta-headline' },
       ],
       features: [
-        { text: '"SOC 2 from day one" addresses security concerns', light: 'green', comment: 'As a skeptic, seeing compliance certifications matters.', ref: 'SOC 2 from day one' },
+        { text: '"SOC 2 from day one" addresses security concerns', light: 'green', comment: 'As a skeptic, seeing compliance certifications matters.', ref: 'tier-scale' },
       ],
       pricing: [
         { text: 'No money-back guarantee still missing', light: 'yellow', comment: 'I want a safety net before I commit my credit card.' },
@@ -876,7 +876,7 @@ export const exampleReviews: Record<string, Review> = {
     shortVerdict: 'Faster hero, still long page.',
     sections: {
       hero: [
-        { text: '"Ship in 4 minutes" is scannable', light: 'green', comment: 'I get the point in 3 seconds. That is my budget.', ref: 'Ship your first feature in 4 minutes.' },
+        { text: '"Ship in 4 minutes" is scannable', light: 'green', comment: 'I get the point in 3 seconds. That is my budget.', ref: 'hero-headline' },
       ],
       features: [
         { text: 'Feature titles are benefit-focused', light: 'green', comment: 'I understand what I get without reading descriptions.' },
@@ -899,7 +899,7 @@ export const exampleReviews: Record<string, Review> = {
         { text: 'Dark theme looks impressive on a projector', light: 'green', comment: 'Dark backgrounds show well on conference room screens.' },
       ],
       features: [
-        { text: 'Specific metrics ("40ms cold start") aid discussion', light: 'green', comment: 'My team can evaluate concrete claims, not vague promises.', ref: '40ms cold start' },
+        { text: 'Specific metrics ("40ms cold start") aid discussion', light: 'green', comment: 'My team can evaluate concrete claims, not vague promises.', ref: 'feature-deploy' },
       ],
       pricing: [
         { text: 'Clear tier structure for team decision', light: 'green', comment: '"For growing teams" helps the team self-identify.' },

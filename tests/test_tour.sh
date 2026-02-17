@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # ═══════════════════════════════════════════════════════════════
-# E2E Test Suite: Dual-Mode Tour System
+# E2E Test Suite: Dual-Mode Tour + Granular Ref Highlighting
 # ═══════════════════════════════════════════════════════════════
 # Tests guided review and live review tour modes:
 # button visibility, start/stop, navigation, mode switching,
-# keyboard nav, spotlight movement, and state restoration.
+# keyboard nav, spotlight movement, ref highlights, ARIA roles.
 #
 # Usage: ./tests/test_tour.sh [--port 5173]
 # ═══════════════════════════════════════════════════════════════
@@ -36,10 +36,10 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 1: Tour button visibility
+# TEST 1: Page structure and ARIA roles
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 1: Tour button visibility"
+log_info "TEST 1: Page structure and ARIA roles"
 
 if open_page "${BASE_URL}/#/example/v1"; then
   log_pass "Workspace page opened"
@@ -51,7 +51,48 @@ fi
 
 sleep 2  # Let React render + animations settle
 
-check_testid "tour-button" "Tour button present in top bar"
+check_testid "draft-frame" "Frame element present"
+check_testid "draft-topbar" "TopBar present"
+check_testid "draft-viewport" "Viewport present"
+check_testid "draft-rail" "Rail present"
+
+# Check ARIA roles on sections
+HERO_ROLE=$(browser_eval "document.querySelector('[data-section=\"hero\"]')?.getAttribute('role')")
+if [ "$HERO_ROLE" = "region" ]; then
+  log_pass "Hero section has role=region"
+else
+  log_fail "Hero section should have role=region" "Got: $HERO_ROLE"
+fi
+
+HERO_LABEL=$(browser_eval "document.querySelector('[data-section=\"hero\"]')?.getAttribute('aria-label')")
+if [ "$HERO_LABEL" = "Hero section" ]; then
+  log_pass "Hero section has aria-label"
+else
+  log_fail "Hero should have aria-label='Hero section'" "Got: $HERO_LABEL"
+fi
+
+# Check data-ref attributes exist
+HAS_HERO_REF=$(browser_eval "!!document.querySelector('[data-ref=\"hero-headline\"]')")
+if [ "$HAS_HERO_REF" = "true" ]; then
+  log_pass "data-ref='hero-headline' present"
+else
+  log_fail "data-ref='hero-headline' not found"
+fi
+
+HAS_CTA_REF=$(browser_eval "!!document.querySelector('[data-ref=\"cta-button\"]')")
+if [ "$HAS_CTA_REF" = "true" ]; then
+  log_pass "data-ref='cta-button' present"
+else
+  log_fail "data-ref='cta-button' not found"
+fi
+
+# ══════════════════════════════════════════════════════════════
+# TEST 2: Tour button visibility and initial state
+# ══════════════════════════════════════════════════════════════
+echo ""
+log_info "TEST 2: Tour button visibility"
+
+check_testid "draft-tour-btn" "Tour button present in top bar"
 
 # Verify tour is not active initially
 TOUR_ACTIVE=$(browser_eval "window.slapState && window.slapState.tourActive")
@@ -61,13 +102,21 @@ else
   log_fail "Tour should not be active initially" "Got: $TOUR_ACTIVE"
 fi
 
+# Verify wrapper mode is idle (data-mode is on draft-workspace)
+FRAME_MODE=$(browser_eval "document.querySelector('[data-testid=\"draft-workspace\"]')?.getAttribute('data-mode')")
+if [ "$FRAME_MODE" = "idle" ]; then
+  log_pass "Frame starts in idle mode"
+else
+  log_fail "Frame should start in idle mode" "Got: $FRAME_MODE"
+fi
+
 # ══════════════════════════════════════════════════════════════
-# TEST 2: Start guided tour
+# TEST 3: Start guided tour
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 2: Start guided tour"
+log_info "TEST 3: Start guided tour"
 
-click_testid "tour-button"
+click_testid "draft-tour-btn"
 sleep 1
 
 TOUR_ACTIVE=$(browser_eval "window.slapState && window.slapState.tourActive")
@@ -84,18 +133,15 @@ else
   log_fail "Tour should start in guided mode" "Got: $TOUR_MODE"
 fi
 
-# Verify chin is rendered
-check_testid "tour-chin" "Tour chin rendered"
-
-# Verify chin data attribute
-CHIN_MODE=$(browser_eval "document.body.dataset.tourChin")
-if [ "$CHIN_MODE" = "guided" ]; then
-  log_pass "Body has data-tour-chin=guided"
+# Verify wrapper mode switched to guided (data-mode is on draft-workspace)
+FRAME_MODE=$(browser_eval "document.querySelector('[data-testid=\"draft-workspace\"]')?.getAttribute('data-mode')")
+if [ "$FRAME_MODE" = "guided" ]; then
+  log_pass "Frame mode is guided"
 else
-  log_fail "Body should have data-tour-chin=guided" "Got: $CHIN_MODE"
+  log_fail "Frame should be in guided mode" "Got: $FRAME_MODE"
 fi
 
-# Verify step counter starts at 1
+# Verify step counter starts at 0
 TOUR_STEP=$(browser_eval "window.slapState && window.slapState.tourStep")
 if [ "$TOUR_STEP" = "0" ]; then
   log_pass "Tour starts at step index 0"
@@ -103,7 +149,7 @@ else
   log_fail "Tour should start at step 0" "Got: $TOUR_STEP"
 fi
 
-# Verify a highlight is active (from the first step)
+# Verify a highlight is active
 HIGHLIGHTED=$(browser_eval "window.slapState && window.slapState.highlightedSection")
 if [ -n "$HIGHLIGHTED" ] && [ "$HIGHLIGHTED" != "null" ]; then
   log_pass "Section is highlighted: $HIGHLIGHTED"
@@ -111,16 +157,49 @@ else
   log_fail "A section should be highlighted during tour"
 fi
 
+# Verify slapState has new fields
+CURRENT_FINDING=$(browser_eval "window.slapState.currentFinding")
+if [ -n "$CURRENT_FINDING" ] && [ "$CURRENT_FINDING" != "null" ]; then
+  log_pass "slapState.currentFinding populated"
+else
+  log_fail "slapState.currentFinding should be set"
+fi
+
+CURRENT_REF=$(browser_eval "window.slapState.currentRef")
+if [ -n "$CURRENT_REF" ] && [ "$CURRENT_REF" != "null" ]; then
+  log_pass "slapState.currentRef populated: $CURRENT_REF"
+else
+  log_skip "slapState.currentRef may be null (not all findings have refs)"
+fi
+
 # ══════════════════════════════════════════════════════════════
-# TEST 3: Step navigation (next/prev)
+# TEST 4: Ref highlight (element-level)
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 3: Step navigation"
+log_info "TEST 4: Ref highlight on elements"
+
+# Check if slap-ref-element class is applied to any element
+HAS_REF_HL=$(browser_eval "!!document.querySelector('.slap-ref-element')")
+if [ "$HAS_REF_HL" = "true" ]; then
+  log_pass "slap-ref-element class applied to an element"
+  # Check which element
+  REF_TAG=$(browser_eval "document.querySelector('.slap-ref-element')?.tagName")
+  REF_ID=$(browser_eval "document.querySelector('.slap-ref-element')?.getAttribute('data-ref')")
+  log_info "  Highlighted: <$REF_TAG data-ref=\"$REF_ID\">"
+else
+  log_skip "No slap-ref-element found (first finding may not have a ref)"
+fi
+
+# ══════════════════════════════════════════════════════════════
+# TEST 5: Step navigation (next/prev)
+# ══════════════════════════════════════════════════════════════
+echo ""
+log_info "TEST 5: Step navigation"
 
 INITIAL_STEP=$(browser_eval "window.slapState.tourStep")
 
 # Click next
-click_testid "tour-next"
+click_testid "draft-next"
 sleep 0.5
 
 AFTER_NEXT=$(browser_eval "window.slapState.tourStep")
@@ -131,7 +210,7 @@ else
 fi
 
 # Click prev
-click_testid "tour-prev"
+click_testid "draft-prev"
 sleep 0.5
 
 AFTER_PREV=$(browser_eval "window.slapState.tourStep")
@@ -142,19 +221,19 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 4: Spotlight movement
+# TEST 6: Spotlight movement
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 4: Spotlight movement"
+log_info "TEST 6: Spotlight movement"
 
 SECTION_BEFORE=$(browser_eval "window.slapState.highlightedSection")
 
 # Advance multiple steps to likely change section
-click_testid "tour-next"
+click_testid "draft-next"
 sleep 0.3
-click_testid "tour-next"
+click_testid "draft-next"
 sleep 0.3
-click_testid "tour-next"
+click_testid "draft-next"
 sleep 0.5
 
 SECTION_AFTER=$(browser_eval "window.slapState.highlightedSection")
@@ -166,44 +245,31 @@ else
   log_fail "Steps should have advanced" "Got step: $STEP_AFTER"
 fi
 
-# Section may or may not have changed depending on findings per section
-# Just verify highlight is still active
+# Verify highlight is still active
 if [ -n "$SECTION_AFTER" ] && [ "$SECTION_AFTER" != "null" ]; then
   log_pass "Section highlight active: $SECTION_AFTER"
 else
   log_fail "Section highlight should be active during tour"
 fi
 
+# Verify section-spotlight class is on exactly one section
+SPOT_COUNT=$(browser_eval "document.querySelectorAll('.section-spotlight').length")
+if [ "$SPOT_COUNT" = "1" ]; then
+  log_pass "Exactly one section has spotlight class"
+else
+  log_fail "Expected 1 spotlighted section" "Got: $SPOT_COUNT"
+fi
+
 # ══════════════════════════════════════════════════════════════
-# TEST 5: Mode switching (guided → live)
+# TEST 7: Mode switching (guided → live)
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 5: Mode switching"
+log_info "TEST 7: Mode switching"
 
 STEP_BEFORE_SWITCH=$(browser_eval "window.slapState.tourStep")
 
-# Open mode dropdown and switch to live
-click_testid "tour-mode-dropdown"
-sleep 0.3
-
-# Click "Live" in dropdown — evaluate JS to find and click it
-browser_eval "
-  (function() {
-    var btns = document.querySelectorAll('[data-testid=\"tour-mode-dropdown\"] ~ div button');
-    if (!btns.length) {
-      // Try finding buttons inside the dropdown wrapper
-      var wrapper = document.querySelector('[data-testid=\"tour-mode-dropdown\"]').parentElement;
-      btns = wrapper.querySelectorAll('div button');
-    }
-    for (var i = 0; i < btns.length; i++) {
-      if (btns[i].textContent.trim() === 'Live') {
-        btns[i].click();
-        return 'clicked';
-      }
-    }
-    return 'not_found';
-  })()
-"
+# Click live mode toggle directly
+click_testid "draft-mode-live"
 sleep 0.5
 
 TOUR_MODE=$(browser_eval "window.slapState.tourMode")
@@ -221,12 +287,12 @@ else
   log_fail "Step should be preserved" "Was $STEP_BEFORE_SWITCH, now $STEP_AFTER_SWITCH"
 fi
 
-# Check chin data attribute updated
-CHIN_MODE=$(browser_eval "document.body.dataset.tourChin")
-if [ "$CHIN_MODE" = "live" ]; then
-  log_pass "Body has data-tour-chin=live"
+# Check wrapper data-mode updated (data-mode is on draft-workspace)
+FRAME_MODE=$(browser_eval "document.querySelector('[data-testid=\"draft-workspace\"]')?.getAttribute('data-mode')")
+if [ "$FRAME_MODE" = "live" ]; then
+  log_pass "Frame mode is live"
 else
-  log_fail "Body should have data-tour-chin=live" "Got: $CHIN_MODE"
+  log_fail "Frame should be in live mode" "Got: $FRAME_MODE"
 fi
 
 # Tour should still be active
@@ -237,11 +303,22 @@ else
   log_fail "Tour should remain active after mode switch"
 fi
 
+# Switch back to guided
+click_testid "draft-mode-guided"
+sleep 0.5
+
+TOUR_MODE=$(browser_eval "window.slapState.tourMode")
+if [ "$TOUR_MODE" = "guided" ]; then
+  log_pass "Switched back to guided mode"
+else
+  log_fail "Should be back in guided mode" "Got: $TOUR_MODE"
+fi
+
 # ══════════════════════════════════════════════════════════════
-# TEST 6: Keyboard navigation
+# TEST 8: Keyboard navigation
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 6: Keyboard navigation"
+log_info "TEST 8: Keyboard navigation"
 
 STEP_BEFORE_KEY=$(browser_eval "window.slapState.tourStep")
 
@@ -268,10 +345,10 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 7: Tour stop (Escape key)
+# TEST 9: Tour stop (Escape key)
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 7: Tour stop restores normal interaction"
+log_info "TEST 9: Tour stop via Escape"
 
 # Simulate Escape keydown
 browser_eval "document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))"
@@ -284,33 +361,38 @@ else
   log_fail "Escape should stop tour" "tourActive: $TOUR_ACTIVE"
 fi
 
-# Chin data attribute should be removed
-CHIN_ATTR=$(browser_eval "document.body.dataset.tourChin || 'undefined'")
-if [ "$CHIN_ATTR" = "undefined" ]; then
-  log_pass "data-tour-chin removed from body"
+# Wrapper should return to idle mode (data-mode is on draft-workspace)
+FRAME_MODE=$(browser_eval "document.querySelector('[data-testid=\"draft-workspace\"]')?.getAttribute('data-mode')")
+if [ "$FRAME_MODE" = "idle" ]; then
+  log_pass "Frame returns to idle mode"
 else
-  log_fail "data-tour-chin should be removed" "Got: $CHIN_ATTR"
+  log_fail "Frame should return to idle" "Got: $FRAME_MODE"
 fi
 
-# Tour chin should not be rendered
-CHIN_EXISTS=$(browser_eval "!!document.querySelector('[data-testid=\"tour-chin\"]')")
-if [ "$CHIN_EXISTS" = "false" ]; then
-  log_pass "Tour chin removed from DOM"
+# Ref highlights should be cleared
+HAS_REF_HL=$(browser_eval "!!document.querySelector('.slap-ref-element')")
+if [ "$HAS_REF_HL" = "false" ]; then
+  log_pass "Ref highlights cleared after stop"
 else
-  log_fail "Tour chin should be removed when tour stops"
+  log_fail "Ref highlights should be cleared"
 fi
 
-# Bubble rail should be interactive again (bubbles clickable)
-check_testid "bubble-rail" "Bubble rail still present"
+# Section spotlight should be cleared
+SPOT_COUNT=$(browser_eval "document.querySelectorAll('.section-spotlight').length")
+if [ "$SPOT_COUNT" = "0" ]; then
+  log_pass "Section spotlight cleared after stop"
+else
+  log_fail "Section spotlight should be cleared" "Got: $SPOT_COUNT"
+fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 8: Tour stop via button
+# TEST 10: Tour stop via STOP button
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 8: Tour stop via STOP button"
+log_info "TEST 10: Tour stop via STOP button"
 
 # Start tour again
-click_testid "tour-button"
+click_testid "draft-tour-btn"
 sleep 1
 
 TOUR_ACTIVE=$(browser_eval "window.slapState.tourActive")
@@ -320,8 +402,8 @@ else
   log_fail "Tour should restart" "tourActive: $TOUR_ACTIVE"
 fi
 
-# Click STOP button
-click_testid "tour-button"
+# Click STOP button (visible when tour is active)
+click_testid "draft-tour-stop"
 sleep 0.5
 
 TOUR_ACTIVE=$(browser_eval "window.slapState.tourActive")
@@ -329,6 +411,43 @@ if [ "$TOUR_ACTIVE" = "false" ]; then
   log_pass "STOP button stops tour"
 else
   log_fail "STOP button should stop tour" "tourActive: $TOUR_ACTIVE"
+fi
+
+# ══════════════════════════════════════════════════════════════
+# TEST 11: V2 version data-ref attributes
+# ══════════════════════════════════════════════════════════════
+echo ""
+log_info "TEST 11: V2 version data-ref attributes"
+
+if open_page "${BASE_URL}/#/example/v2"; then
+  log_pass "V2 workspace opened"
+else
+  log_fail "Failed to open V2 workspace"
+  print_summary
+  exit 0
+fi
+
+sleep 2
+
+HAS_V2_DEPLOY=$(browser_eval "!!document.querySelector('[data-ref=\"feature-deploy\"]')")
+if [ "$HAS_V2_DEPLOY" = "true" ]; then
+  log_pass "V2 has data-ref='feature-deploy'"
+else
+  log_fail "V2 should have data-ref='feature-deploy'"
+fi
+
+HAS_V2_TEAM=$(browser_eval "!!document.querySelector('[data-ref=\"tier-team\"]')")
+if [ "$HAS_V2_TEAM" = "true" ]; then
+  log_pass "V2 has data-ref='tier-team'"
+else
+  log_fail "V2 should have data-ref='tier-team'"
+fi
+
+V2_HERO_ROLE=$(browser_eval "document.querySelector('[data-section=\"hero\"]')?.getAttribute('role')")
+if [ "$V2_HERO_ROLE" = "region" ]; then
+  log_pass "V2 hero has role=region"
+else
+  log_fail "V2 hero should have role=region" "Got: $V2_HERO_ROLE"
 fi
 
 # ══════════════════════════════════════════════════════════════

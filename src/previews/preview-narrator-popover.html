@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preview: Tour Overlay (Floating Text)</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── Registered color stops for synchronized bezel transition ── */
+  @property --bezel-border { syntax: '<color>'; inherits: true; initial-value: #B8BFC8; }
+  @property --chin-top { syntax: '<color>'; inherits: true; initial-value: #A0A8B2; }
+  @property --chin-mid { syntax: '<color>'; inherits: true; initial-value: #B8BFC8; }
+  @property --chin-hi { syntax: '<color>'; inherits: true; initial-value: #CDD2D9; }
+
+  body {
+    margin: 0;
+    background: #080810;
+    font-family: 'Courier New', monospace;
+    color: #F5F0E1;
+    --bezel-border: #B8BFC8;
+    --chin-top: #A0A8B2;
+    --chin-mid: #B8BFC8;
+    --chin-hi: #CDD2D9;
+    transition:
+      --bezel-border 800ms ease-in-out,
+      --chin-top 800ms ease-in-out,
+      --chin-mid 800ms ease-in-out,
+      --chin-hi 800ms ease-in-out;
+  }
+  body[data-content-theme="light"] {
+    --bezel-border: #443862;
+    --chin-top: #342850;
+    --chin-mid: #443862;
+    --chin-hi: #554A74;
+  }
+
+  /* iMac bezel — top + sides */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    border: 10px solid var(--bezel-border);
+    border-bottom: none;
+    pointer-events: none;
+    z-index: 99999;
+    border-radius: 12px 12px 0 0;
+    box-shadow:
+      inset 0 0 40px rgba(0,0,0,0.10),
+      inset 0 2px 6px rgba(0,0,0,0.08),
+      0 0 0 1px rgba(0,0,0,0.06);
+  }
+  /* iMac bezel — fixed chin */
+  body::before {
+    content: '';
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 88px;
+    background: linear-gradient(180deg, var(--chin-top) 0%, var(--chin-mid) 30%, var(--chin-hi) 60%, var(--chin-mid) 100%);
+    border-left: 10px solid var(--bezel-border);
+    border-right: 10px solid var(--bezel-border);
+    border-bottom: 10px solid var(--bezel-border);
+    border-radius: 0 0 14px 14px;
+    pointer-events: none;
+    z-index: 99998;
+    box-shadow:
+      inset 0 2px 0 var(--chin-hi),
+      inset 0 4px 12px rgba(0,0,0,0.08),
+      0 -1px 0 rgba(0,0,0,0.06),
+      0 0 0 1px rgba(0,0,0,0.04);
+  }
+
+  /* ── Workspace wrapper ── */
+  .workspace {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 32px 24px 100px 24px;
+  }
+
+  /* ── Stage ── */
+  .stage {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+  }
+
+  /* ── Frame ── */
+  .frame {
+    position: relative;
+    width: 1020px;
+    max-width: 100%;
+    height: 600px;
+    background: #0D0D1A;
+    border: 8px solid #443862;
+    border-radius: 12px 12px 0 0;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(255,208,0,0.08),
+      0 20px 80px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.03);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  /* ── TopBar ── */
+  .topbar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 16px;
+    background: #1A1A2E;
+    border-bottom: 1px solid rgba(255,208,0,0.12);
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .topbar-back {
+    width: 26px; height: 26px;
+    border-radius: 5px;
+    border: 1px solid rgba(245,240,225,0.12);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(245,240,225,0.5);
+    font-size: 0.7rem; font-family: inherit;
+    cursor: pointer; background: none;
+  }
+  .topbar-project { color: #FFD000; }
+  .topbar-pill {
+    font-family: inherit; font-size: 0.55rem; font-weight: 700;
+    padding: 3px 10px; border-radius: 4px;
+    border: 1px solid rgba(245,240,225,0.12);
+    color: rgba(245,240,225,0.5);
+    cursor: pointer; background: none;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .topbar-pill.active {
+    background: rgba(255,208,0,0.1);
+    border-color: #FFD000; color: #FFD000;
+  }
+  .topbar-spacer { flex: 1; }
+  .topbar-mode {
+    font-family: inherit; font-size: 0.45rem; font-weight: 700;
+    padding: 3px 8px; border-radius: 3px;
+    border: 1px solid rgba(245,240,225,0.12);
+    background: none; color: rgba(245,240,225,0.4);
+    cursor: pointer; letter-spacing: 0.06em;
+    transition: all 200ms;
+  }
+  .topbar-mode:hover { border-color: #FFD000; color: #FFD000; }
+  .topbar-mode.active { background: #FFD000; border-color: #FFD000; color: #0D0D1A; }
+  .topbar-tour {
+    font-family: inherit; font-size: 0.55rem; font-weight: 700;
+    padding: 4px 14px; border-radius: 5px;
+    border: 1px solid #FFD000;
+    background: rgba(255,208,0,0.08);
+    color: #FFD000; cursor: pointer;
+    letter-spacing: 0.06em; transition: all 200ms;
+  }
+  .topbar-tour:hover { background: rgba(255,208,0,0.15); }
+  .topbar-tour.stop { border-color: #FF6B6B; background: rgba(255,107,107,0.1); color: #FF6B6B; }
+
+  /* ── Viewport ── */
+  .viewport {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(245,240,225,0.1) transparent;
+  }
+  .viewport::-webkit-scrollbar { width: 4px; }
+  .viewport::-webkit-scrollbar-thumb { background: rgba(245,240,225,0.1); border-radius: 2px; }
+
+  .mock-section {
+    padding: 28px; margin-bottom: 16px; border-radius: 8px;
+    border: 1px solid rgba(245,240,225,0.06);
+    background: rgba(245,240,225,0.015);
+    transition: box-shadow 400ms, border-color 400ms, opacity 300ms, filter 300ms;
+  }
+  .mock-section h3 {
+    font-size: 0.5rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(245,240,225,0.3);
+    margin-bottom: 14px;
+  }
+  .mock-placeholder {
+    height: 10px; background: rgba(245,240,225,0.05);
+    border-radius: 3px; margin-bottom: 8px;
+  }
+  .mock-placeholder:last-child { width: 60%; }
+
+  .mock-section.spotlight {
+    border-color: rgba(255,208,0,0.4);
+    box-shadow: 0 0 20px rgba(255,208,0,0.08), inset 0 0 30px rgba(255,208,0,0.03);
+  }
+  .mock-section.spotlight h3 { color: #FFD000; }
+
+  body[data-mode="guided"] .mock-section:not(.spotlight) {
+    opacity: 0.15; filter: brightness(0.4); pointer-events: none;
+  }
+
+  /* ── External Rail ── */
+  .external-rail {
+    width: 64px;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0 10px; padding-top: 44px; gap: 14px;
+    flex-shrink: 0; z-index: 30;
+  }
+  .rail-bubble {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; cursor: pointer;
+    transition: all 200ms; background: #0D0D1A; overflow: hidden;
+  }
+  .rail-bubble:hover { transform: scale(1.08); }
+  .rail-bubble.active { box-shadow: 0 0 12px currentColor; }
+  .rail-label {
+    font-size: 0.4rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(245,240,225,0.2);
+    writing-mode: vertical-lr; margin-top: 12px;
+  }
+
+  /* ══════════════════════════════════════════════════════════ */
+  /* TOUR OVERLAY — floating text, centered above the chin     */
+  /* No background, no border. Just text.                      */
+  /* ══════════════════════════════════════════════════════════ */
+
+  .tour-overlay {
+    --tour-ease-enter: cubic-bezier(0.175, 0.885, 0.32, 1.05);
+    --tour-ease-exit: cubic-bezier(0.55, 0, 1, 0.45);
+    --tour-ease-content: cubic-bezier(0.16, 1, 0.3, 1);
+
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99997; /* below chin (99998) and bezel (99999) */
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    pointer-events: none;
+
+    /* Entrance */
+    opacity: 0;
+    transition:
+      opacity 300ms var(--tour-ease-enter);
+  }
+  .tour-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .tour-overlay.exiting {
+    opacity: 0;
+    transition: opacity 200ms var(--tour-ease-exit);
+    pointer-events: none;
+  }
+
+  /* ── Meta row: avatar + reviewer + section + counter + nav ── */
+  .tour-meta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 200ms ease-out, transform 250ms var(--tour-ease-content);
+  }
+  .tour-overlay.visible .tour-meta {
+    opacity: 1; transform: translateY(0);
+    transition-delay: 80ms;
+  }
+
+  .tour-avatar {
+    width: 24px; height: 24px; min-width: 24px;
+    border-radius: 50%; border: 2px solid;
+    overflow: hidden; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem;
+  }
+  .tour-reviewer {
+    font-size: 0.6rem; font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .tour-dash {
+    color: rgba(245,240,225,0.2);
+    font-size: 0.55rem;
+  }
+  .tour-section {
+    font-size: 0.55rem; font-weight: 700;
+    color: rgba(245,240,225,0.4);
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .tour-counter {
+    font-size: 0.55rem; font-weight: 700;
+    color: rgba(245,240,225,0.3);
+    letter-spacing: 0.04em;
+  }
+  .tour-nav {
+    font-family: inherit; font-size: 0.55rem; font-weight: 800;
+    width: 24px; height: 24px;
+    border: 1px solid rgba(245,240,225,0.15);
+    border-radius: 5px;
+    background: transparent;
+    color: rgba(245,240,225,0.4);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 120ms;
+    flex-shrink: 0;
+  }
+  .tour-nav:hover { border-color: #FFD000; color: #FFD000; }
+  .tour-nav:disabled { opacity: 0.2; cursor: default; }
+
+  /* ── Finding text: the hero element ── */
+  .tour-finding {
+    font-size: 1rem;
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(245, 240, 225, 0.85);
+    line-height: 1.5;
+    max-width: 640px;
+    margin: 0 auto 10px auto;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 200ms ease-out, transform 250ms var(--tour-ease-content);
+  }
+  .tour-overlay.visible .tour-finding {
+    opacity: 1; transform: translateY(0);
+    transition-delay: 140ms;
+  }
+
+  .severity-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+    box-shadow: 0 0 6px currentColor;
+  }
+
+  /* ── Progress row: bar + breadcrumbs ── */
+  .tour-progress-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 200ms ease-out, transform 250ms var(--tour-ease-content);
+  }
+  .tour-overlay.visible .tour-progress-row {
+    opacity: 1; transform: translateY(0);
+    transition-delay: 200ms;
+  }
+
+  .tour-progress { font-size: 0.55rem; letter-spacing: 1px; }
+  .bar-filled { color: #FFD000; }
+  .bar-empty { color: rgba(245,240,225,0.12); }
+
+  .tour-breadcrumb {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 0.5rem; letter-spacing: 0.06em;
+  }
+  .crumb {
+    color: rgba(245,240,225,0.25); cursor: pointer;
+    padding: 2px 5px; border-radius: 3px;
+    transition: color 200ms, background 200ms;
+  }
+  .crumb:hover { color: rgba(245,240,225,0.5); }
+  .crumb.done { color: rgba(107,203,119,0.5); }
+  .crumb.active { color: #FFD000; font-weight: 700; background: rgba(255,208,0,0.06); }
+  .crumb-sep { color: rgba(245,240,225,0.1); font-size: 0.4rem; }
+
+  /* ── Live mode: progress track replaces breadcrumbs ── */
+  .tour-live-row {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 200ms ease-out, transform 250ms var(--tour-ease-content);
+  }
+  body[data-mode="live"] .tour-live-row { display: flex; }
+  body[data-mode="live"] .tour-progress-row { display: none; }
+  .tour-overlay.visible .tour-live-row {
+    opacity: 1; transform: translateY(0);
+    transition-delay: 200ms;
+  }
+  .live-track {
+    width: 160px; height: 3px;
+    background: rgba(245,240,225,0.08);
+    border-radius: 2px; overflow: hidden;
+  }
+  .live-fill {
+    height: 100%; background: #FFD000;
+    border-radius: 2px; transition: width 400ms ease;
+    box-shadow: 0 0 8px rgba(255,208,0,0.3);
+  }
+  .live-step {
+    font-size: 0.5rem; font-weight: 700;
+    color: rgba(245,240,225,0.35);
+  }
+
+  /* Step crossfade */
+  @keyframes stepOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-4px); }
+  }
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .step-exit { animation: stepOut 150ms cubic-bezier(0.4, 0, 1, 1) forwards; }
+  .step-enter { animation: stepIn 200ms cubic-bezier(0, 0, 0.2, 1) 80ms both; }
+
+  /* ── CRT Chin Overlay (hand + power) ── */
+  .crt-overlay {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 28px);
+    max-width: 1020px;
+    height: 60px;
+    z-index: 99998;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .crt-overlay > * { pointer-events: auto; }
+
+  .chin-hand {
+    font-size: 1.4rem;
+    filter: grayscale(1) brightness(0.25);
+    user-select: none; cursor: default;
+    transition: filter 300ms, transform 300ms, opacity 300ms;
+  }
+  .chin-hand:hover { filter: grayscale(0.5) brightness(0.4); transform: scale(1.08); }
+
+  .power-btn {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(245,240,225,0.25);
+    background: rgba(245,240,225,0.04);
+    cursor: pointer;
+    position: absolute; right: 20px; top: 50%;
+    transform: translateY(-50%);
+    transition: border-color 300ms, box-shadow 300ms;
+  }
+  .power-btn::before {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px; height: 6px;
+    border: 1.5px solid rgba(245,240,225,0.5);
+    border-radius: 50%; border-top-color: transparent;
+  }
+  .power-btn::after {
+    content: '';
+    position: absolute;
+    width: 1.5px; height: 5px;
+    background: rgba(245,240,225,0.5);
+    top: 2px; left: 50%;
+    transform: translateX(-50%); border-radius: 1px;
+  }
+  .power-btn[data-state="dark"] {
+    border-color: rgba(255,176,0,0.6);
+    box-shadow: 0 0 6px rgba(255,176,0,0.3);
+  }
+  .power-btn[data-state="light"] {
+    border-color: rgba(255,255,255,0.7);
+    box-shadow: 0 0 6px rgba(255,255,255,0.3);
+  }
+
+  /* ── Controls ── */
+  .controls {
+    position: fixed; top: 20px; right: 24px;
+    z-index: 100000; display: flex; gap: 6px;
+  }
+  .ctrl-btn {
+    font-family: 'Courier New', monospace;
+    font-size: 0.55rem; font-weight: 700;
+    letter-spacing: 0.08em; padding: 6px 12px;
+    border: 1px solid rgba(245,240,225,0.2);
+    border-radius: 5px;
+    background: rgba(17,16,32,0.9);
+    color: rgba(245,240,225,0.5);
+    cursor: pointer; transition: all 150ms;
+  }
+  .ctrl-btn:hover { border-color: #FFD000; color: #FFD000; }
+  .ctrl-btn.active { background: #FFD000; color: #0D0D1A; border-color: #FFD000; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      transition-delay: 0ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Controls -->
+<div class="controls">
+  <button class="ctrl-btn active" onclick="setMode('idle')">IDLE</button>
+  <button class="ctrl-btn" onclick="setMode('guided')">GUIDED</button>
+  <button class="ctrl-btn" onclick="setMode('live')">LIVE</button>
+  <button class="ctrl-btn" onclick="toggleTheme()" id="themeBtn">THEME: DARK</button>
+</div>
+
+<!-- Workspace -->
+<div class="workspace" id="workspace">
+  <div class="stage">
+
+    <!-- Frame -->
+    <div class="frame">
+      <div class="topbar">
+        <button class="topbar-back">&larr;</button>
+        <span class="topbar-project">EXAMPLE</span>
+        <span class="topbar-pill active">V1 <span style="font-weight:800">5.8</span></span>
+        <span class="topbar-pill">V2</span>
+        <div class="topbar-spacer"></div>
+        <button class="topbar-mode" id="modeGuided" onclick="setMode('guided')">GUIDED</button>
+        <button class="topbar-mode" id="modeLive" onclick="setMode('live')">LIVE</button>
+        <button class="topbar-tour" id="tourBtn">&#9654; TOUR</button>
+      </div>
+      <div class="viewport" id="viewport">
+        <div class="mock-section" id="sec-hero" data-section="hero">
+          <h3>HERO</h3>
+          <div class="mock-placeholder" style="width:80%"></div>
+          <div class="mock-placeholder" style="width:55%"></div>
+          <div class="mock-placeholder" style="width:40%"></div>
+        </div>
+        <div class="mock-section" id="sec-features" data-section="features">
+          <h3>FEATURES</h3>
+          <div class="mock-placeholder" style="width:90%"></div>
+          <div class="mock-placeholder" style="width:70%"></div>
+          <div class="mock-placeholder" style="width:60%"></div>
+        </div>
+        <div class="mock-section" id="sec-pricing" data-section="pricing">
+          <h3>PRICING</h3>
+          <div class="mock-placeholder" style="width:75%"></div>
+          <div class="mock-placeholder" style="width:85%"></div>
+          <div class="mock-placeholder" style="width:45%"></div>
+        </div>
+        <div class="mock-section" id="sec-cta" data-section="cta">
+          <h3>CTA</h3>
+          <div class="mock-placeholder" style="width:65%"></div>
+          <div class="mock-placeholder" style="width:50%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- External Rail -->
+    <div class="external-rail">
+      <div class="rail-bubble active" style="color:#FF6B6B; border-color:#FF6B6B;" title="Marketing">&#x1F3AF;</div>
+      <div class="rail-bubble" style="color:#4ECDC4; border-color:#4ECDC4;" title="UX">&#x1F3A8;</div>
+      <div class="rail-bubble" style="color:#FFD93D; border-color:#FFD93D;" title="Product">&#x1F4E6;</div>
+      <div class="rail-bubble" style="color:#95E1D3; border-color:#95E1D3;" title="Technical">&#x1F527;</div>
+      <div class="rail-bubble" style="color:#F38181; border-color:#F38181;" title="Design">&#x2728;</div>
+      <span class="rail-label">Reviewers</span>
+    </div>
+
+  </div>
+
+  <!-- CRT Chin Overlay -->
+  <div class="crt-overlay">
+    <span class="chin-hand" id="chinHand">&#x270B;</span>
+    <button class="power-btn" data-state="dark" id="powerBtn" onclick="toggleTheme()"></button>
+  </div>
+</div>
+
+<!-- ═══ TOUR OVERLAY — floating text, fixed above chin, centered ═══ -->
+<div class="tour-overlay" id="overlay">
+
+  <!-- Meta: reviewer + section + nav -->
+  <div class="tour-meta">
+    <div class="tour-avatar" id="tour-avatar" style="border-color:#FF6B6B;">&#x1F3AF;</div>
+    <span class="tour-reviewer" id="tour-reviewer" style="color:#FF6B6B;">Marketing</span>
+    <span class="tour-dash">&mdash;</span>
+    <span class="tour-section" id="tour-section">HERO</span>
+    <span class="tour-counter" id="tour-counter">[1/8]</span>
+    <button class="tour-nav" id="btnPrev" onclick="prevStep()">&larr;</button>
+    <button class="tour-nav" id="btnNext" onclick="nextStep()">&rarr;</button>
+  </div>
+
+  <!-- Finding: the hero text -->
+  <div class="tour-finding" id="tour-finding">
+    <span class="severity-dot" style="background:#FFD93D; color:#FFD93D;"></span>
+    &ldquo;Headline uses generic AI-generated phrasing &mdash; lacks brand voice and specificity&rdquo;
+  </div>
+
+  <!-- Guided: progress + breadcrumbs -->
+  <div class="tour-progress-row">
+    <div class="tour-progress" id="tour-bar">
+      <span class="bar-filled">&#9608;&#9608;</span><span class="bar-empty">&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;&#9617;</span>
+    </div>
+    <div class="tour-breadcrumb" id="tour-crumbs">
+      <span class="crumb active">HERO</span>
+      <span class="crumb-sep">&gt;</span>
+      <span class="crumb">FEAT</span>
+      <span class="crumb-sep">&gt;</span>
+      <span class="crumb">PRICE</span>
+      <span class="crumb-sep">&gt;</span>
+      <span class="crumb">CTA</span>
+    </div>
+  </div>
+
+  <!-- Live: track + step -->
+  <div class="tour-live-row">
+    <div class="live-track"><div class="live-fill" id="liveFill" style="width:12.5%"></div></div>
+    <span class="live-step" id="liveStep">1/8</span>
+  </div>
+
+</div>
+
+<script>
+  const steps = [
+    { sec: 'hero', label: 'HERO', finding: 'Headline uses generic AI-generated phrasing \u2014 lacks brand voice and specificity', light: '#FFD93D' },
+    { sec: 'hero', label: 'HERO', finding: 'CTA button text \u201cGet Started\u201d is the most overused phrase on SaaS landing pages', light: '#FF6B6B' },
+    { sec: 'features', label: 'FEATURES', finding: 'Feature descriptions are vague and could apply to any competitor', light: '#FFD93D' },
+    { sec: 'features', label: 'FEATURES', finding: 'No social proof or quantitative claims \u2014 feels unsubstantiated', light: '#FF6B6B' },
+    { sec: 'pricing', label: 'PRICING', finding: 'Pricing tiers lack anchor pricing \u2014 show premium tier first', light: '#FFD93D' },
+    { sec: 'pricing', label: 'PRICING', finding: 'No annual discount displayed \u2014 missing conversion lever', light: '#6BCB77' },
+    { sec: 'cta', label: 'CTA', finding: 'Final CTA repeats hero without adding urgency or new information', light: '#FFD93D' },
+    { sec: 'cta', label: 'CTA', finding: 'No testimonial or trust signal near the conversion point', light: '#FF6B6B' },
+  ];
+  const sections = ['hero', 'features', 'pricing', 'cta'];
+  const sectionLabels = { hero: 'HERO', features: 'FEAT', pricing: 'PRICE', cta: 'CTA' };
+  let currentStep = 0;
+  let currentMode = 'idle';
+  let stepAnimating = false;
+
+  function setMode(mode) {
+    const prev = currentMode;
+    currentMode = mode;
+    document.body.dataset.mode = mode;
+
+    document.querySelectorAll('.ctrl-btn').forEach((b, i) => {
+      b.classList.toggle('active', i === ['idle','guided','live'].indexOf(mode));
+    });
+    document.getElementById('modeGuided').classList.toggle('active', mode === 'guided');
+    document.getElementById('modeLive').classList.toggle('active', mode === 'live');
+
+    const overlay = document.getElementById('overlay');
+    const chinHand = document.getElementById('chinHand');
+    const tourBtn = document.getElementById('tourBtn');
+
+    if (mode === 'idle') {
+      if (prev !== 'idle') {
+        overlay.classList.add('exiting');
+        overlay.classList.remove('visible');
+        setTimeout(() => overlay.classList.remove('exiting'), 220);
+      } else {
+        overlay.classList.remove('visible', 'exiting');
+      }
+      chinHand.style.opacity = '1';
+      tourBtn.classList.remove('stop');
+      tourBtn.innerHTML = '&#9654; TOUR';
+      clearSpotlight();
+      document.getElementById('modeGuided').style.display = 'none';
+      document.getElementById('modeLive').style.display = 'none';
+    } else {
+      overlay.classList.remove('exiting');
+      overlay.classList.add('visible');
+      chinHand.style.opacity = '0.3';
+      tourBtn.classList.add('stop');
+      tourBtn.innerHTML = '&#9632; STOP';
+      document.getElementById('modeGuided').style.display = '';
+      document.getElementById('modeLive').style.display = '';
+      updateStep(false);
+      requestAnimationFrame(repositionOverlay);
+    }
+  }
+
+  function updateStep(animate) {
+    const s = steps[currentStep];
+    const total = steps.length;
+    const filled = Math.round((currentStep + 1) / total * 15);
+    const secIdx = sections.indexOf(s.sec);
+
+    function apply() {
+      document.getElementById('tour-section').textContent = s.label;
+      document.getElementById('tour-counter').textContent = `[${currentStep + 1}/${total}]`;
+      document.getElementById('tour-finding').innerHTML =
+        `<span class="severity-dot" style="background:${s.light}; color:${s.light};"></span>&ldquo;${s.finding}&rdquo;`;
+      document.getElementById('tour-bar').innerHTML =
+        `<span class="bar-filled">${'\u2588'.repeat(filled)}</span><span class="bar-empty">${'\u2591'.repeat(15 - filled)}</span>`;
+
+      document.getElementById('tour-crumbs').innerHTML = sections.map((sec, i) => {
+        const cls = i < secIdx ? 'crumb done' : i === secIdx ? 'crumb active' : 'crumb';
+        return (i > 0 ? '<span class="crumb-sep">&gt;</span>' : '') +
+          `<span class="${cls}">${sectionLabels[sec]}</span>`;
+      }).join('');
+
+      document.getElementById('liveFill').style.width = `${((currentStep + 1) / total) * 100}%`;
+      document.getElementById('liveStep').textContent = `${currentStep + 1}/${total}`;
+
+      document.getElementById('btnPrev').disabled = currentStep === 0;
+      document.getElementById('btnNext').disabled = currentStep === total - 1;
+    }
+
+    clearSpotlight();
+    const secEl = document.getElementById('sec-' + s.sec);
+    if (secEl) {
+      secEl.classList.add('spotlight');
+      secEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    if (animate && !stepAnimating) {
+      stepAnimating = true;
+      const finding = document.getElementById('tour-finding');
+      finding.classList.add('step-exit');
+      setTimeout(() => {
+        finding.classList.remove('step-exit');
+        apply();
+        finding.classList.add('step-enter');
+        setTimeout(() => {
+          finding.classList.remove('step-enter');
+          stepAnimating = false;
+        }, 280);
+      }, 150);
+    } else {
+      apply();
+    }
+  }
+
+  function clearSpotlight() {
+    document.querySelectorAll('.mock-section').forEach(s => s.classList.remove('spotlight'));
+  }
+
+  function nextStep() {
+    if (currentStep < steps.length - 1 && !stepAnimating) {
+      currentStep++;
+      updateStep(true);
+    }
+  }
+  function prevStep() {
+    if (currentStep > 0 && !stepAnimating) {
+      currentStep--;
+      updateStep(true);
+    }
+  }
+
+  function toggleTheme() {
+    const isLight = document.body.hasAttribute('data-content-theme');
+    if (isLight) {
+      document.body.removeAttribute('data-content-theme');
+      document.getElementById('powerBtn').dataset.state = 'dark';
+      document.getElementById('themeBtn').textContent = 'THEME: DARK';
+    } else {
+      document.body.setAttribute('data-content-theme', 'light');
+      document.getElementById('powerBtn').dataset.state = 'light';
+      document.getElementById('themeBtn').textContent = 'THEME: LIGHT';
+    }
+  }
+
+  /* ── Position overlay centered between frame bottom and chin top ── */
+  function repositionOverlay() {
+    const overlay = document.getElementById('overlay');
+    const frame = document.querySelector('.frame');
+    if (!frame || !overlay) return;
+    const frameRect = frame.getBoundingClientRect();
+    const chinTop = window.innerHeight - 88; /* 88px chin height */
+    const gap = chinTop - frameRect.bottom;
+    const overlayH = overlay.offsetHeight;
+    const centerY = frameRect.bottom + (gap - overlayH) / 2;
+    overlay.style.top = Math.max(frameRect.bottom + 4, centerY) + 'px';
+  }
+
+  // Reposition on resize and after step changes
+  window.addEventListener('resize', repositionOverlay);
+  new ResizeObserver(repositionOverlay).observe(document.querySelector('.frame'));
+
+  document.addEventListener('keydown', e => {
+    if (currentMode === 'idle') return;
+    if (e.key === 'ArrowRight') nextStep();
+    if (e.key === 'ArrowLeft') prevStep();
+    if (e.key === 'Escape') setMode('idle');
+  });
+
+  document.getElementById('tourBtn').addEventListener('click', () => {
+    if (currentMode === 'idle') { currentStep = 0; setMode('guided'); }
+    else setMode('idle');
+  });
+
+  document.body.dataset.mode = 'idle';
+  document.getElementById('modeGuided').style.display = 'none';
+  document.getElementById('modeLive').style.display = 'none';
+</script>
+</body>
+</html>

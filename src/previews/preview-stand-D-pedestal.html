@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP Stand Preview — D. Angular Pedestal</title>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #111;
+    font-family: 'Courier New', Courier, monospace;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  /* ── Outer wrapper ── */
+  .frame-wrapper {
+    position: relative;
+    max-width: 1040px;
+    width: 100%;
+  }
+
+  /* ── Floating label ── */
+  .frame-label {
+    position: absolute;
+    top: -32px;
+    left: 0;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    padding: 5px 12px;
+    border-radius: 4px;
+    z-index: 10;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  /* ── Bezel (top + sides) ── */
+  .bezel-top {
+    border: 10px solid #443862;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    box-shadow:
+      inset 0 0 40px rgba(0, 0, 0, 0.20),
+      inset 0 2px 6px rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(0, 0, 0, 0.10);
+    overflow: hidden;
+  }
+
+  /* ── Content area ── */
+  .content-area {
+    min-height: 480px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 600ms ease;
+  }
+
+  /* ── Dark mode (default) ── */
+  .content-area[data-theme="dark"] {
+    background: #1A1A2E;
+  }
+
+  .content-area[data-theme="light"] {
+    background: #F5F0E1;
+  }
+
+  /* ── Top bar ── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    font-size: 12px;
+    transition: background-color 600ms ease, border-color 600ms ease, color 600ms ease;
+  }
+
+  [data-theme="dark"] .top-bar {
+    background: rgba(0, 0, 0, 0.35);
+    border-bottom: 1px solid rgba(255, 208, 0, 0.12);
+    color: #b0afc4;
+  }
+
+  [data-theme="light"] .top-bar {
+    background: rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid rgba(255, 208, 0, 0.25);
+    color: #5a5970;
+  }
+
+  .top-bar-btn {
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    cursor: default;
+    transition: background-color 600ms ease, color 600ms ease, border-color 600ms ease;
+  }
+
+  [data-theme="dark"] .top-bar-btn {
+    background: rgba(255, 208, 0, 0.12);
+    color: #FFD000;
+    border: 1px solid rgba(255, 208, 0, 0.30);
+  }
+
+  [data-theme="light"] .top-bar-btn {
+    background: rgba(255, 208, 0, 0.18);
+    color: #b8960a;
+    border: 1px solid rgba(255, 208, 0, 0.40);
+  }
+
+  .top-bar-title {
+    font-weight: 700;
+    margin-right: auto;
+    transition: color 600ms ease;
+  }
+
+  [data-theme="dark"] .top-bar-title {
+    color: #ddd;
+  }
+
+  [data-theme="light"] .top-bar-title {
+    color: #1A1A2E;
+  }
+
+  .top-bar-version {
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+    transition: background-color 600ms ease, color 600ms ease, border-color 600ms ease;
+  }
+
+  [data-theme="dark"] .top-bar-version {
+    background: rgba(255, 208, 0, 0.08);
+    color: #FFD000;
+    border: 1px solid rgba(255, 208, 0, 0.18);
+  }
+
+  [data-theme="light"] .top-bar-version {
+    background: rgba(255, 208, 0, 0.15);
+    color: #b8960a;
+    border: 1px solid rgba(255, 208, 0, 0.30);
+  }
+
+  /* ── Workspace body ── */
+  .workspace-body {
+    display: flex;
+    flex: 1;
+    padding: 16px;
+    gap: 16px;
+  }
+
+  /* ── Sections column ── */
+  .sections-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .section-card {
+    border-radius: 6px;
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background-color 600ms ease, border-color 600ms ease, box-shadow 600ms ease;
+  }
+
+  [data-theme="dark"] .section-card {
+    background: #222240;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    box-shadow: none;
+  }
+
+  [data-theme="light"] .section-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .section-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #FFD000;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  [data-theme="light"] .section-card-label {
+    color: #b8960a;
+    opacity: 0.9;
+  }
+
+  .section-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    transition: color 600ms ease;
+  }
+
+  [data-theme="dark"] .section-card-title {
+    color: #e0dfe8;
+  }
+
+  [data-theme="light"] .section-card-title {
+    color: #1A1A2E;
+  }
+
+  .section-card-body {
+    font-size: 11px;
+    line-height: 1.5;
+    transition: color 600ms ease;
+  }
+
+  [data-theme="dark"] .section-card-body {
+    color: #6b6a80;
+  }
+
+  [data-theme="light"] .section-card-body {
+    color: #6b6a80;
+  }
+
+  .section-card-bar {
+    margin-top: auto;
+    height: 3px;
+    border-radius: 2px;
+    overflow: hidden;
+    transition: background-color 600ms ease;
+  }
+
+  [data-theme="dark"] .section-card-bar {
+    background: rgba(255, 208, 0, 0.10);
+  }
+
+  [data-theme="light"] .section-card-bar {
+    background: rgba(255, 208, 0, 0.20);
+  }
+
+  .section-card-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: #FFD000;
+  }
+
+  .section-card:nth-child(1) .section-card-bar-fill { width: 85%; }
+  .section-card:nth-child(2) .section-card-bar-fill { width: 60%; }
+  .section-card:nth-child(3) .section-card-bar-fill { width: 45%; }
+  .section-card:nth-child(4) .section-card-bar-fill { width: 70%; }
+
+  /* ── Reviewers sidebar ── */
+  .reviewers-sidebar {
+    width: 52px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 8px;
+  }
+
+  .reviewer-bubble {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border-width: 2px;
+    border-style: solid;
+    flex-shrink: 0;
+    transition: background-color 600ms ease;
+  }
+
+  [data-theme="dark"] .reviewer-bubble {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  [data-theme="light"] .reviewer-bubble {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .reviewer-bubble:nth-child(1) { border-color: #FFD000; }
+  .reviewer-bubble:nth-child(2) { border-color: #7B68EE; }
+  .reviewer-bubble:nth-child(3) { border-color: #00C9A7; }
+  .reviewer-bubble:nth-child(4) { border-color: #FF6B6B; }
+  .reviewer-bubble:nth-child(5) { border-color: #4DA8DA; }
+
+  .reviewers-label {
+    font-size: 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    margin-top: 8px;
+    transition: color 600ms ease;
+  }
+
+  [data-theme="dark"] .reviewers-label {
+    color: #5a5970;
+  }
+
+  [data-theme="light"] .reviewers-label {
+    color: #8a8998;
+  }
+
+  /* ── Chin ── */
+  .chin {
+    height: 88px;
+    background: linear-gradient(180deg, #342850 0%, #443862 30%, #554A74 60%, #443862 100%);
+    border-left: 10px solid #443862;
+    border-right: 10px solid #443862;
+    border-bottom: 10px solid #443862;
+    border-radius: 0 0 14px 14px;
+    box-shadow:
+      inset 0 2px 0 #554A74,
+      inset 0 4px 12px rgba(52, 40, 80, 0.15),
+      0 -1px 0 rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* ── Chin hand emboss ── */
+  .chin-hand {
+    font-size: 1.4rem;
+    filter: grayscale(1) brightness(0.25);
+    user-select: none;
+    line-height: 1;
+  }
+
+  /* ── Power button toggle ── */
+  .power-btn {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: transparent;
+    transition: transform 200ms ease, box-shadow 300ms ease, filter 300ms ease;
+  }
+
+  .power-btn-ring {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  /* Power symbol via CSS */
+  .power-symbol {
+    position: relative;
+    width: 12px;
+    height: 12px;
+  }
+
+  /* The broken circle */
+  .power-symbol::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 1px;
+    width: 10px;
+    height: 10px;
+    border: 1.5px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    border-top-color: transparent;
+    box-sizing: border-box;
+  }
+
+  /* The vertical line */
+  .power-symbol::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1.5px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 1px;
+    z-index: 1;
+  }
+
+  /* Dark mode power button state */
+  .power-btn.mode-dark {
+    filter: grayscale(1) brightness(0.25);
+    box-shadow: 0 0 6px rgba(255, 176, 0, 0.3);
+  }
+
+  .power-btn.mode-dark:hover {
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 0 12px rgba(255, 176, 0, 0.5);
+    filter: grayscale(1) brightness(0.35);
+  }
+
+  /* Light mode power button state */
+  .power-btn.mode-light {
+    filter: grayscale(1) brightness(0.5);
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.4);
+  }
+
+  .power-btn.mode-light:hover {
+    transform: translateY(-50%) scale(1.15);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+    filter: grayscale(1) brightness(0.6);
+  }
+
+  .power-btn:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+
+  /* ══════════════════════════════════════════════
+     STAND: Angular Pedestal (Pro Display XDR style)
+     ══════════════════════════════════════════════ */
+
+  .stand-assembly {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  /* ── Angled pedestal plate ── */
+  .pedestal-plate {
+    width: 120px;
+    height: 60px;
+    background: linear-gradient(
+      180deg,
+      #554A74 0%,
+      #4a3f6a 15%,
+      #443862 40%,
+      #3d3258 70%,
+      #362c50 100%
+    );
+    transform: perspective(400px) rotateX(15deg);
+    transform-origin: top center;
+    border-radius: 0 0 2px 2px;
+    position: relative;
+    box-shadow:
+      inset 1px 0 0 rgba(255, 255, 255, 0.06),
+      inset -1px 0 0 rgba(255, 255, 255, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 4px 12px rgba(0, 0, 0, 0.4),
+      0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Subtle edge highlight on the angled plate */
+  .pedestal-plate::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 10%,
+      rgba(255, 255, 255, 0.10) 30%,
+      rgba(255, 255, 255, 0.14) 50%,
+      rgba(255, 255, 255, 0.10) 70%,
+      transparent 90%
+    );
+  }
+
+  /* Subtle vertical center line on the plate */
+  .pedestal-plate::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 50%;
+    width: 1px;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  /* ── Rubber foot strip at base ── */
+  .pedestal-foot {
+    width: 130px;
+    height: 2px;
+    background: #1a1a1a;
+    border-radius: 1px;
+    margin-top: -2px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
+  }
+
+  /* ── Desk shadow ── */
+  .desk-shadow {
+    width: 180px;
+    height: 8px;
+    margin-top: 2px;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(0, 0, 0, 0.35) 0%,
+      rgba(0, 0, 0, 0.15) 50%,
+      transparent 80%
+    );
+    border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+
+<div class="frame-wrapper" data-testid="preview-stand-pedestal">
+
+  <!-- Floating label -->
+  <div class="frame-label">D. ANGULAR PEDESTAL</div>
+
+  <!-- Bezel (top + sides) -->
+  <div class="bezel-top">
+
+    <!-- Content area -->
+    <div class="content-area" id="contentArea" data-theme="dark">
+
+      <!-- Top bar -->
+      <div class="top-bar">
+        <span class="top-bar-btn">[Back]</span>
+        <span class="top-bar-title">Example Project</span>
+        <span class="top-bar-version">v1 5.2</span>
+        <span class="top-bar-version">v2 6.8</span>
+        <span class="top-bar-btn">[TOUR]</span>
+      </div>
+
+      <!-- Workspace body -->
+      <div class="workspace-body">
+
+        <!-- Section cards -->
+        <div class="sections-column">
+
+          <div class="section-card">
+            <span class="section-card-label">Section 01</span>
+            <span class="section-card-title">Hero</span>
+            <span class="section-card-body">Main landing section with headline, subtext, and primary CTA button.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+          <div class="section-card">
+            <span class="section-card-label">Section 02</span>
+            <span class="section-card-title">Features</span>
+            <span class="section-card-body">Three-column feature grid with icons and short descriptions.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+          <div class="section-card">
+            <span class="section-card-label">Section 03</span>
+            <span class="section-card-title">Pricing</span>
+            <span class="section-card-body">Tiered pricing cards with feature comparison toggle.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+          <div class="section-card">
+            <span class="section-card-label">Section 04</span>
+            <span class="section-card-title">CTA</span>
+            <span class="section-card-body">Final call-to-action with email capture and social proof.</span>
+            <div class="section-card-bar"><div class="section-card-bar-fill"></div></div>
+          </div>
+
+        </div>
+
+        <!-- Reviewers sidebar -->
+        <div class="reviewers-sidebar">
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <div class="reviewer-bubble"></div>
+          <span class="reviewers-label">Reviewers</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Chin -->
+  <div class="chin">
+    <!-- Center: embossed hand -->
+    <span class="chin-hand">&#x270B;</span>
+
+    <!-- Right: power button toggle -->
+    <button
+      class="power-btn mode-dark"
+      id="powerBtn"
+      data-testid="theme-toggle"
+      aria-label="Toggle theme"
+      title="Toggle dark/light mode"
+    >
+      <span class="power-btn-ring">
+        <span class="power-symbol"></span>
+      </span>
+    </button>
+  </div>
+
+  <!-- ══ Stand: Angular Pedestal ══ -->
+  <div class="stand-assembly">
+    <div class="pedestal-plate"></div>
+    <div class="pedestal-foot"></div>
+    <div class="desk-shadow"></div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  var contentArea = document.getElementById('contentArea');
+  var powerBtn = document.getElementById('powerBtn');
+
+  powerBtn.addEventListener('click', function() {
+    var currentTheme = contentArea.getAttribute('data-theme');
+    var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    contentArea.setAttribute('data-theme', newTheme);
+
+    powerBtn.classList.remove('mode-dark', 'mode-light');
+    powerBtn.classList.add('mode-' + newTheme);
+  });
+})();
+</script>
+
+</body>
+</html>
