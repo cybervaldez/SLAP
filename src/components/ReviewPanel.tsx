@@ -14,7 +14,9 @@ interface ReviewPanelProps {
   onClose: () => void;
   reviewer: Reviewer | null;
   review: Review | null;
-  onFindingHover: (info: { section: string; text?: string; color?: string } | null) => void;
+  onFindingHover: (info: { section: string; text?: string; color?: string; ref?: string } | null) => void;
+  onFindingSave?: (reviewerId: string, reviewerName: string, section: string, findingIndex: number, text: string, comment: string, light: TrafficLight) => void;
+  savedFindingKeys?: Set<string>;
 }
 
 // ─── Score helpers ──────────────────────────────────────────
@@ -208,6 +210,12 @@ const PANEL_SECTION_KEYFRAMES = `
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+@keyframes findingSavePulse {
+  0% { background: rgba(255, 208, 0, 0.12); }
+  100% { background: transparent; }
+}
+.slap-finding-row:hover .slap-save-btn { opacity: 1 !important; }
+.slap-finding-row:hover { background: rgba(255, 255, 255, 0.02); }
 `;
 
 // ─── Main component ─────────────────────────────────────────
@@ -218,6 +226,8 @@ export default function ReviewPanel({
   reviewer,
   review,
   onFindingHover,
+  onFindingSave,
+  savedFindingKeys,
 }: ReviewPanelProps) {
 
   // Escape key
@@ -257,6 +267,8 @@ export default function ReviewPanel({
             reviewer={reviewer}
             review={review}
             onFindingHover={onFindingHover}
+            onFindingSave={onFindingSave}
+            savedFindingKeys={savedFindingKeys}
           />
         )}
       </div>
@@ -272,10 +284,14 @@ function ReviewContent({
   reviewer,
   review,
   onFindingHover,
+  onFindingSave,
+  savedFindingKeys,
 }: {
   reviewer: Reviewer;
   review: Review;
-  onFindingHover: (info: { section: string; text?: string; color?: string } | null) => void;
+  onFindingHover: (info: { section: string; text?: string; color?: string; ref?: string } | null) => void;
+  onFindingSave?: (reviewerId: string, reviewerName: string, section: string, findingIndex: number, text: string, comment: string, light: TrafficLight) => void;
+  savedFindingKeys?: Set<string>;
 }) {
   const sc = scoreClass(review.score);
   const accent = reviewer.color;
@@ -314,21 +330,69 @@ function ReviewContent({
             onMouseLeave={() => onFindingHover(null)}
           >
             <div style={st.sectionLabel}>{section.toUpperCase()}</div>
-            {items.map((item, fi) => (
-              <div
-                key={fi}
-                data-testid={`panel-finding-${section}-${fi}`}
-                style={st.finding}
-              >
-                <TrafficLightIcon light={item.light} size={14} />
-                <div>
-                  <div>{item.text}</div>
-                  {item.comment && (
-                    <div style={st.findingComment}>&ldquo;{item.comment}&rdquo;</div>
+            {items.map((item, fi) => {
+              const fKey = `${reviewer.id}:${section}:${fi}`;
+              const isSaved = savedFindingKeys?.has(fKey) ?? false;
+              return (
+                <div
+                  key={fi}
+                  className="slap-finding-row"
+                  data-testid={`panel-finding-${section}-${fi}`}
+                  style={{
+                    ...st.finding,
+                    borderLeft: isSaved ? '3px solid #FFD000' : '3px solid transparent',
+                    paddingLeft: 8,
+                    position: 'relative',
+                  }}
+                  onMouseEnter={() => onFindingHover({ section, text: item.text, color: accent, ref: item.ref })}
+                  onMouseLeave={() => onFindingHover({ section, text: statusText, color: accent })}
+                >
+                  <TrafficLightIcon light={item.light} size={14} />
+                  <div style={{ flex: 1 }}>
+                    <div>{item.text}</div>
+                    {item.comment && (
+                      <div style={st.findingComment}>&ldquo;{item.comment}&rdquo;</div>
+                    )}
+                  </div>
+                  {onFindingSave && (
+                    <button
+                      className="slap-save-btn"
+                      data-testid={`finding-save-btn-${section}-${fi}`}
+                      onClick={() => onFindingSave(
+                        reviewer.id, reviewer.name, section, fi,
+                        item.text, item.comment, item.light,
+                      )}
+                      style={{
+                        width: 16,
+                        height: 16,
+                        borderRadius: '50%',
+                        border: isSaved ? 'none' : '1.5px solid #FFD000',
+                        background: isSaved ? '#FFD000' : 'transparent',
+                        cursor: 'pointer',
+                        flexShrink: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 0,
+                        marginTop: 2,
+                        transition: 'all 150ms',
+                        opacity: isSaved ? 1 : 0,
+                      }}
+                    >
+                      {isSaved ? (
+                        <svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="#0D0D1A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M2 6l3 3 5-5" />
+                        </svg>
+                      ) : (
+                        <svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="#FFD000" strokeWidth="2" strokeLinecap="round">
+                          <path d="M6 2v8M2 6h8" />
+                        </svg>
+                      )}
+                    </button>
                   )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         );
       })}

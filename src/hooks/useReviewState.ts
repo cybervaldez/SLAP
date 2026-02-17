@@ -13,6 +13,7 @@ export interface HighlightInfo {
   section: string;
   text?: string;
   color?: string;
+  ref?: string;
 }
 
 interface ReviewState {

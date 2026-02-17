@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SLAP Preview — Variation D: Theater Mode</title>
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Design Tokens ─────────────────────────────────────── */
+:root {
+  --bg-dark: #0D0D1A;
+  --surface-dark: #1A1A2E;
+  --surface-mid: #222240;
+  --text-light: #F5F0E1;
+  --text-muted: rgba(245, 240, 225, 0.5);
+  --accent-gold: #FFD000;
+  --score-green: #6BCB77;
+  --score-yellow: #FFD93D;
+  --score-red: #FF6B6B;
+  --bezel-dark: #3A3A4E;
+  --bezel-highlight: #4A4A5E;
+
+  --font-mono: 'Courier New', 'Consolas', monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  --chin-height: 120px;
+  --overlay-dark: rgba(0, 0, 0, 0.75);
+  --transition-cinematic: 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  --transition-fast: 200ms ease;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: #080810;
+  color: var(--text-light);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ── Info Banner ───────────────────────────────────────── */
+.info-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+  background: var(--accent-gold); color: var(--bg-dark);
+  font-family: var(--font-mono);
+  font-size: 0.7rem; font-weight: 700; text-align: center;
+  padding: 6px 16px; letter-spacing: 0.06em;
+}
+.info-banner code {
+  background: rgba(0,0,0,0.1); padding: 1px 6px; border-radius: 3px;
+}
+
+/* ── Bezel Frame ───────────────────────────────────────── */
+.bezel {
+  width: 960px;
+  height: 680px;
+  border: 8px solid var(--bezel-dark);
+  border-radius: 10px;
+  background: var(--bg-dark);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255, 208, 0, 0.08),
+    0 20px 80px rgba(0, 0, 0, 0.6),
+    0 0 120px rgba(13, 13, 26, 0.8);
+  position: relative;
+  margin-top: 30px;
+}
+
+/* ── Exit Theater Button ───────────────────────────────── */
+.exit-theater {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  z-index: 200;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.05em;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 300ms ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.exit-theater:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--text-light);
+  border-color: rgba(255, 208, 0, 0.3);
+}
+
+/* ── Screen Area ───────────────────────────────────────── */
+.screen {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-dark);
+}
+
+/* ── Design Content (the actual "website" being reviewed) ── */
+.design-content {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.design-content::-webkit-scrollbar { display: none; }
+
+/* Sections */
+.design-section {
+  position: relative;
+  padding: 48px 56px;
+  min-height: 280px;
+  transition: none;
+}
+
+/* Hero */
+.section-hero {
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(180deg, #12122a 0%, #0D0D1A 100%);
+}
+.section-hero .hero-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  border: 1px solid rgba(255, 208, 0, 0.3);
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.section-hero h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.25;
+  max-width: 560px;
+  margin-bottom: 14px;
+  color: var(--text-light);
+}
+.section-hero .subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+  max-width: 420px;
+  line-height: 1.6;
+}
+.section-hero .cta-button {
+  display: inline-block;
+  background: var(--accent-gold);
+  color: var(--bg-dark);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 12px 32px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  position: relative;
+}
+.cta-button.highlighted {
+  border-bottom: 2px solid var(--accent-gold);
+  box-shadow: 0 2px 0 0 var(--accent-gold);
+}
+.cta-button.highlighted::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: var(--accent-gold);
+  border-radius: 1px;
+  animation: highlightPulse 2s ease-in-out infinite;
+}
+@keyframes highlightPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Features */
+.section-features {
+  background: var(--surface-dark);
+  padding: 44px 56px;
+}
+.section-features h2 {
+  font-size: 1rem;
+  margin-bottom: 24px;
+  text-align: center;
+  color: var(--text-light);
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.feature-card {
+  background: var(--surface-mid);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 24px 20px;
+  text-align: center;
+}
+.feature-card .icon {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+.feature-card h3 {
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-light);
+}
+.feature-card p {
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Pricing */
+.section-pricing {
+  background: var(--bg-dark);
+  padding: 44px 56px;
+}
+.section-pricing h2 {
+  font-size: 1rem;
+  margin-bottom: 24px;
+  text-align: center;
+  color: var(--text-light);
+}
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.pricing-card {
+  background: var(--surface-dark);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 28px 20px;
+  text-align: center;
+}
+.pricing-card.featured {
+  border-color: rgba(255, 208, 0, 0.3);
+  background: var(--surface-mid);
+}
+.pricing-card h3 {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.pricing-card .price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+.pricing-card .price span {
+  font-size: 0.55rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.pricing-card .plan-desc {
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.pricing-card button {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-light);
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+.pricing-card.featured button {
+  background: var(--accent-gold);
+  color: var(--bg-dark);
+  border-color: var(--accent-gold);
+  font-weight: 700;
+}
+
+/* CTA Section */
+.section-cta {
+  background: linear-gradient(180deg, var(--surface-dark) 0%, var(--bg-dark) 100%);
+  padding: 48px 56px;
+  text-align: center;
+}
+.section-cta h2 {
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  color: var(--text-light);
+}
+.section-cta p {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+.section-cta button {
+  background: var(--accent-gold);
+  color: var(--bg-dark);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 12px 36px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+/* ── Theater Overlay ───────────────────────────────────── */
+.theater-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+}
+
+/* Dark mask that covers non-spotlighted areas */
+.theater-mask {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-dark);
+  transition: opacity var(--transition-cinematic);
+}
+
+/* The spotlight cutout — positioned over the active section */
+.theater-spotlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 51;
+  box-shadow:
+    0 0 60px rgba(255, 208, 0, 0.15),
+    0 0 120px rgba(255, 208, 0, 0.05);
+  border-top: 1px solid rgba(255, 208, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 208, 0, 0.1);
+  transition:
+    top var(--transition-cinematic),
+    height var(--transition-cinematic),
+    opacity var(--transition-cinematic);
+  background: transparent;
+  /* The spotlight is a "window" — we use clip-path on the mask instead */
+}
+
+/* Animate the reveal */
+.theater-spotlight.entering {
+  animation: theaterReveal 600ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+@keyframes theaterReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+    filter: brightness(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+/* Section dim/light states */
+.design-section {
+  position: relative;
+  z-index: 1;
+}
+.design-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 10;
+  transition: opacity var(--transition-cinematic);
+  pointer-events: none;
+}
+.design-section.spotlight-active::after {
+  opacity: 0;
+}
+.design-section.spotlight-active {
+  z-index: 52;
+}
+
+/* Glow ring around active section */
+.design-section.spotlight-active::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-top: 1px solid rgba(255, 208, 0, 0.12);
+  border-bottom: 1px solid rgba(255, 208, 0, 0.12);
+  z-index: 11;
+  pointer-events: none;
+  box-shadow:
+    inset 0 1px 30px rgba(255, 208, 0, 0.04),
+    0 0 60px rgba(255, 208, 0, 0.08),
+    0 0 120px rgba(255, 208, 0, 0.03);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* ── Cinema Chin ───────────────────────────────────────── */
+.cinema-chin {
+  height: var(--chin-height);
+  min-height: var(--chin-height);
+  max-height: var(--chin-height);
+  background: linear-gradient(180deg, rgba(10, 10, 26, 0.95), rgba(26, 26, 46, 0.98));
+  border-top: 1px solid rgba(255, 208, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 32px;
+  position: relative;
+  z-index: 100;
+}
+
+/* Reviewer attribution line */
+.chin-reviewer {
+  font-family: var(--font-mono);
+  font-size: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity var(--transition-fast);
+}
+.chin-reviewer .reviewer-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.chin-reviewer .reviewer-name {
+  /* color set dynamically */
+}
+.chin-reviewer .section-label {
+  color: var(--accent-gold);
+  margin-left: 4px;
+  font-weight: 400;
+}
+
+/* Finding text */
+.chin-finding {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  transition: opacity var(--transition-fast);
+}
+.chin-finding .severity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.chin-finding .finding-text {
+  font-size: 0.6rem;
+  font-style: italic;
+  color: var(--text-light);
+  line-height: 1.6;
+  max-width: 700px;
+}
+.chin-finding .finding-text::before { content: '\201C'; }
+.chin-finding .finding-text::after { content: '\201D'; }
+
+/* Playback controls */
+.chin-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 2px;
+}
+
+.chin-controls .playback-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.45rem;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 200ms ease;
+  white-space: nowrap;
+}
+.chin-controls .playback-btn:hover {
+  color: var(--text-light);
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.step-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+}
+.step-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: all 300ms ease;
+  border: none;
+  padding: 0;
+}
+.step-dot:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+.step-dot.visited {
+  background: var(--text-muted);
+}
+.step-dot.active {
+  width: 9px;
+  height: 9px;
+  background: var(--accent-gold);
+  box-shadow: 0 0 8px rgba(255, 208, 0, 0.4);
+}
+
+/* ── Chin Crossfade Animations ─────────────────────────── */
+.chin-content {
+  transition: opacity 200ms ease;
+}
+.chin-content.fading {
+  opacity: 0;
+}
+
+/* ── Progress bar at very top of chin ──────────────────── */
+.chin-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--accent-gold);
+  transition: width 100ms linear;
+  opacity: 0.6;
+}
+
+/* ── Keyboard hint ─────────────────────────────────────── */
+.keyboard-hint {
+  position: absolute;
+  bottom: 6px;
+  right: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.38rem;
+  color: rgba(245, 240, 225, 0.2);
+  letter-spacing: 0.04em;
+}
+.keyboard-hint kbd {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+  padding: 0 4px;
+  margin: 0 1px;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* ── Section label overlays (visible when spotlighted) ── */
+.section-label-overlay {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  font-family: var(--font-mono);
+  font-size: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-gold);
+  opacity: 0;
+  z-index: 55;
+  transition: opacity var(--transition-cinematic);
+  pointer-events: none;
+}
+.design-section.spotlight-active .section-label-overlay {
+  opacity: 0.5;
+}
+
+/* ── Highlighted text within sections ──────────────────── */
+.text-highlight {
+  position: relative;
+  display: inline;
+}
+.text-highlight::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--accent-gold);
+  border-radius: 1px;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+.design-section.spotlight-active .text-highlight::after {
+  opacity: 1;
+  animation: highlightPulse 2s ease-in-out infinite;
+}
+
+/* ── Scrollbar for the bezel if needed ─────────────────── */
+.screen::-webkit-scrollbar { display: none; }
+.screen { scrollbar-width: none; }
+</style>
+</head>
+<body>
+
+<!-- Info Banner -->
+<div class="info-banner">
+  VARIATION D: THEATER MODE &mdash; <code>THEATER / TOUR</code> state &mdash; cinematic walkthrough with auto-play
+</div>
+
+<!-- Bezel Frame -->
+<div class="bezel" id="bezel">
+
+  <!-- Exit Theater Button (minimal) -->
+  <button class="exit-theater" id="exitTheater" title="Exit Theater Mode (Esc)">&times; Exit Theater</button>
+
+  <!-- Screen Area -->
+  <div class="screen" id="screen">
+
+    <!-- Design Content -->
+    <div class="design-content" id="designContent">
+
+      <!-- HERO SECTION -->
+      <div class="design-section section-hero spotlight-active" data-section="hero" id="sectionHero">
+        <span class="section-label-overlay">HERO</span>
+        <div class="hero-badge">AI-POWERED PLATFORM</div>
+        <h1>Unlock the Power of Seamless Integration</h1>
+        <p class="subtitle">Boost productivity by 10x with our AI-powered platform. Connect your tools, automate workflows, and focus on what matters.</p>
+        <button class="cta-button highlighted" id="ctaButton"><span class="text-highlight">Get Started Today</span></button>
+      </div>
+
+      <!-- FEATURES SECTION -->
+      <div class="design-section section-features" data-section="features" id="sectionFeatures">
+        <span class="section-label-overlay">FEATURES</span>
+        <h2>Why Teams Choose Us</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="icon">&#9889;</div>
+            <h3>Lightning Fast</h3>
+            <p>Sub-100ms response times across all endpoints with edge caching.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">&#128274;</div>
+            <h3>Enterprise Security</h3>
+            <p>SOC 2 Type II certified with end-to-end encryption at rest and in transit.</p>
+          </div>
+          <div class="feature-card">
+            <div class="icon">&#128295;</div>
+            <h3>Powerful API</h3>
+            <p>RESTful and GraphQL endpoints with comprehensive SDK support.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRICING SECTION -->
+      <div class="design-section section-pricing" data-section="pricing" id="sectionPricing">
+        <span class="section-label-overlay">PRICING</span>
+        <h2>Simple, Transparent Pricing</h2>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <h3>Starter</h3>
+            <div class="price">$9<span>/mo</span></div>
+            <p class="plan-desc">For individuals and small projects getting started.</p>
+            <button>Choose Starter</button>
+          </div>
+          <div class="pricing-card featured">
+            <h3>Professional</h3>
+            <div class="price">$29<span>/mo</span></div>
+            <p class="plan-desc">For growing teams that need advanced features.</p>
+            <button>Choose Pro</button>
+          </div>
+          <div class="pricing-card">
+            <h3>Enterprise</h3>
+            <div class="price">$99<span>/mo</span></div>
+            <p class="plan-desc">For organizations with custom needs and SLA.</p>
+            <button>Contact Sales</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA SECTION -->
+      <div class="design-section section-cta" data-section="cta" id="sectionCta">
+        <span class="section-label-overlay">CTA</span>
+        <h2>Ready to Transform Your Workflow?</h2>
+        <p>Join 10,000+ teams already using our platform to ship faster, collaborate better, and build with confidence.</p>
+        <button>Start Free Trial</button>
+      </div>
+
+    </div><!-- /design-content -->
+
+  </div><!-- /screen -->
+
+  <!-- Cinema Chin -->
+  <div class="cinema-chin" id="cinemaChin">
+    <!-- Progress bar -->
+    <div class="chin-progress" id="chinProgress" style="width: 0%;"></div>
+
+    <div class="chin-content" id="chinContent">
+      <!-- Reviewer attribution -->
+      <div class="chin-reviewer" id="chinReviewer">
+        <span class="reviewer-dot" id="reviewerDot"></span>
+        <span class="reviewer-name" id="reviewerName">Marketing Expert</span>
+        <span>&mdash;</span>
+        <span class="section-label" id="sectionName">HERO</span>
+      </div>
+
+      <!-- Finding -->
+      <div class="chin-finding" id="chinFinding">
+        <span class="severity-dot" id="severityDot"></span>
+        <span class="finding-text" id="findingText">Generic CTA with no urgency &mdash; every AI landing page says &ldquo;Get Started Today&rdquo;</span>
+      </div>
+
+      <!-- Controls -->
+      <div class="chin-controls">
+        <button class="playback-btn" id="btnPause">&#9208; Pause</button>
+        <div class="step-dots" id="stepDots"></div>
+        <button class="playback-btn" id="btnSkip">&#9654;&#9654; Skip</button>
+      </div>
+    </div>
+
+    <!-- Keyboard hint -->
+    <div class="keyboard-hint">
+      <kbd>Space</kbd> pause &middot; <kbd>&larr;</kbd><kbd>&rarr;</kbd> navigate &middot; <kbd>Esc</kbd> exit
+    </div>
+  </div>
+
+</div><!-- /bezel -->
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Step Data ──────────────────────────────────────────
+  const steps = [
+    {
+      reviewer: 'Marketing Expert', color: '#FF6B6B', section: 'hero', severity: 'red',
+      finding: 'Generic CTA with no urgency \u2014 every AI landing page says \u201CGet Started Today\u201D'
+    },
+    {
+      reviewer: 'Marketing Expert', color: '#FF6B6B', section: 'features', severity: 'yellow',
+      finding: 'Feature cards look identical \u2014 no visual hierarchy to guide the eye'
+    },
+    {
+      reviewer: 'Marketing Expert', color: '#FF6B6B', section: 'pricing', severity: 'red',
+      finding: 'No anchor pricing visible \u2014 users can\u2019t tell which tier is the best deal'
+    },
+    {
+      reviewer: 'UX Designer', color: '#4ECDC4', section: 'hero', severity: 'yellow',
+      finding: 'CTA button has no hover state feedback \u2014 users unsure if it\u2019s clickable'
+    },
+    {
+      reviewer: 'UX Designer', color: '#4ECDC4', section: 'pricing', severity: 'red',
+      finding: 'Pricing comparison requires too much cognitive load \u2014 no feature diff visible'
+    },
+    {
+      reviewer: 'UX Designer', color: '#4ECDC4', section: 'cta', severity: 'green',
+      finding: 'Final CTA is well-positioned and has clear value proposition'
+    },
+  ];
+
+  const severityColors = {
+    red: '#FF6B6B',
+    yellow: '#FFD93D',
+    green: '#6BCB77'
+  };
+
+  // ── DOM refs ───────────────────────────────────────────
+  const sectionMap = {
+    hero: document.getElementById('sectionHero'),
+    features: document.getElementById('sectionFeatures'),
+    pricing: document.getElementById('sectionPricing'),
+    cta: document.getElementById('sectionCta'),
+  };
+  const designContent = document.getElementById('designContent');
+  const chinContent = document.getElementById('chinContent');
+  const chinReviewer = document.getElementById('chinReviewer');
+  const reviewerDot = document.getElementById('reviewerDot');
+  const reviewerName = document.getElementById('reviewerName');
+  const sectionNameEl = document.getElementById('sectionName');
+  const severityDot = document.getElementById('severityDot');
+  const findingText = document.getElementById('findingText');
+  const stepDotsContainer = document.getElementById('stepDots');
+  const btnPause = document.getElementById('btnPause');
+  const btnSkip = document.getElementById('btnSkip');
+  const exitBtn = document.getElementById('exitTheater');
+  const chinProgress = document.getElementById('chinProgress');
+  const ctaButton = document.getElementById('ctaButton');
+
+  let currentStep = 0;
+  let isPlaying = true;
+  let autoTimer = null;
+  let progressTimer = null;
+  const STEP_DURATION = 5000; // 5 seconds per step
+  const PROGRESS_INTERVAL = 50;
+  let progressElapsed = 0;
+
+  // ── Build Step Dots ────────────────────────────────────
+  function buildDots() {
+    stepDotsContainer.innerHTML = '';
+    steps.forEach(function(_, i) {
+      const dot = document.createElement('button');
+      dot.className = 'step-dot';
+      dot.setAttribute('aria-label', 'Step ' + (i + 1));
+      dot.addEventListener('click', function() { goToStep(i); });
+      stepDotsContainer.appendChild(dot);
+    });
+  }
+  buildDots();
+
+  // ── Update Dots ────────────────────────────────────────
+  function updateDots() {
+    const dots = stepDotsContainer.querySelectorAll('.step-dot');
+    dots.forEach(function(dot, i) {
+      dot.classList.remove('active', 'visited');
+      if (i === currentStep) {
+        dot.classList.add('active');
+      } else if (i < currentStep) {
+        dot.classList.add('visited');
+      }
+    });
+  }
+
+  // ── Spotlight Section ──────────────────────────────────
+  function spotlightSection(sectionKey, animate) {
+    Object.keys(sectionMap).forEach(function(key) {
+      const el = sectionMap[key];
+      if (key === sectionKey) {
+        if (animate && !el.classList.contains('spotlight-active')) {
+          // Remove and re-add to trigger animation
+          el.classList.remove('spotlight-active');
+          void el.offsetWidth; // force reflow
+          el.classList.add('spotlight-active');
+
+          // Cinematic scale-in
+          el.style.transition = 'transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1), filter 600ms cubic-bezier(0.22, 0.61, 0.36, 1)';
+          el.style.transform = 'scale(0.98)';
+          el.style.filter = 'brightness(0.5)';
+          void el.offsetWidth;
+          el.style.transform = 'scale(1)';
+          el.style.filter = 'brightness(1)';
+        } else {
+          el.classList.add('spotlight-active');
+        }
+        // Scroll section into view smoothly
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        el.classList.remove('spotlight-active');
+        el.style.transform = '';
+        el.style.filter = '';
+      }
+    });
+
+    // Handle highlight on hero CTA
+    if (sectionKey === 'hero' && currentStep === 0) {
+      ctaButton.classList.add('highlighted');
+    } else {
+      ctaButton.classList.remove('highlighted');
+    }
+  }
+
+  // ── Update Chin Content ────────────────────────────────
+  function updateChin(step, animate) {
+    var doUpdate = function() {
+      reviewerDot.style.background = step.color;
+      reviewerName.style.color = step.color;
+      reviewerName.textContent = step.reviewer;
+      sectionNameEl.textContent = step.section.toUpperCase();
+      severityDot.style.background = severityColors[step.severity] || '#999';
+      findingText.textContent = step.finding;
+
+      if (animate) {
+        chinContent.classList.remove('fading');
+      }
+    };
+
+    if (animate) {
+      chinContent.classList.add('fading');
+      setTimeout(doUpdate, 200);
+    } else {
+      doUpdate();
+    }
+  }
+
+  // ── Go To Step ─────────────────────────────────────────
+  function goToStep(index, animate) {
+    if (typeof animate === 'undefined') animate = true;
+
+    var prevSection = steps[currentStep].section;
+    currentStep = index;
+    if (currentStep >= steps.length) currentStep = 0;
+    if (currentStep < 0) currentStep = steps.length - 1;
+
+    var step = steps[currentStep];
+    var sectionChanged = step.section !== prevSection;
+
+    spotlightSection(step.section, animate && sectionChanged);
+    updateChin(step, animate);
+    updateDots();
+    resetProgress();
+  }
+
+  // ── Progress Bar ───────────────────────────────────────
+  function resetProgress() {
+    progressElapsed = 0;
+    chinProgress.style.width = '0%';
+    clearInterval(progressTimer);
+    if (isPlaying) {
+      startProgress();
+    }
+  }
+
+  function startProgress() {
+    clearInterval(progressTimer);
+    progressTimer = setInterval(function() {
+      progressElapsed += PROGRESS_INTERVAL;
+      var pct = Math.min((progressElapsed / STEP_DURATION) * 100, 100);
+      chinProgress.style.width = pct + '%';
+    }, PROGRESS_INTERVAL);
+  }
+
+  function stopProgress() {
+    clearInterval(progressTimer);
+  }
+
+  // ── Auto-Advance ───────────────────────────────────────
+  function startAutoPlay() {
+    clearInterval(autoTimer);
+    autoTimer = setInterval(function() {
+      goToStep(currentStep + 1, true);
+    }, STEP_DURATION);
+  }
+
+  function stopAutoPlay() {
+    clearInterval(autoTimer);
+  }
+
+  // ── Play / Pause ───────────────────────────────────────
+  function togglePlayPause() {
+    isPlaying = !isPlaying;
+    if (isPlaying) {
+      btnPause.innerHTML = '&#9208; Pause';
+      startAutoPlay();
+      startProgress();
+    } else {
+      btnPause.innerHTML = '&#9654; Play';
+      stopAutoPlay();
+      stopProgress();
+    }
+  }
+
+  // ── Skip ───────────────────────────────────────────────
+  function skipNext() {
+    goToStep(currentStep + 1, true);
+    if (isPlaying) {
+      stopAutoPlay();
+      startAutoPlay();
+    }
+  }
+
+  function skipPrev() {
+    goToStep(currentStep - 1, true);
+    if (isPlaying) {
+      stopAutoPlay();
+      startAutoPlay();
+    }
+  }
+
+  // ── Exit Theater ───────────────────────────────────────
+  let theaterActive = true;
+  function toggleTheater() {
+    theaterActive = !theaterActive;
+    if (!theaterActive) {
+      // Remove all overlays
+      Object.keys(sectionMap).forEach(function(key) {
+        sectionMap[key].classList.add('spotlight-active');
+        sectionMap[key].style.transform = '';
+        sectionMap[key].style.filter = '';
+      });
+      document.querySelector('.cinema-chin').style.opacity = '0.3';
+      exitBtn.innerHTML = '&#9654; Enter Theater';
+      stopAutoPlay();
+      stopProgress();
+      isPlaying = false;
+      btnPause.innerHTML = '&#9654; Play';
+    } else {
+      document.querySelector('.cinema-chin').style.opacity = '1';
+      exitBtn.innerHTML = '&times; Exit Theater';
+      goToStep(currentStep, false);
+      isPlaying = true;
+      btnPause.innerHTML = '&#9208; Pause';
+      startAutoPlay();
+      resetProgress();
+    }
+  }
+
+  // ── Event Listeners ────────────────────────────────────
+  btnPause.addEventListener('click', togglePlayPause);
+  btnSkip.addEventListener('click', skipNext);
+  exitBtn.addEventListener('click', toggleTheater);
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', function(e) {
+    switch (e.key) {
+      case ' ':
+        e.preventDefault();
+        togglePlayPause();
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        skipNext();
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        skipPrev();
+        break;
+      case 'Escape':
+        e.preventDefault();
+        toggleTheater();
+        break;
+    }
+  });
+
+  // ── Initialize ─────────────────────────────────────────
+  goToStep(0, false);
+  startAutoPlay();
+  resetProgress();
+
+})();
+</script>
+
+</body>
+</html>

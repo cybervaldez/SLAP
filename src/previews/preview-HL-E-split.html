@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SLAP! — Variation E: Split Stage (No Overlay)</title>
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Design Tokens ────────────────────────────────────── */
+:root {
+  --color-bg: #0D0D1A;
+  --color-surface: #161628;
+  --color-accent: #FFD000;
+  --color-text: #F5F0E1;
+  --color-text-dim: rgba(245, 240, 225, 0.5);
+  --color-border: rgba(245, 240, 225, 0.1);
+  --color-green: #6BCB77;
+  --color-yellow: #FFD93D;
+  --color-red: #FF6B6B;
+  --font: 'Courier New', monospace;
+
+  --bezel: 8px;
+  --chin-height: 56px;
+  --topbar-height: 44px;
+  --panel-split: 35%;
+  --canvas-split: 65%;
+
+  --dim-opacity: 0.4;
+  --active-opacity: 1;
+  --transition-speed: 200ms;
+  --tour-section-duration: 4s;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--color-bg);
+  color: var(--color-text);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── iMac Bezel Frame ─────────────────────────────────── */
+.bezel-frame {
+  position: fixed;
+  inset: 0;
+  border: var(--bezel) solid #1A1A2E;
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+}
+
+/* ── Info Banner ──────────────────────────────────────── */
+.info-banner {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 10000;
+  background: var(--color-accent);
+  color: #0D0D1A;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 5px 16px;
+  letter-spacing: 0.06em;
+}
+.info-banner code {
+  background: rgba(0,0,0,0.1);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+/* ── Main Layout Container ────────────────────────────── */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding-top: 24px; /* info banner space */
+}
+
+/* ── Top Bar ──────────────────────────────────────────── */
+.topbar {
+  height: var(--topbar-height);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  flex-shrink: 0;
+  margin: var(--bezel) var(--bezel) 0 var(--bezel);
+  border-radius: 10px 10px 0 0;
+}
+
+.topbar-back {
+  font-family: var(--font);
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 150ms;
+}
+.topbar-back:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.topbar-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-text);
+}
+
+.topbar-versions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.version-badge {
+  font-family: var(--font);
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  transition: all 150ms;
+  letter-spacing: 0.04em;
+}
+.version-badge:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+.version-badge.active {
+  background: var(--color-accent);
+  color: #0D0D1A;
+  border-color: var(--color-accent);
+}
+
+.topbar-mode {
+  display: flex;
+  gap: 0;
+  margin-left: 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+.mode-btn {
+  font-family: var(--font);
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-dim);
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  transition: all 150ms;
+}
+.mode-btn.active {
+  background: var(--color-accent);
+  color: #0D0D1A;
+}
+.mode-btn:hover:not(.active) {
+  color: var(--color-text);
+}
+
+/* ── Split Stage (Panel + Canvas) ─────────────────────── */
+.split-stage {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  margin: 0 var(--bezel);
+}
+
+/* ── Review Panel (Left, 35%) ─────────────────────────── */
+.review-panel {
+  width: var(--panel-split);
+  min-width: 280px;
+  background: var(--color-bg);
+  border-right: 1px solid var(--color-border);
+  overflow-y: auto;
+  padding: 16px 0;
+  position: relative;
+}
+
+.review-panel::-webkit-scrollbar { width: 4px; }
+.review-panel::-webkit-scrollbar-track { background: transparent; }
+.review-panel::-webkit-scrollbar-thumb { background: var(--color-accent); border-radius: 2px; }
+
+/* Panel Header */
+.panel-header {
+  padding: 0 16px 14px;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 12px;
+}
+
+.panel-category {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.panel-category-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-yellow);
+}
+
+.panel-category-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.panel-score {
+  font-size: 0.65rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.04em;
+}
+.panel-score span {
+  font-weight: 800;
+  color: var(--color-accent);
+  font-size: 0.8rem;
+}
+
+/* Panel Sections */
+.panel-section {
+  padding: 0 16px;
+  margin-bottom: 4px;
+  position: relative;
+  transition: background var(--transition-speed);
+}
+
+.panel-section::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background var(--transition-speed);
+}
+
+.panel-section.active::before {
+  background: var(--color-accent);
+}
+
+.panel-section.active {
+  background: rgba(255, 208, 0, 0.04);
+}
+
+.panel-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 6px;
+  cursor: pointer;
+  position: relative;
+}
+
+.panel-section-header:hover {
+  color: var(--color-accent);
+}
+
+.panel-section-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  position: relative;
+}
+
+.panel-section.active .panel-section-name::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-accent);
+  border-radius: 1px;
+}
+
+.section-score-mini {
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--color-text-dim);
+}
+
+/* Panel Findings */
+.panel-finding {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 8px 0 8px 4px;
+  font-size: 0.65rem;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(245, 240, 225, 0.04);
+  cursor: pointer;
+  transition: background var(--transition-speed);
+  position: relative;
+}
+
+.panel-finding:hover {
+  background: rgba(255, 208, 0, 0.03);
+}
+
+.panel-finding:last-child {
+  border-bottom: none;
+}
+
+.finding-light {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.finding-light.red { background: var(--color-red); }
+.finding-light.yellow { background: var(--color-yellow); }
+.finding-light.green { background: var(--color-green); }
+
+.finding-content {
+  flex: 1;
+}
+
+.finding-text {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.finding-comment {
+  font-size: 0.58rem;
+  color: var(--color-text-dim);
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.finding-severity-icon {
+  font-size: 0.7rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Separator between panel sections */
+.panel-section + .panel-section {
+  border-top: 1px solid var(--color-border);
+}
+
+/* ── Bubble Rail (Panel/Canvas Divider) ───────────────── */
+.bubble-rail {
+  width: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(13, 13, 26, 0.8);
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.rail-bubble {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  opacity: 0.5;
+}
+
+.rail-bubble:hover {
+  transform: scale(1.3);
+  opacity: 1;
+}
+
+.rail-bubble.active {
+  opacity: 1;
+  box-shadow: 0 0 6px currentColor;
+  transform: scale(1.2);
+}
+
+/* ── Design Canvas (Right, 65%) ───────────────────────── */
+.design-canvas {
+  width: var(--canvas-split);
+  overflow-y: auto;
+  padding: 20px 28px;
+  position: relative;
+}
+
+.design-canvas::-webkit-scrollbar { width: 4px; }
+.design-canvas::-webkit-scrollbar-track { background: transparent; }
+.design-canvas::-webkit-scrollbar-thumb { background: rgba(245, 240, 225, 0.15); border-radius: 2px; }
+
+/* Canvas Sections */
+.canvas-section {
+  padding: 24px;
+  margin-bottom: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  position: relative;
+  opacity: var(--dim-opacity);
+  transition: opacity var(--transition-speed) ease,
+              border-color var(--transition-speed) ease,
+              box-shadow var(--transition-speed) ease;
+}
+
+.canvas-section.active {
+  opacity: var(--active-opacity);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent), 0 0 20px rgba(255, 208, 0, 0.08);
+}
+
+.canvas-section-label {
+  font-size: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+  margin-bottom: 12px;
+}
+
+.canvas-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.canvas-section .section-body {
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: var(--color-text-dim);
+}
+
+/* Active text underline ref */
+.canvas-section.active .highlight-ref {
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+}
+
+/* Section-specific styling */
+.hero-cta {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 20px;
+  background: var(--color-accent);
+  color: #0D0D1A;
+  font-family: var(--font);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.feature-card {
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.feature-card-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+  letter-spacing: 0.04em;
+}
+
+.feature-card-text {
+  font-size: 0.6rem;
+  color: var(--color-text-dim);
+  line-height: 1.5;
+}
+
+.pricing-tiers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.pricing-tier {
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.pricing-tier.highlighted-tier {
+  border-color: var(--color-accent);
+  background: rgba(255, 208, 0, 0.05);
+}
+
+.pricing-tier-name {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.pricing-tier-price {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+
+.pricing-tier-price span {
+  font-size: 0.55rem;
+  color: var(--color-text-dim);
+  font-weight: 600;
+}
+
+.pricing-tier-features {
+  font-size: 0.55rem;
+  color: var(--color-text-dim);
+  line-height: 1.8;
+}
+
+.pricing-cta-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 5px 14px;
+  font-family: var(--font);
+  font-size: 0.55rem;
+  font-weight: 700;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  background: transparent;
+  border-radius: 3px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
+.cta-block {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.cta-block h2 {
+  font-size: 1.2rem;
+}
+
+.cta-block .section-body {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.cta-main-btn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 10px 28px;
+  background: var(--color-accent);
+  color: #0D0D1A;
+  font-family: var(--font);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Dashed dividers between canvas sections (visual) */
+.canvas-divider {
+  border: none;
+  border-top: 1px dashed var(--color-border);
+  margin: 0 0 16px 0;
+  opacity: 0.5;
+}
+
+/* ── Chin (Findings Ticker) ───────────────────────────── */
+.chin {
+  height: var(--chin-height);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 0 var(--bezel) var(--bezel);
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.chin-arrow {
+  font-family: var(--font);
+  font-size: 0.8rem;
+  color: var(--color-text-dim);
+  background: var(--color-surface);
+  border: none;
+  cursor: pointer;
+  padding: 0 10px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  transition: color 150ms;
+  flex-shrink: 0;
+  z-index: 2;
+}
+.chin-arrow:hover {
+  color: var(--color-accent);
+}
+
+.chin-ticker-track {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+
+.chin-ticker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0 8px;
+  transition: transform 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  width: max-content;
+}
+
+.chin-card {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all var(--transition-speed);
+  height: 36px;
+}
+
+.chin-card:hover {
+  border-color: rgba(255, 208, 0, 0.4);
+  background: rgba(255, 208, 0, 0.04);
+}
+
+.chin-card.active {
+  border-color: var(--color-accent);
+  background: rgba(255, 208, 0, 0.08);
+  box-shadow: 0 0 8px rgba(255, 208, 0, 0.15);
+}
+
+.chin-card-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.chin-card-dot.red { background: var(--color-red); }
+.chin-card-dot.yellow { background: var(--color-yellow); }
+.chin-card-dot.green { background: var(--color-green); }
+
+.chin-card-section {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-text);
+}
+
+.chin-card-text {
+  font-size: 0.55rem;
+  color: var(--color-text-dim);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Tour Animation Keyframes ─────────────────────────── */
+/* 16s total: 0-4s Hero, 4-8s Features, 8-12s Pricing, 12-16s CTA */
+
+@keyframes tourPanelBorder {
+  0%, 24.9%   { border-left-color: var(--color-accent); }
+  25%         { border-left-color: transparent; }
+  25%, 49.9%  { border-left-color: transparent; }
+  50%         { border-left-color: transparent; }
+  50%, 74.9%  { border-left-color: transparent; }
+  75%         { border-left-color: transparent; }
+  75%, 100%   { border-left-color: transparent; }
+}
+
+/* ── Tour State Classes (applied by JS) ──────────────── */
+.tour-active .canvas-section {
+  opacity: var(--dim-opacity);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+
+.tour-active .canvas-section.active {
+  opacity: var(--active-opacity);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent), 0 0 20px rgba(255, 208, 0, 0.08);
+}
+
+.tour-active .panel-section::before {
+  background: transparent;
+}
+.tour-active .panel-section.active::before {
+  background: var(--color-accent);
+}
+
+.tour-active .panel-section.active {
+  background: rgba(255, 208, 0, 0.04);
+}
+
+/* ── Accessibility ────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-speed: 0ms;
+  }
+  .chin-ticker {
+    transition: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Info Banner -->
+<div class="info-banner">
+  VARIATION E: SPLIT STAGE &mdash; No overlay. Panel + canvas side-by-side. Active section brightens, others dim.
+  <code>Browse</code> <code>Spotlight</code> <code>Tour</code>
+</div>
+
+<!-- iMac Bezel -->
+<div class="bezel-frame"></div>
+
+<!-- App Container -->
+<div class="app-container">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <button class="topbar-back" title="Back">&larr;</button>
+    <span class="topbar-title">SaaSLand Marketing Page</span>
+    <div class="topbar-versions">
+      <button class="version-badge" data-version="v1">v1 <span style="color:var(--color-yellow);">5.2</span></button>
+      <button class="version-badge active" data-version="v2">v2 <span style="color:var(--color-green);">6.8</span></button>
+    </div>
+    <div class="topbar-mode">
+      <button class="mode-btn" data-mode="browse" title="Hover findings to highlight sections">BROWSE</button>
+      <button class="mode-btn" data-mode="spotlight" title="Click to lock a finding highlight">SPOTLIGHT</button>
+      <button class="mode-btn active" data-mode="tour" title="Auto-tour through all sections">TOUR</button>
+    </div>
+  </div>
+
+  <!-- Split Stage -->
+  <div class="split-stage">
+
+    <!-- Review Panel (35%) -->
+    <div class="review-panel" id="reviewPanel">
+      <!-- Panel Header -->
+      <div class="panel-header">
+        <div class="panel-category">
+          <div class="panel-category-dot" style="background: var(--color-yellow);"></div>
+          <span class="panel-category-name">Marketing</span>
+        </div>
+        <div class="panel-score"><span>6</span>/10 &mdash; Strong hook, weak follow-through</div>
+      </div>
+
+      <!-- HERO Section -->
+      <div class="panel-section" data-section="hero" id="panelHero">
+        <div class="panel-section-header" data-section="hero">
+          <span class="panel-section-name">HERO</span>
+          <span class="section-score-mini">2 findings</span>
+        </div>
+        <div class="panel-finding" data-section="hero" data-severity="red">
+          <div class="finding-light red"></div>
+          <div class="finding-content">
+            <div class="finding-text">Generic CTA lacks urgency</div>
+            <div class="finding-comment">"Unlock the power" is verbal clip art. No specificity, no urgency.</div>
+          </div>
+          <span class="finding-severity-icon">&#x1F534;</span>
+        </div>
+        <div class="panel-finding" data-section="hero" data-severity="yellow">
+          <div class="finding-light yellow"></div>
+          <div class="finding-content">
+            <div class="finding-text">No social proof above the fold</div>
+            <div class="finding-comment">No logos, no numbers. Why should they trust you?</div>
+          </div>
+          <span class="finding-severity-icon">&#x1F7E1;</span>
+        </div>
+      </div>
+
+      <!-- FEATURES Section -->
+      <div class="panel-section" data-section="features" id="panelFeatures">
+        <div class="panel-section-header" data-section="features">
+          <span class="panel-section-name">FEATURES</span>
+          <span class="section-score-mini">2 findings</span>
+        </div>
+        <div class="panel-finding" data-section="features" data-severity="yellow">
+          <div class="finding-light yellow"></div>
+          <div class="finding-content">
+            <div class="finding-text">Good card layout but needs hierarchy</div>
+            <div class="finding-comment">Three equal options = three things they'll skip equally.</div>
+          </div>
+          <span class="finding-severity-icon">&#x1F7E1;</span>
+        </div>
+        <div class="panel-finding" data-section="features" data-severity="red">
+          <div class="finding-light red"></div>
+          <div class="finding-content">
+            <div class="finding-text">"Next-gen AI" is undifferentiated</div>
+            <div class="finding-comment">Every competitor says this. What do you actually do?</div>
+          </div>
+          <span class="finding-severity-icon">&#x1F534;</span>
+        </div>
+      </div>
+
+      <!-- PRICING Section -->
+      <div class="panel-section" data-section="pricing" id="panelPricing">
+        <div class="panel-section-header" data-section="pricing">
+          <span class="panel-section-name">PRICING</span>
+          <span class="section-score-mini">2 findings</span>
+        </div>
+        <div class="panel-finding" data-section="pricing" data-severity="red">
+          <div class="finding-light red"></div>
+          <div class="finding-content">
+            <div class="finding-text">No anchor pricing strategy</div>
+            <div class="finding-comment">"Start Free" promises a tier that doesn't exist. Trust eroded.</div>
+          </div>
+          <span class="finding-severity-icon">&#x1F534;</span>
+        </div>
+        <div class="panel-finding" data-section="pricing" data-severity="yellow">
+          <div class="finding-light yellow"></div>
+          <div class="finding-content">
+            <div class="finding-text">Tier names don't indicate audience</div>
+            <div class="finding-comment">"Pro" vs "Enterprise" -- who am I? Say "For individuals" vs "For teams."</div>
+          </div>
+          <span class="finding-severity-icon">&#x1F7E1;</span>
+        </div>
+      </div>
+
+      <!-- CTA Section -->
+      <div class="panel-section" data-section="cta" id="panelCta">
+        <div class="panel-section-header" data-section="cta">
+          <span class="panel-section-name">CTA</span>
+          <span class="section-score-mini">2 findings</span>
+        </div>
+        <div class="panel-finding" data-section="cta" data-severity="red">
+          <div class="finding-light red"></div>
+          <div class="finding-content">
+            <div class="finding-text">No trust signals near final CTA</div>
+            <div class="finding-comment">No guarantee, no testimonial snippet, no security badge. Conversion drops.</div>
+          </div>
+          <span class="finding-severity-icon">&#x1F534;</span>
+        </div>
+        <div class="panel-finding" data-section="cta" data-severity="green">
+          <div class="finding-light green"></div>
+          <div class="finding-content">
+            <div class="finding-text">Strong action verb in button copy</div>
+            <div class="finding-comment">"Start Now" is direct and clear. Good foundation.</div>
+          </div>
+          <span class="finding-severity-icon">&#x1F7E2;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bubble Rail (Divider) -->
+    <div class="bubble-rail" id="bubbleRail">
+      <div class="rail-bubble" data-section="hero" style="color: var(--color-red); background: var(--color-red);"></div>
+      <div class="rail-bubble" data-section="features" style="color: var(--color-yellow); background: var(--color-yellow);"></div>
+      <div class="rail-bubble" data-section="pricing" style="color: var(--color-red); background: var(--color-red);"></div>
+      <div class="rail-bubble" data-section="cta" style="color: var(--color-red); background: var(--color-red);"></div>
+    </div>
+
+    <!-- Design Canvas (65%) -->
+    <div class="design-canvas" id="designCanvas">
+
+      <!-- HERO Section -->
+      <div class="canvas-section" data-section="hero" id="canvasHero">
+        <div class="canvas-section-label">HERO</div>
+        <h2>Unlock the <span class="highlight-ref">Power of Next-Generation</span> AI</h2>
+        <div class="section-body">
+          Streamline your processes, boost productivity, and transform the way
+          your team collaborates. The future of work starts here.
+        </div>
+        <button class="hero-cta">Get Started Free</button>
+      </div>
+
+      <hr class="canvas-divider" />
+
+      <!-- FEATURES Section -->
+      <div class="canvas-section" data-section="features" id="canvasFeatures">
+        <div class="canvas-section-label">FEATURES</div>
+        <h2>Everything You Need</h2>
+        <div class="section-body">Powerful tools to transform your workflow.</div>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-card-title">AI Insights</div>
+            <div class="feature-card-text">Next-generation analytics powered by machine learning.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-title">Team Sync</div>
+            <div class="feature-card-text">Real-time collaboration across your entire organization.</div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-title">Smart Workflows</div>
+            <div class="feature-card-text">Automate repetitive tasks and focus on what matters.</div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="canvas-divider" />
+
+      <!-- PRICING Section -->
+      <div class="canvas-section" data-section="pricing" id="canvasPricing">
+        <div class="canvas-section-label">PRICING</div>
+        <h2>Simple, Transparent Pricing</h2>
+        <div class="section-body">Choose the plan that fits your team.</div>
+        <div class="pricing-tiers">
+          <div class="pricing-tier">
+            <div class="pricing-tier-name">Free</div>
+            <div class="pricing-tier-price">$0<span>/mo</span></div>
+            <div class="pricing-tier-features">
+              5 projects<br/>1 user<br/>Basic analytics
+            </div>
+            <button class="pricing-cta-btn">Start Free</button>
+          </div>
+          <div class="pricing-tier highlighted-tier">
+            <div class="pricing-tier-name">Pro</div>
+            <div class="pricing-tier-price">$29<span>/mo</span></div>
+            <div class="pricing-tier-features">
+              Unlimited projects<br/>10 users<br/>Advanced analytics
+            </div>
+            <button class="pricing-cta-btn">Start Free</button>
+          </div>
+          <div class="pricing-tier">
+            <div class="pricing-tier-name">Enterprise</div>
+            <div class="pricing-tier-price">$99<span>/mo</span></div>
+            <div class="pricing-tier-features">
+              Unlimited everything<br/>SSO + SAML<br/>Dedicated support
+            </div>
+            <button class="pricing-cta-btn">Contact Sales</button>
+          </div>
+        </div>
+      </div>
+
+      <hr class="canvas-divider" />
+
+      <!-- CTA Section -->
+      <div class="canvas-section" data-section="cta" id="canvasCta">
+        <div class="canvas-section-label">CTA</div>
+        <div class="cta-block">
+          <h2>Ready to <span class="highlight-ref">Transform Your Workflow</span>?</h2>
+          <div class="section-body">
+            Join 10,000+ teams already using our platform. No credit card required.
+          </div>
+          <button class="cta-main-btn">Start Now &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chin (Findings Ticker) -->
+  <div class="chin" id="chin">
+    <button class="chin-arrow" id="chinArrowLeft" title="Scroll left">&laquo;</button>
+    <div class="chin-ticker-track" id="chinTickerTrack">
+      <div class="chin-ticker" id="chinTicker">
+        <!-- Hero findings -->
+        <div class="chin-card" data-section="hero" data-index="0">
+          <div class="chin-card-dot red"></div>
+          <span class="chin-card-section">Hero</span>
+          <span class="chin-card-text">Generic CTA lacks urgency</span>
+        </div>
+        <div class="chin-card" data-section="hero" data-index="1">
+          <div class="chin-card-dot yellow"></div>
+          <span class="chin-card-section">Hero</span>
+          <span class="chin-card-text">No social proof above fold</span>
+        </div>
+        <!-- Features findings -->
+        <div class="chin-card" data-section="features" data-index="2">
+          <div class="chin-card-dot yellow"></div>
+          <span class="chin-card-section">Features</span>
+          <span class="chin-card-text">Good cards, needs hierarchy</span>
+        </div>
+        <div class="chin-card" data-section="features" data-index="3">
+          <div class="chin-card-dot red"></div>
+          <span class="chin-card-section">Features</span>
+          <span class="chin-card-text">Undifferentiated "next-gen AI"</span>
+        </div>
+        <!-- Pricing findings -->
+        <div class="chin-card" data-section="pricing" data-index="4">
+          <div class="chin-card-dot red"></div>
+          <span class="chin-card-section">Pricing</span>
+          <span class="chin-card-text">No anchor pricing strategy</span>
+        </div>
+        <div class="chin-card" data-section="pricing" data-index="5">
+          <div class="chin-card-dot yellow"></div>
+          <span class="chin-card-section">Pricing</span>
+          <span class="chin-card-text">Tier names unclear</span>
+        </div>
+        <!-- CTA findings -->
+        <div class="chin-card" data-section="cta" data-index="6">
+          <div class="chin-card-dot red"></div>
+          <span class="chin-card-section">CTA</span>
+          <span class="chin-card-text">No trust signals near CTA</span>
+        </div>
+        <div class="chin-card" data-section="cta" data-index="7">
+          <div class="chin-card-dot green"></div>
+          <span class="chin-card-section">CTA</span>
+          <span class="chin-card-text">Strong action verb</span>
+        </div>
+      </div>
+    </div>
+    <button class="chin-arrow" id="chinArrowRight" title="Scroll right">&raquo;</button>
+  </div>
+
+</div><!-- /app-container -->
+
+<script>
+// ── State ──────────────────────────────────────────────
+const sections = ['hero', 'features', 'pricing', 'cta'];
+let currentMode = 'tour'; // browse | spotlight | tour
+let activeSection = null;
+let spotlockSection = null; // for spotlight mode
+let tourInterval = null;
+let tourIndex = 0;
+let chinOffset = 0;
+
+// ── DOM References ─────────────────────────────────────
+const panelSections = document.querySelectorAll('.panel-section');
+const canvasSections = document.querySelectorAll('.canvas-section');
+const railBubbles = document.querySelectorAll('.rail-bubble');
+const chinCards = document.querySelectorAll('.chin-card');
+const chinTicker = document.getElementById('chinTicker');
+const chinTickerTrack = document.getElementById('chinTickerTrack');
+const panelFindings = document.querySelectorAll('.panel-finding');
+const panelHeaders = document.querySelectorAll('.panel-section-header');
+const modeBtns = document.querySelectorAll('.mode-btn');
+
+// ── Activate Section ───────────────────────────────────
+function activateSection(sectionId) {
+  activeSection = sectionId;
+
+  // Panel sections
+  panelSections.forEach(ps => {
+    ps.classList.toggle('active', ps.dataset.section === sectionId);
+  });
+
+  // Canvas sections
+  canvasSections.forEach(cs => {
+    cs.classList.toggle('active', cs.dataset.section === sectionId);
+  });
+
+  // Rail bubbles
+  railBubbles.forEach(rb => {
+    rb.classList.toggle('active', rb.dataset.section === sectionId);
+  });
+
+  // Chin cards - highlight cards belonging to active section
+  chinCards.forEach(cc => {
+    cc.classList.toggle('active', cc.dataset.section === sectionId);
+  });
+
+  // Scroll chin to center active cards
+  scrollChinToSection(sectionId);
+
+  // Scroll canvas to make active section visible
+  scrollCanvasToSection(sectionId);
+
+  // Scroll panel to make active section visible
+  scrollPanelToSection(sectionId);
+}
+
+function deactivateAll() {
+  activeSection = null;
+  panelSections.forEach(ps => ps.classList.remove('active'));
+  canvasSections.forEach(cs => cs.classList.remove('active'));
+  railBubbles.forEach(rb => rb.classList.remove('active'));
+  chinCards.forEach(cc => cc.classList.remove('active'));
+}
+
+// ── Chin Scrolling ─────────────────────────────────────
+function scrollChinToSection(sectionId) {
+  // Find first chin card for this section
+  const targetCard = document.querySelector(`.chin-card[data-section="${sectionId}"]`);
+  if (!targetCard) return;
+
+  const trackWidth = chinTickerTrack.offsetWidth;
+  const cardLeft = targetCard.offsetLeft;
+  const cardWidth = targetCard.offsetWidth;
+  const centerOffset = cardLeft - (trackWidth / 2) + (cardWidth / 2);
+  const maxOffset = chinTicker.scrollWidth - trackWidth;
+
+  chinOffset = Math.max(0, Math.min(centerOffset, maxOffset));
+  chinTicker.style.transform = `translateX(-${chinOffset}px)`;
+}
+
+function scrollChinLeft() {
+  const trackWidth = chinTickerTrack.offsetWidth;
+  chinOffset = Math.max(0, chinOffset - trackWidth * 0.5);
+  chinTicker.style.transform = `translateX(-${chinOffset}px)`;
+}
+
+function scrollChinRight() {
+  const trackWidth = chinTickerTrack.offsetWidth;
+  const maxOffset = chinTicker.scrollWidth - trackWidth;
+  chinOffset = Math.min(maxOffset, chinOffset + trackWidth * 0.5);
+  chinTicker.style.transform = `translateX(-${chinOffset}px)`;
+}
+
+// ── Canvas Scrolling ───────────────────────────────────
+function scrollCanvasToSection(sectionId) {
+  const target = document.querySelector(`.canvas-section[data-section="${sectionId}"]`);
+  if (!target) return;
+  const canvas = document.getElementById('designCanvas');
+  const targetTop = target.offsetTop - 20;
+  canvas.scrollTo({ top: targetTop, behavior: 'smooth' });
+}
+
+// ── Panel Scrolling ────────────────────────────────────
+function scrollPanelToSection(sectionId) {
+  const target = document.querySelector(`.panel-section[data-section="${sectionId}"]`);
+  if (!target) return;
+  const panel = document.getElementById('reviewPanel');
+  const targetTop = target.offsetTop - panel.offsetTop - 10;
+  panel.scrollTo({ top: targetTop, behavior: 'smooth' });
+}
+
+// ── Mode Switching ─────────────────────────────────────
+function setMode(mode) {
+  currentMode = mode;
+  spotlockSection = null;
+
+  // Update mode buttons
+  modeBtns.forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+
+  // Stop tour if switching away
+  if (mode !== 'tour') {
+    stopTour();
+    deactivateAll();
+    document.querySelector('.split-stage').classList.remove('tour-active');
+  }
+
+  // Start tour if switching to tour
+  if (mode === 'tour') {
+    document.querySelector('.split-stage').classList.add('tour-active');
+    startTour();
+  }
+}
+
+// ── Tour Mode ──────────────────────────────────────────
+function startTour() {
+  stopTour();
+  tourIndex = 0;
+  activateSection(sections[tourIndex]);
+
+  tourInterval = setInterval(() => {
+    tourIndex = (tourIndex + 1) % sections.length;
+    activateSection(sections[tourIndex]);
+  }, 4000); // 4s per section
+}
+
+function stopTour() {
+  if (tourInterval) {
+    clearInterval(tourInterval);
+    tourInterval = null;
+  }
+}
+
+// ── Browse Mode: Hover Interactions ────────────────────
+function setupBrowseHover() {
+  // Panel findings hover
+  panelFindings.forEach(finding => {
+    finding.addEventListener('mouseenter', () => {
+      if (currentMode !== 'browse') return;
+      activateSection(finding.dataset.section);
+    });
+    finding.addEventListener('mouseleave', () => {
+      if (currentMode !== 'browse') return;
+      deactivateAll();
+    });
+  });
+
+  // Panel section headers hover
+  panelHeaders.forEach(header => {
+    header.addEventListener('mouseenter', () => {
+      if (currentMode !== 'browse') return;
+      activateSection(header.dataset.section);
+    });
+    header.addEventListener('mouseleave', () => {
+      if (currentMode !== 'browse') return;
+      deactivateAll();
+    });
+  });
+
+  // Rail bubbles hover
+  railBubbles.forEach(rb => {
+    rb.addEventListener('mouseenter', () => {
+      if (currentMode !== 'browse') return;
+      activateSection(rb.dataset.section);
+    });
+    rb.addEventListener('mouseleave', () => {
+      if (currentMode !== 'browse') return;
+      deactivateAll();
+    });
+  });
+}
+
+// ── Spotlight Mode: Click to Lock ──────────────────────
+function setupSpotlightClick() {
+  // Panel findings click
+  panelFindings.forEach(finding => {
+    finding.addEventListener('click', () => {
+      if (currentMode !== 'spotlight') return;
+      const sectionId = finding.dataset.section;
+      if (spotlockSection === sectionId) {
+        // Unlock
+        spotlockSection = null;
+        deactivateAll();
+      } else {
+        spotlockSection = sectionId;
+        activateSection(sectionId);
+      }
+    });
+  });
+
+  // Panel section headers click
+  panelHeaders.forEach(header => {
+    header.addEventListener('click', () => {
+      if (currentMode !== 'spotlight') return;
+      const sectionId = header.dataset.section;
+      if (spotlockSection === sectionId) {
+        spotlockSection = null;
+        deactivateAll();
+      } else {
+        spotlockSection = sectionId;
+        activateSection(sectionId);
+      }
+    });
+  });
+
+  // Rail bubbles click
+  railBubbles.forEach(rb => {
+    rb.addEventListener('click', () => {
+      if (currentMode !== 'spotlight') return;
+      const sectionId = rb.dataset.section;
+      if (spotlockSection === sectionId) {
+        spotlockSection = null;
+        deactivateAll();
+      } else {
+        spotlockSection = sectionId;
+        activateSection(sectionId);
+      }
+    });
+  });
+
+  // Chin cards click
+  chinCards.forEach(cc => {
+    cc.addEventListener('click', () => {
+      if (currentMode !== 'spotlight') return;
+      const sectionId = cc.dataset.section;
+      if (spotlockSection === sectionId) {
+        spotlockSection = null;
+        deactivateAll();
+      } else {
+        spotlockSection = sectionId;
+        activateSection(sectionId);
+      }
+    });
+  });
+}
+
+// ── Chin Card Click (all modes) ────────────────────────
+function setupChinClicks() {
+  chinCards.forEach(cc => {
+    cc.addEventListener('click', () => {
+      const sectionId = cc.dataset.section;
+
+      if (currentMode === 'tour') {
+        // Interrupt tour, switch to spotlight
+        setMode('spotlight');
+        spotlockSection = sectionId;
+        activateSection(sectionId);
+        return;
+      }
+
+      if (currentMode === 'browse') {
+        // Switch to spotlight on click
+        setMode('spotlight');
+        spotlockSection = sectionId;
+        activateSection(sectionId);
+        return;
+      }
+
+      // spotlight mode handled by setupSpotlightClick
+    });
+  });
+}
+
+// ── Mode Buttons ───────────────────────────────────────
+modeBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    setMode(btn.dataset.mode);
+  });
+});
+
+// ── Chin Arrows ────────────────────────────────────────
+document.getElementById('chinArrowLeft').addEventListener('click', scrollChinLeft);
+document.getElementById('chinArrowRight').addEventListener('click', scrollChinRight);
+
+// ── Version Badges ─────────────────────────────────────
+document.querySelectorAll('.version-badge').forEach(vb => {
+  vb.addEventListener('click', () => {
+    document.querySelectorAll('.version-badge').forEach(v => v.classList.remove('active'));
+    vb.classList.add('active');
+  });
+});
+
+// ── Canvas Section Click (in browse mode -> spotlight) ──
+canvasSections.forEach(cs => {
+  cs.addEventListener('click', () => {
+    if (currentMode === 'tour') {
+      setMode('spotlight');
+    }
+    if (currentMode === 'browse' || currentMode === 'spotlight') {
+      if (spotlockSection === cs.dataset.section) {
+        spotlockSection = null;
+        deactivateAll();
+        setMode('browse');
+      } else {
+        setMode('spotlight');
+        spotlockSection = cs.dataset.section;
+        activateSection(cs.dataset.section);
+      }
+    }
+  });
+});
+
+// ── Initialize ─────────────────────────────────────────
+setupBrowseHover();
+setupSpotlightClick();
+setupChinClicks();
+
+// Start in tour mode
+document.querySelector('.split-stage').classList.add('tour-active');
+startTour();
+</script>
+</body>
+</html>

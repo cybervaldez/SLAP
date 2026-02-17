@@ -45,8 +45,11 @@
           inset 0 4px 12px rgba(0, 0, 0, 0.08),
           0 -1px 0 rgba(0, 0, 0, 0.06),
           0 0 0 1px rgba(0, 0, 0, 0.04);
-        transition: background 800ms ease-in-out, border-color 800ms ease-in-out, box-shadow 800ms ease-in-out;
+        transition: background 800ms ease-in-out, border-color 800ms ease-in-out, box-shadow 800ms ease-in-out, height 300ms cubic-bezier(0.4, 0, 0.2, 1);
       }
+      /* Tour chin height overrides */
+      body[data-tour-chin="guided"]::before { height: 96px; }
+      body[data-tour-chin="live"]::before { height: 72px; }
       /* Light content → dark bezel for contrast */
       body[data-content-theme="light"]::after {
         border-color: #3A3A4E;
@@ -64,6 +67,8 @@
           0 -1px 0 rgba(0, 0, 0, 0.08),
           0 0 0 1px rgba(0, 0, 0, 0.06);
       }
+      body[data-content-theme="light"][data-tour-chin="guided"]::before { height: 96px; }
+      body[data-content-theme="light"][data-tour-chin="live"]::before { height: 72px; }
       /* Custom scrollbar for UI review panel — yellow on white */
       [data-testid="anti-slop-overlay"] > div:first-child::-webkit-scrollbar {
         width: 6px;

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP! Variation C: Bubble Parade</title>
+<style>
+  /* ======================================================
+     SLAP! Design System
+     Variation C — Bubble Parade
+     Reviewer bubbles detach from the rail and float
+     to sections they're reviewing, delivering findings
+     via speech-bubble popovers.
+     ====================================================== */
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  :root {
+    --bg: #0D0D1A;
+    --accent: #FFD000;
+    --text: #F5F0E1;
+    --font: 'Courier New', monospace;
+    --bezel: 8px;
+    --chin-h: 56px;
+    --bubble-size: 40px;
+    --rail-right: 16px;
+    --rail-top: 110px;
+    --rail-gap: 54px;
+    --travel-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --cycle: 15s;
+
+    /* Bubble accent colors */
+    --clr-m: #FFD000; /* gold — Mktg */
+    --clr-u: #00E5FF; /* cyan — UX */
+    --clr-p: #39FF14; /* green — PM */
+    --clr-t: #FF6B6B; /* coral — Tech */
+    --clr-d: #BD93F9; /* purple — Design */
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    font-family: var(--font);
+    color: var(--text);
+  }
+
+  /* === Bezel (iMac frame) ================================ */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    border: var(--bezel) solid #222;
+    border-radius: 10px;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* === App wrapper ====================================== */
+  .app {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* === TopBar =========================================== */
+  .topbar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,208,0,0.15);
+    flex-shrink: 0;
+    z-index: 10;
+    background: rgba(13,13,26,0.95);
+  }
+
+  .topbar-back {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid rgba(245,240,225,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0.6;
+  }
+
+  .topbar-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .topbar-versions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .version-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(245,240,225,0.15);
+    color: var(--text);
+    opacity: 0.5;
+    cursor: pointer;
+  }
+  .version-pill.active {
+    opacity: 1;
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .tour-btn {
+    font-family: var(--font);
+    font-size: 11px;
+    padding: 4px 14px;
+    border-radius: 5px;
+    border: 1px solid var(--accent);
+    background: rgba(255,208,0,0.1);
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    animation: tour-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes tour-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,208,0,0.3); }
+    50% { box-shadow: 0 0 8px 2px rgba(255,208,0,0.15); }
+  }
+
+  /* === Main content area ================================ */
+  .main {
+    flex: 1;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 24px 72px 24px 24px; /* right padding for rail */
+  }
+
+  /* === Sections ========================================= */
+  .section {
+    border: 1px solid rgba(245,240,225,0.08);
+    border-radius: 8px;
+    padding: 32px 28px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: border-color 0.4s, box-shadow 0.4s;
+    background: rgba(245,240,225,0.02);
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(245,240,225,0.35);
+    margin-bottom: 16px;
+  }
+
+  .section h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .section p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(245,240,225,0.55);
+    max-width: 520px;
+  }
+
+  .section .cta-placeholder {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 8px 24px;
+    border: 1px solid var(--accent);
+    border-radius: 5px;
+    color: var(--accent);
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    opacity: 0.7;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .feature-card {
+    border: 1px solid rgba(245,240,225,0.08);
+    border-radius: 6px;
+    padding: 16px;
+    background: rgba(245,240,225,0.02);
+  }
+
+  .feature-card h4 {
+    font-size: 12px;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .feature-card p {
+    font-size: 11px;
+    color: rgba(245,240,225,0.4);
+    line-height: 1.5;
+  }
+
+  .pricing-tiers {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+  }
+
+  .tier {
+    flex: 1;
+    border: 1px solid rgba(245,240,225,0.1);
+    border-radius: 6px;
+    padding: 18px;
+    text-align: center;
+  }
+
+  .tier h4 {
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .tier .price {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .tier p {
+    font-size: 11px;
+    color: rgba(245,240,225,0.4);
+    margin: 0 auto;
+  }
+
+  /* === Section glow states ============================== */
+  .section.glow {
+    border-color: rgba(255,208,0,0.4);
+    box-shadow: 0 0 20px rgba(255,208,0,0.06), inset 0 0 30px rgba(255,208,0,0.03);
+  }
+
+  /* === Reviewer bubble rail ============================= */
+  .rail {
+    position: fixed;
+    right: var(--rail-right);
+    top: var(--rail-top);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    z-index: 50;
+    padding: 8px 0;
+  }
+
+  .bubble {
+    width: var(--bubble-size);
+    height: var(--bubble-size);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--font);
+    cursor: pointer;
+    position: relative;
+    transition: opacity 0.4s, transform 0.3s;
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+
+  .bubble-m { border: 2px solid var(--clr-m); color: var(--clr-m); }
+  .bubble-u { border: 2px solid var(--clr-u); color: var(--clr-u); }
+  .bubble-p { border: 2px solid var(--clr-p); color: var(--clr-p); }
+  .bubble-t { border: 2px solid var(--clr-t); color: var(--clr-t); }
+  .bubble-d { border: 2px solid var(--clr-d); color: var(--clr-d); }
+
+  .bubble::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .bubble:hover::after {
+    border-color: inherit;
+  }
+
+  /* === Floating bubble (the one that detaches) ========== */
+  .float-bubble {
+    position: fixed;
+    width: var(--bubble-size);
+    height: var(--bubble-size);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--font);
+    z-index: 100;
+    background: var(--bg);
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(1);
+  }
+
+  .float-bubble.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* === Speech bubble popover ============================ */
+  .speech {
+    position: fixed;
+    z-index: 99;
+    background: rgba(13,13,26,0.95);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: var(--font);
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text);
+    max-width: 220px;
+    opacity: 0;
+    transform: scaleY(0);
+    transform-origin: left center;
+    pointer-events: none;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+
+  .speech::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-right: 8px solid var(--accent);
+  }
+
+  .speech.active {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  .speech .reviewer-name {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: 0.5;
+  }
+
+  .speech .finding {
+    font-weight: 700;
+  }
+
+  .speech .score {
+    margin-top: 8px;
+    font-size: 11px;
+    opacity: 0.6;
+  }
+
+  /* === Chin ============================================= */
+  .chin {
+    height: var(--chin-h);
+    border-top: 1px solid rgba(255,208,0,0.15);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    flex-shrink: 0;
+    background: rgba(13,13,26,0.95);
+    z-index: 10;
+  }
+
+  .progress-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: transparent;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  .dot.filled {
+    background: var(--accent);
+    box-shadow: 0 0 6px rgba(255,208,0,0.4);
+  }
+
+  .step-label {
+    font-size: 12px;
+    color: rgba(245,240,225,0.5);
+    letter-spacing: 0.5px;
+    min-width: 80px;
+  }
+
+  .chin-spacer { flex: 1; }
+
+  .chin-btn {
+    font-family: var(--font);
+    font-size: 11px;
+    padding: 5px 14px;
+    border-radius: 5px;
+    border: 1px solid rgba(245,240,225,0.15);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .chin-btn:hover { opacity: 1; }
+
+  /* === Trail line (dashed path from rail to section) ==== */
+  .trail {
+    position: fixed;
+    z-index: 49;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .trail.active {
+    opacity: 1;
+  }
+
+  /* === ANIMATION STATES ================================= */
+  /*
+    The full cycle is 15s, broken into phases:
+      Phase 0 (0–3s):   Browse mode — bubbles in rail, hero glows
+      Phase 1 (3–6s):   Bubble M floats to Hero, speech appears
+      Phase 2 (6–9s):   M returns, U floats to Features
+      Phase 3 (9–12s):  U returns, P floats to Pricing
+      Phase 4 (12–15s): P returns, T floats to CTA
+  */
+
+  /* === Variation label ================================== */
+  .var-label {
+    position: fixed;
+    bottom: calc(var(--chin-h) + var(--bezel) + 8px);
+    left: calc(var(--bezel) + 12px);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(245,240,225,0.2);
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TopBar -->
+  <div class="topbar">
+    <div class="topbar-back">&larr;</div>
+    <div class="topbar-title">AcmeSaaS Landing</div>
+    <div class="topbar-versions">
+      <span class="version-pill">v1 <span style="color:var(--clr-t)">5.2</span></span>
+      <span class="version-pill active">v2 <span style="color:var(--clr-p)">6.8</span></span>
+    </div>
+    <button class="tour-btn" id="tourBtn">&#9654; Tour</button>
+  </div>
+
+  <!-- Main content -->
+  <div class="main" id="mainContent">
+    <!-- Hero Section -->
+    <div class="section" id="sec-hero" data-idx="0">
+      <div class="section-label">Hero</div>
+      <h2>Ship faster. Review smarter.</h2>
+      <p>Bring every stakeholder into one feedback loop. No more scattered emails, lost Slack threads, or forgotten comments. SLAP! puts reviewers where they belong: right on the page.</p>
+      <div class="cta-placeholder">Start Free Trial</div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="section" id="sec-features" data-idx="1">
+      <div class="section-label">Features</div>
+      <h2>Everything you need</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h4>Live Review</h4>
+          <p>Drop reviewers directly onto any section. Feedback appears in context.</p>
+        </div>
+        <div class="feature-card">
+          <h4>Scoring</h4>
+          <p>Each reviewer scores independently. See consensus at a glance.</p>
+        </div>
+        <div class="feature-card">
+          <h4>Version Diff</h4>
+          <p>Compare any two versions side by side with semantic diffing.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Section -->
+    <div class="section" id="sec-pricing" data-idx="2">
+      <div class="section-label">Pricing</div>
+      <h2>Simple, transparent pricing</h2>
+      <div class="pricing-tiers">
+        <div class="tier">
+          <h4>Starter</h4>
+          <div class="price">$0</div>
+          <p>3 reviewers, 5 pages</p>
+        </div>
+        <div class="tier" style="border-color: var(--accent);">
+          <h4>Pro</h4>
+          <div class="price">$29</div>
+          <p>Unlimited everything</p>
+        </div>
+        <div class="tier">
+          <h4>Enterprise</h4>
+          <div class="price">Custom</div>
+          <p>SSO, audit, SLA</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="section" id="sec-cta" data-idx="3">
+      <div class="section-label">Call to Action</div>
+      <h2>Ready to SLAP! your pages?</h2>
+      <p>Join 2,400+ teams shipping better landing pages. Set up takes less than 5 minutes. No credit card required.</p>
+      <div class="cta-placeholder">Get Started &rarr;</div>
+    </div>
+  </div>
+
+  <!-- Bubble Rail -->
+  <div class="rail" id="rail">
+    <div class="bubble bubble-m" id="rail-m" data-key="m" title="Marketing">M</div>
+    <div class="bubble bubble-u" id="rail-u" data-key="u" title="UX">U</div>
+    <div class="bubble bubble-p" id="rail-p" data-key="p" title="Product">P</div>
+    <div class="bubble bubble-t" id="rail-t" data-key="t" title="Tech">T</div>
+    <div class="bubble bubble-d" id="rail-d" data-key="d" title="Design">D</div>
+  </div>
+
+  <!-- Floating bubble (reused for animation) -->
+  <div class="float-bubble" id="floater"></div>
+
+  <!-- Speech bubble popover -->
+  <div class="speech" id="speech">
+    <div class="reviewer-name" id="speechName"></div>
+    <div class="finding" id="speechFinding"></div>
+    <div class="score" id="speechScore"></div>
+  </div>
+
+  <!-- SVG trail line -->
+  <svg class="trail" id="trail" width="100%" height="100%" style="position:fixed;inset:0;z-index:49;pointer-events:none;">
+    <path id="trailPath" fill="none" stroke-width="1.5" stroke-dasharray="6 4" />
+  </svg>
+
+  <!-- Chin -->
+  <div class="chin">
+    <div class="progress-dots" id="progressDots">
+      <div class="dot" data-step="0"></div>
+      <div class="dot" data-step="1"></div>
+      <div class="dot" data-step="2"></div>
+      <div class="dot" data-step="3"></div>
+    </div>
+    <div class="step-label" id="stepLabel">Browse</div>
+    <div class="chin-spacer"></div>
+    <button class="chin-btn" id="prevBtn">&larr; Prev</button>
+    <button class="chin-btn" id="nextBtn">Next &rarr;</button>
+  </div>
+
+  <div class="var-label">Variation C &mdash; Bubble Parade</div>
+</div>
+
+<script>
+  // ======================================================
+  // BUBBLE PARADE — Animation Controller
+  // ======================================================
+
+  const CYCLE_MS    = 15000;
+  const PHASE_MS    = 3000;
+  const TRAVEL_MS   = 800;
+  const SPEECH_FADE = 300;
+  const EASE        = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
+
+  // Reviewer data
+  const REVIEWERS = [
+    { key: 'm', label: 'Marketing', initials: 'M', color: '#FFD000', sectionId: 'sec-hero',
+      finding: 'CTA lacks urgency. "Start Free Trial" is generic — try "Launch in 5 min" instead.',
+      score: '6/10' },
+    { key: 'u', label: 'UX',        initials: 'U', color: '#00E5FF', sectionId: 'sec-features',
+      finding: 'Feature cards need icons. Wall of text at this density won\'t scan on mobile.',
+      score: '5/10' },
+    { key: 'p', label: 'Product',   initials: 'P', color: '#39FF14', sectionId: 'sec-pricing',
+      finding: 'Enterprise tier needs social proof. Add "Trusted by 50+ enterprises" badge.',
+      score: '7/10' },
+    { key: 't', label: 'Tech',      initials: 'T', color: '#FF6B6B', sectionId: 'sec-cta',
+      finding: 'Form should pre-fill company domain from email. Reduces friction by ~30%.',
+      score: '8/10' },
+  ];
+
+  // DOM refs
+  const floater      = document.getElementById('floater');
+  const speech       = document.getElementById('speech');
+  const speechName   = document.getElementById('speechName');
+  const speechFinding= document.getElementById('speechFinding');
+  const speechScore  = document.getElementById('speechScore');
+  const trail        = document.getElementById('trail');
+  const trailPath    = document.getElementById('trailPath');
+  const stepLabel    = document.getElementById('stepLabel');
+  const progressDots = document.querySelectorAll('.dot');
+  const sections     = [
+    document.getElementById('sec-hero'),
+    document.getElementById('sec-features'),
+    document.getElementById('sec-pricing'),
+    document.getElementById('sec-cta'),
+  ];
+  const railBubbles  = [
+    document.getElementById('rail-m'),
+    document.getElementById('rail-u'),
+    document.getElementById('rail-p'),
+    document.getElementById('rail-t'),
+    document.getElementById('rail-d'),
+  ];
+
+  // State
+  let currentPhase = -1;
+  let animFrame = null;
+  let floaterAnim = null;
+  let speechAnim = null;
+
+  // ---- Helpers ----
+
+  function getRailPos(index) {
+    const el = railBubbles[index];
+    if (!el) return { x: 0, y: 0 };
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+
+  function getSectionTarget(sectionEl) {
+    const r = sectionEl.getBoundingClientRect();
+    // Target: right side of section, vertically centered
+    return { x: r.right - 60, y: r.top + r.height / 2 };
+  }
+
+  function setFloater(reviewer, x, y, scale) {
+    floater.style.left       = (x - 20) + 'px';
+    floater.style.top        = (y - 20) + 'px';
+    floater.style.transform  = `scale(${scale})`;
+    floater.style.border     = `2px solid ${reviewer.color}`;
+    floater.style.color      = reviewer.color;
+    floater.textContent      = reviewer.initials;
+  }
+
+  function showSpeech(reviewer, bx, by) {
+    speechName.textContent    = reviewer.label;
+    speechName.style.color    = reviewer.color;
+    speechFinding.textContent = reviewer.finding;
+    speechScore.textContent   = `Score: ${reviewer.score}`;
+    speech.style.borderColor  = reviewer.color;
+
+    // Position speech to the left of the bubble
+    const sw = 220;
+    speech.style.left = (bx - sw - 40) + 'px';
+    speech.style.top  = (by - 40) + 'px';
+    speech.style.transformOrigin = 'right center';
+
+    // Update the caret color
+    speech.style.setProperty('--caret-color', reviewer.color);
+    const styleTag = document.getElementById('dynamic-caret');
+    if (styleTag) {
+      styleTag.textContent = `.speech.active::before { border-right-color: ${reviewer.color}; }`;
+    }
+
+    speech.classList.add('active');
+  }
+
+  function hideSpeech() {
+    speech.classList.remove('active');
+  }
+
+  function hideFloater() {
+    floater.classList.remove('active');
+  }
+
+  function showFloater() {
+    floater.classList.add('active');
+  }
+
+  function dimRail(exceptIndex) {
+    railBubbles.forEach((b, i) => {
+      b.style.opacity = (i === exceptIndex) ? '0' : '0.3';
+      b.style.transition = 'opacity 0.4s';
+    });
+  }
+
+  function undimRail() {
+    railBubbles.forEach(b => {
+      b.style.opacity = '1';
+    });
+  }
+
+  function glowSection(index) {
+    sections.forEach((s, i) => {
+      if (i === index) s.classList.add('glow');
+      else s.classList.remove('glow');
+    });
+  }
+
+  function clearGlow() {
+    sections.forEach(s => s.classList.remove('glow'));
+  }
+
+  function updateProgress(step) {
+    progressDots.forEach((d, i) => {
+      if (i < step) d.classList.add('filled');
+      else d.classList.remove('filled');
+    });
+  }
+
+  function setStepLabel(text) {
+    stepLabel.textContent = text;
+  }
+
+  function drawTrail(x1, y1, x2, y2, color) {
+    // Curved path from rail to section
+    const mx = (x1 + x2) / 2;
+    const cp1x = x1 - 40;
+    const cp1y = y1;
+    const cp2x = x2 + 40;
+    const cp2y = y2;
+    trailPath.setAttribute('d', `M ${x1} ${y1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x2} ${y2}`);
+    trailPath.setAttribute('stroke', color);
+    trailPath.style.opacity = '0.3';
+    trail.classList.add('active');
+  }
+
+  function hideTrail() {
+    trail.classList.remove('active');
+    trailPath.style.opacity = '0';
+  }
+
+  // ---- Animation via CSS transitions ----
+
+  function animateFloater(fromX, fromY, toX, toY, fromScale, toScale, duration, onDone) {
+    setFloater(REVIEWERS[0], fromX, fromY, fromScale); // placeholder; color set elsewhere
+    floater.style.transition = 'none';
+    floater.style.left      = (fromX - 20) + 'px';
+    floater.style.top       = (fromY - 20) + 'px';
+    floater.style.transform = `scale(${fromScale})`;
+    showFloater();
+
+    // Force reflow
+    void floater.offsetWidth;
+
+    floater.style.transition = `left ${duration}ms ${EASE}, top ${duration}ms ${EASE}, transform ${duration}ms ${EASE}`;
+    floater.style.left      = (toX - 20) + 'px';
+    floater.style.top       = (toY - 20) + 'px';
+    floater.style.transform = `scale(${toScale})`;
+
+    if (onDone) {
+      setTimeout(onDone, duration);
+    }
+  }
+
+  // ---- Phase controller ----
+
+  function enterPhase(phase) {
+    if (phase === currentPhase) return;
+    currentPhase = phase;
+
+    // Clean up
+    hideSpeech();
+    hideFloater();
+    hideTrail();
+    undimRail();
+    clearGlow();
+
+    if (phase === 0) {
+      // Browse mode: hero glows, bubbles in rail
+      setStepLabel('Browse');
+      updateProgress(0);
+      glowSection(0);
+    } else if (phase >= 1 && phase <= 4) {
+      // Spotlight / Tour: bubble floats to section
+      const ri = phase - 1; // reviewer index 0..3
+      const reviewer = REVIEWERS[ri];
+      const section  = sections[ri];
+
+      setStepLabel(`Step ${phase}/4`);
+      updateProgress(phase);
+      glowSection(ri);
+      dimRail(ri);
+
+      // Positions
+      const from = getRailPos(ri);
+      const to   = getSectionTarget(section);
+
+      // Set floater appearance
+      floater.style.border = `2px solid ${reviewer.color}`;
+      floater.style.color  = reviewer.color;
+      floater.textContent  = reviewer.initials;
+
+      // Draw trail
+      drawTrail(from.x, from.y, to.x, to.y, reviewer.color);
+
+      // Animate float
+      animateFloater(from.x, from.y, to.x, to.y, 1, 1.2, TRAVEL_MS, () => {
+        // Arrived — show speech
+        showSpeech(reviewer, to.x, to.y);
+      });
+    }
+  }
+
+  function exitPhase(phase) {
+    if (phase >= 1 && phase <= 4) {
+      const ri = phase - 1;
+      const reviewer = REVIEWERS[ri];
+      const section  = sections[ri];
+      const from = getSectionTarget(section);
+      const to   = getRailPos(ri);
+
+      hideSpeech();
+      hideTrail();
+
+      // Animate back
+      floater.style.transition = `left ${TRAVEL_MS}ms ${EASE}, top ${TRAVEL_MS}ms ${EASE}, transform ${TRAVEL_MS}ms ${EASE}`;
+      floater.style.left      = (to.x - 20) + 'px';
+      floater.style.top       = (to.y - 20) + 'px';
+      floater.style.transform = 'scale(1)';
+
+      setTimeout(() => {
+        hideFloater();
+        undimRail();
+      }, TRAVEL_MS);
+    }
+  }
+
+  // ---- Main loop ----
+
+  let loopStart = null;
+
+  function tick(ts) {
+    if (!loopStart) loopStart = ts;
+    const elapsed = (ts - loopStart) % CYCLE_MS;
+    const phase = Math.floor(elapsed / PHASE_MS);
+
+    if (phase !== currentPhase) {
+      // Exit old phase
+      if (currentPhase >= 0) exitPhase(currentPhase);
+
+      // Small delay before entering to let return animation finish
+      setTimeout(() => enterPhase(phase), phase > 0 ? 200 : 0);
+    }
+
+    animFrame = requestAnimationFrame(tick);
+  }
+
+  // ---- Dynamic caret style ----
+  const caretStyle = document.createElement('style');
+  caretStyle.id = 'dynamic-caret';
+  document.head.appendChild(caretStyle);
+
+  // ---- Speech bubble transition ----
+  speech.style.transition = `opacity ${SPEECH_FADE}ms ease, transform ${SPEECH_FADE}ms ${EASE}`;
+  floater.style.background = 'var(--bg)';
+
+  // ---- Start ----
+  requestAnimationFrame(tick);
+
+  // ---- Interactive controls ----
+  let paused = false;
+
+  document.getElementById('tourBtn').addEventListener('click', () => {
+    if (paused) {
+      paused = false;
+      loopStart = null;
+      currentPhase = -1;
+      hideSpeech();
+      hideFloater();
+      hideTrail();
+      undimRail();
+      clearGlow();
+      animFrame = requestAnimationFrame(tick);
+      document.getElementById('tourBtn').innerHTML = '&#9654; Tour';
+    } else {
+      // Already running — restart
+      loopStart = null;
+      currentPhase = -1;
+    }
+  });
+
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if (!paused) {
+      paused = true;
+      cancelAnimationFrame(animFrame);
+      document.getElementById('tourBtn').innerHTML = '&#9654; Resume';
+    }
+    exitPhase(currentPhase);
+    const next = currentPhase >= 4 ? 0 : currentPhase + 1;
+    currentPhase = -1;
+    setTimeout(() => enterPhase(next), TRAVEL_MS + 100);
+  });
+
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    if (!paused) {
+      paused = true;
+      cancelAnimationFrame(animFrame);
+      document.getElementById('tourBtn').innerHTML = '&#9654; Resume';
+    }
+    exitPhase(currentPhase);
+    const prev = currentPhase <= 0 ? 4 : currentPhase - 1;
+    currentPhase = -1;
+    setTimeout(() => enterPhase(prev), TRAVEL_MS + 100);
+  });
+
+  // Handle resize — recalc positions
+  window.addEventListener('resize', () => {
+    // Positions are recalculated on each phase enter, so just reset
+    const phase = currentPhase;
+    currentPhase = -1;
+    enterPhase(phase);
+  });
+</script>
+</body>
+</html>

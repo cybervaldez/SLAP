@@ -11,6 +11,7 @@ export interface Finding {
   text: string;
   light: TrafficLight;
   comment: string;
+  ref?: string;
 }
 
 export interface Review {
@@ -22,25 +23,10 @@ export interface Review {
 
 // ─── Review Data ──────────────────────────────────────
 
+import { exampleReviews } from './exampleReviews';
+
 const reviews: Record<string, Review> = {
-  // Reviews will be populated as projects are built.
-  // Key format: 'landing-page:brutalist:marketing'
-  //
-  // Example:
-  // 'landing-page:slap:marketing': {
-  //   score: 6,
-  //   verdict: 'Strong hook but weak follow-through...',
-  //   shortVerdict: 'Strong hook, weak follow-through.',
-  //   sections: {
-  //     hero: [
-  //       { text: 'Headline grabs attention immediately', light: 'green', comment: 'The first 5 words do heavy lifting.' },
-  //       { text: 'CTA button lacks urgency language', light: 'yellow', comment: 'Try "Start Free" instead of "Get Started".' },
-  //     ],
-  //     pricing: [
-  //       { text: 'No anchor pricing visible', light: 'red', comment: 'Show the premium tier first to anchor value.' },
-  //     ],
-  //   },
-  // },
+  ...exampleReviews,
 };
 
 // ─── Consensus & Actions ──────────────────────────────

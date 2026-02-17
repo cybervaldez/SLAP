@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAP Preview — Variation C: Bubble Parade</title>
+<style>
+/* ===========================================================
+   SLAP Preview — Variation C: Bubble Parade
+   Tour State — Reviewer bubbles detach from rail and float
+   to the section they're reviewing, with speech bubbles.
+   =========================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-dark: #0D0D1A;
+  --surface-dark: #1A1A2E;
+  --surface-mid: #222240;
+  --text-light: #F5F0E1;
+  --text-muted: rgba(245, 240, 225, 0.5);
+  --accent-gold: #FFD000;
+  --score-green: #6BCB77;
+  --score-yellow: #FFD93D;
+  --score-red: #FF6B6B;
+  --bezel-dark: #3A3A4E;
+  --bezel-highlight: #4A4A5E;
+  --font: 'Courier New', monospace;
+
+  /* Reviewer colors */
+  --clr-marketing: #FF6B6B;
+  --clr-ux: #4ECDC4;
+  --clr-product: #FFD93D;
+  --clr-technical: #95E1D3;
+  --clr-design: #F38181;
+
+  /* Layout */
+  --bezel-w: 10px;
+  --chin-h: 72px;
+  --topbar-h: 44px;
+  --rail-w: 64px;
+  --bubble-size: 36px;
+  --rail-bubble-size: 40px;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #080810;
+  font-family: var(--font);
+  color: var(--text-light);
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+/* === iMac Bezel Frame ===================================== */
+.bezel-frame {
+  position: relative;
+  width: 1020px;
+  max-width: 100%;
+  height: 680px;
+  background: var(--bg-dark);
+  border: var(--bezel-w) solid var(--bezel-dark);
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px var(--bezel-highlight),
+    0 20px 80px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+/* === Top Bar ============================================== */
+.topbar {
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  background: var(--surface-dark);
+  border-bottom: 1px solid rgba(255, 208, 0, 0.12);
+  flex-shrink: 0;
+  z-index: 20;
+}
+
+.topbar-back {
+  width: 26px;
+  height: 26px;
+  border-radius: 5px;
+  border: 1px solid rgba(245, 240, 225, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.topbar-back:hover {
+  border-color: rgba(245, 240, 225, 0.3);
+}
+
+.topbar-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-light);
+  flex: 1;
+}
+
+.topbar-versions {
+  display: flex;
+  gap: 6px;
+}
+
+.version-pill {
+  font-size: 0.55rem;
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(245, 240, 225, 0.12);
+  color: var(--text-muted);
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.2s;
+}
+.version-pill .score-val {
+  font-weight: 700;
+}
+.version-pill.v1 .score-val { color: var(--score-red); }
+.version-pill.v2 .score-val { color: var(--score-green); }
+.version-pill.v2 {
+  border-color: rgba(107, 203, 119, 0.3);
+  color: var(--text-light);
+}
+
+.tour-badge {
+  font-family: var(--font);
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 5px;
+  border: 1px solid var(--accent-gold);
+  background: rgba(255, 208, 0, 0.08);
+  color: var(--accent-gold);
+  cursor: pointer;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  animation: tour-glow 3s ease-in-out infinite;
+}
+.tour-badge:hover {
+  background: rgba(255, 208, 0, 0.15);
+}
+
+@keyframes tour-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 208, 0, 0.2); }
+  50% { box-shadow: 0 0 10px 2px rgba(255, 208, 0, 0.1); }
+}
+
+/* === Main Area (viewport + rail) ========================== */
+.main-area {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+/* === Design Viewport (the page being reviewed) ============ */
+.design-viewport {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 24px;
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 240, 225, 0.1) transparent;
+}
+.design-viewport::-webkit-scrollbar { width: 4px; }
+.design-viewport::-webkit-scrollbar-track { background: transparent; }
+.design-viewport::-webkit-scrollbar-thumb { background: rgba(245, 240, 225, 0.1); border-radius: 2px; }
+
+/* === Sections ============================================= */
+.section {
+  border: 1px solid rgba(245, 240, 225, 0.06);
+  border-radius: 8px;
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  position: relative;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  background: rgba(245, 240, 225, 0.015);
+}
+
+.section-label {
+  font-size: 0.5rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 225, 0.3);
+  margin-bottom: 14px;
+}
+
+.section h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-light);
+  line-height: 1.3;
+}
+
+.section p {
+  font-size: 0.65rem;
+  line-height: 1.7;
+  color: rgba(245, 240, 225, 0.5);
+  max-width: 480px;
+}
+
+.cta-btn {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 8px 22px;
+  border: none;
+  border-radius: 5px;
+  background: var(--accent-gold);
+  color: var(--bg-dark);
+  font-family: var(--font);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.cta-btn:hover { opacity: 0.85; }
+
+.cta-btn-outline {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 8px 22px;
+  border: 1px solid var(--accent-gold);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--accent-gold);
+  font-family: var(--font);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.cta-btn-outline:hover { opacity: 1; }
+
+/* Section: being reviewed (glow) */
+.section.being-reviewed {
+  border-color: rgba(255, 107, 107, 0.4);
+  box-shadow:
+    0 0 0 2px rgba(255, 107, 107, 0.15),
+    0 0 30px rgba(255, 107, 107, 0.08),
+    inset 0 0 20px rgba(255, 107, 107, 0.02);
+}
+
+/* Feature grid */
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.feature-card {
+  border: 1px solid rgba(245, 240, 225, 0.06);
+  border-radius: 6px;
+  padding: 14px;
+  background: rgba(245, 240, 225, 0.02);
+}
+
+.feature-card h4 {
+  font-size: 0.6rem;
+  margin-bottom: 5px;
+  color: var(--text-light);
+}
+
+.feature-card p {
+  font-size: 0.5rem;
+  color: rgba(245, 240, 225, 0.35);
+  line-height: 1.5;
+  max-width: none;
+}
+
+/* Pricing tiers */
+.pricing-tiers {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.tier {
+  flex: 1;
+  border: 1px solid rgba(245, 240, 225, 0.08);
+  border-radius: 6px;
+  padding: 16px;
+  text-align: center;
+}
+.tier.featured {
+  border-color: var(--accent-gold);
+  background: rgba(255, 208, 0, 0.03);
+}
+
+.tier h4 {
+  font-size: 0.6rem;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.tier .price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  margin-bottom: 4px;
+}
+
+.tier p {
+  font-size: 0.5rem;
+  color: rgba(245, 240, 225, 0.35);
+  max-width: none;
+  margin: 0 auto;
+}
+
+/* === Reviewer Rail (right side) =========================== */
+.rail {
+  width: var(--rail-w);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  gap: 14px;
+  flex-shrink: 0;
+  z-index: 30;
+  position: relative;
+}
+
+.rail-slot {
+  width: var(--rail-bubble-size);
+  height: var(--rail-bubble-size);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  position: relative;
+  transition: opacity 0.4s, transform 0.3s;
+  background: var(--bg-dark);
+  flex-shrink: 0;
+}
+
+.rail-slot:hover {
+  transform: scale(1.08);
+}
+
+.rail-slot[data-reviewer="marketing"] {
+  border: 2px solid var(--clr-marketing);
+  color: var(--clr-marketing);
+}
+.rail-slot[data-reviewer="ux"] {
+  border: 2px solid var(--clr-ux);
+  color: var(--clr-ux);
+}
+.rail-slot[data-reviewer="product"] {
+  border: 2px solid var(--clr-product);
+  color: var(--clr-product);
+}
+.rail-slot[data-reviewer="technical"] {
+  border: 2px solid var(--clr-technical);
+  color: var(--clr-technical);
+}
+.rail-slot[data-reviewer="design"] {
+  border: 2px solid var(--clr-design);
+  color: var(--clr-design);
+}
+
+/* Empty slot: bubble has floated away */
+.rail-slot.empty {
+  border: 2px dashed rgba(255, 107, 107, 0.3);
+  color: transparent;
+  background: transparent;
+  cursor: default;
+}
+.rail-slot.empty:hover {
+  transform: none;
+}
+
+/* Rail label */
+.rail-label {
+  font-size: 0.4rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 225, 0.2);
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  margin-top: 12px;
+}
+
+/* === Floating Bubble (detached from rail) ================= */
+.bubble-floating {
+  position: absolute;
+  width: var(--bubble-size);
+  height: var(--bubble-size);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  font-family: var(--font);
+  z-index: 100;
+  background: var(--bg-dark);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    top 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    left 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    right 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 200ms ease,
+    transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bubble-floating.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.bubble-floating.arriving {
+  transform: scale(1.15);
+}
+
+/* Bubble glow ring */
+.bubble-floating::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  opacity: 0.3;
+  animation: ring-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.15); opacity: 0.1; }
+}
+
+/* === Speech Bubble (attached to floating bubble) ========== */
+.speech-bubble {
+  position: absolute;
+  z-index: 99;
+  background: rgba(26, 26, 46, 0.95);
+  border: 1px solid var(--clr-marketing);
+  border-radius: 6px 6px 0 6px;
+  padding: 10px 14px;
+  max-width: 220px;
+  font-family: var(--font);
+  font-size: 0.55rem;
+  color: var(--text-light);
+  line-height: 1.5;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 300ms ease, transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.speech-bubble.active {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Triangle pointer toward the bubble (points right) */
+.speech-bubble::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: var(--clr-marketing);
+}
+
+.speech-header {
+  font-size: 0.45rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.speech-header .severity-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.speech-text {
+  font-size: 0.55rem;
+  line-height: 1.5;
+  color: var(--text-light);
+  opacity: 0.9;
+}
+
+/* === Trail line SVG ======================================= */
+.trail-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+  overflow: visible;
+}
+
+.trail-path {
+  fill: none;
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.trail-path.active {
+  opacity: 1;
+}
+
+/* === Chin (bottom bar) ==================================== */
+.chin {
+  height: var(--chin-h);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 14px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, var(--surface-dark) 0%, #151528 100%);
+  border-top: 1px solid rgba(255, 208, 0, 0.1);
+  z-index: 20;
+}
+
+.progress-track {
+  width: 160px;
+  height: 4px;
+  background: rgba(245, 240, 225, 0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent-gold);
+  border-radius: 2px;
+  transition: width 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 8px rgba(255, 208, 0, 0.3);
+}
+
+.step-indicator {
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  min-width: 70px;
+}
+
+.chin-spacer { flex: 1; }
+
+.chin-btn {
+  font-family: var(--font);
+  font-size: 0.55rem;
+  padding: 5px 14px;
+  border-radius: 5px;
+  border: 1px solid rgba(245, 240, 225, 0.12);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+.chin-btn:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+.chin-btn:disabled {
+  opacity: 0.25;
+  cursor: default;
+  border-color: rgba(245, 240, 225, 0.06);
+  color: rgba(245, 240, 225, 0.2);
+}
+.chin-btn:disabled:hover {
+  border-color: rgba(245, 240, 225, 0.06);
+  color: rgba(245, 240, 225, 0.2);
+}
+
+/* === Variation label ====================================== */
+.var-label {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  font-size: 0.45rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245, 240, 225, 0.15);
+  z-index: 1000;
+}
+
+/* === Smooth section scroll ================================ */
+.design-viewport {
+  scroll-behavior: smooth;
+}
+</style>
+</head>
+<body>
+
+<div class="var-label">Variation C &mdash; Bubble Parade</div>
+
+<div class="bezel-frame">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-back">&larr;</div>
+    <div class="topbar-title">Example.com</div>
+    <div class="topbar-versions">
+      <span class="version-pill v1">v1 <span class="score-val">5.2</span></span>
+      <span class="version-pill v2">v2 <span class="score-val">6.8</span></span>
+    </div>
+    <button class="tour-badge" id="tourBtn">&#9654; TOUR</button>
+  </div>
+
+  <!-- Main Area -->
+  <div class="main-area" id="mainArea">
+
+    <!-- Design Viewport -->
+    <div class="design-viewport" id="viewport">
+
+      <!-- HERO Section -->
+      <div class="section" id="sec-hero" data-section="hero">
+        <div class="section-label">Hero</div>
+        <h2>Unlock the Power of Seamless Integration</h2>
+        <p>Boost productivity by 10x with our AI-powered platform. Connect your tools, automate your workflows, and focus on what matters most.</p>
+        <button class="cta-btn">Get Started Today</button>
+      </div>
+
+      <!-- FEATURES Section -->
+      <div class="section" id="sec-features" data-section="features">
+        <div class="section-label">Features</div>
+        <h2>Everything you need to scale</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h4>Smart Automation</h4>
+            <p>Set up workflows in minutes. Our AI handles the rest, learning from your patterns.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Real-time Sync</h4>
+            <p>Changes propagate instantly across all connected tools and team members.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Advanced Analytics</h4>
+            <p>Track performance metrics with customizable dashboards and reports.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRICING Section -->
+      <div class="section" id="sec-pricing" data-section="pricing">
+        <div class="section-label">Pricing</div>
+        <h2>Simple, transparent pricing</h2>
+        <div class="pricing-tiers">
+          <div class="tier">
+            <h4>Starter</h4>
+            <div class="price">$29</div>
+            <p>For individuals and small teams</p>
+          </div>
+          <div class="tier featured">
+            <h4>Professional</h4>
+            <div class="price">$79</div>
+            <p>For growing businesses</p>
+          </div>
+          <div class="tier">
+            <h4>Enterprise</h4>
+            <div class="price">$149</div>
+            <p>For large organizations</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA Section -->
+      <div class="section" id="sec-cta" data-section="cta">
+        <div class="section-label">Call to Action</div>
+        <h2>Ready to Transform Your Workflow?</h2>
+        <p>Join 10,000+ teams already using our platform. Start your free trial today &mdash; no credit card required.</p>
+        <button class="cta-btn-outline">Get Started &rarr;</button>
+      </div>
+
+    </div>
+
+    <!-- Reviewer Rail -->
+    <div class="rail" id="rail">
+      <div class="rail-slot" id="rail-marketing" data-reviewer="marketing" title="Marketing">M</div>
+      <div class="rail-slot" id="rail-ux" data-reviewer="ux" title="UX">U</div>
+      <div class="rail-slot" id="rail-product" data-reviewer="product" title="Product">P</div>
+      <div class="rail-slot" id="rail-technical" data-reviewer="technical" title="Technical">T</div>
+      <div class="rail-slot" id="rail-design" data-reviewer="design" title="Design">D</div>
+      <div class="rail-label">Reviewers</div>
+    </div>
+
+    <!-- SVG trail line overlay -->
+    <svg class="trail-svg" id="trailSvg">
+      <path class="trail-path" id="trailPath" />
+    </svg>
+
+    <!-- Floating bubble (reused, moves between rail and sections) -->
+    <div class="bubble-floating" id="floater"></div>
+
+    <!-- Speech bubble (attached to floating bubble) -->
+    <div class="speech-bubble" id="speechBubble">
+      <div class="speech-header">
+        <span class="severity-dot"></span>
+        <span class="speech-reviewer-name"></span>
+      </div>
+      <div class="speech-text"></div>
+    </div>
+
+  </div>
+
+  <!-- Chin -->
+  <div class="chin">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width: 25%"></div>
+    </div>
+    <div class="step-indicator" id="stepIndicator">Step 1/4</div>
+    <div class="chin-spacer"></div>
+    <button class="chin-btn" id="prevBtn" disabled>&larr; Prev</button>
+    <button class="chin-btn" id="nextBtn">Next &rarr;</button>
+  </div>
+
+</div>
+
+<script>
+// =============================================================
+// BUBBLE PARADE — Animation Controller
+// =============================================================
+
+// -- Tour step data -----------------------------------------
+const STEPS = [
+  {
+    reviewer: 'marketing',
+    label: 'MARKETING',
+    initials: 'M',
+    color: '#FF6B6B',
+    sectionId: 'sec-hero',
+    finding: 'Generic CTA with no urgency \u2014 every AI landing page says "Get Started Today"',
+    severity: 'red',
+    severityColor: '#FF6B6B',
+  },
+  {
+    reviewer: 'ux',
+    label: 'UX',
+    initials: 'U',
+    color: '#4ECDC4',
+    sectionId: 'sec-features',
+    finding: 'Feature cards lack visual hierarchy \u2014 add icons or illustrations to aid scanning on mobile',
+    severity: 'yellow',
+    severityColor: '#FFD93D',
+  },
+  {
+    reviewer: 'product',
+    label: 'PRODUCT',
+    initials: 'P',
+    color: '#FFD93D',
+    sectionId: 'sec-pricing',
+    finding: 'No social proof near pricing \u2014 add "Trusted by 2,400+ teams" to reduce purchase anxiety',
+    severity: 'yellow',
+    severityColor: '#FFD93D',
+  },
+  {
+    reviewer: 'technical',
+    label: 'TECHNICAL',
+    initials: 'T',
+    color: '#95E1D3',
+    sectionId: 'sec-cta',
+    finding: 'CTA form should pre-fill company domain from email \u2014 reduces friction by ~30%',
+    severity: 'green',
+    severityColor: '#6BCB77',
+  },
+];
+
+// -- DOM refs -----------------------------------------------
+const mainArea      = document.getElementById('mainArea');
+const viewport      = document.getElementById('viewport');
+const floater       = document.getElementById('floater');
+const speechBubble  = document.getElementById('speechBubble');
+const speechName    = speechBubble.querySelector('.speech-reviewer-name');
+const speechText    = speechBubble.querySelector('.speech-text');
+const severityDot   = speechBubble.querySelector('.severity-dot');
+const trailPath     = document.getElementById('trailPath');
+const progressFill  = document.getElementById('progressFill');
+const stepIndicator = document.getElementById('stepIndicator');
+const prevBtn       = document.getElementById('prevBtn');
+const nextBtn       = document.getElementById('nextBtn');
+const tourBtn       = document.getElementById('tourBtn');
+
+const railSlots = {};
+['marketing', 'ux', 'product', 'technical', 'design'].forEach(key => {
+  railSlots[key] = document.getElementById('rail-' + key);
+});
+
+const sections = {};
+STEPS.forEach(s => {
+  sections[s.sectionId] = document.getElementById(s.sectionId);
+});
+
+// -- State --------------------------------------------------
+let currentStep = -1;
+let animating = false;
+
+// -- Geometry helpers ---------------------------------------
+function getRelativeRect(el) {
+  // Get position relative to mainArea
+  const parentRect = mainArea.getBoundingClientRect();
+  const elRect = el.getBoundingClientRect();
+  return {
+    top: elRect.top - parentRect.top,
+    left: elRect.left - parentRect.left,
+    right: elRect.right - parentRect.left,
+    bottom: elRect.bottom - parentRect.top,
+    width: elRect.width,
+    height: elRect.height,
+    cx: elRect.left - parentRect.left + elRect.width / 2,
+    cy: elRect.top - parentRect.top + elRect.height / 2,
+  };
+}
+
+function getRailSlotCenter(reviewerKey) {
+  const slot = railSlots[reviewerKey];
+  if (!slot) return { x: 0, y: 0 };
+  const r = getRelativeRect(slot);
+  return { x: r.cx, y: r.cy };
+}
+
+function getSectionDockPoint(sectionId) {
+  const sec = sections[sectionId];
+  if (!sec) return { x: 0, y: 0 };
+  const r = getRelativeRect(sec);
+  // Dock at top-right corner, inset a bit
+  return { x: r.right - 40, y: r.top + 30 };
+}
+
+// -- Drawing helpers ----------------------------------------
+function positionFloater(x, y, step) {
+  const bSize = 36;
+  floater.style.left = (x - bSize / 2) + 'px';
+  floater.style.top  = (y - bSize / 2) + 'px';
+  floater.style.border = '2px solid ' + step.color;
+  floater.style.color  = step.color;
+  floater.style.boxShadow = '0 0 12px ' + step.color + '66';
+  floater.textContent = step.initials;
+}
+
+function positionSpeech(bubbleX, bubbleY, step) {
+  // Position speech bubble to the left of the floating bubble
+  const speechW = 220;
+  const bSize = 36;
+  speechBubble.style.left = (bubbleX - bSize / 2 - speechW - 14) + 'px';
+  speechBubble.style.top  = (bubbleY - 30) + 'px';
+  speechBubble.style.maxWidth = speechW + 'px';
+  speechBubble.style.borderColor = step.color;
+
+  // Update the triangle pointer color
+  speechBubble.style.setProperty('--ptr-color', step.color);
+
+  speechName.textContent = step.label;
+  speechName.style.color = step.color;
+  speechText.textContent = step.finding;
+  severityDot.style.background = step.severityColor;
+}
+
+function drawTrail(fromX, fromY, toX, toY, color) {
+  // Curved dashed line from rail slot to floating bubble
+  const dx = toX - fromX;
+  const dy = toY - fromY;
+  const cp1x = fromX - 30;
+  const cp1y = fromY + dy * 0.3;
+  const cp2x = toX + 30;
+  const cp2y = toY - dy * 0.3;
+  trailPath.setAttribute('d', `M ${fromX} ${fromY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${toX} ${toY}`);
+  trailPath.setAttribute('stroke', color);
+  trailPath.style.opacity = '0.3';
+  trailPath.classList.add('active');
+}
+
+function hideTrail() {
+  trailPath.classList.remove('active');
+  trailPath.style.opacity = '0';
+}
+
+// -- Section glow -------------------------------------------
+function setGlow(sectionId) {
+  Object.values(sections).forEach(sec => sec.classList.remove('being-reviewed'));
+  if (sectionId && sections[sectionId]) {
+    sections[sectionId].classList.add('being-reviewed');
+    // Update glow color dynamically
+    const step = STEPS.find(s => s.sectionId === sectionId);
+    if (step) {
+      sections[sectionId].style.borderColor = step.color + '66';
+      sections[sectionId].style.boxShadow =
+        '0 0 0 2px ' + step.color + '26, 0 0 30px ' + step.color + '14, inset 0 0 20px ' + step.color + '05';
+    }
+  }
+}
+
+function clearGlow() {
+  Object.values(sections).forEach(sec => {
+    sec.classList.remove('being-reviewed');
+    sec.style.borderColor = '';
+    sec.style.boxShadow = '';
+  });
+}
+
+// -- Rail slot states ---------------------------------------
+function setRailEmpty(reviewerKey, color) {
+  const slot = railSlots[reviewerKey];
+  if (!slot) return;
+  slot.classList.add('empty');
+  slot.style.borderColor = color + '4D'; // 30% opacity
+}
+
+function resetRailSlot(reviewerKey) {
+  const slot = railSlots[reviewerKey];
+  if (!slot) return;
+  slot.classList.remove('empty');
+  slot.style.borderColor = '';
+}
+
+function resetAllRailSlots() {
+  Object.keys(railSlots).forEach(key => resetRailSlot(key));
+}
+
+// -- Progress UI --------------------------------------------
+function updateProgress(stepIdx) {
+  const pct = ((stepIdx + 1) / STEPS.length) * 100;
+  progressFill.style.width = pct + '%';
+  stepIndicator.textContent = 'Step ' + (stepIdx + 1) + '/' + STEPS.length;
+  prevBtn.disabled = (stepIdx <= 0);
+  nextBtn.textContent = (stepIdx >= STEPS.length - 1) ? 'Restart \u21BB' : 'Next \u2192';
+}
+
+// -- Speech bubble dynamic caret color ---------------------
+// We need to update the ::after pseudo-element color dynamically
+const caretStyle = document.createElement('style');
+caretStyle.id = 'dynamic-caret';
+document.head.appendChild(caretStyle);
+
+function updateCaretColor(color) {
+  caretStyle.textContent = `.speech-bubble::after { border-left-color: ${color} !important; }`;
+}
+
+// -- Core animation: enter step -----------------------------
+function enterStep(stepIdx) {
+  if (animating) return;
+  if (stepIdx < 0 || stepIdx >= STEPS.length) return;
+
+  const step = STEPS[stepIdx];
+  const prevStepIdx = currentStep;
+  animating = true;
+
+  // Phase 1: If there's a current bubble out, animate it back
+  const returnBubble = new Promise((resolve) => {
+    if (prevStepIdx >= 0 && prevStepIdx < STEPS.length) {
+      const prevStep = STEPS[prevStepIdx];
+      const railPos = getRailSlotCenter(prevStep.reviewer);
+
+      // Hide speech first
+      speechBubble.classList.remove('active');
+
+      // Hide trail
+      hideTrail();
+
+      // Animate floater back to rail
+      setTimeout(() => {
+        floater.style.transition =
+          'left 500ms cubic-bezier(0.34, 1.56, 0.64, 1), ' +
+          'top 500ms cubic-bezier(0.34, 1.56, 0.64, 1), ' +
+          'transform 300ms ease, opacity 200ms ease';
+        floater.style.left = (railPos.x - 18) + 'px';
+        floater.style.top  = (railPos.y - 18) + 'px';
+
+        setTimeout(() => {
+          floater.classList.remove('active');
+          floater.classList.remove('arriving');
+          resetRailSlot(prevStep.reviewer);
+          clearGlow();
+          resolve();
+        }, 500);
+      }, 50);
+    } else {
+      resolve();
+    }
+  });
+
+  returnBubble.then(() => {
+    currentStep = stepIdx;
+    updateProgress(stepIdx);
+
+    // Phase 2: Scroll section into view, apply glow
+    const sectionEl = sections[step.sectionId];
+    if (sectionEl) {
+      sectionEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    // Slight delay to let scroll settle
+    setTimeout(() => {
+      setGlow(step.sectionId);
+
+      // Phase 3: Set rail slot to empty
+      resetAllRailSlots();
+      setRailEmpty(step.reviewer, step.color);
+
+      // Phase 4: Position floater at rail, then animate to section
+      const railPos = getRailSlotCenter(step.reviewer);
+      const dockPos = getSectionDockPoint(step.sectionId);
+
+      // Place at rail position first (no transition)
+      floater.style.transition = 'none';
+      positionFloater(railPos.x, railPos.y, step);
+      floater.classList.remove('arriving');
+      floater.classList.add('active');
+
+      // Force reflow
+      void floater.offsetWidth;
+
+      // Draw trail from rail to dock point
+      drawTrail(railPos.x, railPos.y, dockPos.x, dockPos.y, step.color);
+
+      // Animate to dock position
+      setTimeout(() => {
+        floater.style.transition =
+          'left 500ms cubic-bezier(0.34, 1.56, 0.64, 1), ' +
+          'top 500ms cubic-bezier(0.34, 1.56, 0.64, 1), ' +
+          'transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1), ' +
+          'opacity 200ms ease';
+        positionFloater(dockPos.x, dockPos.y, step);
+        floater.classList.add('arriving');
+
+        // Phase 5: Show speech bubble after arrival
+        setTimeout(() => {
+          floater.classList.remove('arriving');
+          floater.classList.add('active');
+
+          positionSpeech(dockPos.x, dockPos.y, step);
+          updateCaretColor(step.color);
+          speechBubble.classList.add('active');
+
+          animating = false;
+        }, 500);
+      }, 50);
+    }, 250);
+  });
+}
+
+// -- Navigation controls ------------------------------------
+nextBtn.addEventListener('click', () => {
+  if (animating) return;
+  const next = currentStep + 1;
+  if (next >= STEPS.length) {
+    // Restart
+    enterStep(0);
+  } else {
+    enterStep(next);
+  }
+});
+
+prevBtn.addEventListener('click', () => {
+  if (animating) return;
+  if (currentStep > 0) {
+    enterStep(currentStep - 1);
+  }
+});
+
+tourBtn.addEventListener('click', () => {
+  if (animating) return;
+  // Restart tour from step 0
+  const prevStep = currentStep;
+  currentStep = -1;
+  resetAllRailSlots();
+  clearGlow();
+  hideTrail();
+  floater.classList.remove('active');
+  floater.classList.remove('arriving');
+  speechBubble.classList.remove('active');
+  setTimeout(() => enterStep(0), 100);
+});
+
+// -- Rail click: jump to that reviewer's finding -----------
+Object.entries(railSlots).forEach(([key, slot]) => {
+  slot.addEventListener('click', () => {
+    if (animating) return;
+    const idx = STEPS.findIndex(s => s.reviewer === key);
+    if (idx >= 0) {
+      enterStep(idx);
+    }
+  });
+});
+
+// -- Handle resize: re-position if a step is active --------
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (currentStep >= 0 && currentStep < STEPS.length && !animating) {
+      const step = STEPS[currentStep];
+      const railPos = getRailSlotCenter(step.reviewer);
+      const dockPos = getSectionDockPoint(step.sectionId);
+
+      // Update positions without animation
+      floater.style.transition = 'none';
+      positionFloater(dockPos.x, dockPos.y, step);
+      positionSpeech(dockPos.x, dockPos.y, step);
+      drawTrail(railPos.x, railPos.y, dockPos.x, dockPos.y, step.color);
+    }
+  }, 150);
+});
+
+// -- Initialize: start at Step 1 (Marketing -> Hero) -------
+// Small delay to let the page render
+setTimeout(() => enterStep(0), 400);
+</script>
+</body>
+</html>

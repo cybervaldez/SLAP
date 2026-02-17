@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SLAP Preview — Variation E: Split Stage</title>
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Design Tokens ─────────────────────────────────────── */
+:root {
+  --bg-dark: #0D0D1A;
+  --surface-dark: #1A1A2E;
+  --surface-mid: #222240;
+  --text-light: #F5F0E1;
+  --text-muted: rgba(245, 240, 225, 0.5);
+  --accent-gold: #FFD000;
+  --score-green: #6BCB77;
+  --score-yellow: #FFD93D;
+  --score-red: #FF6B6B;
+  --bezel-dark: #3A3A4E;
+  --bezel-highlight: #4A4A5E;
+
+  /* Reviewer Colors */
+  --rev-marketing: #FF6B6B;
+  --rev-ux: #4ECDC4;
+  --rev-product: #FFD93D;
+  --rev-technical: #95E1D3;
+  --rev-design: #F38181;
+
+  /* Fonts */
+  --font-overlay: 'Courier New', monospace;
+  --font-design: system-ui, -apple-system, sans-serif;
+}
+
+/* ── Base ──────────────────────────────────────────────── */
+html { height: 100%; }
+body {
+  font-family: var(--font-overlay);
+  background: #080810;
+  color: var(--text-light);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 24px;
+  overflow-x: hidden;
+}
+
+/* ── iMac Bezel Frame ──────────────────────────────────── */
+.imac-frame {
+  position: relative;
+  width: 1120px;
+  max-width: 100%;
+  background: var(--bg-dark);
+  border: 10px solid var(--bezel-dark);
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+/* ── Top Bar ───────────────────────────────────────────── */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--surface-dark);
+  border-bottom: 1px solid rgba(245, 240, 225, 0.08);
+  position: relative;
+  z-index: 20;
+}
+
+.nav-back {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(245, 240, 225, 0.15);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.nav-back:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.top-bar-url {
+  font-family: var(--font-overlay);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  flex: 1;
+}
+
+.version-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.version-badge {
+  font-family: var(--font-overlay);
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 10px;
+  letter-spacing: 0.04em;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid;
+}
+.version-badge.v1 {
+  color: var(--score-yellow);
+  border-color: rgba(255, 217, 61, 0.3);
+}
+.version-badge.v2 {
+  color: var(--score-green);
+  border-color: rgba(107, 203, 119, 0.3);
+}
+
+/* ── Split Content Area ────────────────────────────────── */
+.split-area {
+  display: flex;
+  height: 620px;
+  position: relative;
+}
+
+/* ── Review Panel (Left, 40%) ──────────────────────────── */
+.review-panel {
+  width: 40%;
+  background: var(--surface-dark);
+  border-right: 1px solid rgba(255, 208, 0, 0.15);
+  overflow-y: auto;
+  padding: 16px 20px;
+  flex-shrink: 0;
+}
+
+/* Panel Scrollbar */
+.review-panel::-webkit-scrollbar { width: 6px; }
+.review-panel::-webkit-scrollbar-track { background: rgba(255,255,255,0.08); }
+.review-panel::-webkit-scrollbar-thumb { background: var(--accent-gold); border-radius: 3px; }
+.review-panel::-webkit-scrollbar-thumb:hover { background: #FFE44D; }
+
+/* Panel Header */
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(245, 240, 225, 0.08);
+  margin-bottom: 16px;
+}
+
+.reviewer-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-overlay);
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: #0D0D1A;
+  flex-shrink: 0;
+}
+
+.reviewer-info {
+  flex: 1;
+}
+
+.reviewer-name {
+  font-family: var(--font-overlay);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-light);
+}
+
+.reviewer-role {
+  font-family: var(--font-overlay);
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+
+.score-ring-container {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.score-ring-container svg {
+  width: 40px;
+  height: 40px;
+  transform: rotate(-90deg);
+}
+
+.score-ring-bg {
+  fill: none;
+  stroke: rgba(245, 240, 225, 0.08);
+  stroke-width: 3;
+}
+
+.score-ring-fill {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.score-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-overlay);
+  font-size: 0.55rem;
+  font-weight: 700;
+}
+
+/* ── Panel Section Groups ──────────────────────────────── */
+.panel-section-group {
+  margin-bottom: 16px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.panel-section-group:hover {
+  background: rgba(255, 208, 0, 0.08);
+  border-left-color: var(--accent-gold);
+}
+
+.panel-section-group.active {
+  background: rgba(255, 107, 107, 0.1);
+  border-left-color: var(--rev-marketing);
+}
+
+.section-label {
+  font-family: var(--font-overlay);
+  font-size: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-gold);
+  margin-bottom: 6px;
+}
+
+.section-label-line {
+  height: 1px;
+  background: rgba(255, 208, 0, 0.2);
+  margin-bottom: 10px;
+}
+
+/* ── Finding Row ───────────────────────────────────────── */
+.finding-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.finding-row:hover .finding-summary {
+  color: #FFFFFF;
+}
+
+.finding-arrow {
+  font-family: var(--font-overlay);
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.finding-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.finding-summary {
+  font-family: var(--font-overlay);
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+.panel-section-group.active .finding-summary {
+  color: #FFFFFF;
+}
+
+.finding-detail {
+  font-family: var(--font-overlay);
+  font-size: 0.5rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.5;
+  margin-top: 3px;
+}
+
+.panel-section-group.active .finding-detail {
+  color: rgba(245, 240, 225, 0.6);
+}
+
+.severity-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.severity-dot.red { background: var(--score-red); }
+.severity-dot.yellow { background: var(--score-yellow); }
+.severity-dot.green { background: var(--score-green); }
+
+/* ── Design Canvas (Right, 60%) ────────────────────────── */
+.design-canvas {
+  width: 60%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg-dark);
+  position: relative;
+}
+
+.design-canvas::-webkit-scrollbar { width: 6px; }
+.design-canvas::-webkit-scrollbar-track { background: rgba(255,255,255,0.08); }
+.design-canvas::-webkit-scrollbar-thumb { background: rgba(245, 240, 225, 0.15); border-radius: 3px; }
+
+.design-canvas-inner {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 28px 48px;
+  font-family: var(--font-design);
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Canvas Design Sections ────────────────────────────── */
+.design-section {
+  padding: 48px 0;
+  transition: opacity 200ms linear;
+}
+
+.design-section.dimmed {
+  opacity: 0.4;
+}
+
+.design-section.bright {
+  opacity: 1;
+}
+
+/* Section Divider */
+.section-divider {
+  border: none;
+  border-top: 1px dashed rgba(255, 208, 0, 0.15);
+  margin: 0;
+}
+
+/* Hero Section */
+.hero-section {
+  text-align: center;
+  padding: 56px 16px;
+}
+.hero-section h1 {
+  font-family: var(--font-design);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text-light);
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+.hero-section .subtitle {
+  font-family: var(--font-design);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 440px;
+  margin: 0 auto 24px;
+}
+.hero-cta {
+  display: inline-block;
+  background: var(--accent-gold);
+  color: #0D0D1A;
+  font-family: var(--font-design);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 12px 30px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.hero-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(255, 208, 0, 0.3);
+}
+
+/* Features Section */
+.features-section {
+  padding: 40px 0;
+}
+.features-section h2 {
+  font-family: var(--font-design);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 28px;
+  color: var(--text-light);
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.feature-card {
+  background: var(--surface-mid);
+  border: 1px solid rgba(245, 240, 225, 0.06);
+  border-radius: 10px;
+  padding: 22px 16px;
+  text-align: center;
+}
+.feature-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(255, 208, 0, 0.1);
+  border: 1px solid rgba(255, 208, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  font-size: 1.1rem;
+}
+.feature-card h3 {
+  font-family: var(--font-design);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+.feature-card p {
+  font-family: var(--font-design);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* Pricing Section */
+.pricing-section {
+  padding: 40px 0;
+}
+.pricing-section h2 {
+  font-family: var(--font-design);
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 28px;
+  color: var(--text-light);
+}
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+.pricing-card {
+  background: var(--surface-mid);
+  border: 1px solid rgba(245, 240, 225, 0.06);
+  border-radius: 10px;
+  padding: 22px 16px;
+  text-align: center;
+  position: relative;
+}
+.pricing-card.popular {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 30px rgba(255, 208, 0, 0.08);
+}
+.popular-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-gold);
+  color: #0D0D1A;
+  font-family: var(--font-overlay);
+  font-size: 0.45rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 2px 10px;
+  border-radius: 8px;
+}
+.pricing-tier-name {
+  font-family: var(--font-design);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.pricing-price {
+  font-family: var(--font-design);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+.pricing-price span {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.pricing-features {
+  list-style: none;
+  margin-top: 14px;
+  text-align: left;
+}
+.pricing-features li {
+  font-family: var(--font-design);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(245, 240, 225, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pricing-features li::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--score-green);
+  flex-shrink: 0;
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 48px 0;
+  text-align: center;
+}
+.cta-section h2 {
+  font-family: var(--font-design);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 10px;
+}
+.cta-section p {
+  font-family: var(--font-design);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+.cta-form {
+  display: flex;
+  gap: 8px;
+  max-width: 380px;
+  margin: 0 auto;
+}
+.cta-input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(245, 240, 225, 0.12);
+  background: var(--surface-mid);
+  color: var(--text-light);
+  font-family: var(--font-design);
+  font-size: 0.75rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.cta-input::placeholder {
+  color: var(--text-muted);
+}
+.cta-input:focus {
+  border-color: var(--accent-gold);
+}
+.cta-submit {
+  background: var(--accent-gold);
+  color: #0D0D1A;
+  font-family: var(--font-design);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.cta-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(255, 208, 0, 0.3);
+}
+
+/* ── Mini Bubble Rail (on canvas right edge) ───────────── */
+.mini-rail {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+
+.mini-bubble {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 150ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-overlay);
+  font-size: 0.35rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.mini-bubble.active {
+  border-color: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.mini-bubble:hover {
+  transform: scale(1.15);
+}
+
+.mini-bubble-tooltip {
+  position: absolute;
+  right: 32px;
+  white-space: nowrap;
+  font-family: var(--font-overlay);
+  font-size: 0.45rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: rgba(26, 26, 46, 0.95);
+  padding: 4px 8px;
+  border-radius: 3px;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(4px);
+  transition: opacity 150ms, transform 150ms;
+}
+
+.mini-bubble:hover .mini-bubble-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── Chin (Section Ticker) ─────────────────────────────── */
+.chin {
+  height: 56px;
+  background: linear-gradient(180deg, #2A2A3E 0%, #3A3A4E 50%, #4A4A5E 100%);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  z-index: 20;
+}
+
+.chin-arrow {
+  width: 36px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 150ms;
+}
+.chin-arrow:hover {
+  color: var(--accent-gold);
+}
+
+.chin-ticker-track {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  mask-image: linear-gradient(90deg, transparent 0%, black 4%, black 96%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 4%, black 96%, transparent 100%);
+}
+
+.chin-ticker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  transition: transform 300ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  width: max-content;
+}
+
+.section-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-family: var(--font-overlay);
+  font-size: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 150ms ease;
+  background: transparent;
+  border: 1px solid rgba(245, 240, 225, 0.08);
+  color: var(--text-light);
+  white-space: nowrap;
+  height: 32px;
+}
+
+.section-chip:hover {
+  border-color: rgba(245, 240, 225, 0.25);
+}
+
+.section-chip.active {
+  border-color: currentColor;
+}
+
+.chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Chin Logo ─────────────────────────────────────────── */
+.chin-brand {
+  position: absolute;
+  right: 16px;
+  font-family: var(--font-overlay);
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: var(--accent-gold);
+  opacity: 0.4;
+  user-select: none;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .features-grid,
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+  .review-panel {
+    width: 45%;
+  }
+  .design-canvas {
+    width: 55%;
+  }
+}
+
+/* ── Accessibility ─────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--accent-gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .design-section,
+  .panel-section-group,
+  .section-chip,
+  .mini-bubble {
+    transition: none !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="imac-frame">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <button class="nav-back" title="Back">&larr;</button>
+    <span class="top-bar-url">Example.com</span>
+    <div class="version-badges">
+      <span class="version-badge v1">v1 5.2</span>
+      <span class="version-badge v2">v2 6.8</span>
+    </div>
+  </div>
+
+  <!-- Split Content -->
+  <div class="split-area">
+
+    <!-- ═══ REVIEW PANEL (40%) ═══ -->
+    <div class="review-panel" id="reviewPanel">
+
+      <!-- Panel Header -->
+      <div class="panel-header">
+        <div class="reviewer-avatar" style="background: var(--rev-marketing);">MK</div>
+        <div class="reviewer-info">
+          <div class="reviewer-name">Marketing Expert</div>
+          <div class="reviewer-role">Landing page review</div>
+        </div>
+        <div class="score-ring-container">
+          <svg viewBox="0 0 40 40">
+            <circle class="score-ring-bg" cx="20" cy="20" r="16" />
+            <circle class="score-ring-fill" cx="20" cy="20" r="16"
+              stroke="var(--score-yellow)"
+              stroke-dasharray="100.53"
+              stroke-dashoffset="40.21" />
+          </svg>
+          <div class="score-ring-text" style="color: var(--score-yellow);">6/10</div>
+        </div>
+      </div>
+
+      <!-- HERO Section Group (ACTIVE — currently hovered) -->
+      <div class="panel-section-group active" data-panel-section="hero">
+        <div class="section-label">HERO</div>
+        <div class="section-label-line"></div>
+
+        <div class="finding-row" data-finding-section="hero">
+          <span class="finding-arrow">&triangleright;</span>
+          <div class="finding-content">
+            <div class="finding-summary">Generic CTA with no urgency</div>
+            <div class="finding-detail">"No urgency &mdash; every AI page says this. 'Get Started Today' converts at baseline. Try a time-bound offer."</div>
+          </div>
+          <div class="severity-dot red"></div>
+        </div>
+
+        <div class="finding-row" data-finding-section="hero">
+          <span class="finding-arrow">&triangleright;</span>
+          <div class="finding-content">
+            <div class="finding-summary">Headline lacks specificity</div>
+            <div class="finding-detail">"'Unlock the Power' is verbal clip art. Lead with a quantified benefit like 'Cut integration time by 80%'."</div>
+          </div>
+          <div class="severity-dot yellow"></div>
+        </div>
+      </div>
+
+      <!-- FEATURES Section Group -->
+      <div class="panel-section-group" data-panel-section="features">
+        <div class="section-label">FEATURES</div>
+        <div class="section-label-line"></div>
+
+        <div class="finding-row" data-finding-section="features">
+          <span class="finding-arrow">&triangleright;</span>
+          <div class="finding-content">
+            <div class="finding-summary">Cards look alike &mdash; no visual hierarchy</div>
+            <div class="finding-detail">"Three equal options = three things visitors skip equally. Lead with your strongest differentiator."</div>
+          </div>
+          <div class="severity-dot yellow"></div>
+        </div>
+
+        <div class="finding-row" data-finding-section="features">
+          <span class="finding-arrow">&triangleright;</span>
+          <div class="finding-content">
+            <div class="finding-summary">"Enterprise Security" claim needs proof</div>
+            <div class="finding-detail">"Show compliance badges, not just words. SOC 2, GDPR, ISO logos build trust instantly."</div>
+          </div>
+          <div class="severity-dot yellow"></div>
+        </div>
+      </div>
+
+      <!-- PRICING Section Group -->
+      <div class="panel-section-group" data-panel-section="pricing">
+        <div class="section-label">PRICING</div>
+        <div class="section-label-line"></div>
+
+        <div class="finding-row" data-finding-section="pricing">
+          <span class="finding-arrow">&triangleright;</span>
+          <div class="finding-content">
+            <div class="finding-summary">No anchor price &mdash; can't tell best deal</div>
+            <div class="finding-detail">"Without a high-anchor reference, $79 feels expensive, not like a bargain. Add a crossed-out price or 'Save 40%' badge."</div>
+          </div>
+          <div class="severity-dot red"></div>
+        </div>
+
+        <div class="finding-row" data-finding-section="pricing">
+          <span class="finding-arrow">&triangleright;</span>
+          <div class="finding-content">
+            <div class="finding-summary">Missing free tier or trial callout</div>
+            <div class="finding-detail">"Visitors want to try before they buy. Even a '14-day trial' link reduces friction."</div>
+          </div>
+          <div class="severity-dot yellow"></div>
+        </div>
+      </div>
+
+      <!-- CTA Section Group -->
+      <div class="panel-section-group" data-panel-section="cta">
+        <div class="section-label">CTA</div>
+        <div class="section-label-line"></div>
+
+        <div class="finding-row" data-finding-section="cta">
+          <span class="finding-arrow">&triangleright;</span>
+          <div class="finding-content">
+            <div class="finding-summary">Good placement &mdash; clear value prop</div>
+            <div class="finding-detail">"Strong close. 'Transform Your Workflow' mirrors the buyer's intent. Keep it."</div>
+          </div>
+          <div class="severity-dot green"></div>
+        </div>
+
+        <div class="finding-row" data-finding-section="cta">
+          <span class="finding-arrow">&triangleright;</span>
+          <div class="finding-content">
+            <div class="finding-summary">Add trust signal near final CTA</div>
+            <div class="finding-detail">"A testimonial snippet or '30-day guarantee' badge would lift conversion by ~15%."</div>
+          </div>
+          <div class="severity-dot yellow"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ DESIGN CANVAS (60%) ═══ -->
+    <div class="design-canvas" id="designCanvas">
+
+      <!-- Mini Bubble Rail -->
+      <div class="mini-rail" id="miniRail">
+        <div class="mini-bubble active" data-reviewer="marketing"
+          style="background: rgba(255, 107, 107, 0.15); color: var(--rev-marketing); border-color: var(--rev-marketing);">
+          <span>MK</span>
+          <span class="mini-bubble-tooltip" style="color: var(--rev-marketing);">Marketing</span>
+        </div>
+        <div class="mini-bubble" data-reviewer="ux"
+          style="background: rgba(78, 205, 196, 0.15); color: var(--rev-ux);">
+          <span>UX</span>
+          <span class="mini-bubble-tooltip" style="color: var(--rev-ux);">UX</span>
+        </div>
+        <div class="mini-bubble" data-reviewer="product"
+          style="background: rgba(255, 217, 61, 0.15); color: var(--rev-product);">
+          <span>PR</span>
+          <span class="mini-bubble-tooltip" style="color: var(--rev-product);">Product</span>
+        </div>
+        <div class="mini-bubble" data-reviewer="technical"
+          style="background: rgba(149, 225, 211, 0.15); color: var(--rev-technical);">
+          <span>TC</span>
+          <span class="mini-bubble-tooltip" style="color: var(--rev-technical);">Technical</span>
+        </div>
+        <div class="mini-bubble" data-reviewer="design"
+          style="background: rgba(243, 129, 129, 0.15); color: var(--rev-design);">
+          <span>DS</span>
+          <span class="mini-bubble-tooltip" style="color: var(--rev-design);">Design</span>
+        </div>
+      </div>
+
+      <div class="design-canvas-inner">
+
+        <!-- HERO Section (ACTIVE — full brightness) -->
+        <div class="design-section hero-section bright" data-section="hero" id="sectionHero">
+          <h1>Unlock the Power of Seamless Integration</h1>
+          <p class="subtitle">Boost productivity by 10x with our AI-powered platform. Trusted by 10,000+ teams worldwide.</p>
+          <button class="hero-cta">Get Started Today</button>
+        </div>
+
+        <hr class="section-divider" />
+
+        <!-- FEATURES Section (40% opacity — dimmed) -->
+        <div class="design-section features-section dimmed" data-section="features" id="sectionFeatures">
+          <h2>Why Teams Love Us</h2>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">&#9878;</div>
+              <h3>Lightning Fast</h3>
+              <p>Deploy in seconds with our zero-config setup. No engineering resources required.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">&#9883;</div>
+              <h3>Enterprise Security</h3>
+              <p>SOC 2 Type II certified with end-to-end encryption and role-based access controls.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">&#10024;</div>
+              <h3>AI-Powered Insights</h3>
+              <p>Surface actionable patterns from your data with machine learning built right in.</p>
+            </div>
+          </div>
+        </div>
+
+        <hr class="section-divider" />
+
+        <!-- PRICING Section (40% opacity — dimmed) -->
+        <div class="design-section pricing-section dimmed" data-section="pricing" id="sectionPricing">
+          <h2>Simple, Transparent Pricing</h2>
+          <div class="pricing-grid">
+            <div class="pricing-card">
+              <div class="pricing-tier-name">Starter</div>
+              <div class="pricing-price">$29<span>/mo</span></div>
+              <ul class="pricing-features">
+                <li>Up to 5 team members</li>
+                <li>10GB storage</li>
+                <li>Basic analytics</li>
+                <li>Email support</li>
+              </ul>
+            </div>
+            <div class="pricing-card popular">
+              <div class="popular-badge">Most Popular</div>
+              <div class="pricing-tier-name">Pro</div>
+              <div class="pricing-price">$79<span>/mo</span></div>
+              <ul class="pricing-features">
+                <li>Up to 25 team members</li>
+                <li>100GB storage</li>
+                <li>Advanced analytics</li>
+                <li>Priority support</li>
+              </ul>
+            </div>
+            <div class="pricing-card">
+              <div class="pricing-tier-name">Enterprise</div>
+              <div class="pricing-price">$149<span>/mo</span></div>
+              <ul class="pricing-features">
+                <li>Unlimited team members</li>
+                <li>1TB storage</li>
+                <li>Custom integrations</li>
+                <li>Dedicated account manager</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <hr class="section-divider" />
+
+        <!-- CTA Section (40% opacity — dimmed) -->
+        <div class="design-section cta-section dimmed" data-section="cta" id="sectionCta">
+          <h2>Ready to Transform Your Workflow?</h2>
+          <p>Join thousands of teams already shipping faster.</p>
+          <div class="cta-form">
+            <input type="email" class="cta-input" placeholder="Enter your email" />
+            <button class="cta-submit">Start Free Trial</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chin (Section Ticker) -->
+  <div class="chin" id="chin">
+    <button class="chin-arrow" id="chinLeft" title="Scroll left">&#9668;</button>
+    <div class="chin-ticker-track">
+      <div class="chin-ticker" id="chinTicker">
+        <div class="section-chip active" data-chip-section="hero" style="color: var(--score-red); background: rgba(255, 107, 107, 0.2); border-color: var(--score-red);">
+          <span class="chip-dot" style="background: var(--score-red);"></span>
+          Hero
+        </div>
+        <div class="section-chip" data-chip-section="features" style="color: var(--score-yellow);">
+          <span class="chip-dot" style="background: var(--score-yellow);"></span>
+          Features
+        </div>
+        <div class="section-chip" data-chip-section="pricing" style="color: var(--score-red);">
+          <span class="chip-dot" style="background: var(--score-red);"></span>
+          Pricing
+        </div>
+        <div class="section-chip" data-chip-section="cta" style="color: var(--score-green);">
+          <span class="chip-dot" style="background: var(--score-green);"></span>
+          CTA
+        </div>
+      </div>
+    </div>
+    <button class="chin-arrow" id="chinRight" title="Scroll right">&#9658;</button>
+    <span class="chin-brand">SLAP!</span>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── State ──────────────────────────────────────────────
+  const sections = ['hero', 'features', 'pricing', 'cta'];
+  let activeSection = 'hero'; // Start with HERO active (BROWSE state)
+  let lockedSection = 'hero'; // Clicked/locked section
+
+  // ── Reviewer Data (for mini-rail switching) ────────────
+  const reviewerData = {
+    marketing: {
+      color: '#FF6B6B',
+      name: 'Marketing Expert',
+      initials: 'MK',
+      score: 6,
+      scoreColor: 'var(--score-yellow)',
+      findings: {
+        hero: [
+          { summary: 'Generic CTA with no urgency', detail: '"No urgency \u2014 every AI page says this. \'Get Started Today\' converts at baseline. Try a time-bound offer."', severity: 'red' },
+          { summary: 'Headline lacks specificity', detail: '"\'Unlock the Power\' is verbal clip art. Lead with a quantified benefit like \'Cut integration time by 80%\'."', severity: 'yellow' }
+        ],
+        features: [
+          { summary: 'Cards look alike \u2014 no visual hierarchy', detail: '"Three equal options = three things visitors skip equally. Lead with your strongest differentiator."', severity: 'yellow' },
+          { summary: '"Enterprise Security" claim needs proof', detail: '"Show compliance badges, not just words. SOC 2, GDPR, ISO logos build trust instantly."', severity: 'yellow' }
+        ],
+        pricing: [
+          { summary: 'No anchor price \u2014 can\'t tell best deal', detail: '"Without a high-anchor reference, $79 feels expensive, not like a bargain. Add a crossed-out price or \'Save 40%\' badge."', severity: 'red' },
+          { summary: 'Missing free tier or trial callout', detail: '"Visitors want to try before they buy. Even a \'14-day trial\' link reduces friction."', severity: 'yellow' }
+        ],
+        cta: [
+          { summary: 'Good placement \u2014 clear value prop', detail: '"Strong close. \'Transform Your Workflow\' mirrors the buyer\'s intent. Keep it."', severity: 'green' },
+          { summary: 'Add trust signal near final CTA', detail: '"A testimonial snippet or \'30-day guarantee\' badge would lift conversion by ~15%."', severity: 'yellow' }
+        ]
+      }
+    },
+    ux: {
+      color: '#4ECDC4',
+      name: 'UX Expert',
+      initials: 'UX',
+      score: 7,
+      scoreColor: 'var(--score-green)',
+      findings: {
+        hero: [
+          { summary: 'CTA button has low contrast ratio', detail: '"Gold on white background only hits 2.8:1. WCAG AA requires 4.5:1 for text this size."', severity: 'red' },
+          { summary: 'Good visual hierarchy in hero', detail: '"Strong H1 \u2192 subtitle \u2192 CTA flow. Eye naturally follows the path."', severity: 'green' }
+        ],
+        features: [
+          { summary: 'Cards need hover states', detail: '"No visual feedback on interaction. Add elevation change and cursor pointer."', severity: 'yellow' },
+          { summary: 'Icon sizing is inconsistent', detail: '"First icon is 48px, others are rendering at 44px. Standardize to 48px."', severity: 'yellow' }
+        ],
+        pricing: [
+          { summary: 'Popular tier styling is effective', detail: '"Gold border + badge draws the eye. Good use of visual anchoring."', severity: 'green' },
+          { summary: 'Feature list alignment is off', detail: '"Bullet points don\'t align across tiers. Use consistent line-height."', severity: 'yellow' }
+        ],
+        cta: [
+          { summary: 'Form input lacks validation feedback', detail: '"No success/error states visible. Users need to know if their email is valid."', severity: 'red' },
+          { summary: 'Good form layout', detail: '"Inline form with clear submit button. Low friction pattern."', severity: 'green' }
+        ]
+      }
+    },
+    product: {
+      color: '#FFD93D',
+      name: 'Product Expert',
+      initials: 'PR',
+      score: 5,
+      scoreColor: 'var(--score-yellow)',
+      findings: {
+        hero: [
+          { summary: 'Value prop is too vague', detail: '"\'Seamless integration\' with what? Name the tools. Zapier, Slack, Salesforce."', severity: 'red' },
+          { summary: '10x claim needs substantiation', detail: '"Show a case study link or methodology. Unproven claims erode trust."', severity: 'red' }
+        ],
+        features: [
+          { summary: 'Missing competitive differentiator', detail: '"Every SaaS page has these three features. What do YOU do that Notion/Asana don\'t?"', severity: 'red' },
+          { summary: 'AI feature is buried', detail: '"If AI is your moat, it should be the first card, not the third."', severity: 'yellow' }
+        ],
+        pricing: [
+          { summary: 'No annual billing toggle', detail: '"You\'re leaving 20-30% of potential annual revenue on the table."', severity: 'yellow' },
+          { summary: 'Enterprise tier is too cheap', detail: '"$149/mo signals \'small business\', not enterprise. Consider \'Contact Sales\' instead."', severity: 'yellow' }
+        ],
+        cta: [
+          { summary: 'Missing urgency mechanism', detail: '"No limited offer, no scarcity, no time pressure. Why sign up today vs. next week?"', severity: 'red' },
+          { summary: 'Email-only signup is good', detail: '"Low friction. Don\'t add name, company, phone fields."', severity: 'green' }
+        ]
+      }
+    },
+    technical: {
+      color: '#95E1D3',
+      name: 'Technical Expert',
+      initials: 'TC',
+      score: 7,
+      scoreColor: 'var(--score-green)',
+      findings: {
+        hero: [
+          { summary: 'Hero image is missing', detail: '"A product screenshot or demo video would increase time-on-page by 2x."', severity: 'yellow' },
+          { summary: 'Page load is fast', detail: '"No heavy assets in hero. First contentful paint should be under 1.2s."', severity: 'green' }
+        ],
+        features: [
+          { summary: 'Feature cards are accessible', detail: '"Good semantic HTML structure. Screen readers can parse this."', severity: 'green' },
+          { summary: 'Icons are inline \u2014 consider SVG sprite', detail: '"Reduces HTTP requests and gives better rendering control."', severity: 'yellow' }
+        ],
+        pricing: [
+          { summary: 'Missing API tier for developers', detail: '"Developer-focused buyers need API rate limits, webhook support, sandbox access."', severity: 'red' },
+          { summary: 'Pricing table is responsive', detail: '"Grid layout collapses cleanly on mobile. Good implementation."', severity: 'green' }
+        ],
+        cta: [
+          { summary: 'Form needs CSRF protection', detail: '"No visible token. Ensure backend handles this before launch."', severity: 'red' },
+          { summary: 'Email validation looks client-side only', detail: '"Add server-side validation and rate limiting to prevent abuse."', severity: 'yellow' }
+        ]
+      }
+    },
+    design: {
+      color: '#F38181',
+      name: 'Design Expert',
+      initials: 'DS',
+      score: 6,
+      scoreColor: 'var(--score-yellow)',
+      findings: {
+        hero: [
+          { summary: 'Typography is clean and legible', detail: '"Good font pairing and size hierarchy. Letter-spacing is well-tuned."', severity: 'green' },
+          { summary: 'Needs a background texture or gradient', detail: '"Flat dark bg feels generic. A subtle noise texture or radial gradient adds depth."', severity: 'yellow' }
+        ],
+        features: [
+          { summary: 'Card border radius is inconsistent', detail: '"Icons use 12px, cards use 10px. Pick one radius and stick with it."', severity: 'yellow' },
+          { summary: 'Good whitespace in feature cards', detail: '"28px padding gives content room to breathe. Well proportioned."', severity: 'green' }
+        ],
+        pricing: [
+          { summary: 'Gold accent overused in pricing', detail: '"Popular badge, border, AND price all use gold. Tone one down for contrast."', severity: 'yellow' },
+          { summary: 'Tier card alignment is solid', detail: '"Equal heights and consistent internal spacing. Visually balanced."', severity: 'green' }
+        ],
+        cta: [
+          { summary: 'CTA section blends into page', detail: '"Needs stronger contrast, a background gradient, or an illustration to draw the eye."', severity: 'red' },
+          { summary: 'Form input styling is cohesive', detail: '"Border color, border-radius, and padding match the design system."', severity: 'green' }
+        ]
+      }
+    }
+  };
+
+  let currentReviewer = 'marketing';
+
+  // ── DOM References ─────────────────────────────────────
+  const panelEl = document.getElementById('reviewPanel');
+  const canvasEl = document.getElementById('designCanvas');
+  const sectionChips = document.querySelectorAll('.section-chip');
+  const miniBubbles = document.querySelectorAll('.mini-bubble');
+
+  // ── Severity color map ─────────────────────────────────
+  const severityColors = {
+    red: 'var(--score-red)',
+    yellow: 'var(--score-yellow)',
+    green: 'var(--score-green)'
+  };
+
+  // ── Chip severity map (worst severity per section) ─────
+  function getChipSeverity(reviewer, sectionId) {
+    const data = reviewerData[reviewer];
+    if (!data || !data.findings[sectionId]) return 'green';
+    const findings = data.findings[sectionId];
+    if (findings.some(f => f.severity === 'red')) return 'red';
+    if (findings.some(f => f.severity === 'yellow')) return 'yellow';
+    return 'green';
+  }
+
+  const chipColorMap = {
+    red: { dot: 'var(--score-red)', text: 'var(--score-red)', bg: 'rgba(255, 107, 107, 0.2)' },
+    yellow: { dot: 'var(--score-yellow)', text: 'var(--score-yellow)', bg: 'rgba(255, 217, 61, 0.2)' },
+    green: { dot: 'var(--score-green)', text: 'var(--score-green)', bg: 'rgba(107, 203, 119, 0.2)' }
+  };
+
+  // ── Activate a Section ─────────────────────────────────
+  function activateSection(sectionId) {
+    activeSection = sectionId;
+
+    // Update canvas sections
+    document.querySelectorAll('.design-section').forEach(ds => {
+      if (ds.dataset.section === sectionId) {
+        ds.classList.remove('dimmed');
+        ds.classList.add('bright');
+      } else {
+        ds.classList.remove('bright');
+        ds.classList.add('dimmed');
+      }
+    });
+
+    // Update panel section groups
+    document.querySelectorAll('.panel-section-group').forEach(pg => {
+      pg.classList.toggle('active', pg.dataset.panelSection === sectionId);
+    });
+
+    // Update chin chips
+    document.querySelectorAll('.section-chip').forEach(chip => {
+      const chipSection = chip.dataset.chipSection;
+      const severity = getChipSeverity(currentReviewer, chipSection);
+      const colors = chipColorMap[severity];
+
+      if (chipSection === sectionId) {
+        chip.classList.add('active');
+        chip.style.background = colors.bg;
+        chip.style.borderColor = colors.text;
+      } else {
+        chip.classList.remove('active');
+        chip.style.background = 'transparent';
+        chip.style.borderColor = 'rgba(245, 240, 225, 0.08)';
+      }
+    });
+  }
+
+  // ── Scroll Canvas to Section ───────────────────────────
+  function scrollCanvasToSection(sectionId) {
+    const target = document.getElementById({
+      hero: 'sectionHero',
+      features: 'sectionFeatures',
+      pricing: 'sectionPricing',
+      cta: 'sectionCta'
+    }[sectionId]);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  // ── Scroll Panel to Section ────────────────────────────
+  function scrollPanelToSection(sectionId) {
+    const target = document.querySelector(`.panel-section-group[data-panel-section="${sectionId}"]`);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // ── Render Panel for a Reviewer ────────────────────────
+  function renderPanel(reviewerKey) {
+    const data = reviewerData[reviewerKey];
+    if (!data) return;
+
+    currentReviewer = reviewerKey;
+
+    // Update score ring
+    const circumference = 2 * Math.PI * 16; // r=16
+    const offset = circumference * (1 - data.score / 10);
+
+    let panelHTML = '';
+
+    // Panel Header
+    panelHTML += `
+      <div class="panel-header">
+        <div class="reviewer-avatar" style="background: ${data.color};">${data.initials}</div>
+        <div class="reviewer-info">
+          <div class="reviewer-name">${data.name}</div>
+          <div class="reviewer-role">Landing page review</div>
+        </div>
+        <div class="score-ring-container">
+          <svg viewBox="0 0 40 40">
+            <circle class="score-ring-bg" cx="20" cy="20" r="16" />
+            <circle class="score-ring-fill" cx="20" cy="20" r="16"
+              stroke="${data.scoreColor}"
+              stroke-dasharray="${circumference.toFixed(2)}"
+              stroke-dashoffset="${offset.toFixed(2)}" />
+          </svg>
+          <div class="score-ring-text" style="color: ${data.scoreColor};">${data.score}/10</div>
+        </div>
+      </div>
+    `;
+
+    // Section Groups
+    sections.forEach(sectionId => {
+      const findings = data.findings[sectionId] || [];
+      const isActive = sectionId === activeSection;
+
+      panelHTML += `
+        <div class="panel-section-group${isActive ? ' active' : ''}" data-panel-section="${sectionId}">
+          <div class="section-label">${sectionId.toUpperCase()}</div>
+          <div class="section-label-line"></div>
+      `;
+
+      findings.forEach(finding => {
+        panelHTML += `
+          <div class="finding-row" data-finding-section="${sectionId}">
+            <span class="finding-arrow">&triangleright;</span>
+            <div class="finding-content">
+              <div class="finding-summary">${finding.summary}</div>
+              <div class="finding-detail">"${finding.detail.replace(/^"|"$/g, '')}"</div>
+            </div>
+            <div class="severity-dot ${finding.severity}"></div>
+          </div>
+        `;
+      });
+
+      panelHTML += '</div>';
+    });
+
+    panelEl.innerHTML = panelHTML;
+
+    // Update chin chips for this reviewer
+    updateChipColors();
+
+    // Re-bind panel events
+    bindPanelEvents();
+
+    // Re-activate current section to update styles
+    activateSection(activeSection);
+  }
+
+  // ── Update Chin Chip Colors ────────────────────────────
+  function updateChipColors() {
+    document.querySelectorAll('.section-chip').forEach(chip => {
+      const sectionId = chip.dataset.chipSection;
+      const severity = getChipSeverity(currentReviewer, sectionId);
+      const colors = chipColorMap[severity];
+
+      chip.style.color = colors.text;
+      chip.querySelector('.chip-dot').style.background = colors.dot;
+
+      if (sectionId === activeSection) {
+        chip.style.background = colors.bg;
+        chip.style.borderColor = colors.text;
+      }
+    });
+  }
+
+  // ── Bind Panel Hover/Click Events ──────────────────────
+  function bindPanelEvents() {
+    // Finding rows: hover to preview, click to lock
+    document.querySelectorAll('.finding-row').forEach(row => {
+      row.addEventListener('mouseenter', function() {
+        const sectionId = this.dataset.findingSection;
+        activateSection(sectionId);
+        scrollCanvasToSection(sectionId);
+      });
+
+      row.addEventListener('mouseleave', function() {
+        // Return to locked section
+        activateSection(lockedSection);
+      });
+
+      row.addEventListener('click', function() {
+        const sectionId = this.dataset.findingSection;
+        lockedSection = sectionId;
+        activateSection(sectionId);
+        scrollCanvasToSection(sectionId);
+      });
+    });
+
+    // Section group headers: click to lock
+    document.querySelectorAll('.panel-section-group').forEach(group => {
+      group.querySelector('.section-label').addEventListener('click', function() {
+        const sectionId = group.dataset.panelSection;
+        lockedSection = sectionId;
+        activateSection(sectionId);
+        scrollCanvasToSection(sectionId);
+      });
+    });
+  }
+
+  // ── Canvas Section Hover/Click ─────────────────────────
+  document.querySelectorAll('.design-section').forEach(ds => {
+    ds.addEventListener('mouseenter', function() {
+      const sectionId = this.dataset.section;
+      activateSection(sectionId);
+      scrollPanelToSection(sectionId);
+    });
+
+    ds.addEventListener('mouseleave', function() {
+      activateSection(lockedSection);
+    });
+
+    ds.addEventListener('click', function() {
+      const sectionId = this.dataset.section;
+      lockedSection = sectionId;
+      activateSection(sectionId);
+      scrollPanelToSection(sectionId);
+    });
+
+    // Make the canvas sections respond to cursor
+    ds.style.cursor = 'pointer';
+  });
+
+  // ── Chin Chip Click ────────────────────────────────────
+  document.querySelectorAll('.section-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      const sectionId = this.dataset.chipSection;
+      lockedSection = sectionId;
+      activeSection = sectionId;
+      activateSection(sectionId);
+      scrollPanelToSection(sectionId);
+      scrollCanvasToSection(sectionId);
+    });
+  });
+
+  // ── Mini Rail Bubble Click (switch reviewer) ───────────
+  miniBubbles.forEach(bubble => {
+    bubble.addEventListener('click', function() {
+      const reviewer = this.dataset.reviewer;
+
+      // Update active state on bubbles
+      miniBubbles.forEach(b => {
+        b.classList.remove('active');
+        b.style.borderColor = 'transparent';
+      });
+      this.classList.add('active');
+      this.style.borderColor = 'currentColor';
+
+      // Render new reviewer panel
+      renderPanel(reviewer);
+    });
+  });
+
+  // ── Chin Arrows ────────────────────────────────────────
+  let chinOffset = 0;
+  const chinTicker = document.getElementById('chinTicker');
+
+  document.getElementById('chinLeft').addEventListener('click', function() {
+    chinOffset = Math.max(0, chinOffset - 120);
+    chinTicker.style.transform = `translateX(-${chinOffset}px)`;
+  });
+
+  document.getElementById('chinRight').addEventListener('click', function() {
+    const maxOffset = chinTicker.scrollWidth - chinTicker.parentElement.offsetWidth;
+    chinOffset = Math.min(Math.max(0, maxOffset), chinOffset + 120);
+    chinTicker.style.transform = `translateX(-${chinOffset}px)`;
+  });
+
+  // ── Synchronized Scrolling (Panel → Canvas) ────────────
+  const panelObserverOptions = {
+    root: panelEl,
+    threshold: 0.6
+  };
+
+  function setupPanelObserver() {
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          const sectionId = entry.target.dataset.panelSection;
+          if (sectionId && sectionId !== activeSection) {
+            // Only auto-sync if user is scrolling the panel (not from a click)
+            // We use a flag to avoid feedback loops
+            if (!scrollingSyncLock) {
+              activateSection(sectionId);
+            }
+          }
+        }
+      });
+    }, panelObserverOptions);
+
+    document.querySelectorAll('.panel-section-group').forEach(group => {
+      observer.observe(group);
+    });
+  }
+
+  let scrollingSyncLock = false;
+
+  // ── Initialize ─────────────────────────────────────────
+  bindPanelEvents();
+  activateSection('hero');
+
+  // Set up the observer after a short delay to avoid initial trigger
+  setTimeout(function() {
+    setupPanelObserver();
+  }, 500);
+
+})();
+</script>
+
+</body>
+</html>

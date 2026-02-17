@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SLAP Preview — Variation A: Classic Review</title>
+<style>
+/* ── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Design Tokens ─────────────────────────────────────── */
+:root {
+  --bg-dark: #0D0D1A;
+  --surface-dark: #1A1A2E;
+  --surface-mid: #222240;
+  --text-light: #F5F0E1;
+  --text-muted: rgba(245, 240, 225, 0.5);
+  --accent-gold: #FFD000;
+  --score-green: #6BCB77;
+  --score-yellow: #FFD93D;
+  --score-red: #FF6B6B;
+  --bezel-dark: #3A3A4E;
+  --bezel-highlight: #4A4A5E;
+
+  /* Reviewer Colors */
+  --rev-marketing: #FF6B6B;
+  --rev-ux: #4ECDC4;
+  --rev-product: #FFD93D;
+  --rev-technical: #95E1D3;
+  --rev-design: #F38181;
+
+  /* Fonts */
+  --font-overlay: 'Courier New', monospace;
+  --font-design: system-ui, -apple-system, sans-serif;
+}
+
+/* ── Light Theme Overrides ─────────────────────────────── */
+:root.light {
+  --bg-dark: #F0EDE6;
+  --surface-dark: #E8E4DC;
+  --surface-mid: #DDD9D0;
+  --text-light: #1A1A2E;
+  --text-muted: rgba(26, 26, 46, 0.5);
+  --bezel-dark: #C0BDB6;
+  --bezel-highlight: #D0CDC6;
+}
+
+/* ── Base ──────────────────────────────────────────────── */
+html { height: 100%; }
+body {
+  font-family: var(--font-overlay);
+  background: #080810;
+  color: var(--text-light);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 24px;
+  overflow-x: hidden;
+  transition: background 0.3s;
+}
+:root.light body {
+  background: #D8D4CC;
+}
+
+/* ── iMac Bezel Frame ──────────────────────────────────── */
+.imac-frame {
+  position: relative;
+  width: 1080px;
+  max-width: 100%;
+  background: var(--bg-dark);
+  border: 10px solid var(--bezel-dark);
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+/* ── Top Bar ───────────────────────────────────────────── */
+.top-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--surface-dark);
+  border-bottom: 1px solid rgba(245, 240, 225, 0.08);
+  position: relative;
+  z-index: 20;
+  transition: background 0.3s;
+}
+
+.nav-back {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(245, 240, 225, 0.15);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.nav-back:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+.top-bar-url {
+  font-family: var(--font-overlay);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  flex: 1;
+}
+
+.version-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.version-badge {
+  font-family: var(--font-overlay);
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 10px;
+  letter-spacing: 0.04em;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid;
+}
+.version-badge.v1 {
+  color: var(--score-yellow);
+  border-color: rgba(255, 217, 61, 0.3);
+}
+.version-badge.v2 {
+  color: var(--score-green);
+  border-color: rgba(107, 203, 119, 0.3);
+}
+
+.theme-toggle {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(245, 240, 225, 0.15);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  margin-left: 4px;
+}
+.theme-toggle:hover {
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+}
+
+/* ── Main Content Area ─────────────────────────────────── */
+.content-area {
+  position: relative;
+  display: flex;
+  min-height: 620px;
+}
+
+/* ── Design Canvas ─────────────────────────────────────── */
+.design-canvas {
+  flex: 1;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bg-dark);
+  transition: background 0.3s;
+}
+
+.design-canvas-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 32px 48px;
+  font-family: var(--font-design);
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Spotlight Overlay ─────────────────────────────────── */
+.spotlight-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.spotlight-overlay.active {
+  opacity: 1;
+}
+
+/* We use box-shadow on the spotlight-cutout to create the dark overlay effect */
+.spotlight-cutout {
+  position: absolute;
+  border-radius: 6px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  transition: all 0.4s ease;
+}
+
+/* ── Annotation Label ──────────────────────────────────── */
+.annotation-label {
+  position: absolute;
+  z-index: 15;
+  background: rgba(26, 26, 46, 0.95);
+  border: 1.5px solid var(--rev-ux);
+  border-radius: 6px;
+  padding: 8px 14px;
+  max-width: 400px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+.annotation-label.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.annotation-title {
+  font-family: var(--font-overlay);
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--rev-ux);
+  margin-bottom: 3px;
+}
+.annotation-desc {
+  font-family: var(--font-overlay);
+  font-size: 0.55rem;
+  font-weight: 400;
+  color: var(--text-light);
+  letter-spacing: 0.04em;
+  line-height: 1.5;
+}
+
+/* ── Section Glow (Browse Hint) ────────────────────────── */
+.section-glow {
+  box-shadow: 0 0 0 2px rgba(255, 208, 0, 0.4), 0 0 20px rgba(255, 208, 0, 0.15);
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+}
+
+/* ── Design Sections ───────────────────────────────────── */
+.design-section {
+  padding: 48px 0;
+  border-radius: 8px;
+  transition: opacity 0.4s ease;
+  position: relative;
+}
+
+/* Hero Section */
+.hero-section {
+  text-align: center;
+  padding: 64px 24px;
+}
+.hero-section h1 {
+  font-family: var(--font-design);
+  font-size: 2.4rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text-light);
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+}
+.hero-section .subtitle {
+  font-family: var(--font-design);
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 540px;
+  margin: 0 auto 32px;
+}
+.hero-cta {
+  display: inline-block;
+  background: var(--accent-gold);
+  color: #0D0D1A;
+  font-family: var(--font-design);
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 14px 36px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.hero-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(255, 208, 0, 0.3);
+}
+
+/* Features Section */
+.features-section {
+  padding: 48px 0;
+}
+.features-section h2 {
+  font-family: var(--font-design);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 36px;
+  color: var(--text-light);
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.feature-card {
+  background: var(--surface-mid);
+  border: 1px solid rgba(245, 240, 225, 0.06);
+  border-radius: 10px;
+  padding: 28px 22px;
+  text-align: center;
+  transition: background 0.3s, border-color 0.3s;
+}
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255, 208, 0, 0.1);
+  border: 1px solid rgba(255, 208, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 1.3rem;
+}
+.feature-card h3 {
+  font-family: var(--font-design);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+.feature-card p {
+  font-family: var(--font-design);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* Pricing Section */
+.pricing-section {
+  padding: 48px 0;
+}
+.pricing-section h2 {
+  font-family: var(--font-design);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 36px;
+  color: var(--text-light);
+}
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.pricing-card {
+  background: var(--surface-mid);
+  border: 1px solid rgba(245, 240, 225, 0.06);
+  border-radius: 10px;
+  padding: 28px 22px;
+  text-align: center;
+  position: relative;
+  transition: background 0.3s, border-color 0.3s;
+}
+.pricing-card.popular {
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 30px rgba(255, 208, 0, 0.08);
+}
+.popular-badge {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-gold);
+  color: #0D0D1A;
+  font-family: var(--font-overlay);
+  font-size: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 14px;
+  border-radius: 10px;
+}
+.pricing-tier {
+  font-family: var(--font-design);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.pricing-price {
+  font-family: var(--font-design);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+.pricing-price span {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.pricing-features {
+  list-style: none;
+  margin-top: 20px;
+  text-align: left;
+}
+.pricing-features li {
+  font-family: var(--font-design);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(245, 240, 225, 0.04);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pricing-features li::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--score-green);
+  flex-shrink: 0;
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 48px 0;
+  text-align: center;
+}
+.cta-section h2 {
+  font-family: var(--font-design);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 12px;
+}
+.cta-section p {
+  font-family: var(--font-design);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+}
+.cta-form {
+  display: flex;
+  gap: 10px;
+  max-width: 460px;
+  margin: 0 auto;
+}
+.cta-input {
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(245, 240, 225, 0.12);
+  background: var(--surface-mid);
+  color: var(--text-light);
+  font-family: var(--font-design);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.cta-input::placeholder {
+  color: var(--text-muted);
+}
+.cta-input:focus {
+  border-color: var(--accent-gold);
+}
+.cta-submit {
+  background: var(--accent-gold);
+  color: #0D0D1A;
+  font-family: var(--font-design);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.cta-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(255, 208, 0, 0.3);
+}
+
+/* ── Bubble Rail ───────────────────────────────────────── */
+.bubble-rail {
+  width: 64px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  gap: 12px;
+  position: relative;
+  z-index: 20;
+  background: var(--surface-dark);
+  border-left: 1px solid rgba(245, 240, 225, 0.06);
+  transition: background 0.3s;
+}
+
+.bubble {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-overlay);
+  font-size: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.bubble[data-reviewer="marketing"] {
+  border-color: var(--rev-marketing);
+  color: var(--rev-marketing);
+}
+.bubble[data-reviewer="ux"] {
+  border-color: var(--rev-ux);
+  color: var(--rev-ux);
+}
+.bubble[data-reviewer="product"] {
+  border-color: var(--rev-product);
+  color: var(--rev-product);
+}
+.bubble[data-reviewer="technical"] {
+  border-color: var(--rev-technical);
+  color: var(--rev-technical);
+}
+.bubble[data-reviewer="design"] {
+  border-color: var(--rev-design);
+  color: var(--rev-design);
+}
+
+.bubble.active {
+  transform: scale(1.15);
+}
+.bubble[data-reviewer="marketing"].active {
+  background: rgba(255, 107, 107, 0.15);
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.35), 0 0 24px rgba(255, 107, 107, 0.15);
+}
+.bubble[data-reviewer="ux"].active {
+  background: rgba(78, 205, 196, 0.15);
+  box-shadow: 0 0 12px rgba(78, 205, 196, 0.35), 0 0 24px rgba(78, 205, 196, 0.15);
+}
+.bubble[data-reviewer="product"].active {
+  background: rgba(255, 217, 61, 0.15);
+  box-shadow: 0 0 12px rgba(255, 217, 61, 0.35), 0 0 24px rgba(255, 217, 61, 0.15);
+}
+.bubble[data-reviewer="technical"].active {
+  background: rgba(149, 225, 211, 0.15);
+  box-shadow: 0 0 12px rgba(149, 225, 211, 0.35), 0 0 24px rgba(149, 225, 211, 0.15);
+}
+.bubble[data-reviewer="design"].active {
+  background: rgba(243, 129, 129, 0.15);
+  box-shadow: 0 0 12px rgba(243, 129, 129, 0.35), 0 0 24px rgba(243, 129, 129, 0.15);
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  bottom: -1px;
+  right: -1px;
+}
+.bubble.active::after {
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.bubble-separator {
+  width: 20px;
+  height: 1px;
+  background: rgba(245, 240, 225, 0.08);
+  margin: 4px 0;
+}
+
+.view-review-btn {
+  margin-top: auto;
+  font-family: var(--font-overlay);
+  font-size: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-gold);
+  background: rgba(255, 208, 0, 0.08);
+  border: 1px solid rgba(255, 208, 0, 0.25);
+  border-radius: 6px;
+  padding: 8px 6px;
+  cursor: pointer;
+  text-align: center;
+  line-height: 1.4;
+  transition: all 0.2s;
+  width: 52px;
+}
+.view-review-btn:hover {
+  background: rgba(255, 208, 0, 0.15);
+  border-color: var(--accent-gold);
+}
+
+/* ── Chin ──────────────────────────────────────────────── */
+.chin {
+  height: 88px;
+  background: linear-gradient(180deg, #2A2A3E 0%, #3A3A4E 50%, #4A4A5E 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 20;
+}
+.chin-logo {
+  font-family: var(--font-overlay);
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  color: var(--accent-gold);
+  text-shadow: 0 0 20px rgba(255, 208, 0, 0.2);
+  user-select: none;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 800px) {
+  .features-grid,
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+  .bubble-rail {
+    width: 48px;
+  }
+  .bubble {
+    width: 32px;
+    height: 32px;
+    font-size: 0.4rem;
+  }
+  .hero-section h1 {
+    font-size: 1.6rem;
+  }
+  .cta-form {
+    flex-direction: column;
+  }
+  .view-review-btn {
+    width: 40px;
+    font-size: 0.4rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="imac-frame">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <button class="nav-back" title="Back">&larr;</button>
+    <span class="top-bar-url">Example.com</span>
+    <div class="version-badges">
+      <span class="version-badge v1">v1 5.2/10</span>
+      <span class="version-badge v2">v2 6.8/10</span>
+    </div>
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme">&#9681;</button>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="content-area">
+
+    <!-- Design Canvas -->
+    <div class="design-canvas" id="designCanvas">
+
+      <!-- Spotlight Overlay -->
+      <div class="spotlight-overlay active" id="spotlightOverlay">
+        <div class="spotlight-cutout" id="spotlightCutout"></div>
+      </div>
+
+      <!-- Annotation Label -->
+      <div class="annotation-label active" id="annotationLabel">
+        <div class="annotation-title">HERO &mdash; Generic CTA with no urgency</div>
+        <div class="annotation-desc">The headline promises "seamless integration" but never says what integrates with what. The CTA "Get Started Today" has zero specificity or urgency driver.</div>
+      </div>
+
+      <div class="design-canvas-inner">
+
+        <!-- HERO Section -->
+        <div class="design-section hero-section section-glow" id="sectionHero" data-section="hero">
+          <h1>Unlock the Power of Seamless Integration</h1>
+          <p class="subtitle">Boost productivity by 10x with our AI-powered platform. Trusted by 10,000+ teams worldwide.</p>
+          <button class="hero-cta">Get Started Today</button>
+        </div>
+
+        <!-- FEATURES Section -->
+        <div class="design-section features-section" id="sectionFeatures" data-section="features">
+          <h2>Why Teams Love Us</h2>
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">&#9878;</div>
+              <h3>Lightning Fast</h3>
+              <p>Deploy in seconds with our zero-config setup. No engineering resources required.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">&#9883;</div>
+              <h3>Enterprise Security</h3>
+              <p>SOC 2 Type II certified with end-to-end encryption and role-based access controls.</p>
+            </div>
+            <div class="feature-card">
+              <div class="feature-icon">&#10024;</div>
+              <h3>AI-Powered Insights</h3>
+              <p>Surface actionable patterns from your data with machine learning built right in.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRICING Section -->
+        <div class="design-section pricing-section" id="sectionPricing" data-section="pricing">
+          <h2>Simple, Transparent Pricing</h2>
+          <div class="pricing-grid">
+            <div class="pricing-card">
+              <div class="pricing-tier">Starter</div>
+              <div class="pricing-price">$29<span>/mo</span></div>
+              <ul class="pricing-features">
+                <li>Up to 5 team members</li>
+                <li>10GB storage</li>
+                <li>Basic analytics</li>
+                <li>Email support</li>
+              </ul>
+            </div>
+            <div class="pricing-card popular">
+              <div class="popular-badge">Most Popular</div>
+              <div class="pricing-tier">Pro</div>
+              <div class="pricing-price">$79<span>/mo</span></div>
+              <ul class="pricing-features">
+                <li>Up to 25 team members</li>
+                <li>100GB storage</li>
+                <li>Advanced analytics</li>
+                <li>Priority support</li>
+              </ul>
+            </div>
+            <div class="pricing-card">
+              <div class="pricing-tier">Enterprise</div>
+              <div class="pricing-price">$149<span>/mo</span></div>
+              <ul class="pricing-features">
+                <li>Unlimited team members</li>
+                <li>1TB storage</li>
+                <li>Custom integrations</li>
+                <li>Dedicated account manager</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="design-section cta-section" id="sectionCta" data-section="cta">
+          <h2>Ready to Transform Your Workflow?</h2>
+          <p>Join thousands of teams already shipping faster.</p>
+          <div class="cta-form">
+            <input type="email" class="cta-input" placeholder="Enter your email" />
+            <button class="cta-submit">Start Free Trial</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bubble Rail -->
+    <div class="bubble-rail">
+      <div class="bubble" data-reviewer="marketing" title="Marketing">Mkt</div>
+      <div class="bubble active" data-reviewer="ux" title="UX">UX</div>
+      <div class="bubble" data-reviewer="product" title="Product">Prd</div>
+      <div class="bubble" data-reviewer="technical" title="Technical">Tch</div>
+      <div class="bubble" data-reviewer="design" title="Design">Des</div>
+      <div class="bubble-separator"></div>
+      <button class="view-review-btn">View Review &#9654;</button>
+    </div>
+
+  </div>
+
+  <!-- Chin -->
+  <div class="chin">
+    <div class="chin-logo">SLAP!</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── Reviewer Annotation Data ──────────────────────────
+  const reviewerData = {
+    marketing: {
+      color: '#FF6B6B',
+      section: 'hero',
+      title: 'HERO \u2014 Weak value proposition',
+      desc: '"Unlock the Power" is filler copy. Lead with a quantified benefit like "Cut integration time by 80%" and add a time-bound offer to the CTA.'
+    },
+    ux: {
+      color: '#4ECDC4',
+      section: 'hero',
+      title: 'HERO \u2014 Generic CTA with no urgency',
+      desc: 'The headline promises "seamless integration" but never says what integrates with what. The CTA "Get Started Today" has zero specificity or urgency driver.'
+    },
+    product: {
+      color: '#FFD93D',
+      section: 'features',
+      title: 'FEATURES \u2014 No differentiation',
+      desc: 'Every SaaS page claims "lightning fast" and "enterprise security." Replace with concrete metrics: latency numbers, compliance badges, benchmark comparisons.'
+    },
+    technical: {
+      color: '#95E1D3',
+      section: 'pricing',
+      title: 'PRICING \u2014 Missing API tier',
+      desc: 'Developer-focused buyers need to see API rate limits, webhook support, and sandbox access. Consider adding a Developer tier or feature row.'
+    },
+    design: {
+      color: '#F38181',
+      section: 'cta',
+      title: 'CTA \u2014 Low visual hierarchy',
+      desc: 'The bottom CTA section blends into the page. Needs stronger contrast, a background gradient, or an illustration to draw the eye and close the scroll journey.'
+    }
+  };
+
+  const sectionMap = {
+    hero: document.getElementById('sectionHero'),
+    features: document.getElementById('sectionFeatures'),
+    pricing: document.getElementById('sectionPricing'),
+    cta: document.getElementById('sectionCta')
+  };
+
+  const bubbles = document.querySelectorAll('.bubble');
+  const overlay = document.getElementById('spotlightOverlay');
+  const cutout = document.getElementById('spotlightCutout');
+  const annotation = document.getElementById('annotationLabel');
+  const canvas = document.getElementById('designCanvas');
+
+  // ── Spotlight Positioning ─────────────────────────────
+  function positionSpotlight(sectionId, reviewerColor) {
+    const section = sectionMap[sectionId];
+    if (!section) return;
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const sectionRect = section.getBoundingClientRect();
+
+    const top = sectionRect.top - canvasRect.top + canvas.scrollTop;
+    const left = sectionRect.left - canvasRect.left;
+    const width = sectionRect.width;
+    const height = sectionRect.height;
+
+    // Position the cutout
+    cutout.style.top = (top - 8) + 'px';
+    cutout.style.left = (left - 8) + 'px';
+    cutout.style.width = (width + 16) + 'px';
+    cutout.style.height = (height + 16) + 'px';
+    cutout.style.borderColor = reviewerColor;
+
+    // Position annotation above the section
+    annotation.style.left = (left + 12) + 'px';
+    annotation.style.top = (top - 68) + 'px';
+    annotation.style.borderColor = reviewerColor;
+
+    // Update annotation title color
+    annotation.querySelector('.annotation-title').style.color = reviewerColor;
+
+    // Remove glow from all sections, add to the active one
+    Object.values(sectionMap).forEach(s => s.classList.remove('section-glow'));
+    section.classList.add('section-glow');
+  }
+
+  // ── Activate a reviewer ───────────────────────────────
+  function activateReviewer(reviewerKey) {
+    const data = reviewerData[reviewerKey];
+    if (!data) return;
+
+    // Update bubbles
+    bubbles.forEach(b => b.classList.remove('active'));
+    const activeBubble = document.querySelector(`.bubble[data-reviewer="${reviewerKey}"]`);
+    if (activeBubble) activeBubble.classList.add('active');
+
+    // Update annotation text
+    annotation.querySelector('.annotation-title').textContent = data.title;
+    annotation.querySelector('.annotation-desc').textContent = data.desc;
+
+    // Show overlay and annotation
+    overlay.classList.add('active');
+    annotation.classList.add('active');
+
+    // Position spotlight
+    positionSpotlight(data.section, data.color);
+
+    // Scroll the section into view within the canvas
+    const section = sectionMap[data.section];
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  // ── Deactivate all ────────────────────────────────────
+  function deactivateAll() {
+    bubbles.forEach(b => b.classList.remove('active'));
+    overlay.classList.remove('active');
+    annotation.classList.remove('active');
+    Object.values(sectionMap).forEach(s => s.classList.remove('section-glow'));
+  }
+
+  // ── Bubble click handlers ─────────────────────────────
+  let currentReviewer = 'ux'; // Start with UX active
+
+  bubbles.forEach(bubble => {
+    bubble.addEventListener('click', function() {
+      const reviewer = this.getAttribute('data-reviewer');
+      if (currentReviewer === reviewer) {
+        // Toggle off
+        deactivateAll();
+        currentReviewer = null;
+      } else {
+        currentReviewer = reviewer;
+        activateReviewer(reviewer);
+      }
+    });
+  });
+
+  // ── Theme Toggle ──────────────────────────────────────
+  const themeToggle = document.getElementById('themeToggle');
+  let isDark = true;
+
+  themeToggle.addEventListener('click', function() {
+    isDark = !isDark;
+    if (isDark) {
+      document.documentElement.classList.remove('light');
+      themeToggle.innerHTML = '&#9681;';
+    } else {
+      document.documentElement.classList.add('light');
+      themeToggle.innerHTML = '&#9680;';
+    }
+  });
+
+  // ── Initialize: activate UX reviewer ──────────────────
+  // Use requestAnimationFrame to ensure DOM has laid out
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      activateReviewer('ux');
+    });
+  });
+
+  // ── Reposition on resize / scroll ─────────────────────
+  function repositionIfActive() {
+    if (currentReviewer && reviewerData[currentReviewer]) {
+      positionSpotlight(
+        reviewerData[currentReviewer].section,
+        reviewerData[currentReviewer].color
+      );
+    }
+  }
+
+  window.addEventListener('resize', repositionIfActive);
+  canvas.addEventListener('scroll', repositionIfActive);
+
+})();
+</script>
+
+</body>
+</html>

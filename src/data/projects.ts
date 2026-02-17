@@ -6,6 +6,7 @@
  */
 
 import type React from 'react';
+import ExampleDesign from '../projects/example/ExampleDesign';
 
 export interface VersionDef {
   id: string;
@@ -30,22 +31,25 @@ export interface ProjectDef {
 // ─── Registry ─────────────────────────────────────────
 
 export const projects: ProjectDef[] = [
-  // Projects will be registered here as they are built.
-  // Example:
-  // {
-  //   id: 'landing-page',
-  //   name: 'Landing Page',
-  //   description: 'A conversion-focused landing page with hero, features, pricing, and social proof.',
-  //   icon: '🚀',
-  //   accent: '#4ECDC4',
-  //   archetype: 'landing-page',
-  //   versions: [
-  //     { id: 'slap', label: 'v1', hook: 'SLAP!' },
-  //     { id: 'brutalist', label: 'v2', hook: 'Raw & Honest', shapedBy: ['frank', 'dex'], parentVersionId: 'slap' },
-  //     { id: 'neo-minimal', label: 'v3', hook: 'Less is More', shapedBy: ['priya', 'jasmine'], parentVersionId: 'slap' },
-  //   ],
-  //   component: LandingPageProject,
-  // },
+  {
+    id: 'example',
+    name: 'Example Landing Page',
+    description: 'A SaaS landing page \u2014 from AI slop to intentional design.',
+    icon: '\u{1F680}',
+    accent: '#4ECDC4',
+    archetype: 'landing-page',
+    versions: [
+      { id: 'v1', label: 'v1', hook: 'AI Generated' },
+      {
+        id: 'v2',
+        label: 'v2',
+        hook: 'After SLAP',
+        parentVersionId: 'v1',
+        shapedBy: ['elena', 'frank', 'sarah'],
+      },
+    ],
+    component: ExampleDesign,
+  },
 ];
 
 // ─── Lookup ───────────────────────────────────────────
