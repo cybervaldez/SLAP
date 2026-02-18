@@ -217,7 +217,7 @@ export default function DesignWorkspace() {
 
   // ── render ─────────────────────────────────────────────
 
-  const DemoComponent = project.component;
+  const DemoComponent = project.component!;
   const currentBubbles = rs.mode === 'review' ? expertBubbles : personaBubbles;
   const firstBubble = currentBubbles[0];
 
@@ -287,6 +287,8 @@ export default function DesignWorkspace() {
           role={popoverReviewer?.role ?? ''}
           score={popoverReview?.score ?? 0}
           avatar={popoverReviewer ? getAvatarUrl(popoverReviewer) : undefined}
+          bias={popoverReviewer?.bias}
+          taste={popoverReviewer?.taste}
           shortVerdict={popoverReview?.shortVerdict}
           accentColor={popoverReviewer?.color ?? '#FFD000'}
           chips={popoverChips}

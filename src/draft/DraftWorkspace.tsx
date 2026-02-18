@@ -17,6 +17,9 @@
  *   idle    — browse, CRT chin shows hand + power
  *   guided  — CSS spotlight + floating tour overlay with breadcrumbs
  *   live    — floating bubble choreography + tour overlay with progress track
+ *
+ * All DOM queries into the design content go through viewportRef.
+ * HTML projects inject content inline (no iframe) with scoped CSS.
  */
 
 import { useEffect, useRef, useCallback, useState, useMemo } from 'react';
@@ -29,7 +32,7 @@ import type { TrafficLight } from '../data/reviews';
 import { experts, personas, getReviewer, getAvatarUrl } from '../data/reviewers';
 import type { Reviewer } from '../data/reviewers';
 import { loadCouncil, autoRollCouncil } from '../utils/council';
-import { useTour, SECTION_ORDER, SECTION_LABELS } from './useTour';
+import { useTour, SECTION_ORDER } from './useTour';
 import { useRefHighlight } from './useRefHighlight';
 import BubblePopover from '../components/BubblePopover';
 import type { SectionChip } from '../components/BubblePopover';
@@ -68,6 +71,15 @@ function toChips(rev: { sections: Record<string, { light: TrafficLight; text: st
   });
 }
 
+/** Section label abbreviations for breadcrumbs */
+const SECTION_LABEL_MAP: Record<string, string> = {
+  hero: 'HERO', features: 'FEAT', pricing: 'PRC',
+  cta: 'CTA', testimonials: 'TEST', footer: 'FTR',
+};
+function sectionLabel(s: string): string {
+  return SECTION_LABEL_MAP[s] || s.slice(0, 4).toUpperCase();
+}
+
 // ─── Page ─────────────────────────────────────────────────
 
 // ─── Persona categories for Add Panel ──────────────────
@@ -85,7 +97,10 @@ export default function DraftWorkspace() {
   const project = projectId ? getProject(projectId) : undefined;
   const effectiveVersionId = versionId || project?.versions[0]?.id || 'v1';
 
-  const tour = useTour(projectId, effectiveVersionId);
+  // Section order: project-specific or default
+  const projectSections = project?.sections || SECTION_ORDER;
+
+  const tour = useTour(projectId, effectiveVersionId, project?.sections);
   const rs = useReviewState();
   const refHighlight = useRefHighlight();
 
@@ -113,6 +128,26 @@ export default function DraftWorkspace() {
   // Theme toggle
   const [contentTheme, setContentTheme] = useState<'dark' | 'light'>('dark');
 
+  // ── Content readiness (for async HTML injection) ──────
+  const isHtmlProject = !!project?.htmlUrl;
+  const [contentReady, setContentReady] = useState(!isHtmlProject);
+
+  // Reset content readiness when project/version changes
+  useEffect(() => {
+    setContentReady(!isHtmlProject);
+  }, [projectId, effectiveVersionId, isHtmlProject]);
+
+  // Callback from DesignCanvas when HTML injection completes
+  const handleHtmlReady = useCallback(() => {
+    setContentReady(true);
+
+    // Sync current theme to newly injected .slap-design container
+    if (contentTheme === 'dark') {
+      const el = viewportRef.current?.querySelector('.slap-design');
+      el?.setAttribute('data-theme', 'dark');
+    }
+  }, [contentTheme]);
+
   const toggleTheme = useCallback(() => {
     setContentTheme(prev => {
       const next = prev === 'dark' ? 'light' : 'dark';
@@ -120,6 +155,15 @@ export default function DraftWorkspace() {
         document.body.setAttribute('data-content-theme', 'light');
       } else {
         document.body.removeAttribute('data-content-theme');
+      }
+      // Sync theme to inline HTML container
+      const designEl = viewportRef.current?.querySelector('.slap-design');
+      if (designEl) {
+        if (next === 'dark') {
+          designEl.setAttribute('data-theme', 'dark');
+        } else {
+          designEl.removeAttribute('data-theme');
+        }
       }
       return next;
     });
@@ -196,21 +240,25 @@ export default function DraftWorkspace() {
   // ── Guided mode: scroll active section into view ──────
 
   useEffect(() => {
-    const viewport = viewportRef.current;
-    if (!viewport || !tour.state.active || !tour.currentStep) return;
+    if (!tour.state.active || !tour.currentStep) return;
     if (mode !== 'guided') return;
 
-    const el = viewport.querySelector(`[data-section="${tour.currentStep.section}"]`);
+    const vp = viewportRef.current;
+    if (!vp) return;
+
+    const el = vp.querySelector(`[data-section="${tour.currentStep.section}"]`);
     if (!el) return;
 
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, [mode, tour.state.active, tour.currentStep?.index]);
+  }, [mode, tour.state.active, tour.currentStep?.index, contentReady]);
 
   // ── Section glow (unified: tour + overlay) ────────────
 
   useEffect(() => {
-    if (!viewportRef.current) return;
-    const sections = viewportRef.current.querySelectorAll('[data-section]');
+    const vp = viewportRef.current;
+    if (!vp) return;
+
+    const sections = vp.querySelectorAll('[data-section]');
 
     // Clear all glows and spotlight
     sections.forEach(s => {
@@ -224,7 +272,7 @@ export default function DraftWorkspace() {
     // Source 1: Tour step (takes priority)
     if (tour.state.active && tour.currentStep) {
       const step = tour.currentStep;
-      const el = viewportRef.current.querySelector(`[data-section="${step.section}"]`) as HTMLElement | null;
+      const el = vp.querySelector(`[data-section="${step.section}"]`) as HTMLElement | null;
       if (el) {
         el.classList.add('glowing', 'section-spotlight');
         el.style.setProperty('--d-glow-color', step.reviewerColor + '66');
@@ -238,7 +286,7 @@ export default function DraftWorkspace() {
     // Source 2: Overlay highlight (popover chip hover / panel finding hover)
     if (rs.highlightInfo) {
       const color = rs.highlightInfo.color || '#FFD000';
-      const el = viewportRef.current.querySelector(`[data-section="${rs.highlightInfo.section}"]`) as HTMLElement | null;
+      const el = vp.querySelector(`[data-section="${rs.highlightInfo.section}"]`) as HTMLElement | null;
       if (el) {
         el.classList.add('glowing');
         el.style.setProperty('--d-glow-color', color + '66');
@@ -248,29 +296,29 @@ export default function DraftWorkspace() {
         el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     }
-  }, [tour.state.active, tour.currentStep?.index, rs.highlightInfo]);
+  }, [tour.state.active, tour.currentStep?.index, rs.highlightInfo, contentReady]);
 
   // ── Ref highlight (unified: tour + overlay) ──────────
 
   useEffect(() => {
-    const viewport = viewportRef.current;
-    if (!viewport) return;
+    const vp = viewportRef.current;
+    if (!vp) return;
 
     // Source 1: Tour ref
     if (tour.state.active && tour.currentStep?.finding.ref) {
-      refHighlight.apply(tour.currentStep.finding.ref, viewport);
-      return () => { refHighlight.clear(viewport); };
+      refHighlight.apply(tour.currentStep.finding.ref, vp);
+      return () => { refHighlight.clear(vp); };
     }
 
     // Source 2: Overlay ref (panel finding hover)
     if (!tour.state.active && rs.highlightInfo?.ref) {
-      refHighlight.apply(rs.highlightInfo.ref, viewport);
-      return () => { refHighlight.clear(viewport); };
+      refHighlight.apply(rs.highlightInfo.ref, vp);
+      return () => { refHighlight.clear(vp); };
     }
 
-    refHighlight.clear(viewport);
-    return () => { refHighlight.clear(viewport); };
-  }, [tour.state.active, tour.currentStep?.index, rs.highlightInfo]);
+    refHighlight.clear(vp);
+    return () => { refHighlight.clear(vp); };
+  }, [tour.state.active, tour.currentStep?.index, rs.highlightInfo, contentReady]);
 
   // ── Live mode: floating bubble choreography ───────────
   // Now originates from external rail (outside frame) → section inside viewport
@@ -289,9 +337,11 @@ export default function DraftWorkspace() {
     const trail = trailRef.current;
     if (!floater || !speech || !trail || !stageRef.current) return;
 
+    const vp = viewportRef.current;
+
     // Find external rail slot and target section
     const railSlot = stageRef.current.querySelector(`[data-reviewer="${step.reviewerId}"]`);
-    const sectionEl = viewportRef.current?.querySelector(`[data-section="${step.section}"]`);
+    const sectionEl = vp?.querySelector(`[data-section="${step.section}"]`);
     if (!railSlot || !sectionEl) return;
 
     // Scroll section into view
@@ -356,7 +406,7 @@ export default function DraftWorkspace() {
 
     const timer = setTimeout(choreograph, 300);
     return () => clearTimeout(timer);
-  }, [mode, tour.currentStep?.index, getRelativeRect]);
+  }, [mode, tour.currentStep?.index, getRelativeRect, contentReady]);
 
   // ── Keyboard navigation ───────────────────────────────
 
@@ -437,7 +487,7 @@ export default function DraftWorkspace() {
       panelId: rs.panelId,
       highlightedSection: rs.highlightInfo?.section || tour.currentStep?.section || null,
       highlightedRef: rs.highlightInfo?.ref || tour.currentStep?.finding.ref || null,
-      sections: SECTION_ORDER,
+      sections: projectSections,
       tourActive: tour.state.active,
       tourMode: tour.state.mode,
       tourStep: tour.state.currentIndex,
@@ -450,6 +500,8 @@ export default function DraftWorkspace() {
       councilPersonaCount: councilPersonas.length,
       shapedBy: shapedByIds,
       contentTheme,
+      isHtmlProject,
+      contentReady,
     };
   });
 
@@ -496,7 +548,7 @@ export default function DraftWorkspace() {
   const filledBlocks = Math.round(tour.progress * totalBlocks);
 
   // Current section index for breadcrumbs
-  const currentSectionIdx = step ? SECTION_ORDER.indexOf(step.section) : -1;
+  const currentSectionIdx = step ? projectSections.indexOf(step.section) : -1;
 
   return (
     <div className="draft-wrapper" data-mode={mode} data-testid="draft-workspace">
@@ -562,7 +614,11 @@ export default function DraftWorkspace() {
           {/* Main Area (viewport only) */}
           <div className="draft-main" data-testid="draft-main">
             <div className="draft-viewport" ref={viewportRef} data-testid="draft-viewport">
-              <DesignCanvas version={effectiveVersionId} />
+              <DesignCanvas
+                version={effectiveVersionId}
+                project={project}
+                onHtmlReady={handleHtmlReady}
+              />
             </div>
           </div>
 
@@ -730,6 +786,8 @@ export default function DraftWorkspace() {
         chips={popoverChips}
         onChipHover={rs.setHighlight}
         onViewFull={rs.openPanel}
+        bias={popoverReviewer?.bias}
+        taste={popoverReviewer?.taste}
       />
 
       {/* ── Panel (Tier 3) ────────────────────────────── */}
@@ -752,6 +810,9 @@ export default function DraftWorkspace() {
                 <img src={step.reviewerAvatar} alt={step.reviewerName} />
               </div>
               <span className="draft-tour-reviewer" style={{ color: step.reviewerColor }}>{step.reviewerName}</span>
+              {step.reviewerBias && (
+                <span data-testid="tour-lens" className="draft-tour-lens">{step.reviewerBias}</span>
+              )}
               <span className="draft-tour-dash">&mdash;</span>
               <span className="draft-tour-section">{step.sectionLabel}</span>
               <span className="draft-tour-counter">[{step.index + 1}/{step.totalSteps}]</span>
@@ -778,7 +839,7 @@ export default function DraftWorkspace() {
             <span className="draft-bar-empty">{'\u2591'.repeat(totalBlocks - filledBlocks)}</span>
           </div>
           <div className="draft-tour-breadcrumb">
-            {SECTION_ORDER.map((sec, i) => (
+            {projectSections.map((sec, i) => (
               <span key={sec}>
                 {i > 0 && <span className="draft-tour-crumb-sep">&gt;</span>}
                 <span
@@ -788,7 +849,7 @@ export default function DraftWorkspace() {
                     if (idx >= 0) tour.goTo(idx);
                   }}
                 >
-                  {SECTION_LABELS[sec] || sec.toUpperCase()}
+                  {sectionLabel(sec)}
                 </span>
               </span>
             ))}

@@ -265,8 +265,14 @@
   max-width: 480px;
 }
 
-/* Section glow when being reviewed */
-.draft-section.glowing {
+/* ── Injected HTML Design Container ─────────────────────── */
+.slap-design {
+  width: 100%;
+  min-height: 100%;
+}
+
+/* Section glow when being reviewed (works for both .draft-section and injected HTML sections) */
+[data-section].glowing {
   border-color: var(--d-glow-color, rgba(255, 107, 107, 0.4));
   box-shadow:
     0 0 0 2px var(--d-glow-shadow, rgba(255, 107, 107, 0.15)),
@@ -663,13 +669,13 @@
 }
 
 /* ── CSS Spotlight (guided mode) ──────────────────────── */
-.draft-wrapper[data-mode="guided"] .draft-section {
+.draft-wrapper[data-mode="guided"] [data-section] {
   opacity: 0.15;
   filter: brightness(0.4);
   transition: opacity 0.3s ease, filter 0.3s ease, border-color 0.4s ease, box-shadow 0.4s ease;
   pointer-events: none;
 }
-.draft-wrapper[data-mode="guided"] .draft-section.section-spotlight {
+.draft-wrapper[data-mode="guided"] [data-section].section-spotlight {
   opacity: 1;
   filter: none;
   pointer-events: auto;
@@ -977,6 +983,12 @@
 .draft-tour-reviewer {
   font-size: 0.6rem; font-weight: 700;
   letter-spacing: 0.06em;
+}
+.draft-tour-lens {
+  font-size: 0.4rem; font-style: italic;
+  color: var(--d-text-dim);
+  max-width: 140px;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
 .draft-tour-dash {
   color: var(--d-text-dim);

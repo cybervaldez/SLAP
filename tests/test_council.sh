@@ -239,6 +239,36 @@ else
   log_fail "VIEW FULL REVIEW missing for persona"
 fi
 
+# Persona popover should show lens (bias)
+HAS_LENS=$(browser_eval "!!document.querySelector('[data-testid=\"popover-lens\"]')")
+if [ "$HAS_LENS" = "true" ]; then
+  log_pass "Persona popover has lens context"
+else
+  log_fail "Persona popover lens missing"
+fi
+
+LENS_TEXT=$(browser_eval "document.querySelector('[data-testid=\"popover-lens\"]')?.textContent || ''")
+if echo "$LENS_TEXT" | grep -qi "label"; then
+  log_pass "Elena lens mentions label"
+else
+  log_fail "Elena lens content" "Got: $LENS_TEXT"
+fi
+
+# Persona popover should show taste
+HAS_TASTE=$(browser_eval "!!document.querySelector('[data-testid=\"popover-taste\"]')")
+if [ "$HAS_TASTE" = "true" ]; then
+  log_pass "Persona popover has taste field"
+else
+  log_fail "Persona popover taste missing"
+fi
+
+TASTE_TEXT=$(browser_eval "document.querySelector('[data-testid=\"popover-taste\"]')?.textContent || ''")
+if echo "$TASTE_TEXT" | grep -qi "podcast\|keyboard"; then
+  log_pass "Elena taste has persona-specific content"
+else
+  log_fail "Elena taste content" "Got: $TASTE_TEXT"
+fi
+
 # Close popover for clean state
 click_testid "draft-slot-elena"
 sleep 0.3
@@ -332,11 +362,21 @@ if [ "$HAS_FRANK_NOW" = "false" ]; then
   log_skip "Frank not in rail — skipping V2 popover test"
 else
 
+# Close any open overlays first for clean state
+browser_eval "(function(){ var b = document.querySelector('[data-testid=\"draft-backdrop\"]'); if(b) b.click(); })()" >/dev/null 2>&1
+sleep 0.5
+
 click_testid "draft-version-v2"
-sleep 1
+sleep 2
+
+# Verify we're on V2
+V2_CHECK=$(browser_eval "window.slapState?.version")
+if [ "$V2_CHECK" != "v2" ]; then
+  log_fail "Failed to switch to V2" "version=$V2_CHECK"
+else
 
 click_testid "draft-slot-frank"
-sleep 1
+sleep 2
 
 TIER=$(browser_eval "window.slapState?.overlayTier")
 POPOVER_ID=$(browser_eval "window.slapState?.popoverId")
@@ -356,7 +396,9 @@ fi
 
 # Close popover
 click_testid "draft-slot-frank"
-sleep 0.3
+sleep 0.5
+
+fi  # end V2_CHECK guard
 
 fi  # end HAS_FRANK_NOW guard
 
@@ -365,6 +407,10 @@ fi  # end HAS_FRANK_NOW guard
 # ══════════════════════════════════════════════════════════════
 echo ""
 log_info "TEST 11: Reviewer count in slapState"
+
+# Ensure clean state — close any overlays
+browser_eval "(function(){ var b = document.querySelector('[data-testid=\"draft-backdrop\"]'); if(b) b.click(); })()" >/dev/null 2>&1
+sleep 0.5
 
 TOTAL_REVIEWERS=$(browser_eval "window.slapState?.reviewerCount || 0")
 # Should be 5 experts + council personas (at least 3 from localStorage + marcus we added)

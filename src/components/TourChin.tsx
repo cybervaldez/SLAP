@@ -184,9 +184,28 @@ export default function TourChin({
                 border: `2px solid ${currentStep.reviewerColor}`,
               }}
             />
-            <span style={{ ...st.reviewerName, color: currentStep.reviewerColor }}>
-              {currentStep.reviewerName}
-            </span>
+            <div style={{ flexShrink: 0 }}>
+              <span style={{ ...st.reviewerName, color: currentStep.reviewerColor }}>
+                {currentStep.reviewerName}
+              </span>
+              {currentStep.reviewerBias && (
+                <div
+                  data-testid="tour-lens"
+                  style={{
+                    fontSize: '0.35rem',
+                    color: 'rgba(245, 240, 225, 0.4)',
+                    fontStyle: 'italic',
+                    lineHeight: 1.2,
+                    maxWidth: 120,
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {currentStep.reviewerBias}
+                </div>
+              )}
+            </div>
             <span
               style={{
                 width: 6,

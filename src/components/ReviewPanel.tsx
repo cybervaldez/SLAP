@@ -312,7 +312,24 @@ function ReviewContent({
         </div>
       </div>
 
-      <div style={st.verdictBox}>
+      {reviewer.bias && (
+        <div
+          data-testid="panel-lens"
+          style={{
+            fontSize: '0.55rem',
+            fontStyle: 'italic',
+            color: 'rgba(245, 240, 225, 0.5)',
+            lineHeight: 1.4,
+            marginBottom: 8,
+            padding: '4px 0',
+          }}
+        >
+          <span style={{ fontWeight: 700, fontStyle: 'normal', color: 'rgba(245, 240, 225, 0.35)', letterSpacing: '0.08em', fontSize: '0.5rem' }}>LENS: </span>
+          &ldquo;{reviewer.bias}&rdquo;
+        </div>
+      )}
+
+      <div style={st.verdictBox} data-testid="panel-verdict">
         &ldquo;{review.verdict}&rdquo;
       </div>
 

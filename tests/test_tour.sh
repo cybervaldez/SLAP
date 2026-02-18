@@ -172,6 +172,14 @@ else
   log_skip "slapState.currentRef may be null (not all findings have refs)"
 fi
 
+# Tour chin should show reviewer lens (bias)
+HAS_TOUR_LENS=$(browser_eval "!!document.querySelector('[data-testid=\"tour-lens\"]')")
+if [ "$HAS_TOUR_LENS" = "true" ]; then
+  log_pass "Tour chin shows reviewer lens"
+else
+  log_fail "Tour chin lens missing"
+fi
+
 # ══════════════════════════════════════════════════════════════
 # TEST 4: Ref highlight (element-level)
 # ══════════════════════════════════════════════════════════════

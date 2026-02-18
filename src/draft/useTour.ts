@@ -6,6 +6,8 @@
  *   live   — floating bubble parade + progress chin
  *
  * Both share the same step data and navigation logic.
+ *
+ * Section order is configurable per project via the sectionOrder param.
  */
 
 import { useState, useCallback, useMemo } from 'react';
@@ -18,12 +20,24 @@ import type { Finding } from '../data/reviews';
 export type TourMode = 'guided' | 'live';
 
 const SECTION_ORDER = ['hero', 'features', 'pricing', 'cta'];
-const SECTION_LABELS: Record<string, string> = {
+
+/** Well-known section label abbreviations */
+const KNOWN_LABELS: Record<string, string> = {
   hero: 'HERO',
   features: 'FEAT',
   pricing: 'PRC',
   cta: 'CTA',
+  testimonials: 'TEST',
+  footer: 'FTR',
 };
+
+function buildLabels(sections: string[]): Record<string, string> {
+  return Object.fromEntries(
+    sections.map(s => [s, KNOWN_LABELS[s] || s.slice(0, 4).toUpperCase()])
+  );
+}
+
+const SECTION_LABELS: Record<string, string> = buildLabels(SECTION_ORDER);
 
 export interface TourStep {
   index: number;
@@ -32,6 +46,7 @@ export interface TourStep {
   reviewerName: string;
   reviewerColor: string;
   reviewerAvatar: string;
+  reviewerBias: string;
   section: string;
   sectionLabel: string;
   sectionCrumb: string;
@@ -60,14 +75,21 @@ export interface TourEngine {
 
 // ─── Step Builder ─────────────────────────────────────────
 
-function buildSteps(projectId: string | null, versionId: string, reviewerId: string): TourStep[] {
+function buildSteps(
+  projectId: string | null,
+  versionId: string,
+  reviewerId: string,
+  sectionOrder: string[],
+): TourStep[] {
   if (!projectId) return [];
   const review = getReview(projectId, versionId, reviewerId);
   const reviewer = getReviewer(reviewerId);
   if (!review || !reviewer) return [];
 
+  const labels = buildLabels(sectionOrder);
   const steps: TourStep[] = [];
-  for (const section of SECTION_ORDER) {
+
+  for (const section of sectionOrder) {
     const findings = review.sections[section];
     if (!findings) continue;
     for (const finding of findings) {
@@ -78,9 +100,10 @@ function buildSteps(projectId: string | null, versionId: string, reviewerId: str
         reviewerName: reviewer.name,
         reviewerColor: reviewer.color,
         reviewerAvatar: getAvatarUrl(reviewer),
+        reviewerBias: reviewer.bias,
         section,
         sectionLabel: section.toUpperCase(),
-        sectionCrumb: SECTION_LABELS[section] || section.toUpperCase(),
+        sectionCrumb: labels[section] || section.toUpperCase(),
         finding,
       });
     }
@@ -99,14 +122,19 @@ const INITIAL_STATE: TourState = {
   currentIndex: 0,
 };
 
-export function useTour(projectId: string | null, versionId: string): TourEngine {
+export function useTour(
+  projectId: string | null,
+  versionId: string,
+  sectionOrder?: string[],
+): TourEngine {
   const [state, setState] = useState<TourState>(INITIAL_STATE);
+  const sections = sectionOrder || SECTION_ORDER;
 
   const start = useCallback((reviewerId: string, mode: TourMode = 'guided') => {
-    const steps = buildSteps(projectId, versionId, reviewerId);
+    const steps = buildSteps(projectId, versionId, reviewerId, sections);
     if (steps.length === 0) return;
     setState({ active: true, mode, reviewerId, steps, currentIndex: 0 });
-  }, [projectId, versionId]);
+  }, [projectId, versionId, sections]);
 
   const stop = useCallback(() => {
     setState(INITIAL_STATE);

@@ -21,6 +21,7 @@ export interface TourStep {
   reviewerName: string;
   reviewerColor: string;
   reviewerAvatar: string;
+  reviewerBias: string;
   section: string;
   finding: Finding;
   findingIndex: number;
@@ -91,6 +92,7 @@ export function useTourEngine(
           reviewerName: reviewer.name,
           reviewerColor: reviewer.color,
           reviewerAvatar: avatar,
+          reviewerBias: reviewer.bias,
           section,
           finding: findings[fi],
           findingIndex: fi,

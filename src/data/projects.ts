@@ -2,7 +2,8 @@
  * Project definitions — the designs being reviewed.
  *
  * Each project contains versions (iterations of the design).
- * Version components are lazy-loaded from src/projects/{projectId}/versions/.
+ * Projects render either as inline React components (component)
+ * or external HTML via iframe (htmlUrl).
  */
 
 import type React from 'react';
@@ -25,7 +26,9 @@ export interface ProjectDef {
   accent: string;
   archetype: string;           // Content archetype for review section mapping
   versions: VersionDef[];
-  component: React.ComponentType<{ version: string }>;
+  component?: React.ComponentType<{ version: string }>;  // Inline React rendering
+  htmlUrl?: (version: string) => string;                  // Iframe rendering (URL per version)
+  sections?: string[];                                     // Section order (defaults to SECTION_ORDER)
 }
 
 // ─── Registry ─────────────────────────────────────────
@@ -49,6 +52,19 @@ export const projects: ProjectDef[] = [
       },
     ],
     component: ExampleDesign,
+  },
+  {
+    id: 'flowboard',
+    name: 'FlowBoard',
+    description: 'AI-generated PM tool landing page \u2014 Claude Haiku draft.',
+    icon: '\u{1F4CB}',
+    accent: '#7C3AED',
+    archetype: 'landing-page',
+    versions: [
+      { id: 'haiku', label: 'haiku', hook: 'Claude Haiku Draft' },
+    ],
+    sections: ['hero', 'features', 'pricing', 'testimonials', 'cta'],
+    htmlUrl: (v) => `/projects/FlowBoard/${v}.html`,
   },
 ];
 

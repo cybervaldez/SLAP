@@ -6,8 +6,6 @@ argument-hint: [experts] <question or request>
 
 ## TL;DR
 
-**Phase:** Release (also usable in any phase)
-
 **What:** Expert personas (Marketing, UX, Product, Technical, etc.) give strategic advice.
 
 **When:** Strategic questions, positioning, pricing, architecture decisions.
@@ -213,34 +211,6 @@ When relevant files are mentioned or accessible:
 2. **Acknowledge what was reviewed** in the consultation
 3. **Reference specific elements** from the files in feedback
 4. **Provide context-aware suggestions** based on actual content
-
-## Section-Aware Reviews (for Review System Integration)
-
-When generating expert reviews that will feed into the SLAP! review overlay, expert findings MUST be structured with section keys matching the design's `data-section` attributes.
-
-**Pattern for review findings:**
-```typescript
-{
-  score: 7,
-  verdict: 'Full narrative assessment...',
-  shortVerdict: 'One-line summary for popover.',
-  sections: {
-    'hero': [
-      { text: 'Headline grabs attention', light: 'green', comment: 'First 5 words do heavy lifting.' },
-      { text: 'CTA lacks urgency', light: 'yellow', comment: 'Try "Start Free" over "Get Started".' },
-    ],
-    'pricing': [
-      { text: 'No anchor pricing', light: 'red', comment: 'Show premium tier first.' },
-    ],
-  }
-}
-```
-
-**Rules:**
-- Section keys MUST match `data-section` values from the design (defined in `/ui-planner`'s section map)
-- Each expert evaluates ALL sections, not just their domain
-- `shortVerdict` appears in the popover (Tier 2); `verdict` appears in the panel (Tier 3)
-- Finding `text` appears in severity chips; `comment` appears in the expanded panel view
 
 ---
 

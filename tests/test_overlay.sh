@@ -131,6 +131,21 @@ else
   log_fail "Popover score" "No /10 in popover text"
 fi
 
+# Lens (bias) — experts have bias too
+HAS_LENS=$(browser_eval "!!document.querySelector('[data-testid=\"popover-lens\"]')")
+if [ "$HAS_LENS" = "true" ]; then
+  log_pass "Popover shows reviewer lens"
+else
+  log_fail "Popover lens missing"
+fi
+
+LENS_TEXT=$(browser_eval "document.querySelector('[data-testid=\"popover-lens\"]')?.textContent || ''")
+if echo "$LENS_TEXT" | grep -qi "sell"; then
+  log_pass "Marketing lens contains bias text"
+else
+  log_fail "Marketing lens content" "Got: $LENS_TEXT"
+fi
+
 # Active ring on rail slot
 HAS_RING=$(browser_eval "document.querySelector('[data-testid=\"draft-slot-marketing\"]')?.classList.contains('slot-active')")
 if [ "$HAS_RING" = "true" ]; then
@@ -229,6 +244,22 @@ if [ "$HAS_FINDING" = "true" ]; then
   log_pass "Panel contains findings"
 else
   log_fail "Panel has no findings"
+fi
+
+# Check panel has lens (bias) context
+HAS_PANEL_LENS=$(browser_eval "!!document.querySelector('[data-testid=\"panel-lens\"]')")
+if [ "$HAS_PANEL_LENS" = "true" ]; then
+  log_pass "Panel shows reviewer lens"
+else
+  log_fail "Panel lens missing"
+fi
+
+# Check panel has verdict
+HAS_VERDICT=$(browser_eval "!!document.querySelector('[data-testid=\"panel-verdict\"]')")
+if [ "$HAS_VERDICT" = "true" ]; then
+  log_pass "Panel shows verdict"
+else
+  log_fail "Panel verdict missing"
 fi
 
 # Check panel close button

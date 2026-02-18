@@ -9,6 +9,8 @@
  * Highlight tiers:
  *   Element: adds .slap-ref-element class (dashed outline + badge)
  *   Text:    CSS.highlights.set('slap-ref', Highlight) (wavy underline + tint)
+ *
+ * Accepts an HTMLElement container — all queries scoped to that container.
  */
 
 import { useCallback, useRef } from 'react';
@@ -22,25 +24,25 @@ interface RefTarget {
 }
 
 export interface RefHighlighter {
-  apply: (ref: string, viewport: HTMLElement) => RefTarget | null;
-  clear: (viewport: HTMLElement) => void;
+  apply: (ref: string, container: HTMLElement) => RefTarget | null;
+  clear: (container: HTMLElement) => void;
 }
 
 // ─── Resolver ─────────────────────────────────────────────
 
-function resolveRef(ref: string, viewport: HTMLElement): RefTarget | null {
+function resolveRef(ref: string, container: HTMLElement): RefTarget | null {
   // Strategy 1: data-ref attribute (exact match)
-  const byAttr = viewport.querySelector(`[data-ref="${CSS.escape(ref)}"]`);
+  const byAttr = container.querySelector(`[data-ref="${CSS.escape(ref)}"]`);
   if (byAttr) {
     return { type: 'element', element: byAttr };
   }
 
   // Strategy 2: TreeWalker text search
-  const range = findTextRange(ref, viewport);
+  const range = findTextRange(ref, container);
   if (range) {
-    const container = range.startContainer.parentElement;
-    if (container) {
-      return { type: 'text', element: container, range };
+    const el = range.startContainer.parentElement;
+    if (el) {
+      return { type: 'text', element: el, range };
     }
   }
 
@@ -77,23 +79,23 @@ function applyHighlight(target: RefTarget): void {
     target.element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } else if (target.type === 'text' && target.range) {
     // CSS Custom Highlight API
-    if ('Highlight' in window && CSS.highlights) {
+    if ('Highlight' in window && (window as any).CSS?.highlights) {
       const hl = new (window as any).Highlight(target.range);
-      (CSS as any).highlights.set(HIGHLIGHT_NAME, hl);
+      (window as any).CSS.highlights.set(HIGHLIGHT_NAME, hl);
     }
     target.element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 }
 
-function clearHighlights(viewport: HTMLElement): void {
+function clearHighlights(container: HTMLElement): void {
   // Clear element highlights
-  viewport.querySelectorAll(`.${REF_ELEMENT_CLASS}`).forEach(el => {
+  container.querySelectorAll(`.${REF_ELEMENT_CLASS}`).forEach(el => {
     el.classList.remove(REF_ELEMENT_CLASS);
   });
 
   // Clear CSS Highlight API
-  if (CSS.highlights) {
-    (CSS as any).highlights.delete(HIGHLIGHT_NAME);
+  if ((window as any).CSS?.highlights) {
+    (window as any).CSS.highlights.delete(HIGHLIGHT_NAME);
   }
 }
 
@@ -102,14 +104,14 @@ function clearHighlights(viewport: HTMLElement): void {
 export function useRefHighlight(): RefHighlighter {
   const lastTargetRef = useRef<RefTarget | null>(null);
 
-  const apply = useCallback((ref: string, viewport: HTMLElement): RefTarget | null => {
+  const apply = useCallback((ref: string, container: HTMLElement): RefTarget | null => {
     // Clear previous
-    clearHighlights(viewport);
+    clearHighlights(container);
     lastTargetRef.current = null;
 
     if (!ref) return null;
 
-    const target = resolveRef(ref, viewport);
+    const target = resolveRef(ref, container);
     if (!target) return null;
 
     applyHighlight(target);
@@ -117,8 +119,8 @@ export function useRefHighlight(): RefHighlighter {
     return target;
   }, []);
 
-  const clear = useCallback((viewport: HTMLElement): void => {
-    clearHighlights(viewport);
+  const clear = useCallback((container: HTMLElement): void => {
+    clearHighlights(container);
     lastTargetRef.current = null;
   }, []);
 

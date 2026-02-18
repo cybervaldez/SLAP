@@ -15,6 +15,8 @@ interface BubblePopoverProps {
   role: string;
   score: number;
   avatar?: string;
+  bias?: string;
+  taste?: string;
   shortVerdict?: string;
   accentColor: string;
   chips: SectionChip[];
@@ -180,6 +182,8 @@ export default function BubblePopover({
   role,
   score,
   avatar,
+  bias,
+  taste,
   shortVerdict,
   accentColor,
   chips,
@@ -228,9 +232,40 @@ export default function BubblePopover({
         </div>
       </div>
 
+      {bias && (
+        <div
+          data-testid="popover-lens"
+          style={{
+            fontSize: '0.5rem',
+            fontWeight: 600,
+            color: 'rgba(245, 240, 225, 0.6)',
+            lineHeight: 1.4,
+            marginBottom: 6,
+            fontStyle: 'italic',
+          }}
+        >
+          <span style={{ fontWeight: 700, fontStyle: 'normal', color: 'rgba(245, 240, 225, 0.4)', letterSpacing: '0.06em' }}>LENS: </span>
+          &ldquo;{bias}&rdquo;
+        </div>
+      )}
+
       {shortVerdict && (
         <div style={{ ...st.verdict, borderLeft: `2px solid ${accentColor}` }}>
           {shortVerdict}
+        </div>
+      )}
+
+      {taste && (
+        <div
+          data-testid="popover-taste"
+          style={{
+            fontSize: '0.45rem',
+            color: 'rgba(245, 240, 225, 0.4)',
+            lineHeight: 1.3,
+            marginBottom: 8,
+          }}
+        >
+          {taste}
         </div>
       )}
 
