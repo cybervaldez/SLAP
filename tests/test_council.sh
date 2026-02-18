@@ -41,7 +41,7 @@ fi
 echo ""
 log_info "TEST 1: Auto-rolled council (no localStorage)"
 
-if open_page "${BASE_URL}/#/example/v1"; then
+if open_page "${BASE_URL}/#/flowboard/haiku"; then
   log_pass "Workspace page opened"
 else
   log_fail "Failed to open workspace page"
@@ -274,139 +274,32 @@ click_testid "draft-slot-elena"
 sleep 0.3
 
 # ══════════════════════════════════════════════════════════════
-# TEST 8: shapedBy dots on V2
+# TEST 8: No shapedBy dots on haiku (first version)
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 8: shapedBy gold dots on V2"
+log_info "TEST 8: No shapedBy dots on first version"
 
-# Switch to V2
-click_testid "draft-version-v2"
-sleep 1
-
-# Elena, Frank, Sarah should have gold dots
-for sid in elena frank sarah; do
-  HAS_DOT=$(browser_eval "!!document.querySelector('[data-testid=\"shaped-${sid}\"]')")
-  if [ "$HAS_DOT" = "true" ]; then
-    log_pass "shapedBy dot on ${sid}"
-  else
-    log_fail "shapedBy dot missing on ${sid}"
-  fi
-done
-
-# Non-shapedBy reviewer should NOT have gold dot
-HAS_MARCUS_DOT=$(browser_eval "!!document.querySelector('[data-testid=\"shaped-marcus\"]')")
-if [ "$HAS_MARCUS_DOT" = "false" ]; then
-  log_pass "No shapedBy dot on marcus (correct)"
-else
-  log_fail "marcus incorrectly has shapedBy dot"
-fi
-
-# shapedBy badge on V2 pill
-HAS_BADGE=$(browser_eval "!!document.querySelector('[data-testid=\"shaped-badge\"]')")
-if [ "$HAS_BADGE" = "true" ]; then
-  log_pass "shapedBy sparkle badge on V2 pill"
-else
-  log_fail "shapedBy badge missing on V2 pill"
-fi
-
-# V2 pill title contains shapedBy names
-PILL_TITLE=$(browser_eval "document.querySelector('[data-testid=\"draft-version-v2\"]')?.getAttribute('title') || ''")
-if echo "$PILL_TITLE" | grep -q "Elena"; then
-  log_pass "V2 pill title mentions Elena"
-else
-  log_fail "V2 pill title" "Expected Elena in title, got: $PILL_TITLE"
-fi
-
-# slapState.shapedBy
-SHAPED_JSON=$(browser_eval "JSON.stringify(window.slapState?.shapedBy || [])")
-if echo "$SHAPED_JSON" | grep -q "elena"; then
-  log_pass "slapState.shapedBy includes elena"
-else
-  log_fail "slapState.shapedBy" "Got: $SHAPED_JSON"
-fi
-
-# ══════════════════════════════════════════════════════════════
-# TEST 9: No shapedBy dots on V1
-# ══════════════════════════════════════════════════════════════
-echo ""
-log_info "TEST 9: No shapedBy dots on V1"
-
-click_testid "draft-version-v1"
-sleep 1
-
-# Should have no gold dots on V1
+# Should have no gold dots on first version
 NO_DOTS=$(browser_eval "document.querySelectorAll('.draft-shaped-dot').length")
 if [ "$NO_DOTS" = "0" ]; then
-  log_pass "No shapedBy dots on V1"
+  log_pass "No shapedBy dots on first version"
 else
-  log_fail "V1 has shapedBy dots" "Count: $NO_DOTS"
+  log_fail "First version has shapedBy dots" "Count: $NO_DOTS"
 fi
 
 # No sparkle badge
 NO_BADGE=$(browser_eval "!document.querySelector('[data-testid=\"shaped-badge\"]')")
 if [ "$NO_BADGE" = "true" ]; then
-  log_pass "No sparkle badge on V1"
+  log_pass "No sparkle badge on first version"
 else
-  log_fail "V1 has sparkle badge"
+  log_fail "First version has sparkle badge"
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 10: Popover with persona on V2
+# TEST 9: Total reviewer count in slapState
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 10: Popover with Frank on V2"
-
-# Ensure frank is in rail before trying popover
-HAS_FRANK_NOW=$(browser_eval "!!document.querySelector('[data-testid=\"draft-slot-frank\"]')")
-if [ "$HAS_FRANK_NOW" = "false" ]; then
-  log_skip "Frank not in rail — skipping V2 popover test"
-else
-
-# Close any open overlays first for clean state
-browser_eval "(function(){ var b = document.querySelector('[data-testid=\"draft-backdrop\"]'); if(b) b.click(); })()" >/dev/null 2>&1
-sleep 0.5
-
-click_testid "draft-version-v2"
-sleep 2
-
-# Verify we're on V2
-V2_CHECK=$(browser_eval "window.slapState?.version")
-if [ "$V2_CHECK" != "v2" ]; then
-  log_fail "Failed to switch to V2" "version=$V2_CHECK"
-else
-
-click_testid "draft-slot-frank"
-sleep 2
-
-TIER=$(browser_eval "window.slapState?.overlayTier")
-POPOVER_ID=$(browser_eval "window.slapState?.popoverId")
-if [ "$TIER" = "2" ] && [ "$POPOVER_ID" = "frank" ]; then
-  log_pass "Popover opened for Frank on V2"
-else
-  log_fail "Popover state" "tier=$TIER, popoverId=$POPOVER_ID"
-fi
-
-# Frank should have score in popover
-POPOVER_TEXT=$(browser_eval "document.querySelector('[data-testid=\"bubble-popover\"]')?.textContent || ''")
-if echo "$POPOVER_TEXT" | grep -q "/10"; then
-  log_pass "Frank's popover shows score on V2"
-else
-  log_fail "Frank's popover missing score"
-fi
-
-# Close popover
-click_testid "draft-slot-frank"
-sleep 0.5
-
-fi  # end V2_CHECK guard
-
-fi  # end HAS_FRANK_NOW guard
-
-# ══════════════════════════════════════════════════════════════
-# TEST 11: Total reviewer count in slapState
-# ══════════════════════════════════════════════════════════════
-echo ""
-log_info "TEST 11: Reviewer count in slapState"
+log_info "TEST 9: Reviewer count in slapState"
 
 # Ensure clean state — close any overlays
 browser_eval "(function(){ var b = document.querySelector('[data-testid=\"draft-backdrop\"]'); if(b) b.click(); })()" >/dev/null 2>&1

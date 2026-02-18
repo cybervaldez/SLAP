@@ -7,7 +7,6 @@
  */
 
 import type React from 'react';
-import ExampleDesign from '../projects/example/ExampleDesign';
 
 export interface VersionDef {
   id: string;
@@ -34,25 +33,6 @@ export interface ProjectDef {
 // ─── Registry ─────────────────────────────────────────
 
 export const projects: ProjectDef[] = [
-  {
-    id: 'example',
-    name: 'Example Landing Page',
-    description: 'A SaaS landing page \u2014 from AI slop to intentional design.',
-    icon: '\u{1F680}',
-    accent: '#4ECDC4',
-    archetype: 'landing-page',
-    versions: [
-      { id: 'v1', label: 'v1', hook: 'AI Generated' },
-      {
-        id: 'v2',
-        label: 'v2',
-        hook: 'After SLAP',
-        parentVersionId: 'v1',
-        shapedBy: ['elena', 'frank', 'sarah'],
-      },
-    ],
-    component: ExampleDesign,
-  },
   {
     id: 'flowboard',
     name: 'FlowBoard',

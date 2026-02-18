@@ -41,7 +41,7 @@ fi
 echo ""
 log_info "TEST 1: Council persistence — persona filtering"
 
-if open_page "${BASE_URL}/#/example/v1"; then
+if open_page "${BASE_URL}/#/flowboard/haiku"; then
   log_pass "Workspace page opened"
 else
   log_fail "Failed to open workspace page"

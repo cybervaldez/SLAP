@@ -350,7 +350,7 @@ export default function RosterPage() {
   }, [activeFilter]);
 
   const handleCardClick = (_reviewerId: string) => {
-    navigate('example', 'v1');
+    navigate('flowboard', 'haiku');
   };
 
   return (

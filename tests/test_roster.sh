@@ -315,10 +315,10 @@ click_testid "roster-card-marketing"
 sleep 1
 
 CURRENT_URL=$(browser_eval "window.location.hash")
-if echo "$CURRENT_URL" | grep -q "example"; then
-  log_pass "Card click navigates to example workspace"
+if echo "$CURRENT_URL" | grep -q "flowboard"; then
+  log_pass "Card click navigates to flowboard workspace"
 else
-  log_fail "Card navigation" "Expected example in hash, got: $CURRENT_URL"
+  log_fail "Card navigation" "Expected flowboard in hash, got: $CURRENT_URL"
 fi
 
 # ══════════════════════════════════════════════════════════════

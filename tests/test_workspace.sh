@@ -40,7 +40,7 @@ fi
 echo ""
 log_info "TEST 1: Workspace structure"
 
-if open_page "${BASE_URL}/#/example/v1"; then
+if open_page "${BASE_URL}/#/flowboard/haiku"; then
   log_pass "Workspace page opened"
 else
   log_fail "Failed to open workspace page"
@@ -48,57 +48,56 @@ else
   exit 1
 fi
 
-sleep 2  # Let React render + animations settle
+sleep 3  # Let React render + HTML fetch/inject
 
-check_testid "design-workspace" "Workspace root element"
-check_testid "workspace-topbar" "TopBar present"
-check_testid "bubble-rail" "BubbleRail present"
-check_testid "example-design" "ExampleDesign component rendered"
+check_testid "draft-workspace" "Workspace root element"
+check_testid "draft-topbar" "TopBar present"
+check_testid "draft-rail" "Rail present"
+check_testid "design-html" "HTML canvas rendered"
 
 # ══════════════════════════════════════════════════════════════
-# TEST 2: All 4 data-section elements present
+# TEST 2: All 5 data-section elements present
 # ══════════════════════════════════════════════════════════════
 echo ""
 log_info "TEST 2: Design sections"
 
 SECTION_COUNT=$(browser_eval "document.querySelectorAll('[data-section]').length")
-if [ "$SECTION_COUNT" = "4" ]; then
-  log_pass "4 data-section elements present"
+if [ "$SECTION_COUNT" -ge 5 ]; then
+  log_pass "$SECTION_COUNT data-section elements present"
 else
-  log_fail "Section count" "Expected 4, got $SECTION_COUNT"
+  log_fail "Section count" "Expected >=5, got $SECTION_COUNT"
 fi
 
-check_testid "section-hero" "Hero section present"
-check_testid "section-features" "Features section present"
-check_testid "section-pricing" "Pricing section present"
-check_testid "section-cta" "CTA section present"
+for SEC in hero features pricing testimonials cta; do
+  HAS_SEC=$(browser_eval "!!document.querySelector('[data-section=\"$SEC\"]')")
+  if [ "$HAS_SEC" = "true" ]; then
+    log_pass "$SEC section present"
+  else
+    log_fail "$SEC section missing"
+  fi
+done
 
 # ══════════════════════════════════════════════════════════════
-# TEST 3: BubbleRail with expert bubbles
+# TEST 3: Rail with expert slots
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 3: BubbleRail experts"
+log_info "TEST 3: Rail experts"
 
-BUBBLE_COUNT=$(browser_eval "document.querySelectorAll('[data-testid^=\"bubble-\"]').length")
-# 5 expert bubbles + mode toggle buttons etc.
-EXPERT_BUBBLES=$(browser_eval "
+EXPERT_SLOTS=$(browser_eval "
   (function() {
     var ids = ['marketing','ux','product','technical','design'];
     var count = 0;
     for (var id of ids) {
-      if (document.querySelector('[data-testid=\"bubble-' + id + '\"]')) count++;
+      if (document.querySelector('[data-testid=\"draft-slot-' + id + '\"]')) count++;
     }
     return count;
   })()
 ")
-if [ "$EXPERT_BUBBLES" = "5" ]; then
-  log_pass "5 expert bubbles rendered in EXPERTS mode"
+if [ "$EXPERT_SLOTS" = "5" ]; then
+  log_pass "5 expert slots rendered in rail"
 else
-  log_fail "Expert bubble count" "Expected 5, got $EXPERT_BUBBLES"
+  log_fail "Expert slot count" "Expected 5, got $EXPERT_SLOTS"
 fi
-
-check_testid "bubble-mode-experts" "EXPERTS mode button present"
-check_testid "bubble-mode-personas" "PERSONAS mode button present"
 
 # ══════════════════════════════════════════════════════════════
 # TEST 4: Aggregate score computed
@@ -122,12 +121,12 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 5: Bubble click → popover opens
+# TEST 5: Slot click → popover opens
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 5: Bubble click → popover"
+log_info "TEST 5: Slot click → popover"
 
-click_testid "bubble-marketing"
+click_testid "draft-slot-marketing"
 sleep 0.5
 
 POPOVER_VIS=$(browser_eval "
@@ -249,90 +248,28 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 10: Mode toggle EXPERTS → PERSONAS
+# TEST 10: Add persona button present
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 10: Mode toggle"
+log_info "TEST 10: Add persona button"
 
-click_testid "bubble-mode-personas"
-sleep 0.5
-
-# Persona bubbles should appear
-PERSONA_BUBBLES=$(browser_eval "
-  (function() {
-    var ids = ['marcus','elena','priya','dorothy','kevin','raj','carlos','jasmine','tommy','frank','diana','sarah','sam','maya','mike','yuki','dex','nora'];
-    var count = 0;
-    for (var id of ids) {
-      if (document.querySelector('[data-testid=\"bubble-' + id + '\"]')) count++;
-    }
-    return count;
-  })()
-")
-if [ "$PERSONA_BUBBLES" -gt 0 ] 2>/dev/null; then
-  log_pass "Persona bubbles appear after toggle ($PERSONA_BUBBLES personas)"
-else
-  log_fail "Persona toggle" "No persona bubbles found"
-fi
-
-# Switch back to experts
-click_testid "bubble-mode-experts"
-sleep 0.3
+check_testid "draft-add-persona" "Add persona (+) button present"
 
 # ══════════════════════════════════════════════════════════════
-# TEST 11: Version switching via TopBar pill
+# TEST 11: Version pill present
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 11: Version switching"
+log_info "TEST 11: Version pill"
 
-check_testid "topbar-version-v1" "v1 pill present"
-check_testid "topbar-version-v2" "v2 pill present"
-
-click_testid "topbar-version-v2"
-sleep 1  # Let wipe transition complete
-
-# Check design switched to v2 (dark theme)
-V2_BG=$(browser_eval "
-  (function() {
-    var el = document.querySelector('[data-testid=\"example-design\"]');
-    if (!el) return 'missing';
-    return getComputedStyle(el).backgroundColor;
-  })()
-")
-# v2 has dark background (#0D0D1A = rgb(13, 13, 26))
-if echo "$V2_BG" | grep -q "rgb(13, 13, 26)"; then
-  log_pass "Version switched to v2 (dark background)"
-else
-  log_fail "Version switch" "Background: $V2_BG (expected dark)"
-fi
+check_testid "draft-version-haiku" "haiku version pill present"
 
 # ══════════════════════════════════════════════════════════════
-# TEST 12: Score visible on version pills
+# TEST 12: Back button returns to landing
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 12: Version pill scores"
+log_info "TEST 12: Back button"
 
-V1_PILL_TEXT=$(browser_eval "document.querySelector('[data-testid=\"topbar-version-v1\"]')?.textContent?.trim()")
-V2_PILL_TEXT=$(browser_eval "document.querySelector('[data-testid=\"topbar-version-v2\"]')?.textContent?.trim()")
-
-if echo "$V1_PILL_TEXT" | grep -qE '[0-9]+\.[0-9]'; then
-  log_pass "v1 pill shows score: $V1_PILL_TEXT"
-else
-  log_fail "v1 pill score" "Got: $V1_PILL_TEXT"
-fi
-
-if echo "$V2_PILL_TEXT" | grep -qE '[0-9]+\.[0-9]'; then
-  log_pass "v2 pill shows score: $V2_PILL_TEXT"
-else
-  log_fail "v2 pill score" "Got: $V2_PILL_TEXT"
-fi
-
-# ══════════════════════════════════════════════════════════════
-# TEST 13: Back button returns to landing
-# ══════════════════════════════════════════════════════════════
-echo ""
-log_info "TEST 13: Back button"
-
-click_testid "topbar-back"
+click_testid "draft-back"
 sleep 1
 
 LANDING_PRESENT=$(browser_eval "!!document.querySelector('[data-testid=\"landing-page\"]')")
@@ -343,25 +280,25 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 14: window.slapState correct
+# TEST 13: window.slapState correct
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 14: window.slapState"
+log_info "TEST 13: window.slapState"
 
 # Navigate back to workspace
-open_page "${BASE_URL}/#/example/v1"
-sleep 2
+open_page "${BASE_URL}/#/flowboard/haiku"
+sleep 3
 
 SLAP_STATE=$(browser_eval "JSON.stringify(window.slapState)")
 
-if echo "$SLAP_STATE" | grep -q '"project":"example"'; then
-  log_pass "slapState.project = example"
+if echo "$SLAP_STATE" | grep -q '"project":"flowboard"'; then
+  log_pass "slapState.project = flowboard"
 else
   log_fail "slapState.project" "Got: $SLAP_STATE"
 fi
 
-if echo "$SLAP_STATE" | grep -q '"version":"v1"'; then
-  log_pass "slapState.version = v1"
+if echo "$SLAP_STATE" | grep -q '"version":"haiku"'; then
+  log_pass "slapState.version = haiku"
 else
   log_fail "slapState.version" "Got: $SLAP_STATE"
 fi
@@ -373,10 +310,10 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 15: Landing → KEEP & CONTINUE → workspace
+# TEST 14: Landing → KEEP & CONTINUE → workspace
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 15: Landing → workspace flow"
+log_info "TEST 14: Landing → workspace flow"
 
 open_page "${BASE_URL}"
 sleep 2
@@ -392,7 +329,7 @@ sleep 1
 click_testid "keep-council"
 sleep 1
 
-WORKSPACE_PRESENT=$(browser_eval "!!document.querySelector('[data-testid=\"design-workspace\"]')")
+WORKSPACE_PRESENT=$(browser_eval "!!document.querySelector('[data-testid=\"draft-workspace\"]')")
 if [ "$WORKSPACE_PRESENT" = "true" ]; then
   log_pass "KEEP & CONTINUE navigates to workspace"
 else
@@ -400,48 +337,26 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 16: Direct URL navigation (#/example/v2)
+# TEST 15: Default version fallback (#/flowboard → haiku)
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 16: Direct URL to v2"
+log_info "TEST 15: Default version fallback"
 
-open_page "${BASE_URL}/#/example/v2"
-sleep 2
-
-V2_DIRECT_BG=$(browser_eval "
-  (function() {
-    var el = document.querySelector('[data-testid=\"example-design\"]');
-    if (!el) return 'missing';
-    return getComputedStyle(el).backgroundColor;
-  })()
-")
-if echo "$V2_DIRECT_BG" | grep -q "rgb(13, 13, 26)"; then
-  log_pass "Direct URL #/example/v2 loads v2 design"
-else
-  log_fail "Direct v2 URL" "Background: $V2_DIRECT_BG"
-fi
-
-# ══════════════════════════════════════════════════════════════
-# TEST 17: Default version fallback (#/example → v1)
-# ══════════════════════════════════════════════════════════════
-echo ""
-log_info "TEST 17: Default version fallback"
-
-open_page "${BASE_URL}/#/example"
-sleep 2
+open_page "${BASE_URL}/#/flowboard"
+sleep 3
 
 DEFAULT_STATE=$(browser_eval "JSON.stringify(window.slapState)")
-if echo "$DEFAULT_STATE" | grep -q '"version":"v1"'; then
-  log_pass "#/example defaults to v1"
+if echo "$DEFAULT_STATE" | grep -q '"version":"haiku"'; then
+  log_pass "#/flowboard defaults to haiku"
 else
   log_fail "Default version" "Got: $DEFAULT_STATE"
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 18: Invalid project fallback
+# TEST 16: Invalid project fallback
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 18: Invalid project"
+log_info "TEST 16: Invalid project"
 
 open_page "${BASE_URL}/#/nonexistent"
 sleep 1
@@ -449,73 +364,32 @@ sleep 1
 check_testid "project-not-found" "Project not found message"
 
 # ══════════════════════════════════════════════════════════════
-# TEST 19: Backdrop click dismisses overlays
+# TEST 17: Backdrop click dismisses overlays
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 19: Backdrop dismiss"
+log_info "TEST 17: Backdrop dismiss"
 
-open_page "${BASE_URL}/#/example/v1"
-sleep 2
+open_page "${BASE_URL}/#/flowboard/haiku"
+sleep 3
 
-click_testid "bubble-marketing"
+click_testid "draft-slot-marketing"
 sleep 0.5
 
-# Verify popover opened
-POPOVER_BEFORE=$(browser_eval "
-  getComputedStyle(document.querySelector('[data-testid=\"bubble-popover\"]')).opacity
-")
-if [ "$POPOVER_BEFORE" = "1" ]; then
+TIER=$(browser_eval "window.slapState?.overlayTier")
+if [ "$TIER" = "2" ]; then
   log_pass "Popover open before backdrop click"
 else
-  log_fail "Popover pre-check" "Opacity: $POPOVER_BEFORE"
+  log_fail "Popover pre-check" "overlayTier: $TIER"
 fi
 
-click_testid "workspace-backdrop"
+click_testid "draft-backdrop"
 sleep 0.5
 
-POPOVER_AFTER=$(browser_eval "
-  getComputedStyle(document.querySelector('[data-testid=\"bubble-popover\"]')).opacity
-")
-if [ "$POPOVER_AFTER" = "0" ]; then
+TIER=$(browser_eval "window.slapState?.overlayTier")
+if [ "$TIER" = "0" ]; then
   log_pass "Backdrop click dismisses popover"
 else
-  log_fail "Backdrop dismiss" "Popover opacity after: $POPOVER_AFTER"
-fi
-
-# ══════════════════════════════════════════════════════════════
-# TEST 20: Section highlight on chip hover
-# ══════════════════════════════════════════════════════════════
-echo ""
-log_info "TEST 20: Section highlight"
-
-click_testid "bubble-marketing"
-sleep 0.5
-
-# Hover a chip via JS (can't truly hover with agent-browser easily)
-HIGHLIGHT_RESULT=$(browser_eval "
-  (function() {
-    var chips = document.querySelector('[data-testid=\"bubble-popover\"]')?.querySelectorAll('span') || [];
-    for (var c of chips) {
-      var t = c.textContent.trim().toLowerCase();
-      if (t.includes('hero')) {
-        c.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true }));
-        return 'hovered';
-      }
-    }
-    return 'no-chip';
-  })()
-")
-sleep 1
-
-if [ "$HIGHLIGHT_RESULT" = "hovered" ]; then
-  HIGHLIGHT_EXISTS=$(browser_eval "!!document.querySelector('[data-testid=\"section-highlight-overlay\"]')")
-  if [ "$HIGHLIGHT_EXISTS" = "true" ]; then
-    log_pass "Section highlight overlay appears on chip hover"
-  else
-    log_fail "Section highlight" "No highlight overlay or indicator found"
-  fi
-else
-  log_fail "Chip hover" "Could not find hero chip to hover"
+  log_fail "Backdrop dismiss" "overlayTier after: $TIER"
 fi
 
 # ══════════════════════════════════════════════════════════════

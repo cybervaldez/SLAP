@@ -19,7 +19,7 @@ import type { Finding } from '../data/reviews';
 
 export type TourMode = 'guided' | 'live';
 
-const SECTION_ORDER = ['hero', 'features', 'pricing', 'cta'];
+const SECTION_ORDER = ['hero', 'features', 'pricing', 'testimonials', 'cta'];
 
 /** Well-known section label abbreviations */
 const KNOWN_LABELS: Record<string, string> = {

@@ -41,7 +41,7 @@ fi
 echo ""
 log_info "TEST 1: Page structure and ARIA roles"
 
-if open_page "${BASE_URL}/#/example/v1"; then
+if open_page "${BASE_URL}/#/flowboard/haiku"; then
   log_pass "Workspace page opened"
 else
   log_fail "Failed to open workspace page"
@@ -419,43 +419,6 @@ if [ "$TOUR_ACTIVE" = "false" ]; then
   log_pass "STOP button stops tour"
 else
   log_fail "STOP button should stop tour" "tourActive: $TOUR_ACTIVE"
-fi
-
-# ══════════════════════════════════════════════════════════════
-# TEST 11: V2 version data-ref attributes
-# ══════════════════════════════════════════════════════════════
-echo ""
-log_info "TEST 11: V2 version data-ref attributes"
-
-if open_page "${BASE_URL}/#/example/v2"; then
-  log_pass "V2 workspace opened"
-else
-  log_fail "Failed to open V2 workspace"
-  print_summary
-  exit 0
-fi
-
-sleep 2
-
-HAS_V2_DEPLOY=$(browser_eval "!!document.querySelector('[data-ref=\"feature-deploy\"]')")
-if [ "$HAS_V2_DEPLOY" = "true" ]; then
-  log_pass "V2 has data-ref='feature-deploy'"
-else
-  log_fail "V2 should have data-ref='feature-deploy'"
-fi
-
-HAS_V2_TEAM=$(browser_eval "!!document.querySelector('[data-ref=\"tier-team\"]')")
-if [ "$HAS_V2_TEAM" = "true" ]; then
-  log_pass "V2 has data-ref='tier-team'"
-else
-  log_fail "V2 should have data-ref='tier-team'"
-fi
-
-V2_HERO_ROLE=$(browser_eval "document.querySelector('[data-section=\"hero\"]')?.getAttribute('role')")
-if [ "$V2_HERO_ROLE" = "region" ]; then
-  log_pass "V2 hero has role=region"
-else
-  log_fail "V2 hero should have role=region" "Got: $V2_HERO_ROLE"
 fi
 
 # ══════════════════════════════════════════════════════════════

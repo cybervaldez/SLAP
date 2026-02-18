@@ -41,7 +41,7 @@ fi
 echo ""
 log_info "TEST 1: Initial state"
 
-if open_page "${BASE_URL}/#/example/v1"; then
+if open_page "${BASE_URL}/#/flowboard/haiku"; then
   log_pass "Workspace page opened"
 else
   log_fail "Failed to open workspace page"
@@ -507,39 +507,10 @@ click_testid "review-panel-close"
 sleep 0.3
 
 # ══════════════════════════════════════════════════════════════
-# TEST 15: V2 — popover works on V2
+# TEST 15: Glow section from popover highlight
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 15: Popover on V2"
-
-click_testid "draft-version-v2"
-sleep 1
-
-click_testid "draft-slot-marketing"
-sleep 0.5
-
-TIER=$(browser_eval "window.slapState?.overlayTier")
-POP_ID=$(browser_eval "window.slapState?.popoverId")
-VER=$(browser_eval "window.slapState?.version")
-if [ "$TIER" = "2" ] && [ "$POP_ID" = "marketing" ] && [ "$VER" = "v2" ]; then
-  log_pass "Popover works on V2"
-else
-  log_fail "V2 popover" "tier=$TIER, popover=$POP_ID, version=$VER"
-fi
-
-# Close
-click_testid "draft-backdrop"
-sleep 0.3
-
-# Switch back to V1
-click_testid "draft-version-v1"
-sleep 1
-
-# ══════════════════════════════════════════════════════════════
-# TEST 16: Glow section from popover highlight
-# ══════════════════════════════════════════════════════════════
-echo ""
-log_info "TEST 16: Section glow from overlay"
+log_info "TEST 15: Section glow from overlay"
 
 click_testid "draft-slot-marketing"
 sleep 0.5

@@ -350,69 +350,10 @@ browser_eval "document.querySelector('[data-testid=\"draft-backdrop\"]')?.click(
 sleep 0.3
 
 # ══════════════════════════════════════════════════════════════
-# TEST 10: Navigation between example and flowboard
+# TEST 10: Topbar shows FlowBoard info
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 10: Navigate between React and HTML projects"
-
-# Navigate to example project (React component rendering)
-agent-browser open "${BASE_URL}/#/example/v1" 2>/dev/null
-sleep 2
-
-PROJ=$(browser_eval "window.slapState?.project")
-if [ "$PROJ" = "example" ]; then
-  log_pass "Navigated to example project"
-else
-  log_fail "Navigation to example" "Expected example, got: $PROJ"
-fi
-
-# Check no HTML container (React component mode)
-HAS_HTML=$(browser_eval "!!document.querySelector('[data-testid=\"design-html\"]')")
-if [ "$HAS_HTML" = "false" ]; then
-  log_pass "No HTML container for React component project"
-else
-  log_fail "HTML container should not exist for React project"
-fi
-
-IS_HTML=$(browser_eval "window.slapState?.isHtmlProject")
-if [ "$IS_HTML" = "false" ]; then
-  log_pass "slapState.isHtmlProject is false for React project"
-else
-  log_fail "slapState.isHtmlProject" "Expected false, got: $IS_HTML"
-fi
-
-# Inline sections should work
-INLINE_SECTIONS=$(browser_eval "JSON.stringify(window.slapState?.sections)")
-if echo "$INLINE_SECTIONS" | grep -q "hero"; then
-  log_pass "React project has sections"
-else
-  log_fail "React project sections missing" "Got: $INLINE_SECTIONS"
-fi
-
-# Navigate back to flowboard
-agent-browser open "${BASE_URL}/#/flowboard/haiku" 2>/dev/null
-sleep 3
-
-PROJ=$(browser_eval "window.slapState?.project")
-if [ "$PROJ" = "flowboard" ]; then
-  log_pass "Navigated back to flowboard"
-else
-  log_fail "Return navigation" "Expected flowboard, got: $PROJ"
-fi
-
-# HTML container should be back
-HAS_HTML=$(browser_eval "!!document.querySelector('[data-testid=\"design-html\"]')")
-if [ "$HAS_HTML" = "true" ]; then
-  log_pass "HTML container present after returning to flowboard"
-else
-  log_fail "HTML container missing after returning to flowboard"
-fi
-
-# ══════════════════════════════════════════════════════════════
-# TEST 11: Topbar shows FlowBoard info
-# ══════════════════════════════════════════════════════════════
-echo ""
-log_info "TEST 11: FlowBoard topbar"
+log_info "TEST 10: FlowBoard topbar"
 
 SNAP=$(agent-browser snapshot -c 2>/dev/null)
 if echo "$SNAP" | grep -q "FlowBoard"; then
@@ -428,10 +369,10 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 12: Data-ref attributes in injected content
+# TEST 11: Data-ref attributes in injected content
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 12: Data-ref attributes in injected content"
+log_info "TEST 11: Data-ref attributes in injected content"
 
 REF_COUNT=$(browser_eval "document.querySelectorAll('[data-testid=\"design-html\"] [data-ref]').length")
 if [ "$REF_COUNT" -ge 10 ]; then
@@ -449,10 +390,10 @@ else
 fi
 
 # ══════════════════════════════════════════════════════════════
-# TEST 13: Scripts stripped from injected content
+# TEST 12: Scripts stripped from injected content
 # ══════════════════════════════════════════════════════════════
 echo ""
-log_info "TEST 13: Security — scripts stripped from injected HTML"
+log_info "TEST 12: Security — scripts stripped from injected HTML"
 
 SCRIPT_COUNT=$(browser_eval "document.querySelectorAll('[data-testid=\"design-html\"] script').length")
 if [ "$SCRIPT_COUNT" = "0" ]; then

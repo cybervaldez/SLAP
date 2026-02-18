@@ -292,7 +292,7 @@
         }
 
         .pricing-features li:before {
-            content: "✓ ";
+            content: "\2713 ";
             color: var(--color-success);
             font-weight: 700;
             margin-right: 0.5rem;
@@ -514,19 +514,19 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
+    <!-- Header (stripped at runtime by DesignCanvas) -->
     <header>
         <div class="header-content">
             <a href="#" class="logo">
-                <span>⚡</span>
+                <span>&#9889;</span>
                 FlowBoard
             </a>
             <nav>
                 <a href="#features">Features</a>
                 <a href="#pricing">Pricing</a>
                 <a href="#testimonials">Testimonials</a>
-                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
-                    <span id="theme-icon">🌙</span>
+                <button class="theme-toggle" data-testid="theme-toggle" aria-label="Toggle dark mode">
+                    <span id="theme-icon">&#127769;</span>
                 </button>
             </nav>
         </div>
@@ -536,7 +536,7 @@
     <section class="hero" data-section="hero">
         <h1 data-ref="hero-headline">Organize Your Team's Work Effortlessly</h1>
         <p data-ref="hero-subhead">FlowBoard is the modern project management tool that keeps your team aligned, productive, and on track. From planning to execution, we've got you covered.</p>
-        <button class="cta-button" data-ref="hero-cta" onclick="alert('Welcome to FlowBoard! Sign up for early access.')">Get Started Free</button>
+        <button class="cta-button" data-ref="hero-cta">Get Started Free</button>
     </section>
 
     <!-- Features Section -->
@@ -544,32 +544,32 @@
         <h2 data-ref="features-headline">Powerful Features for Modern Teams</h2>
         <div class="features-grid">
             <div class="feature-card" data-ref="feature-boards">
-                <div class="feature-icon">📋</div>
+                <div class="feature-icon">&#128203;</div>
                 <h3>Intuitive Boards</h3>
                 <p>Kanban-style boards that adapt to your workflow. Drag, drop, and organize your tasks with ease.</p>
             </div>
             <div class="feature-card" data-ref="feature-collab">
-                <div class="feature-icon">🤝</div>
+                <div class="feature-icon">&#129309;</div>
                 <h3>Team Collaboration</h3>
                 <p>Real-time comments, mentions, and file sharing. Keep everyone in sync without endless email threads.</p>
             </div>
             <div class="feature-card" data-ref="feature-analytics">
-                <div class="feature-icon">📊</div>
+                <div class="feature-icon">&#128202;</div>
                 <h3>Smart Analytics</h3>
                 <p>Track progress with intelligent charts and reports. Identify bottlenecks and celebrate wins.</p>
             </div>
             <div class="feature-card" data-ref="feature-integrations">
-                <div class="feature-icon">🔗</div>
+                <div class="feature-icon">&#128279;</div>
                 <h3>Seamless Integrations</h3>
                 <p>Connect with 100+ tools. Slack, GitHub, Google Drive, and more. Your favorite apps, one place.</p>
             </div>
             <div class="feature-card" data-ref="feature-security">
-                <div class="feature-icon">🔒</div>
+                <div class="feature-icon">&#128274;</div>
                 <h3>Enterprise Security</h3>
                 <p>Industry-leading encryption, SSO, and compliance. Your data is safe with us.</p>
             </div>
             <div class="feature-card" data-ref="feature-speed">
-                <div class="feature-icon">⚡</div>
+                <div class="feature-icon">&#9889;</div>
                 <h3>Lightning Fast</h3>
                 <p>Built for speed. Load instantly, work seamlessly. No lag, no frustration.</p>
             </div>
@@ -606,7 +606,7 @@
                     <li>Integrations</li>
                     <li>Custom workflows</li>
                 </ul>
-                <button class="cta-button">Start Free Trial</button>
+                <button class="cta-button" data-ref="pricing-cta">Start Free Trial</button>
             </div>
             <div class="pricing-card" data-ref="tier-enterprise">
                 <h3>Enterprise</h3>
@@ -631,7 +631,7 @@
         <h2 data-ref="testimonials-headline">Loved by Teams Worldwide</h2>
         <div class="testimonials-grid">
             <div class="testimonial" data-ref="testimonial-sarah">
-                <div class="stars">★★★★★</div>
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                 <p class="testimonial-text">"FlowBoard transformed how our team collaborates. We've cut project delivery time by 40% and everyone actually enjoys using it. It's a game-changer."</p>
                 <div class="testimonial-author">
                     <div class="author-avatar">SJ</div>
@@ -642,7 +642,7 @@
                 </div>
             </div>
             <div class="testimonial" data-ref="testimonial-marcus">
-                <div class="stars">★★★★★</div>
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                 <p class="testimonial-text">"Finally, a project management tool that doesn't feel bloated. FlowBoard is clean, intuitive, and our entire design team picked it up in minutes. Highly recommend!"</p>
                 <div class="testimonial-author">
                     <div class="author-avatar">MR</div>
@@ -653,7 +653,7 @@
                 </div>
             </div>
             <div class="testimonial" data-ref="testimonial-emily">
-                <div class="stars">★★★★★</div>
+                <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                 <p class="testimonial-text">"The customer support is outstanding. Whenever we have questions, they respond instantly and actually care about solving our problems. That's rare these days."</p>
                 <div class="testimonial-author">
                     <div class="author-avatar">EM</div>
@@ -669,11 +669,11 @@
     <!-- Final CTA Section -->
     <section class="final-cta" data-section="cta">
         <h2 data-ref="cta-headline">Ready to Transform Your Workflow?</h2>
-        <p>Join thousands of teams already using FlowBoard. Start free, no credit card required. Upgrade anytime.</p>
-        <button class="cta-button" data-ref="cta-button" onclick="alert('Redirecting to signup...')">Start Your Free Trial</button>
+        <p data-ref="cta-subhead">Join thousands of teams already using FlowBoard. Start free, no credit card required. Upgrade anytime.</p>
+        <button class="cta-button" data-ref="cta-button">Start Your Free Trial</button>
     </section>
 
-    <!-- Footer -->
+    <!-- Footer (stripped at runtime by DesignCanvas) -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -714,46 +714,8 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2025 FlowBoard. All rights reserved. Made with ❤️ for teams everywhere.</p>
+            <p>&copy; 2025 FlowBoard. All rights reserved. Made with &#10084;&#65039; for teams everywhere.</p>
         </div>
     </footer>
-
-    <script>
-        // Theme toggle
-        const html = document.documentElement;
-        const themeIcon = document.getElementById('theme-icon');
-
-        // Check for saved theme preference or default to light mode
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-theme', currentTheme);
-        updateThemeIcon(currentTheme);
-
-        function toggleTheme() {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
-        }
-
-        function updateThemeIcon(theme) {
-            themeIcon.textContent = theme === 'light' ? '🌙' : '☀️';
-        }
-
-        // Smooth scroll for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                const href = this.getAttribute('href');
-                if (href !== '#') {
-                    e.preventDefault();
-                    const target = document.querySelector(href);
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }
-            });
-        });
-    </script>
 </body>
 </html>

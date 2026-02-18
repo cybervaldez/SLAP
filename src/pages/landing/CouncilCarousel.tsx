@@ -338,7 +338,7 @@ export default function CouncilCarousel() {
     if (selectedIds.size > 0) {
       localStorage.setItem('slap-default-council', JSON.stringify(Array.from(selectedIds)));
     }
-    navigate('example');
+    navigate('flowboard', 'haiku');
   }, [selectedIds]);
 
   // Tab filter change

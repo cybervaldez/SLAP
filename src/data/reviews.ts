@@ -23,11 +23,9 @@ export interface Review {
 
 // ─── Review Data ──────────────────────────────────────
 
-import { exampleReviews } from './exampleReviews';
 import { flowboardReviews } from './flowboardReviews';
 
 const reviews: Record<string, Review> = {
-  ...exampleReviews,
   ...flowboardReviews,
 };
 
