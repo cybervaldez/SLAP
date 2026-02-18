@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Loop — A: Vertical Timeline</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: #0D0D1A; color: #F5F0E1; font-family: 'Courier New', monospace; overflow-x: hidden; }
+:root {
+  --bg-deep: #0D0D1A; --bg-dark: #1A1A2E; --bg-mid: #222240;
+  --text-light: #F5F0E1; --text-muted: rgba(245, 240, 225, 0.5);
+  --accent-gold: #FFD000; --score-green: #6BCB77; --score-yellow: #FFD93D; --score-red: #FF6B6B;
+  --ease-enter: cubic-bezier(0.22, 0.61, 0.36, 1); --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─── Section ─────────────────────────────────────── */
+.loop-section {
+  min-height: 100vh;
+  background: var(--bg-deep);
+  padding: 4rem 2rem 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loop-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+.loop-subtitle {
+  font-size: 0.45rem;
+  color: var(--text-muted);
+  margin-bottom: 3rem;
+}
+
+/* ─── Timeline spine ──────────────────────────────── */
+.timeline {
+  position: relative;
+  max-width: 560px;
+  width: 100%;
+}
+
+/* Central vertical line */
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(245, 240, 225, 0.08);
+  transform: translateX(-50%);
+}
+
+/* ─── Step card ───────────────────────────────────── */
+.tl-step {
+  position: relative;
+  width: 48%;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 500ms var(--ease-enter), transform 500ms var(--ease-enter);
+}
+.tl-step.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Alternating left/right */
+.tl-step:nth-child(odd) {
+  margin-right: auto;
+  margin-left: 0;
+}
+.tl-step:nth-child(even) {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* Connecting dot on the spine */
+.tl-step::after {
+  content: '';
+  position: absolute;
+  top: 1rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bg-mid);
+  border: 2px solid var(--accent-gold);
+}
+.tl-step:nth-child(odd)::after {
+  right: -32px;
+}
+.tl-step:nth-child(even)::after {
+  left: -32px;
+}
+
+/* Horizontal connector line */
+.tl-step::before {
+  content: '';
+  position: absolute;
+  top: calc(1rem + 3px);
+  height: 1px;
+  width: 24px;
+  background: rgba(255, 208, 0, 0.2);
+}
+.tl-step:nth-child(odd)::before {
+  right: -24px;
+}
+.tl-step:nth-child(even)::before {
+  left: -24px;
+}
+
+/* Card surface */
+.tl-card {
+  background: var(--bg-dark);
+  border-radius: 4px;
+  padding: 1rem 1rem 0.75rem;
+  border-left: 3px solid var(--accent-gold);
+  transition: border-color 300ms;
+}
+.tl-card.green { border-left-color: var(--score-green); }
+.tl-card.loop-end { border-left-color: var(--accent-gold); box-shadow: 0 0 20px rgba(255, 208, 0, 0.08); }
+
+.tl-step-num {
+  font-size: 0.35rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--accent-gold);
+  margin-bottom: 0.3rem;
+}
+.tl-card.green .tl-step-num { color: var(--score-green); }
+
+.tl-headline {
+  font-size: 0.55rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--text-light);
+  margin-bottom: 0.4rem;
+}
+
+.tl-desc {
+  font-size: 0.4rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+.tl-desc em {
+  color: var(--accent-gold);
+  font-style: normal;
+}
+
+/* ─── Score comparison ────────────────────────────── */
+.score-compare {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 0.6rem;
+}
+.score-card {
+  background: var(--bg-mid);
+  border-radius: 4px;
+  padding: 0.5rem 0.8rem;
+  text-align: center;
+  min-width: 80px;
+}
+.score-label {
+  font-size: 0.3rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+}
+.score-val {
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+.score-val.old { color: var(--score-red); }
+.score-val.new { color: var(--score-green); }
+.score-arrow {
+  display: flex;
+  align-items: center;
+  font-size: 0.7rem;
+  color: var(--accent-gold);
+}
+
+/* ─── Loop-back arrow ─────────────────────────────── */
+.loop-back {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 500ms var(--ease-enter), transform 500ms var(--ease-enter);
+}
+.loop-back.visible { opacity: 1; transform: translateY(0); }
+.loop-back-arrow {
+  font-size: 1.2rem;
+  color: var(--accent-gold);
+  animation: loopPulse 2s ease-in-out infinite;
+}
+@keyframes loopPulse {
+  0%, 100% { opacity: 0.4; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-4px); }
+}
+.loop-back-text {
+  font-size: 0.35rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+/* ─── Whisper + CTA ───────────────────────────────── */
+.loop-whisper {
+  font-size: 0.45rem;
+  color: var(--text-muted);
+  margin-top: 2.5rem;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-enter);
+  text-align: center;
+}
+.loop-whisper.visible { opacity: 1; }
+
+.loop-cta-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  opacity: 0;
+  transition: opacity 600ms var(--ease-enter);
+}
+.loop-cta-row.visible { opacity: 1; }
+
+.loop-cta {
+  font-family: 'Courier New', monospace;
+  font-size: 0.45rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 0.6rem 1.2rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 150ms var(--ease-bounce);
+  border: none;
+}
+.loop-cta.primary {
+  background: var(--accent-gold);
+  color: var(--bg-deep);
+}
+.loop-cta.primary:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 16px rgba(255, 208, 0, 0.3);
+}
+.loop-cta.secondary {
+  background: none;
+  color: var(--text-muted);
+  border: 1px solid rgba(245, 240, 225, 0.15);
+}
+.loop-cta.secondary:hover {
+  color: var(--text-light);
+  border-color: rgba(245, 240, 225, 0.3);
+}
+
+@media (max-width: 600px) {
+  .timeline::before { left: 16px; }
+  .tl-step { width: calc(100% - 40px); margin-left: 40px !important; margin-right: 0 !important; }
+  .tl-step::after { left: -28px !important; right: auto !important; }
+  .tl-step::before { left: -20px !important; right: auto !important; }
+}
+</style>
+</head>
+<body>
+
+<section class="loop-section" data-section="the-loop" data-testid="the-loop-section">
+  <p class="loop-title">THE LOOP</p>
+  <p class="loop-subtitle">From new design to proven improvement. Every cycle.</p>
+
+  <div class="timeline" data-testid="loop-timeline">
+
+    <!-- Step 1 -->
+    <div class="tl-step" data-testid="loop-step-1">
+      <div class="tl-card">
+        <div class="tl-step-num">STEP 01</div>
+        <div class="tl-headline">DROP YOUR HTML</div>
+        <div class="tl-desc">One file. That's all <em>/slap</em> needs.</div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="tl-step" data-testid="loop-step-2">
+      <div class="tl-card">
+        <div class="tl-step-num">STEP 02</div>
+        <div class="tl-headline">COUNCIL ASSEMBLED</div>
+        <div class="tl-desc">Not 23 generic reviewers. A panel <em>tailored to your industry</em>, your audience, your competitive landscape.</div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="tl-step" data-testid="loop-step-3">
+      <div class="tl-card">
+        <div class="tl-step-num">STEP 03</div>
+        <div class="tl-headline">PERSONA BRIEFS GENERATED</div>
+        <div class="tl-desc">Frank isn't just "impatient." He's a team lead who's been burned by 3 PM tools. <em>He has 4 minutes.</em></div>
+      </div>
+    </div>
+
+    <!-- Step 4 — green accent -->
+    <div class="tl-step" data-testid="loop-step-4">
+      <div class="tl-card green">
+        <div class="tl-step-num">STEP 04</div>
+        <div class="tl-headline">GROUNDED REVIEWS LAND</div>
+        <div class="tl-desc">Red means red. Every finding references <em>your actual content</em>, not a template.</div>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="tl-step" data-testid="loop-step-5">
+      <div class="tl-card">
+        <div class="tl-step-num">STEP 05</div>
+        <div class="tl-headline">PICK. COPY. ITERATE.</div>
+        <div class="tl-desc">Select the feedback that matters. One click copies the prompt. <em>Paste into Claude.</em></div>
+      </div>
+    </div>
+
+    <!-- Step 6 — loop end -->
+    <div class="tl-step" data-testid="loop-step-6">
+      <div class="tl-card loop-end">
+        <div class="tl-step-num">STEP 06</div>
+        <div class="tl-headline">V2 ARRIVES. SCORES PROVE IT.</div>
+        <div class="tl-desc">Same council. New scores. The numbers don't lie.</div>
+        <div class="score-compare">
+          <div class="score-card">
+            <div class="score-label">V1</div>
+            <div class="score-val old">5.8</div>
+          </div>
+          <div class="score-arrow">&rarr;</div>
+          <div class="score-card">
+            <div class="score-label">V2</div>
+            <div class="score-val new">7.2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Loop-back visual -->
+  <div class="loop-back" data-testid="loop-back">
+    <div class="loop-back-arrow">&uarr;</div>
+    <div class="loop-back-text">REPEAT WITH V3, V4, V5...</div>
+  </div>
+
+  <!-- Whisper -->
+  <p class="loop-whisper" data-testid="loop-whisper">
+    Generic feedback produces generic designs. Grounded feedback produces craft.
+  </p>
+
+  <!-- CTA -->
+  <div class="loop-cta-row" data-testid="loop-cta-row">
+    <button class="loop-cta primary" data-testid="loop-cta-try">TRY WITH YOUR DESIGN</button>
+    <button class="loop-cta secondary" data-testid="loop-cta-demo">EXPLORE FLOWBOARD DEMO</button>
+  </div>
+</section>
+
+<script>
+// Scroll-reveal
+const steps = document.querySelectorAll('.tl-step, .loop-back, .loop-whisper, .loop-cta-row');
+function reveal() {
+  steps.forEach((el, i) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.85) {
+      setTimeout(() => el.classList.add('visible'), i * 80);
+    }
+  });
+}
+reveal();
+window.addEventListener('scroll', reveal);
+</script>
+
+</body>
+</html>

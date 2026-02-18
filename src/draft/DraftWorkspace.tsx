@@ -37,6 +37,7 @@ import { useRefHighlight } from './useRefHighlight';
 import BubblePopover from '../components/BubblePopover';
 import type { SectionChip } from '../components/BubblePopover';
 import ReviewPanel from '../components/ReviewPanel';
+import SectionFocusPanel from '../components/SectionFocusPanel';
 import DesignCanvas from './DesignCanvas';
 import './draft.css';
 
@@ -117,6 +118,42 @@ export default function DraftWorkspace() {
   // shapedBy for current version
   const currentVersion = project ? getVersion(project.id, effectiveVersionId) : undefined;
   const shapedByIds = currentVersion?.shapedBy || [];
+
+  // ── Severity badges (worst finding per reviewer) ────────
+  const [focusedSection, setFocusedSection] = useState<string | null>(null);
+  const [hoveredSlotId, setHoveredSlotId] = useState<string | null>(null);
+  const [hoveredSlotRect, setHoveredSlotRect] = useState<{ top: number; right: number }>({ top: 0, right: 0 });
+
+  const severityMap = useMemo(() => {
+    if (!project) return new Map<string, TrafficLight>();
+    const map = new Map<string, TrafficLight>();
+    const allRevs = getAllReviews(project.id, effectiveVersionId);
+    for (const { reviewerId, review } of allRevs) {
+      const allFindings = Object.values(review.sections).flat();
+      if (allFindings.length > 0) {
+        map.set(reviewerId, worstLight(allFindings));
+      }
+    }
+    return map;
+  }, [project, effectiveVersionId]);
+
+  // Tour preview summary for hovered reviewer
+  const hoveredSummary = useMemo(() => {
+    if (!hoveredSlotId || !project) return null;
+    const review = getReview(project.id, effectiveVersionId, hoveredSlotId);
+    if (!review) return null;
+    let red = 0, yellow = 0, green = 0;
+    const secs: string[] = [];
+    for (const [section, findings] of Object.entries(review.sections)) {
+      secs.push(section);
+      for (const f of findings) {
+        if (f.light === 'red') red++;
+        else if (f.light === 'yellow') yellow++;
+        else green++;
+      }
+    }
+    return { red, yellow, green, total: red + yellow + green, sections: secs, score: review.score };
+  }, [hoveredSlotId, project, effectiveVersionId]);
 
   // ── Popover / Panel data (3-tier overlay) ──────────────
   const popoverReviewer = rs.popoverId ? getReviewer(rs.popoverId) : null;
@@ -215,6 +252,7 @@ export default function DraftWorkspace() {
   const trailRef = useRef<SVGPathElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
+  const hoveredSlotTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Determine frame mode
   const mode = tour.state.active ? tour.state.mode : 'idle';
@@ -296,7 +334,19 @@ export default function DraftWorkspace() {
         el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     }
-  }, [tour.state.active, tour.currentStep?.index, rs.highlightInfo, contentReady]);
+
+    // Source 3: Section focus (clicked section in design)
+    if (focusedSection) {
+      const el = vp.querySelector(`[data-section="${focusedSection}"]`) as HTMLElement | null;
+      if (el) {
+        el.classList.add('glowing');
+        el.style.setProperty('--d-glow-color', '#FFD00066');
+        el.style.setProperty('--d-glow-shadow', '#FFD00026');
+        el.style.setProperty('--d-glow-outer', '#FFD00014');
+        el.style.setProperty('--d-glow-inner', '#FFD00005');
+      }
+    }
+  }, [tour.state.active, tour.currentStep?.index, rs.highlightInfo, focusedSection, contentReady]);
 
   // ── Ref highlight (unified: tour + overlay) ──────────
 
@@ -502,6 +552,8 @@ export default function DraftWorkspace() {
       contentTheme,
       isHtmlProject,
       contentReady,
+      severityBadges: Object.fromEntries(severityMap),
+      focusedSection,
     };
   });
 
@@ -509,6 +561,9 @@ export default function DraftWorkspace() {
 
   const handleRailClick = useCallback((reviewerId: string, event: React.MouseEvent) => {
     setAddPanelOpen(false);
+    setFocusedSection(null);
+    setHoveredSlotId(null);
+    if (hoveredSlotTimer.current) clearTimeout(hoveredSlotTimer.current);
     if (tour.state.active) tour.stop();
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
     rs.toggleBubble(reviewerId, rect);
@@ -522,6 +577,43 @@ export default function DraftWorkspace() {
       tour.start(rid);
     }
   }, [tour, councilPersonas, rs]);
+
+  // ── Section click (opens Section Focus panel) ──────────
+
+  const handleViewportClick = useCallback((e: React.MouseEvent) => {
+    if (tour.state.active) return;
+    if (rs.isOverlayActive) return;
+
+    const target = (e.target as HTMLElement).closest('[data-section]');
+    if (!target) return;
+    const section = target.getAttribute('data-section');
+    if (!section) return;
+
+    rs.closeAll();
+    setFocusedSection(prev => prev === section ? null : section);
+  }, [tour.state.active, rs]);
+
+  // ── Tour preview (hover on rail slot) ──────────────────
+
+  const handleSlotHover = useCallback((reviewerId: string, event: React.MouseEvent) => {
+    if (rs.isOverlayActive || tour.state.active || addPanelOpen) return;
+    if (hoveredSlotTimer.current) clearTimeout(hoveredSlotTimer.current);
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    setHoveredSlotId(reviewerId);
+    setHoveredSlotRect({ top: rect.top, right: window.innerWidth - rect.left + 8 });
+  }, [rs.isOverlayActive, tour.state.active, addPanelOpen]);
+
+  const handleSlotLeave = useCallback(() => {
+    hoveredSlotTimer.current = setTimeout(() => setHoveredSlotId(null), 150);
+  }, []);
+
+  const handlePreviewEnter = useCallback(() => {
+    if (hoveredSlotTimer.current) clearTimeout(hoveredSlotTimer.current);
+  }, []);
+
+  const handlePreviewLeave = useCallback(() => {
+    setHoveredSlotId(null);
+  }, []);
 
   // ── 404 ───────────────────────────────────────────────
 
@@ -613,7 +705,7 @@ export default function DraftWorkspace() {
 
           {/* Main Area (viewport only) */}
           <div className="draft-main" data-testid="draft-main">
-            <div className="draft-viewport" ref={viewportRef} data-testid="draft-viewport">
+            <div className="draft-viewport" ref={viewportRef} data-testid="draft-viewport" onClick={handleViewportClick}>
               <DesignCanvas
                 version={effectiveVersionId}
                 project={project}
@@ -631,6 +723,7 @@ export default function DraftWorkspace() {
             const isEmpty = mode === 'live' && step?.reviewerId === r.id;
             const isShaped = shapedByIds.includes(r.id);
             const isActive = rs.activeBubbleId === r.id;
+            const sev = severityMap.get(r.id);
             return (
               <div
                 key={r.id}
@@ -640,9 +733,12 @@ export default function DraftWorkspace() {
                 data-testid={`draft-slot-${r.id}`}
                 title={r.name}
                 onClick={(e) => handleRailClick(r.id, e)}
+                onMouseEnter={(e) => handleSlotHover(r.id, e)}
+                onMouseLeave={handleSlotLeave}
               >
                 <img src={getAvatarUrl(r)} alt={r.name} loading="lazy" />
                 {isShaped && <span className="draft-shaped-dot" data-testid={`shaped-${r.id}`} />}
+                {sev && <span className="draft-severity-badge" data-testid={`severity-badge-${r.id}`} style={{ background: severityColor(sev) }} />}
               </div>
             );
           })}
@@ -655,6 +751,7 @@ export default function DraftWorkspace() {
             const isEmpty = mode === 'live' && step?.reviewerId === r.id;
             const isShaped = shapedByIds.includes(r.id);
             const isActive = rs.activeBubbleId === r.id;
+            const sev = severityMap.get(r.id);
             return (
               <div
                 key={r.id}
@@ -664,9 +761,12 @@ export default function DraftWorkspace() {
                 data-testid={`draft-slot-${r.id}`}
                 title={`${r.name} — ${r.role}`}
                 onClick={(e) => handleRailClick(r.id, e)}
+                onMouseEnter={(e) => handleSlotHover(r.id, e)}
+                onMouseLeave={handleSlotLeave}
               >
                 <img src={getAvatarUrl(r)} alt={r.name} loading="lazy" />
                 {isShaped && <span className="draft-shaped-dot" data-testid={`shaped-${r.id}`} />}
+                {sev && <span className="draft-severity-badge" data-testid={`severity-badge-${r.id}`} style={{ background: severityColor(sev) }} />}
               </div>
             );
           })}
@@ -764,10 +864,10 @@ export default function DraftWorkspace() {
       </div>
 
       {/* ── Backdrop (click-to-close overlay) ──────────── */}
-      {rs.isOverlayActive && (
+      {(rs.isOverlayActive || focusedSection) && (
         <div
           data-testid="draft-backdrop"
-          onClick={rs.closeAll}
+          onClick={() => { rs.closeAll(); setFocusedSection(null); setHoveredSlotId(null); }}
           style={{ position: 'fixed', inset: 0, zIndex: 790, background: 'transparent' }}
         />
       )}
@@ -798,6 +898,69 @@ export default function DraftWorkspace() {
         review={panelReview}
         onFindingHover={rs.setHighlight}
       />
+
+      {/* ── Section Focus Panel ──────────────────────── */}
+      <SectionFocusPanel
+        isOpen={focusedSection !== null}
+        section={focusedSection}
+        projectId={project?.id ?? ''}
+        versionId={effectiveVersionId}
+        onClose={() => setFocusedSection(null)}
+        onFindingHover={rs.setHighlight}
+      />
+
+      {/* ── Tour Preview Tooltip ─────────────────────── */}
+      {hoveredSlotId && hoveredSummary && (
+        <div
+          className="draft-tour-preview"
+          data-testid={`tour-preview-${hoveredSlotId}`}
+          style={{
+            top: hoveredSlotRect.top,
+            right: hoveredSlotRect.right,
+          }}
+          onMouseEnter={handlePreviewEnter}
+          onMouseLeave={handlePreviewLeave}
+        >
+          <div className="draft-tour-preview-counts">
+            {hoveredSummary.red > 0 && (
+              <span className="draft-tour-preview-count" style={{ color: '#FF6B6B' }}>
+                <span className="draft-severity-dot" style={{ background: '#FF6B6B' }} />
+                {hoveredSummary.red}
+              </span>
+            )}
+            {hoveredSummary.yellow > 0 && (
+              <span className="draft-tour-preview-count" style={{ color: '#FFD93D' }}>
+                <span className="draft-severity-dot" style={{ background: '#FFD93D' }} />
+                {hoveredSummary.yellow}
+              </span>
+            )}
+            {hoveredSummary.green > 0 && (
+              <span className="draft-tour-preview-count" style={{ color: '#6BCB77' }}>
+                <span className="draft-severity-dot" style={{ background: '#6BCB77' }} />
+                {hoveredSummary.green}
+              </span>
+            )}
+            <span className="draft-tour-preview-count" style={{ color: 'rgba(245,240,225,0.4)' }}>
+              {hoveredSummary.total} total
+            </span>
+          </div>
+          <div className="draft-tour-preview-sections">
+            {hoveredSummary.sections.map(s => s.toUpperCase()).join(' \u00B7 ')}
+          </div>
+          <button
+            className="draft-tour-preview-start"
+            data-testid={`tour-start-${hoveredSlotId}`}
+            onClick={() => {
+              setHoveredSlotId(null);
+              rs.closeAll();
+              setFocusedSection(null);
+              tour.start(hoveredSlotId);
+            }}
+          >
+            {'\u25B6'} START TOUR
+          </button>
+        </div>
+      )}
 
       {/* ── Floating Tour Overlay (between frame & chin) ── */}
       <div className="draft-tour-overlay" ref={overlayRef} data-testid="draft-tour-overlay">

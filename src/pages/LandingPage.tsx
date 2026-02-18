@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import HeroProblem from './landing/HeroProblem';
 import CouncilCarousel from './landing/CouncilCarousel';
+import TheLoop from './landing/TheLoop';
 import { CHIN_HEIGHT } from './landing/constants';
 
 const BG_DEEP = '#0D0D1A';
@@ -83,7 +84,7 @@ export default function LandingPage() {
       activeReviewer: null,
       overlayTier: 0,
       highlightedSection: null,
-      sections: ['hero-problem', 'council'],
+      sections: ['hero-problem', 'council', 'the-loop'],
     };
   }, []);
 
@@ -118,6 +119,8 @@ export default function LandingPage() {
         </div>
 
         <CouncilCarousel />
+
+        <TheLoop />
       </div>
 
       {/* Interactive label on the chin bezel */}
