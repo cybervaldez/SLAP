@@ -151,7 +151,7 @@ else
 fi
 
 # Council checklist names
-for name in frank elena carlos jasmine sam; do
+for name in frank elena carlos jasmine sam sarah dorothy mike; do
   if echo "$TERM_TEXT" | grep -q "$name"; then
     log_pass "Council includes $name"
   else
@@ -184,8 +184,14 @@ else
   log_fail "Missing frank.md"
 fi
 
-if echo "$TERM_TEXT" | grep -q "13 persona briefs"; then
-  log_pass "Shows 13 persona briefs count"
+if echo "$TERM_TEXT" | grep -q "sarah.md"; then
+  log_pass "Shows sarah.md brief filename"
+else
+  log_fail "Missing sarah.md"
+fi
+
+if echo "$TERM_TEXT" | grep -q "23 persona briefs"; then
+  log_pass "Shows 23 persona briefs count"
 else
   log_fail "Missing persona count"
 fi
@@ -202,20 +208,20 @@ else
   log_fail "Missing reviews header"
 fi
 
-if echo "$TERM_TEXT" | grep -q "8 red"; then
-  log_pass "Shows 8 red findings"
+if echo "$TERM_TEXT" | grep -q "55 red"; then
+  log_pass "Shows 55 red findings"
 else
   log_fail "Missing red count"
 fi
 
-if echo "$TERM_TEXT" | grep -q "22 yellow"; then
-  log_pass "Shows 22 yellow findings"
+if echo "$TERM_TEXT" | grep -q "80 yellow"; then
+  log_pass "Shows 80 yellow findings"
 else
   log_fail "Missing yellow count"
 fi
 
-if echo "$TERM_TEXT" | grep -q "18 green"; then
-  log_pass "Shows 18 green findings"
+if echo "$TERM_TEXT" | grep -q "43 green"; then
+  log_pass "Shows 43 green findings"
 else
   log_fail "Missing green count"
 fi
@@ -274,16 +280,16 @@ fi
 echo ""
 log_info "TEST 9: Score comparison"
 
-if echo "$TERM_TEXT" | grep -q "5.8"; then
-  log_pass "Shows haiku score 5.8"
+if echo "$TERM_TEXT" | grep -q "4.2"; then
+  log_pass "Shows haiku score 4.2"
 else
-  log_fail "Missing 5.8 score"
+  log_fail "Missing 4.2 score"
 fi
 
-if echo "$TERM_TEXT" | grep -q "7.2"; then
-  log_pass "Shows v2 score 7.2"
+if echo "$TERM_TEXT" | grep -q "5.6"; then
+  log_pass "Shows v2 score 5.6"
 else
-  log_fail "Missing 7.2 score"
+  log_fail "Missing 5.6 score"
 fi
 
 if echo "$TERM_TEXT" | grep -q "+1.4"; then
@@ -354,6 +360,43 @@ fi
 # Navigate back for cleanup
 browser_eval "window.location.hash = '#/'"
 sleep 1
+
+# ═══════════════════════════════════════════════════════════════
+# TEST 13: Sample findings section
+# ═══════════════════════════════════════════════════════════════
+echo ""
+log_info "TEST 13: Sample findings"
+
+HAS_FINDINGS=$(browser_eval "!!document.querySelector('[data-testid=\"loop-findings\"]')")
+if [ "$HAS_FINDINGS" = "true" ]; then
+  log_pass "loop-findings testid exists"
+else
+  log_fail "Missing loop-findings testid"
+fi
+
+if echo "$TERM_TEXT" | grep -q "most overused word"; then
+  log_pass "Frank finding: 'most overused word'"
+else
+  log_fail "Missing frank finding"
+fi
+
+if echo "$TERM_TEXT" | grep -q "TechStart"; then
+  log_pass "Sarah finding: 'TechStart'"
+else
+  log_fail "Missing sarah finding"
+fi
+
+if echo "$TERM_TEXT" | grep -q "clamp"; then
+  log_pass "Technical finding: 'clamp'"
+else
+  log_fail "Missing technical finding"
+fi
+
+if echo "$TERM_TEXT" | grep -q "Kanban"; then
+  log_pass "Dorothy finding: 'Kanban'"
+else
+  log_fail "Missing dorothy finding"
+fi
 
 # ═══════════════════════════════════════════════════════════════
 # CLEANUP

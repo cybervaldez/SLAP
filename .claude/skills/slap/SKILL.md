@@ -363,15 +363,15 @@ After completing all phases:
 SLAP COMPLETE — FlowBoard (haiku)
 ═══════════════════════════════════
 
-Persona briefs: 13 files (5 expert + 8 persona)
+Persona briefs: 23 files (5 expert + 18 persona)
   → projects/FlowBoard/personas/
 
 Annotated HTML: public/projects/FlowBoard/haiku.html
   → 5 sections, 12 data-ref elements
 
 Review data: src/data/flowboardReviews.ts
-  → 13 reviewers, avg score 5.8
-  → 8 red, 22 yellow, 18 green findings
+  → 23 reviewers, avg score 4.2
+  → 55 red, 80 yellow, 43 green findings
 
 Project registered: src/data/projects.ts
 Review data wired: src/data/reviews.ts

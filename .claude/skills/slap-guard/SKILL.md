@@ -132,9 +132,9 @@ All confirmed reviewers should have review data.
 
 ```
 Reviewer Coverage
-  Persona briefs: 13 files (5 expert + 8 persona)
-  Review entries: 13 entries
-  [PASS] All 13 reviewers have review data
+  Persona briefs: 23 files (5 expert + 18 persona)
+  Review entries: 23 entries
+  [PASS] All 23 reviewers have review data
   [PASS] No orphan reviews (every review has a persona brief)
 ```
 
@@ -197,7 +197,7 @@ SLAP GUARD — FlowBoard (haiku)
 ═══════════════════════════════════
 
 1. Persona Files
-  [PASS] 13/13 persona briefs found
+  [PASS] 23/23 persona briefs found
   [PASS] All frontmatter valid
 
 2. Section Parity
@@ -208,15 +208,15 @@ SLAP GUARD — FlowBoard (haiku)
   [WARN] frank:pricing:1 ref "pricing-toggle" not in HTML
 
 4. Score Sanity
-  [PASS] Range: 3.5 — 8.0, avg 5.8
+  [PASS] Range: 2.0 — 6.8, avg 4.2
   [PASS] Distribution looks realistic
 
 5. Traffic Light Distribution
-  [PASS] 18 green, 22 yellow, 8 red
+  [PASS] 43 green, 80 yellow, 55 red
   [WARN] marketing has 0 green findings
 
 6. Reviewer Coverage
-  [PASS] 13/13 reviewers have review data
+  [PASS] 23/23 reviewers have review data
 
 7. Content Accuracy
   [SKIP] Server not running

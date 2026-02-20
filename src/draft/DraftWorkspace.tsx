@@ -101,11 +101,7 @@ export default function DraftWorkspace() {
   // Section order: project-specific or default
   const projectSections = project?.sections || SECTION_ORDER;
 
-  const tour = useTour(projectId, effectiveVersionId, project?.sections);
-  const rs = useReviewState();
-  const refHighlight = useRefHighlight();
-
-  // Council state (from homepage or auto-rolled)
+  // Council state (from homepage or auto-rolled) — must precede useTour for allRailIds
   const [council, setCouncil] = useState<string[]>(() => loadCouncil() ?? autoRollCouncil());
   const [addPanelOpen, setAddPanelOpen] = useState(false);
   const [addPanelCategory, setAddPanelCategory] = useState('accessibility');
@@ -114,6 +110,16 @@ export default function DraftWorkspace() {
   const councilPersonas = council
     .map(id => getReviewer(id))
     .filter((r): r is Reviewer => !!r && r.type === 'persona');
+
+  // Combined rail order: experts then council personas
+  const allRailIds = useMemo(
+    () => [...experts.map(e => e.id), ...councilPersonas.map(p => p.id)],
+    [councilPersonas]
+  );
+
+  const tour = useTour(projectId, effectiveVersionId, project?.sections, allRailIds);
+  const rs = useReviewState();
+  const refHighlight = useRefHighlight();
 
   // shapedBy for current version
   const currentVersion = project ? getVersion(project.id, effectiveVersionId) : undefined;
@@ -254,6 +260,9 @@ export default function DraftWorkspace() {
   const frameRef = useRef<HTMLDivElement>(null);
   const hoveredSlotTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Previous step ref for tier detection in live choreography
+  const prevStepRef = useRef<{ reviewerId: string; section: string } | null>(null);
+
   // Determine frame mode
   const mode = tour.state.active ? tour.state.mode : 'idle';
 
@@ -335,18 +344,7 @@ export default function DraftWorkspace() {
       }
     }
 
-    // Source 3: Section focus (clicked section in design)
-    if (focusedSection) {
-      const el = vp.querySelector(`[data-section="${focusedSection}"]`) as HTMLElement | null;
-      if (el) {
-        el.classList.add('glowing');
-        el.style.setProperty('--d-glow-color', '#FFD00066');
-        el.style.setProperty('--d-glow-shadow', '#FFD00026');
-        el.style.setProperty('--d-glow-outer', '#FFD00014');
-        el.style.setProperty('--d-glow-inner', '#FFD00005');
-      }
-    }
-  }, [tour.state.active, tour.currentStep?.index, rs.highlightInfo, focusedSection, contentReady]);
+  }, [tour.state.active, tour.currentStep?.index, rs.highlightInfo, contentReady]);
 
   // ── Ref highlight (unified: tour + overlay) ──────────
 
@@ -371,13 +369,17 @@ export default function DraftWorkspace() {
   }, [tour.state.active, tour.currentStep?.index, rs.highlightInfo, contentReady]);
 
   // ── Live mode: floating bubble choreography ───────────
-  // Now originates from external rail (outside frame) → section inside viewport
+  // Three tiers:
+  //   Tier 1 — Same reviewer & section: React updates speech text, no movement
+  //   Tier 2 — Same reviewer, new section: slide floater from current position to new dock
+  //   Tier 3 — New reviewer (or first step): full rail-to-section fly-in
 
   useEffect(() => {
     if (mode !== 'live' || !tour.currentStep) {
       if (floaterRef.current) floaterRef.current.classList.remove('active', 'arriving');
       if (speechRef.current) speechRef.current.classList.remove('active');
       if (trailRef.current) trailRef.current.classList.remove('active');
+      prevStepRef.current = null;
       return;
     }
 
@@ -388,74 +390,136 @@ export default function DraftWorkspace() {
     if (!floater || !speech || !trail || !stageRef.current) return;
 
     const vp = viewportRef.current;
+    const prev = prevStepRef.current;
+    const sameReviewer = prev !== null && prev.reviewerId === step.reviewerId;
+    const sameSection = sameReviewer && prev.section === step.section;
 
-    // Find external rail slot and target section
+    // Update prevStepRef for next render
+    prevStepRef.current = { reviewerId: step.reviewerId, section: step.section };
+
+    // Find elements
     const railSlot = stageRef.current.querySelector(`[data-reviewer="${step.reviewerId}"]`);
     const sectionEl = vp?.querySelector(`[data-section="${step.section}"]`);
     if (!railSlot || !sectionEl) return;
 
-    // Scroll section into view
-    sectionEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    // Phase 1: Hide previous, position at rail
-    floater.classList.remove('active', 'arriving');
-    speech.classList.remove('active');
-    trail.classList.remove('active');
-
-    const choreograph = () => {
-      const railRect = getRelativeRect(railSlot);
-      const secRect = getRelativeRect(sectionEl);
-      if (!railRect || !secRect) return;
-
-      // Dock point: top-right of section, inset
-      const dockX = secRect.right - 40;
-      const dockY = secRect.top + 30;
+    // ── Tier 1: Same section — just update speech text (React handles it) ──
+    if (sameSection) {
+      // Speech text updates via React re-render; re-show speech in case it was hidden
       const bSize = 36;
+      const secRect = getRelativeRect(sectionEl);
+      if (secRect) {
+        const dockX = secRect.right - 40;
+        const dockY = secRect.top + 30;
+        const speechW = 220;
+        speech.style.left = `${dockX - bSize / 2 - speechW - 14}px`;
+        speech.style.top = `${dockY - 30}px`;
+        speech.style.maxWidth = `${speechW}px`;
+        speech.style.borderColor = step.reviewerColor;
+        speech.classList.add('active');
+      }
+      return;
+    }
 
-      // Set floater style
-      floater.style.border = `2px solid ${step.reviewerColor}`;
-      floater.style.color = step.reviewerColor;
-      floater.style.boxShadow = `0 0 12px ${step.reviewerColor}66`;
+    // ── Tier 2 & 3 both need scroll + position measurement ──
+    let cancelled = false;
 
-      // Position at external rail first (no transition)
-      floater.style.transition = 'none';
-      floater.style.left = `${railRect.cx - bSize / 2}px`;
-      floater.style.top = `${railRect.cy - bSize / 2}px`;
-      void floater.offsetWidth; // force reflow
+    // Instant scroll, then measure after layout settles
+    sectionEl.scrollIntoView({ behavior: 'instant' as ScrollBehavior, block: 'center' });
 
-      floater.classList.add('active');
+    // Double rAF ensures layout has settled after instant scroll
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (cancelled) return;
 
-      // Draw trail from external rail to section
-      const fromX = railRect.cx;
-      const fromY = railRect.cy;
-      const dy = dockY - fromY;
-      trail.setAttribute('d', `M ${fromX} ${fromY} C ${fromX - 30} ${fromY + dy * 0.3}, ${dockX + 30} ${dockY - dy * 0.3}, ${dockX} ${dockY}`);
-      trail.setAttribute('stroke', step.reviewerColor);
-      trail.classList.add('active');
+        const railRect = getRelativeRect(railSlot);
+        const secRect = getRelativeRect(sectionEl);
+        if (!railRect || !secRect) return;
 
-      // Phase 2: Animate to dock position (crosses frame boundary)
-      setTimeout(() => {
-        floater.style.transition = `left 500ms cubic-bezier(0.34, 1.56, 0.64, 1), top 500ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease`;
-        floater.style.left = `${dockX - bSize / 2}px`;
-        floater.style.top = `${dockY - bSize / 2}px`;
-        floater.classList.add('arriving');
+        const dockX = secRect.right - 40;
+        const dockY = secRect.top + 30;
+        const bSize = 36;
 
-        // Phase 3: Show speech bubble after arrival
-        setTimeout(() => {
-          floater.classList.remove('arriving');
+        // Set floater style (same for both tiers)
+        floater.style.border = `2px solid ${step.reviewerColor}`;
+        floater.style.color = step.reviewerColor;
+        floater.style.boxShadow = `0 0 12px ${step.reviewerColor}66`;
 
-          const speechW = 220;
-          speech.style.left = `${dockX - bSize / 2 - speechW - 14}px`;
-          speech.style.top = `${dockY - 30}px`;
-          speech.style.maxWidth = `${speechW}px`;
-          speech.style.borderColor = step.reviewerColor;
-          speech.classList.add('active');
-        }, 500);
-      }, 50);
-    };
+        if (sameReviewer) {
+          // ── Tier 2: Same reviewer, new section — slide from current position ──
+          speech.classList.remove('active');
 
-    const timer = setTimeout(choreograph, 300);
-    return () => clearTimeout(timer);
+          // Update trail endpoint to new section
+          const fromX = railRect.cx;
+          const fromY = railRect.cy;
+          const dy = dockY - fromY;
+          trail.setAttribute('d', `M ${fromX} ${fromY} C ${fromX - 30} ${fromY + dy * 0.3}, ${dockX + 30} ${dockY - dy * 0.3}, ${dockX} ${dockY}`);
+
+          // Animate floater from current position to new dock
+          floater.style.transition = `left 500ms cubic-bezier(0.34, 1.56, 0.64, 1), top 500ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease`;
+          floater.style.left = `${dockX - bSize / 2}px`;
+          floater.style.top = `${dockY - bSize / 2}px`;
+          floater.classList.add('arriving');
+
+          // Reveal speech after slide completes
+          setTimeout(() => {
+            if (cancelled) return;
+            floater.classList.remove('arriving');
+
+            const speechW = 220;
+            speech.style.left = `${dockX - bSize / 2 - speechW - 14}px`;
+            speech.style.top = `${dockY - 30}px`;
+            speech.style.maxWidth = `${speechW}px`;
+            speech.style.borderColor = step.reviewerColor;
+            speech.classList.add('active');
+          }, 500);
+        } else {
+          // ── Tier 3: New reviewer — full rail-to-section fly-in ──
+          floater.classList.remove('active', 'arriving');
+          speech.classList.remove('active');
+          trail.classList.remove('active');
+
+          // Position at rail (no transition)
+          floater.style.transition = 'none';
+          floater.style.left = `${railRect.cx - bSize / 2}px`;
+          floater.style.top = `${railRect.cy - bSize / 2}px`;
+          void floater.offsetWidth; // force reflow
+
+          floater.classList.add('active');
+
+          // Draw trail from rail to section
+          const fromX = railRect.cx;
+          const fromY = railRect.cy;
+          const dy = dockY - fromY;
+          trail.setAttribute('d', `M ${fromX} ${fromY} C ${fromX - 30} ${fromY + dy * 0.3}, ${dockX + 30} ${dockY - dy * 0.3}, ${dockX} ${dockY}`);
+          trail.setAttribute('stroke', step.reviewerColor);
+          trail.classList.add('active');
+
+          // Animate to dock
+          setTimeout(() => {
+            if (cancelled) return;
+            floater.style.transition = `left 500ms cubic-bezier(0.34, 1.56, 0.64, 1), top 500ms cubic-bezier(0.34, 1.56, 0.64, 1), transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1), opacity 200ms ease`;
+            floater.style.left = `${dockX - bSize / 2}px`;
+            floater.style.top = `${dockY - bSize / 2}px`;
+            floater.classList.add('arriving');
+
+            // Show speech after arrival
+            setTimeout(() => {
+              if (cancelled) return;
+              floater.classList.remove('arriving');
+
+              const speechW = 220;
+              speech.style.left = `${dockX - bSize / 2 - speechW - 14}px`;
+              speech.style.top = `${dockY - 30}px`;
+              speech.style.maxWidth = `${speechW}px`;
+              speech.style.borderColor = step.reviewerColor;
+              speech.classList.add('active');
+            }, 500);
+          }, 50);
+        }
+      });
+    });
+
+    return () => { cancelled = true; };
   }, [mode, tour.currentStep?.index, getRelativeRect, contentReady]);
 
   // ── Keyboard navigation ───────────────────────────────
@@ -570,28 +634,18 @@ export default function DraftWorkspace() {
   }, [tour, rs]);
 
   const handleTourStart = useCallback(() => {
-    const allRailIds = [...experts.map(e => e.id), ...councilPersonas.map(p => p.id)];
     const rid = rs.activeBubbleId || tour.state.reviewerId || allRailIds[0];
     if (rid) {
       rs.closeAll();
       tour.start(rid);
     }
-  }, [tour, councilPersonas, rs]);
+  }, [tour, allRailIds, rs]);
 
   // ── Section click (opens Section Focus panel) ──────────
 
-  const handleViewportClick = useCallback((e: React.MouseEvent) => {
-    if (tour.state.active) return;
-    if (rs.isOverlayActive) return;
-
-    const target = (e.target as HTMLElement).closest('[data-section]');
-    if (!target) return;
-    const section = target.getAttribute('data-section');
-    if (!section) return;
-
-    rs.closeAll();
-    setFocusedSection(prev => prev === section ? null : section);
-  }, [tour.state.active, rs]);
+  const handleViewportClick = useCallback((_e: React.MouseEvent) => {
+    return; // Design sections are non-interactive outside tour mode
+  }, []);
 
   // ── Tour preview (hover on rail slot) ──────────────────
 
@@ -632,8 +686,8 @@ export default function DraftWorkspace() {
   // ── Render ────────────────────────────────────────────
 
   const step = tour.currentStep;
-  const isFirst = tour.state.currentIndex === 0;
-  const isLast = tour.state.currentIndex === tour.state.steps.length - 1;
+  const isFirst = tour.isFirst;
+  const isLast = tour.isLast;
 
   // Progress bar for guided narrator
   const totalBlocks = 14;
@@ -1008,7 +1062,7 @@ export default function DraftWorkspace() {
                 <span
                   className={`draft-tour-crumb ${i === currentSectionIdx ? 'active' : ''}`}
                   onClick={() => {
-                    const idx = tour.state.steps.findIndex(s => s.section === sec);
+                    const idx = tour.state.steps.findIndex(s => s.section === sec && s.reviewerId === tour.currentStep?.reviewerId);
                     if (idx >= 0) tour.goTo(idx);
                   }}
                 >

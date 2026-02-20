@@ -65,6 +65,8 @@ export interface TourEngine {
   state: TourState;
   currentStep: TourStep | null;
   progress: number;
+  isFirst: boolean;
+  isLast: boolean;
   start: (reviewerId: string, mode?: TourMode) => void;
   stop: () => void;
   next: () => void;
@@ -112,6 +114,24 @@ function buildSteps(
   return steps;
 }
 
+/** Concatenate steps for every reviewer in rail order into a single flat array. */
+function buildAllSteps(
+  projectId: string | null,
+  versionId: string,
+  reviewerIds: string[],
+  sectionOrder: string[],
+): TourStep[] {
+  const all: TourStep[] = [];
+  for (const rid of reviewerIds) {
+    const steps = buildSteps(projectId, versionId, rid, sectionOrder);
+    for (const step of steps) {
+      all.push({ ...step, index: all.length, totalSteps: 0 });
+    }
+  }
+  for (const step of all) step.totalSteps = all.length;
+  return all;
+}
+
 // ─── Hook ─────────────────────────────────────────────────
 
 const INITIAL_STATE: TourState = {
@@ -126,15 +146,23 @@ export function useTour(
   projectId: string | null,
   versionId: string,
   sectionOrder?: string[],
+  allReviewerIds?: string[],
 ): TourEngine {
   const [state, setState] = useState<TourState>(INITIAL_STATE);
   const sections = sectionOrder || SECTION_ORDER;
+  const reviewerIds = allReviewerIds || [];
 
   const start = useCallback((reviewerId: string, mode: TourMode = 'guided') => {
-    const steps = buildSteps(projectId, versionId, reviewerId, sections);
+    const steps = reviewerIds.length > 0
+      ? buildAllSteps(projectId, versionId, reviewerIds, sections)
+      : buildSteps(projectId, versionId, reviewerId, sections);
     if (steps.length === 0) return;
-    setState({ active: true, mode, reviewerId, steps, currentIndex: 0 });
-  }, [projectId, versionId, sections]);
+    // Find the first step belonging to the requested reviewer
+    const startIndex = reviewerIds.length > 0
+      ? Math.max(0, steps.findIndex(s => s.reviewerId === reviewerId))
+      : 0;
+    setState({ active: true, mode, reviewerId, steps, currentIndex: startIndex });
+  }, [projectId, versionId, sections, reviewerIds]);
 
   const stop = useCallback(() => {
     setState(INITIAL_STATE);
@@ -143,21 +171,26 @@ export function useTour(
   const next = useCallback(() => {
     setState(prev => {
       if (!prev.active || prev.currentIndex >= prev.steps.length - 1) return prev;
-      return { ...prev, currentIndex: prev.currentIndex + 1 };
+      const nextIndex = prev.currentIndex + 1;
+      const nextStep = prev.steps[nextIndex];
+      return { ...prev, currentIndex: nextIndex, reviewerId: nextStep?.reviewerId ?? prev.reviewerId };
     });
   }, []);
 
   const prev = useCallback(() => {
     setState(prev => {
       if (!prev.active || prev.currentIndex <= 0) return prev;
-      return { ...prev, currentIndex: prev.currentIndex - 1 };
+      const nextIndex = prev.currentIndex - 1;
+      const nextStep = prev.steps[nextIndex];
+      return { ...prev, currentIndex: nextIndex, reviewerId: nextStep?.reviewerId ?? prev.reviewerId };
     });
   }, []);
 
   const goTo = useCallback((index: number) => {
     setState(prev => {
       if (!prev.active || index < 0 || index >= prev.steps.length) return prev;
-      return { ...prev, currentIndex: index };
+      const targetStep = prev.steps[index];
+      return { ...prev, currentIndex: index, reviewerId: targetStep?.reviewerId ?? prev.reviewerId };
     });
   }, []);
 
@@ -167,18 +200,22 @@ export function useTour(
 
   const currentStep = state.active ? state.steps[state.currentIndex] ?? null : null;
   const progress = state.steps.length > 0 ? (state.currentIndex + 1) / state.steps.length : 0;
+  const isFirst = state.currentIndex === 0;
+  const isLast = state.steps.length > 0 && state.currentIndex === state.steps.length - 1;
 
   return useMemo(() => ({
     state,
     currentStep,
     progress,
+    isFirst,
+    isLast,
     start,
     stop,
     next,
     prev,
     goTo,
     setMode,
-  }), [state, currentStep, progress, start, stop, next, prev, goTo, setMode]);
+  }), [state, currentStep, progress, isFirst, isLast, start, stop, next, prev, goTo, setMode]);
 }
 
 // ─── Helpers ──────────────────────────────────────────────

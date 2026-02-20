@@ -51,6 +51,10 @@ else
   exit 1
 fi
 
+# Seed council with all 18 personas so all reviewer bubbles appear
+browser_eval "localStorage.setItem('slap-default-council', JSON.stringify(['frank','elena','carlos','jasmine','sam','sarah','dorothy','mike','marcus','priya','kevin','raj','tommy','diana','maya','yuki','dex','nora']))"
+browser_eval "window.location.reload()"
+
 sleep 2  # Let React render + HTML fetch
 
 # ═══════════════════════════════════════════════════════════════
@@ -117,7 +121,7 @@ fi
 echo ""
 log_info "TEST 5: Reviewer bubbles"
 
-REVIEWERS=("marketing" "ux" "product" "technical" "design" "frank" "elena" "carlos" "jasmine" "sam" "sarah" "dorothy" "mike")
+REVIEWERS=("marketing" "ux" "product" "technical" "design" "frank" "elena" "carlos" "jasmine" "sam" "sarah" "dorothy" "mike" "marcus" "priya" "kevin" "raj" "tommy" "diana" "maya" "yuki" "dex" "nora")
 BUBBLE_COUNT=0
 for reviewer in "${REVIEWERS[@]}"; do
   HAS_BUBBLE=$(browser_eval "!!document.querySelector('[data-testid=\"draft-slot-${reviewer}\"]')")
@@ -126,10 +130,10 @@ for reviewer in "${REVIEWERS[@]}"; do
   fi
 done
 
-if [ "$BUBBLE_COUNT" -eq 13 ]; then
-  log_pass "All 13 reviewer bubbles present on rail"
+if [ "$BUBBLE_COUNT" -eq 23 ]; then
+  log_pass "All 23 reviewer bubbles present on rail"
 else
-  log_fail "Reviewer bubbles" "Found $BUBBLE_COUNT/13"
+  log_fail "Reviewer bubbles" "Found $BUBBLE_COUNT/23"
   # Report which are missing
   for reviewer in "${REVIEWERS[@]}"; do
     HAS=$(browser_eval "!!document.querySelector('[data-testid=\"draft-slot-${reviewer}\"]')")

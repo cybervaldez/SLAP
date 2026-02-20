@@ -263,11 +263,11 @@ export default function TheLoop() {
           setTimeout(() => {
             el.style.opacity = '1';
             el.style.transform = 'translateY(0)';
-          }, i * 90);
+          }, i * 80);
         });
         // Reveal whisper + CTA after lines finish
         const lineCount = lineRefs.current.filter(Boolean).length;
-        setTimeout(() => setRevealed(true), lineCount * 90 + 200);
+        setTimeout(() => setRevealed(true), lineCount * 80 + 200);
       }
     }
     check();
@@ -363,13 +363,19 @@ export default function TheLoop() {
               <Check /> <Name>sam</Name> <Out>One Thumb &mdash; on-the-go PM</Out>
             </div>
             <div ref={setLineRef(li++)} style={{ ...st.line, paddingLeft: '1rem' }}>
+              <Check /> <Name>sarah</Name> <Out>Trusts Nothing &mdash; will Google everything</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={{ ...st.line, paddingLeft: '1rem' }}>
+              <Check /> <Name>dorothy</Name> <Out>Minimal Tech &mdash; &ldquo;what is Kanban?&rdquo;</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={{ ...st.line, paddingLeft: '1rem' }}>
+              <Check /> <Name>mike</Name> <Out>Screen Sharing &mdash; presenting to team</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={{ ...st.line, paddingLeft: '1rem' }}>
               <Uncheck /> <Name dim>marcus</Name> <Dim>(no color-critical UI detected)</Dim>
             </div>
             <div ref={setLineRef(li++)} style={{ ...st.line, paddingLeft: '1rem' }}>
-              <Uncheck /> <Name dim>kevin</Name> <Dim>(not target demographic)</Dim>
-            </div>
-            <div ref={setLineRef(li++)} style={{ ...st.line, paddingLeft: '1rem' }}>
-              <Dim>... 3 more skipped</Dim>
+              <Dim>... 9 more skipped</Dim>
             </div>
 
             <hr ref={setLineRef(li++) as any} style={{ ...st.line, ...st.divider }} />
@@ -383,7 +389,7 @@ export default function TheLoop() {
               <Green>{'\u2713'}</Green> <Out>frank.md &mdash; Team lead, burned by 3 PM tools. Has 4 minutes.</Out>
             </div>
             <div ref={setLineRef(li++)} style={st.line}>
-              <Green>{'\u2713'}</Green> <Out>elena.md &mdash; Screen reader. Board navigation matters.</Out>
+              <Green>{'\u2713'}</Green> <Out>sarah.md &mdash; Will Google every testimonial company name.</Out>
             </div>
             <div ref={setLineRef(li++)} style={st.line}>
               <Green>{'\u2713'}</Green> <Out>carlos.md &mdash; CEO. ROI in the first scroll or he's gone.</Out>
@@ -396,7 +402,7 @@ export default function TheLoop() {
             </div>
             <div ref={setLineRef(li++)} style={st.line}>&nbsp;</div>
             <div ref={setLineRef(li++)} style={st.line}>
-              <Out>13 persona briefs </Out><Gold>&rarr;</Gold><Out> projects/FlowBoard/personas/</Out>
+              <Out>23 persona briefs </Out><Gold>&rarr;</Gold><Out> projects/FlowBoard/personas/</Out>
             </div>
 
             <hr ref={setLineRef(li++) as any} style={{ ...st.line, ...st.divider }} />
@@ -407,19 +413,49 @@ export default function TheLoop() {
             </div>
             <div ref={setLineRef(li++)} style={st.line}>&nbsp;</div>
             <div ref={setLineRef(li++)} style={st.line}>
-              <Out>13 reviewers evaluating 5 sections...</Out>
+              <Out>23 reviewers evaluating 5 sections...</Out>
             </div>
             <div ref={setLineRef(li++)} style={st.line}>&nbsp;</div>
             <div ref={setLineRef(li++)} style={st.line}>
               <Out>Findings: </Out>
               <span style={st.trafficRow}>
-                <span style={st.trafficItem}><TrafficDot color={SCORE_RED} /> 8 red</span>
-                <span style={st.trafficItem}><TrafficDot color={SCORE_YELLOW} /> 22 yellow</span>
-                <span style={st.trafficItem}><TrafficDot color={SCORE_GREEN} /> 18 green</span>
+                <span style={st.trafficItem}><TrafficDot color={SCORE_RED} /> 55 red</span>
+                <span style={st.trafficItem}><TrafficDot color={SCORE_YELLOW} /> 80 yellow</span>
+                <span style={st.trafficItem}><TrafficDot color={SCORE_GREEN} /> 43 green</span>
               </span>
             </div>
+
+            <div ref={setLineRef(li++)} style={st.line}>&nbsp;</div>
+            <div ref={setLineRef(li++)} style={st.line} data-testid="loop-findings">
+              <Out color="rgba(245, 240, 225, 0.15)">&mdash;&mdash;&mdash; WHAT THEY ACTUALLY SAY &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={st.line}>&nbsp;</div>
             <div ref={setLineRef(li++)} style={st.line}>
-              <Out>Every finding references your actual content. Not a template.</Out>
+              <TrafficDot color={SCORE_RED} /> <Bright> frank</Bright> <Out>on hero:</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={{ ...st.line, paddingLeft: '1.2rem' }}>
+              <Out>&ldquo;Effortlessly &mdash; the most overused word in SaaS&rdquo;</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={st.line}>&nbsp;</div>
+            <div ref={setLineRef(li++)} style={st.line}>
+              <TrafficDot color={SCORE_RED} /> <Bright> sarah</Bright> <Out>on testimonials:</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={{ ...st.line, paddingLeft: '1.2rem' }}>
+              <Out>&lsquo;I Googled &ldquo;TechStart Inc.&rdquo; &mdash; nothing.&rsquo;</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={st.line}>&nbsp;</div>
+            <div ref={setLineRef(li++)} style={st.line}>
+              <TrafficDot color={SCORE_GREEN} /> <Bright> technical</Bright> <Out>on hero:</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={{ ...st.line, paddingLeft: '1.2rem' }}>
+              <Out>&ldquo;clamp() responsive typography &mdash; well-implemented&rdquo;</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={st.line}>&nbsp;</div>
+            <div ref={setLineRef(li++)} style={st.line}>
+              <TrafficDot color={SCORE_RED} /> <Bright> dorothy</Bright> <Out>on features:</Out>
+            </div>
+            <div ref={setLineRef(li++)} style={{ ...st.line, paddingLeft: '1.2rem' }}>
+              <Out>&ldquo;Kanban-style boards &mdash; what does Kanban mean?&rdquo;</Out>
             </div>
 
             <hr ref={setLineRef(li++) as any} style={{ ...st.line, ...st.divider }} />
@@ -428,14 +464,11 @@ export default function TheLoop() {
             <div ref={setLineRef(li++)} style={st.line} data-testid="loop-step-5">
               <div style={st.summaryBox}>
                 <div style={st.summaryTitle}>SLAP COMPLETE &mdash; FlowBoard (haiku)</div>
-                <div><Out>Persona briefs: 13 files (5 expert + 8 persona)</Out></div>
+                <div><Out>Persona briefs: 23 files (5 expert + 18 persona)</Out></div>
                 <div><Arrow /><Out>projects/FlowBoard/personas/</Out></div>
                 <div>&nbsp;</div>
-                <div><Out>Annotated HTML: public/projects/FlowBoard/haiku.html</Out></div>
-                <div><Arrow /><Out>5 sections, 12 data-ref elements</Out></div>
-                <div>&nbsp;</div>
                 <div><Out>Review data: src/data/flowboardReviews.ts</Out></div>
-                <div><Arrow /><Out>13 reviewers, avg score </Out><Gold>5.8</Gold></div>
+                <div><Arrow /><Out>23 reviewers, avg score </Out><Gold>4.2</Gold></div>
               </div>
             </div>
 
@@ -468,18 +501,18 @@ export default function TheLoop() {
               <div style={st.scores}>
                 <div style={st.scoreBox}>
                   <div style={st.scoreLabel}>HAIKU</div>
-                  <div style={{ ...st.scoreVal, color: SCORE_YELLOW }}>5.8</div>
+                  <div style={{ ...st.scoreVal, color: SCORE_YELLOW }}>4.2</div>
                 </div>
                 <div style={st.scoreArrow}>&rarr;</div>
                 <div style={st.scoreBox}>
                   <div style={st.scoreLabel}>V2</div>
-                  <div style={{ ...st.scoreVal, color: SCORE_GREEN }}>7.2</div>
+                  <div style={{ ...st.scoreVal, color: SCORE_GREEN }}>5.6</div>
                 </div>
               </div>
             </div>
 
             <div ref={setLineRef(li++)} style={st.line}>
-              <Green>+1.4 avg improvement across 13 reviewers</Green>
+              <Green>+1.4 avg improvement across 23 reviewers</Green>
             </div>
             <div ref={setLineRef(li++)} style={st.line}>&nbsp;</div>
 
